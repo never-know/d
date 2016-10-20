@@ -1,9 +1,9 @@
 /*
 !.gitignore
 !/Annqi
-/Annqi/log 
+
 !/Annyi 
-/Annyi/log
+/Annyi/log/*
 !/Min
 !/Fucome 
 !/CDN
