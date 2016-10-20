@@ -1,11 +1,11 @@
 /*
 !.gitignore
-!/Annqi/app
-!/Annqi/webroot
-!/Annyi/app
-!/Annyi/webroot
+!/Annqi
+/Annqi/log 
+!/Annyi 
+/Annyi/log
 !/Min
-!/Fucome/fucome
+!/Fucome 
 !/CDN
 
 
