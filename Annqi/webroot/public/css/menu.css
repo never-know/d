@@ -1,0 +1,197 @@
+#menu {
+	z-index:199;
+	padding-bottom:20px;
+}
+#menu li {
+	display:block;
+	border:none;
+	margin:0;
+	vertical-align:top;
+	height:40px;
+	z-index: 199;
+ 
+}
+#all_cat_hide #menu li{
+width:210px;
+padding:0;
+float:none;
+}
+#menu li:hover {
+	background: #FF6700;
+	z-index:199;
+	box-shadow: rgba(161,0,0,0.8) 0 2px 10px 0;
+}
+ 
+
+#menu li a {
+    font: 14px/21px "\5fae\8f6f\96c5\9ed1";
+	color: white;
+	outline:0;
+	text-decoration:none;		
+	display: block;
+    float: left;
+    padding:9px 0;
+}
+ 
+#menu span{
+color: white;
+position:absolute;
+right: 12px;
+padding-top: 9px;
+display:none;
+
+}
+
+ 
+ #menu li .subitems dd a {
+    font: 13px/16px "Helvetica Neue",Helvetica,Arial,Verdana,"\5b8b\4f53",sans-serif;
+	color: white;
+	display:block;
+	outline:0;
+	text-decoration:none;
+	padding:0px 8px;
+}
+ #menu li  .subitems dt a {
+	font: 13px/24px Arial,Verdana,"\5b8b\4f53";
+	font-weight:bold;
+	padding:0 ;
+	  float: none;
+ }
+ #menu li .item-brands a {
+    font: 13px/24px "Helvetica Neue",Helvetica,Arial,Verdana,"\5b8b\4f53",sans-serif;
+	color: white;
+	display:block;
+	outline:0;
+	text-decoration:none;
+	padding:2px;	
+}
+
+
+.dropdown_5columns {
+	z-index:998;
+	margin:4px auto;
+	float:left;
+	position:absolute;
+	text-align:left;
+	padding:10px;
+	border:2px solid #E8E8E8;
+	border-left:none;
+	background:#FFF;
+	/*
+	-moz-border-radius: 0px 5px 5px 5px;
+	-webkit-border-radius: 0px 5px 5px 5px;
+	border-radius: 0px 5px 5px 5px;
+	 -moz-border-radius: 15px;       
+    -webkit-border-radius: 15px;   
+    border-radius:15px; 
+	*/
+	-webkit-box-shadow: 0 8px 16px rgba(0,0,0,0.18);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.18);
+	left:210px;
+	top:-4px;
+	display:none;
+	width:988px;
+}
+
+#menu li:hover .dropdown_5columns {
+display:block;
+}
+ 
+#menu li:hover div a, #menu li div a {
+	color:#015b86;
+}
+#menu li:hover div a:hover {
+	color:#029feb;
+}
+
+#menu li ul {
+	padding:0;
+	margin:0 0 12px 0;
+}
+#menu li ul li {
+	font-size:12px;
+	line-height:24px;
+	position:relative;
+	text-shadow: 1px 1px 1px #ffffff;
+	padding:0;
+	margin:0;
+	float:none;
+	text-align:left;
+	width:130px;
+}
+#menu li ul li:hover {
+	background:none;
+	border:none;
+	padding:0;
+	margin:0;
+	zoom:1
+}
+
+ 
+#xxx{  
+  margin: 0 auto;
+  width:730px;
+  float:left;
+  }
+
+ .subitems{
+ 
+ float:left;
+  border-bottom: 1px solid #eee;
+ }
+ 
+.subitems dl {
+  width:756px;
+  overflow: hidden;
+  line-height: 2em;
+  display:block;
+  border: 1px solid #eee;
+  border-bottom:none;
+  border-right:none;
+}
+ .subitems dt {
+  position: relative;
+  float: left;
+  width: 76px;
+  padding: 8px 30px 0 0;
+  text-align: right;
+  font-weight: 700;
+}
+.subitems dd {
+  float: left;
+  width: 626px;
+  padding: 6px 0;  
+}
+.subitems dt i {
+  position: absolute;
+  font-style: normal;
+  top: 13px;
+  right: 16px;
+  width: 4px;
+  height: 14px;
+  font: bold 12px/14px consolas;
+  
+}
+ .subitems dd a {
+  float: left;
+  padding: 0 8px;
+  margin: 4px 0;
+  line-height: 16px;
+  height: 16px;
+  border-left: 1px solid #e0e0e0;
+  white-space: nowrap;
+}
+.item-brands {
+  float: left;
+  display: inline;
+  width: 176px;
+  overflow: hidden;
+  padding:2px 10px;
+
+  border: 1px solid #eee;
+} 
+ .item-brands a {
+  float: left;
+  display: inline;
+  margin: 1px 0 0 1px;
+}

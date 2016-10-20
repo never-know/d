@@ -1,0 +1,23 @@
+/*  index  product-list---------------fucome.css ++++  list.css */
+.a_col{
+width:254px;
+border:1px solid #f3f3f3;
+border-top:none;
+height:611px;
+}
+.c_col .goods dl, .product-list-rightbar .goods dl{
+border-color:#f3f3f3;
+}
+.c_col .goods dl:hover, .product-list-rightbar .goods dl:hover{
+border-color:#A10000;
+}
+.plist-recommend-leftbar{
+border:1px solid #f3f3f3;
+}
+.plist-recommend-leftbar em {
+padding-top:10px;
+}
+#product-shop-id.fixed{
+height:22px;
+border-bottom:1px solid silver;
+}
