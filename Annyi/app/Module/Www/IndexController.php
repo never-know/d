@@ -16,13 +16,11 @@ class IndexController
 
 	private function index()
 	{
- 
 		layout();
 
 	}
 	private function test()
 	{
- 
 		layout();
 
 	}

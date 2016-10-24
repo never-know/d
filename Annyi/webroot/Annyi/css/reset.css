@@ -16,19 +16,6 @@ label,summary{cursor:default;}
 a,button{cursor:pointer;}
 h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
 del,ins,u,s,a,a:hover{text-decoration:none;}
-body,textarea,input,button,select,keygen,legend{font:12px/1.14 arial,\5b8b\4f53;color:#333;outline:0;}
+body,textarea,input,button,select,keygen,legend{font:12px/1.14 "Microsoft YaHei", arial,\5b8b\4f53;color:#333;outline:0;}
 body{background:#fff;}
-a,a:hover{color:#333;}
-.clear:after {content: '\20';display: block;height: 0;clear: both;}/* 清除浮动 */
-.clear {*zoom: 1;}
-
-/* custome */
-hr {border: none;height: 1px;}/* 重置 hr */
-input:focus { outline:none; border:1px solid #3aa2e4;}
-input[type=checkbox]:focus { border:none;}
-input[type=checkbox], input[type=radio]{vertical-align: middle;}
-input::-ms-clear, input::-ms-reveal{display: none;}
-/* 让非ie浏览器默认也显示垂直滚动条，防止因滚动条引起的闪烁 */
-html { overflow-y: scroll; /*IE下a:hover 背景闪烁 */overflow:-moz-scrollbars-vertical;}
-ul, ol ,dl{list-style: none;}
-ul li{float:left;}
+a,a:hover{color:#eee;}

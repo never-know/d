@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
 <head>
 <meta charset="utf-8">
-<link rel="stylesheet" href="http://cdn.annqi.com/public/css/reset.css">
+<link rel="stylesheet" href="<?php echo CDN_DOMAIN; ?>/public/css/reset.css">
 <link rel="stylesheet" href="http://cdn.annqi.com/public/font/iconfont.css">
 <link rel="stylesheet" href="http://cdn.annqi.com/public/css/fucome.css">
 <link rel="stylesheet" href="http://cdn.annqi.com/public/css/menu.css">

@@ -21,11 +21,10 @@ ul li{float:left;}
 /** 重置文本格式元素 **/
 a{
  color:#555;
- text-decoration:none;
  outline: none;
  border:none;
 }
-a:hover { text-decoration: none; }
+a, a:hover { text-decoration: none; }
 
 img {
   vertical-align: top;
@@ -69,8 +68,10 @@ vertical-align: middle;
 
 input::-ms-clear, input::-ms-reveal{display: none;}
 /* 让非ie浏览器默认也显示垂直滚动条，防止因滚动条引起的闪烁 */
-html { overflow-y: scroll; }
+html { 
+overflow-y: scroll; 
 /*IE下a:hover 背景闪烁 */
-html{overflow:-moz-scrollbars-vertical;}
+overflow:-moz-scrollbars-vertical;
+}
 
 

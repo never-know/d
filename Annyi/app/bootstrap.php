@@ -4,7 +4,7 @@
 	define('ERROR_PAGE', HOME_PAGE.'/error.html');
 	define('SITE_DOMAIN','annqi.com');
 	define('COOKIE_DOMAIN','.annqi.com');
-	define('FILE_DOMAIN','cnd.annqi.com');
+	define('CDN_DOMAIN','cnd.annqi.com');
 
 	define('VIEW_EXT','.tpl');
 	define('PHP_EXT','.php');
