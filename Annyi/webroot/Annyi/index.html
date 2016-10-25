@@ -12,18 +12,32 @@
 <![endif]-->	
 <!--[if gte IE 9]><![endif]-->
 </head>
-
+<style>
+.header1::after{
+	content:'';
+	position:absolute;
+	width:100%;
+	height:60px;
+	background:#fff;
+	top:0;
+	left:0;
+}
+.header1 *{
+position:relative;
+z-index:3;
+}
+</style>
 <body>
 
-<div class="head" id="header">          
-	<div class="head_box">   
+<div class="header">          
+	<div class="header-inner">   
 			<div class="logo">
 				<a href="/" title="微信公众平台">
 					<img src="./img/logo.jpg" />
 				</a>
 				</div>                               
 			<div class="account">                       	    
-				<a href="" class="avatar"><img src="" ></a>                          
+				<a href="" class="avatar"><img src="" /></a>                          
 				<a href="" class="nickname">ybcoming</a>  
 				<a id="logout" href="">退出</a>					 
 			</div> 
@@ -31,52 +45,164 @@
 </div>  
  
 <div class="container">
-	<div class="page-container">
+	<div class="container-inner">
+		<div class="leftbar">
+			<div class="menu_box" id="menuBar">
+			
+				<dl class="menu no_extra">    
+					<dt class="menu_title"> <i class="icon_menu" ></i>功能</dt>
+					<dd class="menu_item "><a data-id="10005" href="">群发功能</a></dd>
+					<dd class="menu_item "><a data-id="10006" href="">自动回复</a></dd>
+					<dd class="menu_item "><a data-id="10007" href="">自定义菜单</a></dd>
+					<dd class="menu_item "><a data-id="10038" href="">投票管理  </a></dd> 				 
+				</dl>
 	
-		<div class="page-sidebar-wrapper">
-		
-				<div class="menu_box" id="menuBar">
+				<dl class="menu ">   
+					<dt class="menu_title"><i class="icon_menu"></i>管理</dt> 
+					<dd class="menu_item "><a data-id="10012" href= "">消息管理</a></dd>
+					<dd class="menu_item "><a data-id="10013" href=" ">用户管理</a></dd>
+					<dd class="menu_item "><a data-id="10014" href="">素材管理</a></dd>
+				</dl>
+				<dl class="menu ">   
+					<dt class="menu_title"><i class="icon_menu"></i>管理</dt> 
+					<dd class="menu_item "><a data-id="10012" href= "">消息管理</a></dd>
+					<dd class="menu_item "><a data-id="10013" href=" ">用户管理</a></dd>
+					<dd class="menu_item "><a data-id="10014" href="">素材管理</a></dd>
+				</dl>
+				<dl class="menu ">   
+					<dt class="menu_title"><i class="icon_menu"></i>管理</dt> 
+					<dd class="menu_item "><a data-id="10012" href= "">消息管理</a></dd>
+					<dd class="menu_item "><a data-id="10013" href=" ">用户管理</a></dd>
+					<dd class="menu_item "><a data-id="10014" href="">素材管理</a></dd>
+				</dl>
+				<dl class="menu ">   
+					<dt class="menu_title"><i class="icon_menu"></i>管理</dt> 
+					<dd class="menu_item "><a data-id="10012" href= "">消息管理</a></dd>
+					<dd class="menu_item "><a data-id="10013" href=" ">用户管理</a></dd>
+					<dd class="menu_item "><a data-id="10014" href="">素材管理</a></dd>
+				</dl>
+				<dl class="menu ">   
+					<dt class="menu_title"><i class="icon_menu"></i>管理</dt> 
+					<dd class="menu_item "><a data-id="10012" href= "">消息管理</a></dd>
+					<dd class="menu_item "><a data-id="10013" href=" ">用户管理</a></dd>
+					<dd class="menu_item "><a data-id="10014" href="">素材管理</a></dd>
+				</dl>
+				<dl class="menu ">   
+					<dt class="menu_title"><i class="icon_menu"></i>管理</dt> 
+					<dd class="menu_item "><a data-id="10012" href= "">消息管理</a></dd>
+					<dd class="menu_item "><a data-id="10013" href=" ">用户管理</a></dd>
+					<dd class="menu_item "><a data-id="10014" href="">素材管理</a></dd>
+				</dl>
 				
-					<dl class="menu no_extra">    
-						<dt class="menu_title"> <i class="icon_menu" style="background:url(        https://res.wx.qq.com/mpres/htmledition/images/icon/menu/icon_menu_function.png        ) no-repeat;">    </i>功能                </dt>
-						<dd class="menu_item "><a data-id="10005" href="">群发功能        </a></dd>
-						<dd class="menu_item "><a data-id="10006" href="">自动回复        </a></dd>
-						<dd class="menu_item "><a data-id="10007" href="">自定义菜单        </a></dd>
-						<dd class="menu_item "><a data-id="10038" href="">投票管理<i class="icon_common new"></i>        </a></dd> 
-						<dd class="menu_plugins"><a class="btn_plugins_add" data-id="10025" href="">添加功能插件</a></dd>
-					</dl>
-						
-						
-						<dl class="menu ">    <dt class="menu_title">        <i class="icon_menu" style="background:url(        https://res.wx.qq.com/mpres/htmledition/images/icon/menu/icon_menu_management.png        ) no-repeat;">    </i>管理                </dt> <dd class="menu_item "><a data-id="10012" href="/cgi-bin/message?t=message/list&amp;count=20&amp;day=7&amp;token=1075035665&amp;lang=zh_CN">消息管理        </a></dd><dd class="menu_item "><a data-id="10013" href="/cgi-bin/contactmanage?t=user/index&amp;pageidx=0&amp;type=0&amp;token=1075035665&amp;lang=zh_CN">用户管理        </a></dd><dd class="menu_item "><a data-id="10014" href="/cgi-bin/appmsg?begin=0&amp;count=10&amp;t=media/appmsg_list&amp;type=11&amp;action=list&amp;token=1075035665&amp;lang=zh_CN">素材管理        </a></dd></dl><dl class="menu ">    <dt class="menu_title">        <i class="icon_menu" style="background:url(        https://res.wx.qq.com/mpres/htmledition/images/icon/menu/icon_menu_ad.png        ) no-repeat;">    </i>推广                </dt> <dd class="menu_item "><a data-id="10026" href="/promotion/advertiser_index?&amp;token=1075035665&amp;lang=zh_CN">广告主        </a></dd><dd class="menu_item "><a data-id="10027" href="/merchant/ad_host_index?t=ad_system/host_index&amp;token=1075035665&amp;lang=zh_CN">流量主        </a></dd></dl><dl class="menu ">    <dt class="menu_title">        <i class="icon_menu" style="background:url(        https://res.wx.qq.com/mpres/htmledition/images/icon/menu/icon_menu_statistics.png        ) no-repeat;">    </i>统计                </dt> <dd class="menu_item "><a data-id="10015" href="/misc/useranalysis?&amp;token=1075035665&amp;lang=zh_CN">用户分析        </a></dd><dd class="menu_item "><a data-id="10016" href="/misc/appmsganalysis?action=all&amp;order_direction=2&amp;token=1075035665&amp;lang=zh_CN">图文分析        </a></dd><dd class="menu_item "><a data-id="10047" href="/misc/menuanalysis?&amp;token=1075035665&amp;lang=zh_CN">菜单分析        </a></dd><dd class="menu_item "><a data-id="10017" href="/misc/messageanalysis?type=daily&amp;t=statistics/msg&amp;token=1075035665&amp;lang=zh_CN">消息分析        </a></dd><dd class="menu_item "><a data-id="10018" href="/misc/interfaceanalysis?type=daily&amp;token=1075035665&amp;lang=zh_CN">接口分析        </a></dd><dd class="menu_item "><a data-id="10054" href="/misc/webpageanalysis?action=listintfstat&amp;token=1075035665&amp;lang=zh_CN">网页分析<i class="icon_common new"></i>        </a></dd></dl><dl class="menu ">    <dt class="menu_title">        <i class="icon_menu" style="background:url(        https://res.wx.qq.com/mpres/htmledition/images/icon/menu/icon_menu_setup.png        ) no-repeat;">    </i>设置                </dt> <dd class="menu_item "><a data-id="10019" href="/cgi-bin/settingpage?t=setting/index&amp;action=index&amp;token=1075035665&amp;lang=zh_CN">公众号设置        </a></dd><dd class="menu_item "><a data-id="10020" href="/merchant/store?action=detail&amp;t=wxverify/detail&amp;info=verify&amp;token=1075035665&amp;lang=zh_CN">微信认证        </a></dd><dd class="menu_item "><a data-id="10022" href="/cgi-bin/safecenterstatus?action=view&amp;t=setting/safe-index&amp;token=1075035665&amp;lang=zh_CN">安全中心        </a></dd><dd class="menu_item "><a data-id="10045" href="/cgi-bin/illegalrecord?count=10&amp;token=1075035665&amp;lang=zh_CN">违规记录        </a></dd></dl><dl class="menu ">    <dt class="menu_title">        <i class="icon_menu" style="background:url(        https://res.wx.qq.com/mpres/htmledition/images/icon/menu/icon_menu_developer.png        ) no-repeat;">    </i>开发                </dt> <dd class="menu_item "><a data-id="10048" href="/advanced/advanced?action=dev&amp;t=advanced/dev&amp;token=1075035665&amp;lang=zh_CN">基本配置        </a></dd><dd class="menu_item "><a data-id="10049" href="/cgi-bin/frame?t=advanced/dev_tools_frame&amp;nav=10049&amp;token=1075035665&amp;lang=zh_CN">开发者工具        </a></dd><dd class="menu_item selected"><a data-id="10050" href="/advanced/diagram?action=index&amp;token=1075035665&amp;lang=zh_CN">运维中心        </a></dd><dd class="menu_item "><a data-id="10051" href="/advanced/advanced?action=table&amp;token=1075035665&amp;lang=zh_CN">接口权限        </a></dd></dl></div>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-			<ul>
-				<li><a href="" >首页</a></li>
-				<li><a href="" >我的下线</a></li>
-				<li><a href="" >账户信息</a></li>
-				<li><a href="" >充值记录</a></li>
-				<li><a href="" >提现记录</a></li>
-				<li><a href="" >提现申请</a></li>
-				<li><a href="" >我的下线</a></li>
-				<li><a href="" >账户信息</a></li>
-				<li><a href="" >充值记录</a></li>
-				<li><a href="" >提现记录</a></li>
-				<li><a href="" >提现申请</a></li>
-				<li><a href="" >我的下线</a></li>
-				<li><a href="" >账户信息</a></li>
-				<li><a href="" >充值记录</a></li>
-			</ul>
+			</div>
+		</div>
+		<div style="position:absolute;width:1px;height:100%;background-color:#e7e7eb;left:191px;"></div>
+		<div class="main">
+			<div class="main-content">
+				<p>
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				content
+				</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>
+				content
+				
+				</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+				<p>content</p>
+		 
+			</div>
 		</div>
 	
 	</div>
