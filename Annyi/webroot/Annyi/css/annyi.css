@@ -1,7 +1,15 @@
-﻿html,body{
+﻿/***common**/
+.hide{
+display:none;
+}
+
+
+/****frame*****/
+html,body{
 background-color:#fff;
 width: 100%;
 }
+ 
 .container,.footer{
 min-width:980px;
 }
@@ -16,6 +24,8 @@ _height: 100%;
 .header{
 background-color:#fff;
 height:60px;
+padding:2px 0;
+margin-bottom: 20px;
 }
 .footer{
 overflow:hidden;
@@ -150,12 +160,15 @@ display:inline-block;
 
 /******login*********/
 
-.nav-2{
+.nav-2,.nav-1{
 width:100%;
 height: 10px;
 position:absolute;
 z-index:99;
 background: url(../img/reg_bg.png) no-repeat center top;
+}
+.nav-1{
+background: url(../img/reg_bg1.png) no-repeat center top;
 }
 .login-wrapper{
 position:relative;	
@@ -165,7 +178,7 @@ margin-top:0;
 }
 .login-header{
 height:60px;
-margin-top:10px;
+padding:10px 0;
 }
 .login-header,.login-content{
 max-width:1000px;
@@ -184,11 +197,11 @@ font-size: 20px;
 border-left: 1px solid silver;
 padding-left: 16px;	
 float:left;
-margin:26px 20px 0 0;
+margin:22px 20px 0 0;
 }
 .login-header a.regist-link, .login-header span{
 float:left;
-padding-top:36px;	
+padding-top:32px;	
 }
 .login-header span{
 color: #969696;	
@@ -199,7 +212,7 @@ font-family: "\5fae\8f6f\96c5\9ed1";
 }
 
 .login-content{
-padding-top:12px;
+padding-top: 22px;
 }
 .login-image{
 float:left;
@@ -227,55 +240,33 @@ box-sizing:border-box;
 padding:20px;
 }
 .login-box i.error{
-    border-color: #e4393c;
-    background: #FFF2F2;
-    color: #FF7777;
+border-color: #e4393c;
+background: #FFF2F2;
+color: #FF7777;
 }
 .login-title{
- height: 33px;
- margin-left: -2px;
-}
-.login-title h2{
- height:32px;
-   width:150px;
-  float: left;
-  font-size: 14px;
-   text-align:center;
-   border-bottom:1px solid #dedede;
-   cursor:pointer;
-   color:#999;
-}
+height: 32px;
+font-size: 16px;
+text-align:center;
+border-bottom: 1px solid silver;
+cursor:pointer;
 
-.login-title h3{
- height:32px;
- width:150px;
-  float: left;
-  font-size: 16px;
-   text-align:left;
- padding-top:10px;
-   cursor:pointer;
+}
  
-}
-.login-title .static{
-color:#000;
-border-bottom:1px solid #f40;
-}
 .login-msg{
-  margin:10px 0px;
- 
-  background: #ffebeb;
-  color: #e4393c;
-  border: 1px solid #e4393c;
-  padding: 2px 0px;
-  display:none;
+margin:10px 0px;
+background: #ffebeb;
+color: #e4393c;
+border: 1px solid #e4393c;
+padding: 2px 0px;
+display:none;
 }
 .msg-warn{
-  background: #FFF5D3;
-  color: #666;
-  border: 1px solid #ffe57d;
-  padding: 2px 0px;
-  margin :6px 2px;
- 
+background: #FFF5D3;
+color: #666;
+border: 1px solid #ffe57d;
+padding: 2px 0px;
+margin :6px 2px;
 }
 
 .login-name, .login-pwd, .reg-phone, .reg-mcode, .reg-code, .login-code, .reg-pwd{
@@ -284,28 +275,26 @@ margin:16px 0px 12px 0px;
 font-size:14px;
 }
 .login-name, .login-pwd, .login-code{
-
 margin:20px 0 18px 0;
 } 
 .loginname, .loginpwd, .regname, .regpwd, .regmcode, .regcode, .regphone, .logincode{
-  padding: 8px 0px 6px 10px;
-  border: 1px solid #CFCFCF;
-  width: 250px;
-  overflow: hidden;
-  float:left;
-  display:block;
-  height:22px;
+padding: 8px 0px 6px 10px;
+border: 1px solid #CFCFCF;
+width: 250px;
+overflow: hidden;
+float:left;
+display:block;
+height:22px;
 }
 .login-code{
- display:none;
+display:none;
 }
 .login-code .login-captcha, .reg-code .reg-captcha{
-	cursor:pointer;
-	    height: 36px;
-     
-    display: inline-block;
-      line-height: 36px;  
-    padding-left: 8px;
+cursor:pointer;
+height: 36px;
+display: inline-block;
+line-height: 36px;  
+padding-left: 8px;
 }
 .loginname, .loginpwd{
 padding-left:52px;
@@ -325,149 +314,137 @@ width: 150px;
 *margin-left:-187px;
 }
 .reg-error{
-    text-align: center;
-    width: 200px;
-    margin: 0 auto;
-	margin-top:-10px;
-    background: #ffebeb;
-    color: #e4393c;
-    border: 1px solid #e4393c;
-    padding: 2px 0px;
-    display: none;
-
+text-align: center;
+width: 200px;
+margin: 0 auto;
+margin-top:-10px;
+background: #ffebeb;
+color: #e4393c;
+border: 1px solid #e4393c;
+padding: 2px 0px;
+display: none;
 }
 .login-li{
-  margin:12px 3px;
-  width:288px;
-}
-.rememberme-checkbox {
-vertical-align: middle;
-margin: 0 2px 0 0;
-padding: 0; 
-*margin:2px -4px 0 0;
-_margin-top:-3px;
+margin:6px 0 12px 6px;
+width:288px;
+overflow:hidden;
 }
 
-.forget-pwd{
-margin-left:158px;
-*margin-left:155px;
-}
 .reg-form .login-btn{
 margin-top:6px;
 }
 .login-btn, .reg-btn{
-  display: block;
-  width: 296px;
-  background: #e4393c;
-  height: 38px;
-  line-height: 38px;
-  font-size: 20px;
-  font-family: "\5fae\8f6f\96c5\9ed1";
-  text-align:center;
-   margin:6px auto;
-   cursor:pointer;
-       color: white;
-    border: none;
+display: block;
+width: 296px;
+background: #e4393c;
+height: 38px;
+line-height: 38px;
+font-size: 20px;
+font-family: "\5fae\8f6f\96c5\9ed1";
+text-align:center;
+margin:6px auto;
+cursor:pointer;
+color: white;
+border: none;
 }
-
 .login-btn a, .reg-btn a{
 color:#fff;
-display:block;
 }
-
-.login-footer .links{
-width:800px;
-margin:0 auto;
-margin-bottom:10px;
-}
-.login-footer .links a{
-padding-right:10px;
-padding-left:10px;
-
-}
-.login-footer .copyright{
-width:300px;
-margin:0 auto;
-}
-
-.getcode{
-	width: 112px;
-	    float: left;
-	text-align: center;
-	padding: 7px 12px;
-	background-color: #f4f4f4;
-	margin-left:10px;
-	border:1px solid #dddddd;
-}
-.linkBox a.iconLinks {
-    display: inline;
-    height: 24px;
-    width: 24px;
-    float: left;
-    background: url(http://cdn.annqi.com/public/images/icon_links.png) no-repeat;
-    line-height: 24px;
-    margin-right: 8px;
-}
-.linkBox a.qq {
-    background-position: -24px 0;
-}
-.linkBox a.alipay {
-    background-position: -48px 0;
-}
-.linkBox a.weixin {
-    background-position: -72px 0;
-}
-a.plusLink {
-    overflow: hidden;
-    zoom: 1;
-    position: relative;
-    padding-right: 10px;
-    cursor: pointer;
-    line-height: 24px;
-}
-.linkBox{
-margin-top:16px;
-margin-left:10px;
-
-}
-
 .login-code span{
-    line-height: 30px;
-    height: 30px;
-    padding: 5px 2px 0px 8px;
-    position: absolute;
-	display:inline;
-	color:rgb(237, 20, 91);
-	font-size:12px;
-	cursor:pointer;
+line-height: 30px;
+height: 30px;
+padding: 5px 2px 0px 8px;
+position: absolute;
+display:inline;
+color:rgb(237, 20, 91);
+font-size:12px;
+cursor:pointer;
 }
-
 .logincode{
 width:126px;
-
 }
 
 
+/**********reg*********/
 
-.item{
-position:relative;
+.reg-form{
+width:558px;
+background:white;
+float:left;
+position: relative;
+margin-right: -558px;
+
+}
+.reg-image{
+width: 100%;
+float: right;
+margin-top: 30px;
+background:url(http://cdn.annqi.com/public/images/signPic.jpg) no-repeat;
+}
+.reg-box{
+width:538px;
+padding:50px 10px 30px 10px;
+}
+
+#reg_form{
+margin-bottom:10px;
+}
+.reg-form label{
+width:136px;
+display:block;
+text-align:right;
+color: #999;
+padding :9px 0 0 6px;
+float:left;
+}
+.reg-form span , .reg-form em{
+padding:8px 12px 6px 8px;;
+position: absolute;
 font-size:12px;
-line-height:18px;
-height:18px;
-margin-bottom:12px;
+display:none;
+margin-left:10px;
+}
+.reg-form span{
+min-width:200px;
+}
+.reg-form em{
+padding: 10px 10px 8px 10px;
+display:inline;
+cursor:pointer;
+margin-left: 0;
+}
+.reg-form .tips, .reg-form .tips-s{
+border: 1px solid #E2DDDD;
+background:#f4f4f4;	 
+display:inline;
+}
+.reg-form .tips-s{
+width:180px;
+overflow:hidden;
+}
+.reg-form .tips-s em{
+background: #f4f4f4;
+width: 62px;
+height: 22px;
+position: absolute;
+left: 86px;
+}
+.reg-form .errors{
+border: 1px solid #f00;
+display: inline;
+background:#FFEBEB;
+}
+.reg-pwd{
+margin-top:32px;
 }
 
-.item .safe{
-position:relative;
-}
-.safe .jdcheckbox{
-float:none;vertical-align:middle;_vertical-align:-1px;margin:0 3px 0 0;padding:0;
 
-}
 
-.safe .forget-pw-safe {
-    position: absolute;
-    right: 0;
-    top: 0;
-    margin: 0;
+.service-agreement{
+width:170px;
+margin:22px auto;
 }
+.service-agreement a{
+ color: #005AA0;
+}
+ 
