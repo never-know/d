@@ -149,7 +149,7 @@
 				 
 				<li class="arrow-down" id="arrow-first">
 					<span>
-						<a href="#" >我的安琪<i class="iconfont">&#xe604;</i><em class="iconfont">&#xe606;</em></a></span>
+						<a href="#" >我的QI<i class="iconfont">&#xe604;</i><em class="iconfont">&#xe606;</em></a></span>
 						<div>
 						<p><a href="#">Chinese</a></p>
 						<p><a href="#">English</a></p>

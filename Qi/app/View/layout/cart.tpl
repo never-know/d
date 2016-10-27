@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="http://cdn.qi.com/public/css/reset.css">
 <link rel="stylesheet" href="http://cdn.qi.com/public/font/iconfont.css">
-<link rel="stylesheet" href="http://cdn.qi.com/public/css/fucome.css">
+<link rel="stylesheet" href="http://cdn.qi.com/public/css/qi.css">
 <link rel="stylesheet" href="http://cdn.qi.com/public/css/menu.css">
 <link rel="stylesheet" type="text/css" href="http://cdn.qi.com/public/css/product.css" />
 <link rel="stylesheet" type="text/css" href="http://cdn.qi.com/public/css/list.css" />

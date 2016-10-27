@@ -1,10 +1,10 @@
 <?php
 
-	define('HOME_PAGE','http://www.annqi.com');
+	define('HOME_PAGE','http://www.yi.com');
 	define('ERROR_PAGE', HOME_PAGE.'/error.html');
-	define('SITE_DOMAIN','annqi.com');
-	define('COOKIE_DOMAIN','.annqi.com');
-	define('CDN_DOMAIN','cnd.annqi.com');
+	define('SITE_DOMAIN','yi.com');
+	define('COOKIE_DOMAIN','.yi.com');
+	define('CDN_DOMAIN','cnd.yi.com');
 
 	define('VIEW_EXT','.tpl');
 	define('PHP_EXT','.php');

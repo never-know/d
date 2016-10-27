@@ -80,7 +80,7 @@ Min.event.bind('loginsubmit','click', function(){
 					 
 					var ReturnUrl = Min.util.getQueryString('ReturnUrl');
 					var location = 'http://www.' + site_domain;
-					if(ReturnUrl && '@^http[s]?://[a-z][a-z0-9]*\.annqi\.com(?:/[a-zA-Z0-9]+)+\.html@'.test(ReturnUrl)){
+					if(ReturnUrl && '@^http[s]?://[a-z][a-z0-9]*\.qi\.com(?:/[a-zA-Z0-9]+)+\.html@'.test(ReturnUrl)){
 						location = ReturnUrl; 
 					} 
 					window.location.href = location;

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="http://cdn.qi.com/public/css/reset.css" />
-<link rel="stylesheet" href="http://cdn.qi.com/public/css/fucome.css">
+<link rel="stylesheet" href="http://cdn.qi.com/public/css/qi.css">
 <link rel="stylesheet" href="http://cdn.qi.com/public/font/iconfont.css">
 
 <!--[if !IE]><!--> 
@@ -57,7 +57,7 @@ margin-top:38px;
 			 <div class="login-box">
 				<div class="login-title">
 					<h1>用户注册</h1>
-					<div class="regist-link">已有安琪账号？<a href="https://reg.qi.com/reg/person?ReturnUrl=http%3A%2F%2Fwww.qi.com" target="_blank" clstag="pageclick|keycount|20150112ABD|1">立即登陆</a></div>
+					<div class="regist-link">已有QI账号？<a href="https://reg.qi.com/reg/person?ReturnUrl=http%3A%2F%2Fwww.qi.com" target="_blank" clstag="pageclick|keycount|20150112ABD|1">立即登陆</a></div>
 					 
 				</div>
 

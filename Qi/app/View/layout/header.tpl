@@ -141,7 +141,7 @@
 				 
 				<li class="arrow-down" id="arrow-first">
 					<span>
-						<a href="#" >我的安琪<i class="iconfont">&#xe604;</i><em class="iconfont">&#xe606;</em></a></span>
+						<a href="#" >我的QI<i class="iconfont">&#xe604;</i><em class="iconfont">&#xe606;</em></a></span>
 						<div>
 						<p><a href="#">已买到的宝贝</a></p>
 						<p><a href="#">待收货订单</a></p>

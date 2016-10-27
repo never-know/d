@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="http://cdn.qi.com/public/css/reset.css">
 <link rel="stylesheet" href="http://cdn.qi.com/public/font/iconfont.css">
-<link rel="stylesheet" href="http://cdn.qi.com/public/css/fucome.css">
+<link rel="stylesheet" href="http://cdn.qi.com/public/css/qi.css">
 <link rel="stylesheet" href="http://cdn.qi.com/public/css/menu.css">
 <link rel="stylesheet" type="text/css" href="http://cdn.qi.com/public/css/lrtk.css" />
 <link rel="stylesheet" type="text/css" href="http://cdn.qi.com/public/css/list.css" />
@@ -210,7 +210,7 @@
 					 
 					<li class="arrow-down" id="arrow-first">
 						<span>
-							<a href="#" >我的安琪<i class="iconfont">&#xe604;</i><em class="iconfont">&#xe606;</em></a></span>
+							<a href="#" >我的QI<i class="iconfont">&#xe604;</i><em class="iconfont">&#xe606;</em></a></span>
 							<div>
 							<p><a href="#">Chinese</a></p>
 							<p><a href="#">English</a></p>

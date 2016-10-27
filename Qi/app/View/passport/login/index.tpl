@@ -4,7 +4,7 @@
 		<div class="login-logo">
 			<a href="http://www.qi.com/" target="_blank" class="login-logo-image" > </a>
 			<em>欢迎登陆</em>
-			<span class="regist-link">没有安琪账号？<a href="http://passport.qi.com/regist.html?ReturnUrl=http%3A%2F%2Fwww.qi.com" target="_blank" clstag="pageclick|keycount|20150112ABD|1">立即注册</a></span>
+			<span class="regist-link">没有QI账号？<a href="http://passport.qi.com/regist.html?ReturnUrl=http%3A%2F%2Fwww.qi.com" target="_blank" clstag="pageclick|keycount|20150112ABD|1">立即注册</a></span>
 		</div>
 		
 	</div>
