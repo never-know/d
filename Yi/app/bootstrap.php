@@ -1,5 +1,9 @@
 <?php
-
+	
+	error_reporting(E_ALL);
+	ini_set('display_error','on');
+	date_default_timezone_set('Asia/Shanghai'); 
+	
 	define('HOME_PAGE','http://www.yi.com');
 	define('ERROR_PAGE', HOME_PAGE.'/error.html');
 	define('SITE_DOMAIN','yi.com');
@@ -19,9 +23,7 @@
 	
 	define('MIN_PATH', APP_PATH.'/../../Min/src');
 	define('VENDOR_PATH', APP_PATH.'/../../Min/vendor');
-	
-	date_default_timezone_set('Asia/Shanghai'); 
-	
+
 	require MIN_PATH.'/Min/Common.php';	
 	spl_autoload_register('autoload');
 	

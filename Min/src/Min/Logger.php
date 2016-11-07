@@ -25,7 +25,7 @@ class Logger{
 		}
     }
 
-	public function setChannel($channel)
+	public function setChannel($channel = '')
 	{
 		if (!empty($channel)) $this->channel = $channel;
 		return $this;

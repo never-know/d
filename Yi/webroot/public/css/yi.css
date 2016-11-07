@@ -2,8 +2,13 @@
 .hide{
 display:none;
 }
-
-
+.red {
+    color: red;
+    padding-right: 6px;
+    font-family: "????";
+    font-weight: normal;
+}
+a,a:hover{color:#333;}
 /****frame*****/
 html,body{
 background-color:#fff;
@@ -165,10 +170,10 @@ width:100%;
 height: 10px;
 position:absolute;
 z-index:99;
-background: url(../img/reg_bg.png) no-repeat center top;
+background: url(../images/reg_bg.png) no-repeat center top;
 }
 .nav-1{
-background: url(../img/reg_bg1.png) no-repeat center top;
+background: url(../images/reg_bg1.png) no-repeat center top;
 }
 .login-wrapper{
 position:relative;	
@@ -379,7 +384,10 @@ margin-right: -558px;
 width: 100%;
 float: right;
 margin-top: 30px;
-background:url('../images/signPic.jpg') no-repeat;
+}
+
+.reg-image-inner{
+margin-left: 558px;
 }
 .reg-box{
 width:538px;
@@ -437,7 +445,15 @@ background:#FFEBEB;
 .reg-pwd{
 margin-top:32px;
 }
-
+.getcode {
+    width: 112px;
+    float: left;
+    text-align: center;
+    padding: 7px 12px;
+    background-color: #f4f4f4;
+    margin-left: 10px;
+    border: 1px solid #dddddd;
+}
 
 
 .service-agreement{
@@ -446,5 +462,6 @@ margin:22px auto;
 }
 .service-agreement a{
  color: #005AA0;
+ display: inline;
 }
  

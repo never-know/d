@@ -29,11 +29,12 @@ class Captcha{
             $code .= $this->charset[mt_rand(0, $charset_len)];
         }
 		if(!isset($_SESSION)){
-			usr_error('2', '请使用正常流程生成验证码');
-		}else{
-			$_SESSION[$key . '_code'] = strtolower($code);
-			return $code;
-		}
+			App::initSession(true); 
+		} 
+		
+		$_SESSION[$key . '_code'] = strtolower($code);
+		return $code;
+		 
     }
 
 	
@@ -52,9 +53,10 @@ class Captcha{
         // 验证码字体随机颜色   
         $_color = imagecolorallocate($im, mt_rand(1, 120), mt_rand(1, 120), mt_rand(1, 120));  
    
-        $ttf = MIN_ROOT.'/inc/font/6.ttf';  
+        $ttf = MIN_PATH.'/Min/Font/6.ttf';  
 
 		$code = $this->creatcode($key);
+		 
         $codeNX = -2; // 验证码第N个字符的左边距 
 		$codeNY = rand(23, 35);
 		$arr = [0, 26];

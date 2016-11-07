@@ -1,30 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="css/reset.css">
-<link rel="stylesheet" href="css/function.css">
-<link rel="stylesheet" href="css/yi.css">
-<link rel="stylesheet" href="font/iconfont.css">
-<!--[if IE]><![endif]-->
-<!--[if lte IE 8]><![endif]-->
-<!--[if IE 8]>
-<link rel="stylesheet" type="text/css" href="http://cdn.yi.com/public/yi/css/ie8.css" />
-<![endif]-->	
-<!--[if gte IE 9]><![endif]-->
-</head>
-<style>
 
-</style>
-<body>
-<div class="container">
-	<div class="nav-2" style="top:78px;"> </div> 
 	<div class="login-wrapper">
 		<div class="login-header">
-				<a href="" target="_blank" class="login-logo"><img src="./img/logo.jpg"></a>
+				<a href="" target="_blank" class="login-logo"><img src="/public/images/logo.jpg"></a>
 				<em>欢迎注册</em>
 				<span>已有QI账号？</span>
-				<a href="" target="_blank" class="regist-link">马上登陆</a>
+				<a href="/user/login.html" target="_blank" class="regist-link">马上登陆</a>
 		</div>
 		<div class="login-content">
 			<div class="reg-form">
@@ -45,7 +25,7 @@
 						<div class="reg-code" id="reg-code">
 							<label for="regcode"><b class="red">*</b>验证码：</label>
 							 
-							<input id="regcode" type="text" class="regcode" name="regcode" tabindex="1" autocomplete="off"  maxlength="4" /> <i class="icon-reg iconfont">&nbsp;</i><div class="code-change"><img  class="reg-captcha" src="http://util.yi.com/captcha/get.html?type=reg" /><em>换一张</em>
+							<input id="regcode" type="text" class="regcode" name="regcode" tabindex="1" autocomplete="off"  maxlength="4" /> <i class="icon-reg iconfont">&nbsp;</i><div class="code-change"><img  class="reg-captcha" src="/captcha/get.html?type=reg" /><em>换一张</em>
 							 </div>
 							 <span id="regcode-error"></span>
 						</div>
@@ -84,47 +64,9 @@
 			</div>
 			<div class="reg-image">
 				<div class="reg-image-inner">
-					<img src="./img/signPic.jpg" >
+					<img src="/public/images/signPic.jpg" >
 				</div>
 			</div>
 		</div>	 
 	 
 	</div>
-
-</div>
-
-<div class="footer">
-	<div class="nav-2" style="top:0px;"> </div> 
-	<div class="links">
-		<a rel="nofollow" target="_blank" href=" ">
-			关于我们
-		</a>
-		|
-		<a rel="nofollow" target="_blank" href=" ">
-			联系我们
-		</a>
-		|
-		<a rel="nofollow" target="_blank" href=" ">
-			商家入驻
-		</a>
-		|
-		<a rel="nofollow" target="_blank" href=" ">
-			广告服务
-		</a>
-		|
-		<a rel="nofollow" target="_blank" href=" ">
-			手机QI
-		</a>
-		|
-		<a target="_blank" href=" ">
-			友情链接
-		</a>
-	</div>
-	<div class="copyright">
-		Copyright©2004-2015&nbsp;&nbsp;Yi.com&nbsp;版权所有
-	</div>
-</div>
-	 
-</body>
-<!-- END BODY -->
-</html>
