@@ -1,6 +1,6 @@
 <?php 
 namespace Min;
-class Logger{
+class Config{
 
 	private $logs 				= [];
 	private $allowed 			= [];
