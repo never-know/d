@@ -7,6 +7,11 @@
 				<a href="/user/login.html" target="_blank" class="regist-link">马上登陆</a>
 		</div>
 		<div class="login-content">
+			<div class="reg-image">
+				<div class="reg-image-inner">
+					<img src="/public/images/signPic.jpg" >
+				</div>
+			</div>
 			<div class="reg-form">
 				<div class="reg-box">
 					<form id="reg-form" method="post" onsubmit="return false;">
@@ -62,11 +67,7 @@
 				 
 				</div>
 			</div>
-			<div class="reg-image">
-				<div class="reg-image-inner">
-					<img src="/public/images/signPic.jpg" >
-				</div>
-			</div>
+			
 		</div>	 
 	 
 	</div>

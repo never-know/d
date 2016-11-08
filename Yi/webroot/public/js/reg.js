@@ -151,7 +151,7 @@ _$('regpwd1').onkeyup =function(e){
 			itag.innerHTML="&#xe634;"
 			itag.style.color="#7ABD54";
 	}else{
-		console.log(456);
+		Min.print.log(456);
 		setError(_$('regpwd1-error'),'请再次输入密码','tips');
 		itag = Min.dom.next(this);
 			itag.innerHTML="&#xe63a;"
@@ -204,7 +204,7 @@ _$('regpwd').onblur=function(){
 	
 	//确认密码
 	_$('regpwd1').onfocus=function(){
-	console.log(123);
+	Min.print.log(123);
 		var tips=_$('regpwd1-error');
 		tips.innerHTML='请再次输入密码';
 		tips.className="tips";
@@ -247,7 +247,7 @@ function phone_check(phone){
 
 	if(phone == current_phone) return;
 		current_phone = phone;
-	JSONP.get( 'http://passport.' + site_domain + '/account/phone.html', {phone:phone}, function(data){
+	JSONP.get( 'http://www.' + site_domain + '/account/phone.html', {phone:phone}, function(data){
 				
 				if(_$('regphone').value != phone) return;
 				
@@ -309,7 +309,7 @@ Min.event.bind('regphone','paste',  function(e){
     } else {
             pastedText = e.clipboardData.getData('text/plain');//e.originalEvent.clipboardData.getData('Text');//e.clipboardData.getData('text/plain');
           }
-	console.log(pastedText);
+	Min.print.log(pastedText);
 	
 	var itag = Min.dom.next(this);
 	if( (pastedText.length != 11 && /^1[\d]*$/.test(pastedText)) || pastedText == '' ){
@@ -355,18 +355,24 @@ function code_tag(show){
 }
 
 function code_check(){
+alert('code_check');
 	var code = _$('regcode').value;
+	 alert(current_code);
+		 alert(code);
 	if(code == current_code) return;
 	current_code = code;
 		setError(_$('regcode-error'),'','hide');
-	JSONP.get( 'http://util.' + site_domain + '/captcha/check.html', {code:code,type:'reg'}, function(data){
-		 
+		alert(site_domain);
+	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {code:code,type:'reg'}, function(data){
+		 alert(_$('regcode').value);
+		 alert(code);
+		 alert(data.status);
 			if(_$('regcode').value != code) return;
 			 if( data.status ==1 ) { 
 				code_tag(1);
 			 }else if( data.status == 2 ){
 				code_tag(2);
-				console.log(data.message);
+				Min.print.log(data.message);
 				setError(_$('regcode-error'),data.message,'errors');
 			 }
 		 }
@@ -397,7 +403,7 @@ Min.event.bind('regcode','keyup',function(event){
 });
 	
 Min.event.bind('reg-code','click',{handler:function(e){
-	e.currentTarget.getElementsByTagName('IMG')[0].src='http://util.' + site_domain + '/captcha/get.html?type=reg&v='+new Date().getTime();
+	e.currentTarget.getElementsByTagName('IMG')[0].src='http://www.' + site_domain + '/captcha/get.html?type=reg&v='+new Date().getTime();
 	e.currentTarget.getElementsByTagName('i')[0].removeAttribute('style');
 	e.currentTarget.getElementsByTagName('i')[0].innerHTML='';
 	_$('regcode').value='';
@@ -444,7 +450,7 @@ Min.event.bind('getcode','click',function(e){
 	this.setAttribute("sindex", 1);
 
 	minAjax({
-		url:'http://passport.' + site_domain + '/regist/sendsms.html', 
+		url:'http://www.' + site_domain + '/regist/sendsms.html', 
 		type:'POST', 
 		data:{
 			phone:phone,

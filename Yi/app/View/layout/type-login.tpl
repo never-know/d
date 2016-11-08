@@ -8,6 +8,7 @@
 <script type="text/javascript" src="/public/js/Min.js"></script>
 <script type="text/javascript" src="/public/js/event.js"></script>
 <script type="text/javascript" src="/public/js/cookie.js"></script>
+<script type="text/javascript" src="/public/js/jsonp.js"></script>
 
 </head>
 <body>

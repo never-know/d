@@ -78,13 +78,20 @@ font-size:14px;
   -webkit-font-smoothing: antialiased;
 }
 .icon-reg{
+/*
     margin-top: 1px;
     margin-left: -38px;
     color: silver;
     background: white;
     z-index: 99999;
     position: absolute;
-	padding: 6px 10px 5px 10px;
+	padding: 6px 10px 4px 10px;
+	*/
+	margin-top: 6px;
+    margin-left: -26px;
+    color: silver;
+    background: white;
+    float: left;
 }
 .icon-login{
 	margin-top: 1px;

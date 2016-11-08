@@ -312,8 +312,9 @@ margin-top:22px;
 width:100px;
 }
 .reg-code .code-change{
-float:left;  
-width: 150px;
+    float: right;
+    width: 150px;
+    margin-right: 128px;
 }
 .reg-code i.icon-reg{
 *margin-left:-187px;
@@ -404,18 +405,19 @@ padding :9px 0 0 6px;
 float:left;
 }
 .reg-form span , .reg-form em{
-padding:8px 12px 6px 8px;;
+padding:2px 12px 2px 8px;;
 position: absolute;
 font-size:12px;
 display:none;
 margin-left:10px;
+line-height: 32px;
 }
 .reg-form span{
 min-width:200px;
 }
 .reg-form em{
-padding: 10px 10px 8px 10px;
 display:inline;
+zoom:1;
 cursor:pointer;
 margin-left: 0;
 }

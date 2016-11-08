@@ -28,11 +28,7 @@ class Captcha{
         for ($i = 0; $i < $this->length; $i++) {
             $code .= $this->charset[mt_rand(0, $charset_len)];
         }
-		if(!isset($_SESSION)){
-			App::initSession(true); 
-		} 
-		
-		$_SESSION[$key . '_code'] = strtolower($code);
+		$_SESSION[$key . '_code'] = strtolower($code);		
 		return $code;
 		 
     }
@@ -55,8 +51,8 @@ class Captcha{
    
         $ttf = MIN_PATH.'/Min/Font/6.ttf';  
 
-		$code = $this->creatcode($key);
-		 
+		$code = $this->creatCode($key);
+	
         $codeNX = -2; // 验证码第N个字符的左边距 
 		$codeNY = rand(23, 35);
 		$arr = [0, 26];
@@ -149,6 +145,7 @@ class Captcha{
 	
 	public function checkCode($code, $key) 
 	{ 
+		 
 		return (!empty($_SESSION[$key.'_code']) && $_SESSION[$key.'_code'] === strtolower($code));
 	}
 }

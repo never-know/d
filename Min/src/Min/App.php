@@ -72,8 +72,9 @@ class App
 	{
 		// 与 未登陆不使用session
 		$session_name = 'appid';
+		//var_dump($_COOKIE);
 		if (empty($_COOKIE[$session_name]) && $force == false) return;
-
+		 
 		// Use session cookies, not transparent sessions that puts the session id in
   		// the query string.
   		ini_set('session.use_cookies', '1');
@@ -89,8 +90,8 @@ class App
   		//ini_set('session.cookie_secure', TRUE);
   		define('IS_HTTPS', ( isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? TRUE : FALSE);
 		ini_set('session.cookie_domain', COOKIE_DOMAIN);
-		ini_set('session.save_handler','redis');
-		ini_set('session.save_path', 'tcp://127.0.0.1:6379?weight=2, tcp://127.0.0.1:6380?weight=1, tcp://127.0.0.1:6381?weight=2');
+		//ini_set('session.save_handler','redis');
+		//ini_set('session.save_path', 'tcp://127.0.0.1:6379?weight=2, tcp://127.0.0.1:6380?weight=1, tcp://127.0.0.1:6381?weight=2');
 		session_name($session_name);
 		session_start();
 	}

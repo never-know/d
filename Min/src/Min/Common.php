@@ -204,7 +204,7 @@ function ajax_return($arr)
 }
 
 function jsonp_return($arr)
-{
+{ 
 	if (is_numeric($_GET['callback'])) {
 		if (!headers_sent()) header('Content-Type:application/html; charset=utf-8');
 		echo 'callback',$_GET['callback'],'(',json_encode($arr),')';

@@ -4,11 +4,11 @@
 	ini_set('display_error','on');
 	date_default_timezone_set('Asia/Shanghai'); 
 	
-	define('HOME_PAGE','http://www.yi.com');
+	define('HOME_PAGE','http://www.yi.cn');
 	define('ERROR_PAGE', HOME_PAGE.'/error.html');
-	define('SITE_DOMAIN','yi.com');
-	define('COOKIE_DOMAIN','.yi.com');
-	define('CDN_DOMAIN','cnd.yi.com');
+	define('SITE_DOMAIN','yi.cn');
+	define('COOKIE_DOMAIN','.yi.cn');
+	define('CDN_DOMAIN','cnd.yi.cn');
 
 	define('VIEW_EXT','.tpl');
 	define('PHP_EXT','.php');
