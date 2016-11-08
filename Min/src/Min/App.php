@@ -68,7 +68,7 @@ class App
 	
 	
 	}
-	protected static function initSession($force = false)
+	public static function initSession($force = false)
 	{
 		// 与 未登陆不使用session
 		$session_name = 'appid';
