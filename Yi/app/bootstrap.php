@@ -36,4 +36,4 @@
 	$di->setShared('cacheManager','\\Min\\CacheManager');
 	$di->setShared('logger','\\Min\\Logger');
 	
-	\Min\App::bootstrap($di);
+	\Min\App::bootstrap($di,false);

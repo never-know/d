@@ -6,13 +6,7 @@ use Min\App;
 class CaptchaController
 {
 	public function __construct($action) 
-	{
-		if(!isset($_SESSION)){
-			App::initSession(true); 
-			
-			 
-		} 
-	 
+	{	
 		if($action=='get'){
 			$this->get();
 		}elseif($action=='check'){
@@ -26,6 +20,9 @@ class CaptchaController
 		if( !preg_match('/^[a-z]+$/',$_GET['type']) ){
 			trigger_error( 'captcha parameter error', E_USER_ERROR);
 		}
+		if(!isset($_SESSION)){
+			App::initSession(true);  
+		} 
 		$code = new \Min\Captcha;
 		$code->getCode($_GET['type']);
 		
@@ -34,8 +31,7 @@ class CaptchaController
 	
 	private function check()
 	{ 
-		if( !is_numeric($_GET['callback']) || !preg_match('/^[a-z]+$/',$_GET['type']) ){
-			 
+		if( !is_numeric($_GET['callback']) || !preg_match('/^[a-z]+$/',$_GET['type']) ){ 
 			trigger_error( 'captcha parameter error', E_USER_ERROR);
 		}
 		 
@@ -44,13 +40,8 @@ class CaptchaController
 		if( true === $code->checkCode($_GET['code'],$_GET['type']) ) {
 			response(1);
 		}else{
-			App::initSession(true); 
-			 print_r($_SESSION);
-			 print_r($_COOKIE);
-			 
-			 exit;
+			response(0, '验证码错误');
 		}
-
 	}
 
 }

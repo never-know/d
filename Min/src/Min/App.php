@@ -96,7 +96,7 @@ class App
 		session_start();
 	}
 	
-	public static function bootstrap($di)
+	public static function bootstrap($di,$auto_session)
 	{
 		if (!self::$booted) {
 			self::$booted = true;
@@ -106,7 +106,7 @@ class App
 			define('IS_JSONP', !empty($_POST['isjsonp']) || !empty($_GET['isjsonp']));
 
 			self::setContainer($di);
-			self::initSession();
+			self::initSession($auto_session);
 			self::dispatch();
 		}
 	}

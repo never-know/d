@@ -18,7 +18,7 @@ var JSONP = (function(){
 		var script = document.createElement('script'),
 			done = false;
 		script.src = url;
-		alert(url);
+		 
 		script.async = true;
  
 		var errorHandler = pfnError || config.error;
@@ -35,7 +35,7 @@ var JSONP = (function(){
 				if ( script && script.parentNode ) {
 					script.parentNode.removeChild( script );
 				}
-				alert('okkkk');
+				 
 			}
 		};
 		
@@ -67,7 +67,7 @@ var JSONP = (function(){
 		};
  
 		load(url + query +  'isjsonp=1&callback=' + counter);
-		alert(uniqueName);
+		 
 		return uniqueName;
 	}
 	function setDefaults(obj){

@@ -355,22 +355,19 @@ function code_tag(show){
 }
 
 function code_check(){
-alert('code_check');
+ 
 	var code = _$('regcode').value;
-	 alert(current_code);
-		 alert(code);
+ 
 	if(code == current_code) return;
 	current_code = code;
 		setError(_$('regcode-error'),'','hide');
-		alert(site_domain);
+		 
 	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {code:code,type:'reg'}, function(data){
-		 alert(_$('regcode').value);
-		 alert(code);
-		 alert(data.status);
+		 
 			if(_$('regcode').value != code) return;
-			 if( data.status ==1 ) { 
+			 if( data.status == 1 ) { 
 				code_tag(1);
-			 }else if( data.status == 2 ){
+			 }else if( data.status == 0 ){
 				code_tag(2);
 				Min.print.log(data.message);
 				setError(_$('regcode-error'),data.message,'errors');
