@@ -15,7 +15,7 @@ function strong_settimer(obj,width,tag){
 	obj.className="tips-s";
 	var itag = obj.getElementsByTagName('em')[0];
 	if( !itag ){
-		obj.innerHTML='密码强度：'+tag+'&nbsp;&nbsp;<i class="iconfont icon-pwd">&#xe661;</i><em style="left:86px;"></em>';
+		obj.innerHTML='密码强度：'+tag+'&nbsp;&nbsp;<i class="iconfont icon-pwd">&#xe661;</i><em style="left:92px;"></em>';
 		itag = obj.getElementsByTagName('em')[0];
 	}
 	clearInterval(itag.timer);	
@@ -48,11 +48,11 @@ function pwdstrong(pwd){
 function setstrong(strong,obj){
 	
 	if(strong<3){	
-		strong_settimer(obj,98,'弱');		 
+		strong_settimer(obj,102,'弱');		 
 	}else if(strong>3){
-		strong_settimer(obj,150,'强');
+		strong_settimer(obj,154,'强');
 	}else{ 
-		strong_settimer(obj,122,'中');
+		strong_settimer(obj,126,'中');
 	}
 }
 function setError(obj,msg,name){

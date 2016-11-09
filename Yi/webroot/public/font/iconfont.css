@@ -88,6 +88,9 @@ font-size:14px;
     float: left;
 	
 }
+.icon-white{
+    color:white;
+}
 .reg-code i.icon-reg{
 _margin-left:-187px;
 }
