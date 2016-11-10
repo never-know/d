@@ -19,7 +19,7 @@ class CacheManager
 	public function connect()
 	{
 		if (empty($this->conf)) {
-			$this->conf = parse_ini_file(APP_PATH.'/conf/cachemanager.ini');
+			$this->conf = parse_ini_file(APP_PATH.'/conf/cache.ini');
 			if (empty($this->conf[$this->active])) {
 				throw new \Exception('can not get active '.$this->active.' info in CacheManager, default selected');
 				$this->active = 'default';

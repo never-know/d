@@ -297,7 +297,7 @@ display:none;
 .login-code .login-captcha, .reg-code .reg-captcha{
 cursor:pointer;
 height: 36px;
-display: inline-block;
+float:left;
 line-height: 36px;  
 padding-left: 8px;
 }
@@ -312,9 +312,8 @@ margin-top:22px;
 width:100px;
 }
 .reg-code .code-change{
-    float: left;
-    width: 150px;
- 
+float: left;
+width: 150px;
 }
 
 .reg-error{
@@ -404,20 +403,18 @@ float:left;
 }
 .reg-form span , .reg-form em{
 padding:2px 12px 2px 11px;;
-position: absolute;
 font-size:12px;
-display:none;
-margin-left:12px;
 line-height: 32px;
 }
 .reg-form span{
 min-width:200px;
+display:none;
+position: absolute;
+margin-left:12px;
 }
 .reg-form em{
-display:inline;
-zoom:1;
+float:left;
 cursor:pointer;
-margin-left: 0;
 }
 .reg-form .tips, .reg-form .tips-s{
 border: 1px solid #E2DDDD;
@@ -433,7 +430,7 @@ background: #f4f4f4;
 width: 62px;
 height: 22px;
 position: absolute;
-left: 86px;
+left: 92px;
 }
 .reg-form .errors{
 border: 1px solid #f00;

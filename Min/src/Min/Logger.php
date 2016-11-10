@@ -31,7 +31,7 @@ class Logger{
 		return $this;
 	}
 	
-	public function log($message, $level = 'error', $extra = [])
+	public function log($message, $level = 'ERROR', $extra = [])
 	{	
 		$level = strtoupper($level);
 		if (empty($this->allowed[$level])) return;
@@ -40,7 +40,7 @@ class Logger{
 		
 		if (isset($this->allowed[$level]['handler'])) {
 			$handler = new $this->allowed[$level]['handler'];
-			$handler -> handler($message);
+			$handler->handler($message);
 		}
 	}
 	
