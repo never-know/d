@@ -64,7 +64,7 @@ var JSONP = (function(){
 			window[ uniqueName ] = null;
 		};
  
-		load(url + query +  'isjsonp=1&callback=' + counter);
+		load(url + query +  'isJsonp=1&callback=' + counter);
 		return uniqueName;
 	}
 	function setDefaults(obj){

@@ -20,6 +20,9 @@ class UserController
 	}
 	private function reg()
 	{
+		if(!isset($_SESSION)){
+			App::initSession(true);  
+		} 
 		layout('type-login');
 	}
 

@@ -31,12 +31,13 @@ class Logger{
 		return $this;
 	}
 	
-	public function log($message, $level = 'ERROR', $extra = [])
+	public function log($message, $level = 'ERROR', $extra = [], $channel = '')
 	{	
 		$level = strtoupper($level);
 		if (empty($this->allowed[$level])) return;
+		if (empty($channel)) $channel = $this->channel;
 		
-		$this->logs[] = ['level'=>$level, 'channel'=> $this->channel, 'message'=> $message, 'extra'=> $extra];
+		$this->logs[] = ['level'=>$level, 'channel'=> $channel, 'message'=> $message, 'extra'=> $extra];
 		
 		if (isset($this->allowed[$level]['handler'])) {
 			$handler = new $this->allowed[$level]['handler'];
@@ -73,8 +74,11 @@ class Logger{
 		$records = '';
 		foreach ($this->logs as $log) {
 			$records .= '[' . $log['channel'] . '] [' . $log['level'] . '] [' . $log['message'] . ']';
-			if(!empty($log['extra']))  $records .= ' ['. json_decode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ) . ']';
-			$records .= PHP_EOL;	 
+			if (!empty($log['extra'])) {
+				$records .= ' ['. json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ) . ']';
+			}
+			$records .= PHP_EOL;	
+				echo $records;
 		}
 		
 		error_log($content.$records, 3, $dest_file, '');

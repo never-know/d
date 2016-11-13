@@ -56,7 +56,7 @@ finddl();
 
 Min.obj.each(query(doc,'.goods'),function(a){
 Min.event.bind(a,'mouseover',{handler:function(){
-				console.log('mouseenter');
+			//	console.log('mouseenter');
 				var b = this.getElementsByTagName('img')[0];
 				Min.css.addClass('opacity',b);
 				setTimeout(function(){Min.css.removeClass('opacity',b);},120);

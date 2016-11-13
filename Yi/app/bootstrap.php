@@ -2,13 +2,13 @@
 	
 	error_reporting(E_ALL);
 	ini_set('display_error','on');
-	date_default_timezone_set('Asia/Shanghai'); 
+	date_default_timezone_set('Asia/Shanghai');
 	
-	define('HOME_PAGE','http://www.yi.cn');
+	define('SITE_DOMAIN', 'yi.com');
+	define('HOME_PAGE', 'http://www.'.SITE_DOMAIN );
 	define('ERROR_PAGE', HOME_PAGE.'/error.html');
-	define('SITE_DOMAIN','yi.cn');
-	define('COOKIE_DOMAIN','.yi.cn');
-	define('CDN_DOMAIN','cnd.yi.cn');
+	define('COOKIE_DOMAIN', '.'.SITE_DOMAIN);
+	define('CDN_DOMAIN', 'cnd.'.SITE_DOMAIN);
 
 	define('VIEW_EXT','.tpl');
 	define('PHP_EXT','.php');
@@ -23,17 +23,20 @@
 	
 	define('MIN_PATH', APP_PATH.'/../../Min/src');
 	define('VENDOR_PATH', APP_PATH.'/../../Min/vendor');
-
+	
+	define('IS_JSONP', !empty($_REQUEST['isJsonp']));
+	define('IS_AJAX', (!empty($_REQUEST['isAjax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')));
+			
 	require MIN_PATH.'/Min/Common.php';	
 	spl_autoload_register('autoload');
 	
 	set_error_handler('app_error');
 	set_exception_handler('app_exception');
 	register_shutdown_function('app_tails');
-			
+		
 	$di = new \Min\Di;
-	$di->setShared('db','\\Min\\Db');
-	$di->setShared('cacheManager','\\Min\\CacheManager');
-	$di->setShared('logger','\\Min\\Logger');
+	$di->setShared('db', '\\Min\\Db');
+	$di->setShared('cacheManager', '\\Min\\CacheManager');
+	$di->setShared('logger', '\\Min\\Logger');
 	
-	\Min\App::bootstrap($di,false);
+	\Min\App::bootstrap($di);

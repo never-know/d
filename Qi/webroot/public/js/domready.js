@@ -15,7 +15,7 @@ Min.ready('shortcut-login', function(){
 	if(null === login ){
 
 			JSONP.get( 'http://passport.' + site_domain + '/login/islogged.html', {}, function(data){
-				console.log(data);
+				//console.log(data);
 				 if( data.status == 1 ) { 
 					_$('shortcut-login').innerHTML='<a href ="http://passport.' + site_domain + '/logout.html " target="_blank" >退出</a>';
 				 } 

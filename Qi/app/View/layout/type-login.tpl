@@ -70,7 +70,7 @@
  
 </div>
  
- 
+ <script type="text/javascript" src="http://cdn.qi.com/public/js/domready.js"></script>
 </body>
 
 

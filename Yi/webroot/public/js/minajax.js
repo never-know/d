@@ -73,7 +73,7 @@ function minAjax(config) {
             }
         }
     }
-	sendString.push('isajax=1');
+	sendString.push('isAjax=1');
     sendString = sendString.join('&');
 	 
     if (config.type == "GET") {

@@ -14,11 +14,10 @@
 <body>
 <div class="container" id="container" >
 	<div class="nav-2" style="top:78px;"> </div> 
-	<?php view(); ?> 
-				
+	<?php view(); ?> 			
 </div>
 <?php include APP_PATH.'/View/layout/footer.tpl'; ?>	
 <script type="text/javascript" src="/public/js/domready.js"></script>
-<script type="text/javascript" src="/public/js/reg.js"></script>
+<script type="text/javascript" src="/public/js/<?php echo  \Min\App::getAction();?>.js"></script>
 </body>
 </html>

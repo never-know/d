@@ -19,13 +19,12 @@ function autoload($class)
 	if (is_file($file)) {
 		require $file;
 	} else {
-		retrieve('logger')->log($file . ' not found', 'fatal.error');
-		request_not_found();
+		usr_error(404, $file.' not found when autoload', 'NOTICE', [], 'default');
 	}
 }
  
 function retrieve($name, $params = []){
-	return App::getContainer()->get($name, $params);
+	return App::getService($name, $params);
 }
  
 function ip_address() 
@@ -65,11 +64,12 @@ function ip_address()
 	
 function error_message($error)
 {
-	$message = '{"'
+	$message = '{ ['
 		.	$error['title']
 		.	': '
-		.	rtrim($error['message'],PHP_EOL)
-		.	'" in file ['
+	//	.	rtrim($error['message'],PHP_EOL)
+		.	$error['message']
+		.	'] in file ['
 		.	$error['file']
 		.	']  at line ['
 		.	$error['line']
@@ -259,36 +259,36 @@ function app_tails()
 {
 	// fatal errors 
 	$error = error_get_last();
-	$log = retrieve('logger');
+	$log = App::getService('logger');
 	if ($error['type'] == E_ERROR) {
-		$error['title'] = 'fatal error';
+		$error['title'] = 'Fatal Error';
 		$message = error_message($error);
-		$log->log($message, 'fatal.error', debug_backtrace());
+		$log->log($message, 'CRITICA', debug_backtrace(), 'default');
 	}
 	$log->record();
 }
 
 function app_error($errno, $errstr, $errfile, $errline)
 {	
-	$level = [  E_WARNING => 'warn',
-				E_NOTICE => 'warn',
-				E_USER_WARNING => 'warn',
-				E_USER_NOTICE => 'warn',
-				E_STRICT => 'warn',
-				E_DEPRECATED => 'deprecated',
-				E_USER_DEPRECATED => 'deprecated'
+	$level = [  E_WARNING => 1,
+				E_NOTICE => 1,
+				E_USER_WARNING => 1,
+				E_USER_NOTICE => 1,
+				E_STRICT => 1,
+				E_DEPRECATED => 1,
+				E_USER_DEPRECATED => 1
 			];
 			
-	$type = isset( $level[$errno] ) ? $level[$errno] : 'error'; 
+	$type = isset($level[$errno]) ? 'WARNING' : 'ERROR'; 
 
-	$message = error_message([	'title'		=> 'unexpected error', 
+	$message = error_message([	'title'		=> 'Unexpected Error', 
 								'message'	=> $errstr, 
 								'file'		=> $errfile, 
 								'line'		=> $errline, 
 								'type'		=> $errno
 							]);
 	
-	retrieve('logger')->log($message, 'sys.'.$type, debug_backtrace());
+	App::getService('logger')->log($message, $type, [], 'default');
 	
 	if ($type == 'error') {
 		response(-1);
@@ -298,23 +298,22 @@ function app_error($errno, $errstr, $errfile, $errline)
 
 function app_exception($e)
 {	
-	$message = error_message([	'title'		=> 'unexpected expection', 
+	$message = error_message([	'title'		=> 'Unexpected Expection', 
 								'message'	=> $e->getMessage(), 
 								'file'		=> $e->getFile(), 
 								'line'		=> $e->getLine(),
 								'type'		=> $e->getCode()
 							]);
-	
-	retrieve('logger')->log($message, 'sys.expection', debug_backtrace());
+	App::getService('logger')->log($message, 'CRITICA', debug_backtrace(), 'default');
 	response(-1); 
 }
 
 
-function usr_error($code=0, $msg='', $extra=[])
+function usr_error($code = 0, $msg = '', $level = 'INFO', $extra = [], $channel = '')
 {
-	retrieve('logger')->log( $msg, 'usr.error', $extra);		
+	App::getService('logger')->log($msg, $level, $extra, $channel);		
 	if ($code == -999) return;
-	response($code,$msg);
+	response($code, $msg);
 	exit;
 }	
 	

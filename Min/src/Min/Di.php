@@ -6,8 +6,12 @@ class Di
     private $definitions = [];
     private $instances = [];
 
-    public function get($name, $params = [])
+    public function getService($name, $params = [])
 	{
+		if (empty($name)) {
+			return null;
+		}
+		
         if (isset($this->instances[$name])) {
             return $this->instances[$name];
         }
@@ -43,17 +47,17 @@ class Di
         return $obj;
     }
 
-    public function has($name)
+    public function hasService($name)
 	{
         return isset($this->definitions[$name]) || isset($this->instances[$name]);
     }
 
-    public function remove($name)
+    public function removeService($name)
 	{
         unset($this->definitions[$name], $this->instances[$name]);
     }
 
-    public function set($name,$class)
+    public function setService($name,$class)
 	{
         $this->registerService($name, $class);
     }
@@ -65,7 +69,7 @@ class Di
 
     private function registerService($name, $class, $shared = false)
 	{
-        $this->remove($name);
+        $this->removeService($name);
         if (!($class instanceof \Closure) && is_object($class)) {
             $this->instances[$name] = $class;
         } else {

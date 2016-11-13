@@ -20,9 +20,7 @@ class CaptchaController
 		if( !preg_match('/^[a-z]+$/',$_GET['type']) ){
 			trigger_error( 'captcha parameter error', E_USER_ERROR);
 		}
-		if(!isset($_SESSION)){
-			App::initSession(true);  
-		} 
+		
 		$code = new \Min\Captcha;
 		$code->getCode($_GET['type']);
 		
@@ -36,7 +34,7 @@ class CaptchaController
 		}
 		 
 		$code = new \Min\Captcha;
-	 
+		retrieve('logger')->log(json_encode($_SESSION),'DEBUG');
 		if( true === $code->checkCode($_GET['code'],$_GET['type']) ) {
 			response(1);
 		}else{
