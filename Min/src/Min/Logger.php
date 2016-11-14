@@ -65,7 +65,7 @@ class Logger{
 			chmod($dest_file, 0777);
 		}
 		
-		$dest_file .= date('/Y-m-d-').$type.'.log';
+		$dest_file .= date('/Y-m-d-').'.log';
 		
 		if (is_file($dest_file) && ($this->default_file_size < filesize($dest_file))) {
 			rename($dest_file, $dest_file.'-BAK-'.time().'.log');
@@ -78,7 +78,6 @@ class Logger{
 				$records .= ' ['. json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ) . ']';
 			}
 			$records .= PHP_EOL;	
-				echo $records;
 		}
 		
 		error_log($content.$records, 3, $dest_file, '');

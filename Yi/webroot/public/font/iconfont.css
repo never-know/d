@@ -78,7 +78,6 @@ font-size:14px;
   -webkit-font-smoothing: antialiased;
 }
 .icon-reg{
-
     color: silver;
     background: white;
     z-index: 99999;
@@ -89,7 +88,7 @@ font-size:14px;
 	
 }
 .icon-white{
-    color:white;
+     color: white;
 }
 .reg-code i.icon-reg{
 _margin-left:-187px;

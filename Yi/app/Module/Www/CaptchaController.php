@@ -34,7 +34,6 @@ class CaptchaController
 		}
 		 
 		$code = new \Min\Captcha;
-		retrieve('logger')->log(json_encode($_SESSION),'DEBUG');
 		if( true === $code->checkCode($_GET['code'],$_GET['type']) ) {
 			response(1);
 		}else{

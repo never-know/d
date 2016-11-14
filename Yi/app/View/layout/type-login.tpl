@@ -9,6 +9,7 @@
 <script type="text/javascript" src="/public/js/event.js"></script>
 <script type="text/javascript" src="/public/js/cookie.js"></script>
 <script type="text/javascript" src="/public/js/jsonp.js"></script>
+<script type="text/javascript" src="/public/js/domready.js"></script>
 
 </head>
 <body>
@@ -17,7 +18,6 @@
 	<?php view(); ?> 			
 </div>
 <?php include APP_PATH.'/View/layout/footer.tpl'; ?>	
-<script type="text/javascript" src="/public/js/domready.js"></script>
 <script type="text/javascript" src="/public/js/<?php echo  \Min\App::getAction();?>.js"></script>
 </body>
 </html>

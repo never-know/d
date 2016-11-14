@@ -1,4 +1,4 @@
-var site_domain = 'yi.com';
+var site_domain = 'yi.cn';
 // 顶栏 初始化
 Min.ready('shortcut-login', function(){
 

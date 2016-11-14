@@ -28,10 +28,8 @@ class Captcha{
         for ($i = 0; $i < $this->length; $i++) {
             $code .= $this->charset[mt_rand(0, $charset_len)];
         }
-		$_SESSION[$key . '_code'] = strtolower($code);	
-//retrieve('logger')->log(json_encode($_SESSION),'DEBUG');		
-		return $code;
-		 
+		$_SESSION[$key . '_code'] = strtolower($code);		
+		return $code;		 
     }
 
 	
@@ -144,24 +142,10 @@ class Captcha{
 		imagedestroy($im);
 	}
 	
-	public function checkCode2($code, $key) 
+	public function checkCode($code, $key) 
 	{ 
 		 
 		return (!empty($_SESSION[$key.'_code']) && $_SESSION[$key.'_code'] === strtolower($code));
 	}
-	
-		public function checkCode($code, $key) { 
-	
-		if( empty($code)){
-			usr_error( 2,'请输入验证码进行验证');
-		}elseif (empty($_SESSION[$key.'_code']) ){
-			usr_error( 2,'请使用正常流程验证');
-		}elseif( $_SESSION[$key.'_code'] === strtolower($code) ) {
-			return true;
-		}else{
-			usr_error( 2,'验证码错误或超时,请重试');
-		}
-	}
-	
 	
 }

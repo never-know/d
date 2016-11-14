@@ -8,7 +8,7 @@
 <script type="text/javascript" src="/public/js/Min.js"></script>
 <script type="text/javascript" src="/public/js/event.js"></script>
 <script type="text/javascript" src="/public/js/cookie.js"></script>
-
+<script type="text/javascript" src="/public/js/domready.js"></script>
 </head>
 <body>
 <div class="container" id="container" >
@@ -26,6 +26,6 @@
 	</div>	
 </div>
 <?php include APP_PATH.'/View/layout/footer.tpl'; ?>	
-<script type="text/javascript" src="/public/js/domready.js"></script>
+
 </body>
 </html>

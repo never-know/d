@@ -4,7 +4,7 @@
 	ini_set('display_error','on');
 	date_default_timezone_set('Asia/Shanghai');
 	
-	define('SITE_DOMAIN', 'yi.com');
+	define('SITE_DOMAIN', 'yi.cn');
 	define('HOME_PAGE', 'http://www.'.SITE_DOMAIN );
 	define('ERROR_PAGE', HOME_PAGE.'/error.html');
 	define('COOKIE_DOMAIN', '.'.SITE_DOMAIN);
