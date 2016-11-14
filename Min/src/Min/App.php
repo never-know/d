@@ -18,12 +18,12 @@ class App
 	protected static function dispatch()
 	{
 		// path info 在服务器完成配置
-		if (empty($_SERVER['PATH_INFO']) || !preg_match('/^(?:\/[a-zA-Z0-9]+)+$/', $_SERVER['PATH_INFO'])) {	
+		if (empty($_SERVER['PATH_INFO']) || !preg_match('/^(?:\/[a-zA-Z0-9]+){2,}$/', $_SERVER['PATH_INFO'])) {	
 			request_not_found();
 		} else {	
 			$pathinfo 	= explode('/', $_SERVER['PATH_INFO'], 5);
 			if (empty($pathinfo[4])) $pathinfo[4]	= '';
-			if (empty($pathinfo[3])) $pathinfo[3]	= 'index';
+			if (empty($pathinfo[3])) $pathinfo[3]	= DEFAULT_ACTION;
 			list( , self::$module, self::$controller, self::$action, self::$args) = $pathinfo; 
 		} 
 		$controller_name = '\\App\\Module\\'.ucfirst(self::$module).'\\'.ucfirst(self::$controller).'Controller';

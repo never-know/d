@@ -7,9 +7,9 @@ class SmsController
 {
 	public function __construct($action) 
 	{	
-		if($action=='get'){
+		if ($action=='get') {
 			$this->get();
-		}elseif($action=='check'){
+		} elseif ($action=='check') {
 			$this->check();
 		}
 		exit;

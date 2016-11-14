@@ -20,6 +20,9 @@ class Captcha{
 	 * 获取随机数值
 	 * @return string  返回转换后的字符串
 	 */
+	public function __construct($length = 0){
+		if ($length > 0) $this->length = $length;
+	}
 	
 	private function creatCode($key) 
 	{
@@ -142,10 +145,10 @@ class Captcha{
 		imagedestroy($im);
 	}
 	
-	public function checkCode($code, $key) 
+	public function checkCode($code, $type) 
 	{ 
 		 
-		return (!empty($_SESSION[$key.'_code']) && $_SESSION[$key.'_code'] === strtolower($code));
+		return (!empty($_SESSION[$type.'_code']) && $_SESSION[$type.'_code'] === strtolower($code));
 	}
 	
 }
