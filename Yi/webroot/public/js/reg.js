@@ -1,10 +1,13 @@
 var error_bordercolor = '#e4393c';	
+var pwd_tips = '建议使用字母、数字或符号两种及以上组合，6-20个字符';
 	// 密码
-function isPwd(str) {	   
+function isPwd(str) {
+	return true;
 	return !/[\s'"\\]/.test(str);
 	return /^[a-zA-Z0-9`~!@#$%^&*()_+-=\[\]{}|:;,./<>?]+$/.test(str);
 }
 function Pwd_OK(str){
+	return str.length > 5 && str.length <21;
 	return !/[\s'"\\]/.test(str) && str.length > 5 && str.length <21;
 	return /^[a-zA-Z0-9`~!@#$%^&*()_+-=\[\]{}|:;,./<>?]{6,}$/.test(str);
 }
@@ -29,7 +32,7 @@ function strong_settimer(obj,width,tag){
 		}
 		else{		
 				clearInterval(itag.timer);	
-				itag.parentNode.innerHTML='密码强度：'+tag+'&nbsp;&nbsp;<i class="iconfont icon-pwd" >&#xe661;</i><em style="left:'+cw+'px" ></em>';		 
+				if(itag.parentNode) itag.parentNode.innerHTML='密码强度：'+tag+'&nbsp;&nbsp;<i class="iconfont icon-pwd" >&#xe661;</i><em style="left:'+cw+'px" ></em>';		 
 			}
 		  
 		},15);
@@ -41,8 +44,10 @@ function pwdstrong(pwd){
 	if(/[a-z]/.test(pwd)){ strong++;}
 	if( /[\d]/.test(pwd)){ strong++;} 
 	if(/[A-Z]/.test(pwd)){ strong++;}
-	if(/[`~!@#$%^&*()_+-=\[\]{}|:;,./<>?]+$]/.test(pwd)){ strong ++;} 	
-	if(pwd.length>5){ strong++;} 
+	if(/[`\~\!@#\$%\^&\*\(\)_\+\-\=\[\]{}|:;,\.\/\<\>\?'"\\]+/.test(pwd)){ strong ++;} 	
+	
+	if(pwd.length>6){ strong++;} 
+	console.log(strong);
 	return strong;
 }
 function setstrong(strong,obj){
@@ -62,12 +67,12 @@ function setError(obj,msg,name){
 
 
 _$('regpwd').onkeyup =function(e){
+
 	var itag  = Min.dom.next(this);
 	var error = Min.dom.next(itag);
 	var flag = 0;
 	if(this.value==''){	
-	 
-		setError(error,'6-20位字母、数字或标点（空格、引号、反斜线\除外）','tips');
+		setError(error,pwd_tips,'tips');
 		this.removeAttribute('style');
 		return;
 	}
@@ -89,7 +94,7 @@ _$('regpwd').onkeyup =function(e){
 			this.style.borderColor="red";
 			// flag=2;
 		}else if( this.value.length < 6 ){
-				setError(error,'6-20位字母、数字或标点（空格、引号、反斜线\除外）','tips');
+				setError(error,pwd_tips,'tips');
 		}
 	}else{
 		pwd1.removeAttribute('disabled');
@@ -168,7 +173,7 @@ _$('regpwd').onfocus=function(){
 		 var strong = pwdstrong(this.value); 
 			setstrong(strong,tips);
 	}else if(  this.value=='' || isPwd(this.value) == true){
-		setError( tips,'6-20位字母、数字或标点（空格、引号、反斜线\除外）','tips');
+		setError( tips,pwd_tips,'tips');
 		this.removeAttribute('style');
 		var itag=Min.dom.next(this);
 		itag.innerHTML="&#xe63a;"
@@ -348,7 +353,7 @@ function code_tag(show){
 		}
 		code.style.borderColor = error_bordercolor;
 	}else if(show == -1){
-		itag.innerHTML=""
+		itag.innerHTML="&#xe60f;"
 		itag.removeAttribute('style');
 		code.removeAttribute('style');		
 	}
