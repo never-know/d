@@ -12,6 +12,7 @@ class IndexController
 		} elseif ($args=='test') {
 			$this->test();
 		}
+		exit;
 	}
 
 	private function index()

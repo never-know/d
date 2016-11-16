@@ -3,7 +3,7 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class RegController
+class LoginController extends \App\Module\BaseController
 {
 	public function __construct($action) 
 	{	
