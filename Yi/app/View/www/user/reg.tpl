@@ -41,6 +41,7 @@
 						<div class="reg-mcode">
 							<label for="regmcode"><b class="red">*</b>短信验证码：</label>
 							<input id="regmcode" type="text" class="regmcode" name="regmcode" tabindex="1" autocomplete="off"  maxlength="6" /> 
+							<i class="icon-reg iconfont icon-white" >&#xe619;</i>
 							<a  href="javascript:void(0)" class="getcode" id="getcode" sindex="0" >获取短信验证码</a>
 							<span id="regmcode-error"></span>
 						</div>

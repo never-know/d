@@ -25,7 +25,7 @@ class RegController
 	
 	private function send(){
 	
-		$phone 	= $_POST['phone'];
+		$phone 		= $_POST['phone'];
 		$captcha 	= $_POST['code'];
 		
 		if (true === $this->check($phone, $captcha)) {
