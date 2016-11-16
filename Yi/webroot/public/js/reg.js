@@ -551,7 +551,7 @@ var phone = _$('regphone').value, code = _$('regcode').value, mcode = _$('regmco
 	this.setAttribute("sindex", 1);
 
 	minAjax({
-		url:'http://passport.' + site_domain + '/regist.html', 
+		url:'http://www.' + site_domain + '/regist.html', 
 		type:'POST', 
 		data:{
 			phone:phone,
