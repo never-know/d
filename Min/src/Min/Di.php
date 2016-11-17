@@ -76,4 +76,30 @@ class Di
             $this->definitions[$name] = ['class'=>$class, 'shared'=>$shared];
         }
     }
+	public function backendService($class, $params){
+		
+		if (empty($class)) {
+			return null;
+		}
+	
+        if (!isset($this->instances[$class])) {
+			try
+			{
+				if (empty($params)) {
+					$this->instances[$class] = new $class;
+				} else {
+					$obj = new \ReflectionClass($class);
+					return $obj->newInstanceArgs($params);
+				}
+			}
+			catch (\Throwable)
+			{
+				$this->instances[$class] = null;
+			}
+        }
+		
+		return $this->instances[$class];
+	
+	}
+	
 }
