@@ -17,7 +17,17 @@ class Di
         }
 
         if (!isset($this->definitions[$name])) {
-            return null;
+			
+			try {
+				if (empty($params)) {
+					return  new $name;
+				} else {
+					$obj = new \ReflectionClass($name);
+					return $obj->newInstanceArgs($params);
+				}	
+			} catch (\Throwable $t) {
+				return null;
+			}
         }
         
         $concrete = $this->definitions[$name]['class'];
@@ -30,16 +40,18 @@ class Di
 			} else {
 				$obj = call_user_func_array($concrete,$params);
 			}
-        }
-        elseif (is_string($concrete)) {
-            if (empty($params)) {
-                $obj = new $concrete;
-            } else {
-                $class = new \ReflectionClass($concrete);
-                $obj = $class->newInstanceArgs($params);
-            }
-        }
-
+        } elseif (is_string($concrete)) {
+			try {
+				if (empty($params)) {
+					$obj = new $concrete;
+				} else {
+					$class = new \ReflectionClass($concrete);
+					$obj = $class->newInstanceArgs($params);
+				}
+			} catch (\Throwable $t) {
+				$obj = null;
+			}
+		}
         if ($this->definitions[$name]['shared'] == true && !is_null($obj)) {
             $this->instances[$name] = $obj;
         }
@@ -49,6 +61,9 @@ class Di
 
     public function hasService($name)
 	{
+		if (empty($name)) {	
+			throw new \Exception('service name can not be empty');
+		}
         return isset($this->definitions[$name]) || isset($this->instances[$name]);
     }
 
@@ -68,7 +83,10 @@ class Di
     }
 
     private function registerService($name, $class, $shared = false)
-	{
+	{	
+		if (empty($name)) {	
+			throw new \Exception('service name can not be empty');
+		}
         $this->removeService($name);
         if (!($class instanceof \Closure) && is_object($class)) {
             $this->instances[$name] = $class;
@@ -76,30 +94,27 @@ class Di
             $this->definitions[$name] = ['class'=>$class, 'shared'=>$shared];
         }
     }
-	public function backendService($class, $params){
+	public function getBackendService($class, $params){
 		
 		if (empty($class)) {
 			return null;
 		}
-	
+		
         if (!isset($this->instances[$class])) {
-			try
-			{
+			try {
 				if (empty($params)) {
 					$this->instances[$class] = new $class;
 				} else {
 					$obj = new \ReflectionClass($class);
 					return $obj->newInstanceArgs($params);
 				}
-			}
-			catch (\Throwable)
-			{
+				
+			} catch (\Throwable $t) {
 				$this->instances[$class] = null;
 			}
         }
 		
 		return $this->instances[$class];
-	
 	}
 	
 }

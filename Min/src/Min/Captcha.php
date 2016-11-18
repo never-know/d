@@ -31,7 +31,7 @@ class Captcha{
         for ($i = 0; $i < $this->length; $i++) {
             $code .= $this->charset[mt_rand(0, $charset_len)];
         }
-		$_SESSION[$key . '_code'] = strtolower($code);		
+		$_SESSION[$key .'_code'] = strtolower($code);		
 		return $code;		 
     }
 
@@ -146,8 +146,7 @@ class Captcha{
 	}
 	
 	public function checkCode($code, $type) 
-	{ 
-		 
+	{ 	 
 		return (!empty($_SESSION[$type.'_code']) && $_SESSION[$type.'_code'] === strtolower($code));
 	}
 	

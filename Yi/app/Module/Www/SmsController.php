@@ -17,7 +17,7 @@ class SmsController
 	
 	private function send(){
 	
-		if( true === $this->check() ){
+		if (true === $this->check()){
 			$phone = $_POST['phone'];
 			$sms = new \Min\Sms('reg');	
 			
@@ -48,7 +48,7 @@ class SmsController
 	private function check(){
 
 		if(!validate('phone',$_POST['phone'])){
-			usr_error( 100,'手机号码格式错误');
+			usr_error(100, '手机号码格式错误');
 		}else{
 			$code = new \Min\Captcha;
 			if( true === $code->checkCode($_POST['code'],'reg')){

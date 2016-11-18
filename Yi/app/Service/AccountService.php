@@ -1,6 +1,8 @@
 <?php
 namespace App\Service;
+
 use Min\App;
+
 class AccountService
 {
 	// 是否清理 checkaccount 产生的缓存

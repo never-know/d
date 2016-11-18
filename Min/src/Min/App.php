@@ -27,8 +27,8 @@ class App
 			list( , self::$module, self::$controller, self::$action, self::$args) = $pathinfo; 
 		} 
 		$controller_name = '\\App\\Module\\'.ucfirst(self::$module).'\\'.ucfirst(self::$controller).'Controller';
-		
-		new $controller_name(self::$action);		 
+		 
+		new $controller_name(self::$action);
 	}
 		
 	public static function getContainer()
@@ -39,6 +39,10 @@ class App
 	public static function getService($name = '', $arguments = [])
 	{
 		return self::$container->getService($name, $arguments);			
+	}
+	public static function getBackendService($name = '', $arguments = [])
+	{
+		return self::$container->getBackendService($name, $arguments);			
 	}
 
 	public static function getModule()
