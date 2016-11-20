@@ -29,8 +29,8 @@
 	define('IS_AJAX', (!empty($_REQUEST['isAjax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')));
 			
 	require MIN_PATH.'/Min/Common.php';	
-	spl_autoload_register('autoload');
 	
+	spl_autoload_register('autoload');
 	set_error_handler('app_error');
 	set_exception_handler('app_exception');
 	register_shutdown_function('app_tails');

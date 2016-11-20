@@ -13,11 +13,13 @@ class Mysqli{
 	private $connections = array();
 	private $rw_separate = true;
 
-	public function  __construct($db_key = ''){
-		$this->setActiveDb($db_key);
+	public function  __construct($db_key = '') 
+	{
+		$this->init($db_key);
 	}
 	 
-	public function setActiveDb($db_key){
+	public function init($db_key) 
+	{
 		
 		if (!empty($db_key)) $this->active_db = $db_key;
 		
@@ -25,11 +27,10 @@ class Mysqli{
 			$conf_array	= explode('#',$this->active_db);
 			$conf_key	= empty($conf_array[1]) ? 'default': $conf_array[0];
 			require MIN_ROOT.'/conf/mysql/'.$conf_key.'.conf';		
-		}
-		 	
+		}	 	
 	}
-	private function connect($type='master'){
-	
+	private function connect($type = 'master')
+	{
 		$linkid = $type.$this->active_db;
 		
 		if (empty($this->connections[$linkid])) {
@@ -49,19 +50,17 @@ class Mysqli{
 	}
 	
 	
-	private function parse($type){
-	
+	private function parse($type)
+	{
 		$info	= $this->conf[$this->active_db][$type];
 		
-		if (empty($info))  throw new \Exception('can not get active mysql db conf info');
+		if (empty($info))  throw new \Exception('error get mysql connect info '.$info);
 		
 		do {
 			if (is_array($info)) {
 				$db_index = mt_rand(0, count($info) - 1);
-
 				$tmp =  array_splice($this->conf[$this->active_db][$type], $db_index, 1);
-				$selected_db =  $tmp[0];
-				
+				$selected_db =  $tmp[0];	
 			} else {
 				$selected_db = $info;
 			}
@@ -74,8 +73,7 @@ class Mysqli{
 			$selected_db['path'] = urldecode($selected_db['path']);
 			if (!isset($selected_db['port'])) {
 				$selected_db['port'] = NULL;
-			}
-			
+			}			
 			$connect = mysqli_connect($selected_db['host'], $selected_db['user'], $selected_db['pass'], substr($selected_db['path'], 1), $selected_db['port']);
 			
 		} while (!$connect && is_array($info) && !empty($info));
@@ -91,8 +89,8 @@ class Mysqli{
 		return $connect;
 	}
 	
-	private function retry($db_type){
-	
+	private function retry($db_type)
+	{
 		if (true == $this->intrans) {
 			return false;
 		} elseif (2006 == mysqli_errno($this->connect($db_type)) || false == mysqli_ping($this->connect($db_type))) {

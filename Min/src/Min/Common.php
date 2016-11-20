@@ -18,9 +18,9 @@ function autoload($class)
 	}
 	if (is_file($file)) {
 		require $file;
-	} else {
-		usr_error(404, $file.' not found when autoload', 'NOTICE', [], 'default');
-	}
+	}else{
+		throw new \Exception($file.' can not be autoloaded');
+	}	
 }
  
 function retrieve($name, $params = []){
@@ -316,4 +316,5 @@ function usr_error($code = 0, $msg = '', $level = 'INFO', $extra = [], $channel 
 	response($code, $msg);
 	exit;
 }	
+
 	

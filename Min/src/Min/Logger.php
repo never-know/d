@@ -14,7 +14,7 @@ class Logger{
         'ERROR' => 400,
         'CRITICAL' => 500,
         'ALERT' => 550,
-        'EMERGENCY' => 600, 	// send sms
+        'EMERGENCY' => 600 	// send sms
     ]; 
 	
 	public function __construct($option = [])
@@ -25,7 +25,7 @@ class Logger{
 		}
     }
 
-	public function setChannel($channel = '')
+	public function init($channel = '')
 	{
 		if (!empty($channel)) $this->channel = $channel;
 		return $this;

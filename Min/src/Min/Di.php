@@ -6,7 +6,7 @@ class Di
     private $definitions = [];
     private $instances = [];
 
-    public function getService($name, $params = [])
+    public function getService($name, $params = null)
 	{
 		if (empty($name)) {
 			return null;
@@ -17,17 +17,7 @@ class Di
         }
 
         if (!isset($this->definitions[$name])) {
-			
-			try {
-				if (empty($params)) {
-					return  new $name;
-				} else {
-					$obj = new \ReflectionClass($name);
-					return $obj->newInstanceArgs($params);
-				}	
-			} catch (\Throwable $t) {
-				return null;
-			}
+			return null; 
         }
         
         $concrete = $this->definitions[$name]['class'];
@@ -35,18 +25,14 @@ class Di
         $obj = null;
 
         if ($concrete instanceof \Closure) {
-			if (empty($params)) {
-				$obj = $concrete();
-			} else {
-				$obj = call_user_func_array($concrete,$params);
-			}
+		
+			$obj = $concrete($params);
+			
         } elseif (is_string($concrete)) {
 			try {
-				if (empty($params)) {
-					$obj = new $concrete;
-				} else {
-					$class = new \ReflectionClass($concrete);
-					$obj = $class->newInstanceArgs($params);
+				$obj = new $concrete;
+				if (!empty($params)) {
+					$obj->init($params);
 				}
 			} catch (\Throwable $t) {
 				$obj = null;
@@ -68,7 +54,10 @@ class Di
     }
 
     public function removeService($name)
-	{
+	{	
+		if (empty($name)) {	
+			throw new \Exception('service name can not be empty');
+		}
         unset($this->definitions[$name], $this->instances[$name]);
     }
 
@@ -94,27 +83,5 @@ class Di
             $this->definitions[$name] = ['class'=>$class, 'shared'=>$shared];
         }
     }
-	public function getBackendService($class, $params){
-		
-		if (empty($class)) {
-			return null;
-		}
-		
-        if (!isset($this->instances[$class])) {
-			try {
-				if (empty($params)) {
-					$this->instances[$class] = new $class;
-				} else {
-					$obj = new \ReflectionClass($class);
-					return $obj->newInstanceArgs($params);
-				}
-				
-			} catch (\Throwable $t) {
-				$this->instances[$class] = null;
-			}
-        }
-		
-		return $this->instances[$class];
-	}
 	
 }

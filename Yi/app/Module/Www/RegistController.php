@@ -59,21 +59,22 @@ class RegistController extends \App\Module\BaseController
 	
 	private function check($phone, $code){
 
-		if (!validate('phone', $phone)) {
+		if (true !== validate('phone', $phone)) {
 			response(100, '手机号码格式错误');
 		}
+
+		$code_result = $this->request('\\Min\\Service\\Captcha::checkCode', ['code'=>$code, 'type'=>'reg']);
 		
-		$code = new \Min\Captcha;
-		if (false == $code->checkCode($code, 'reg')) {
+		if (true !== $code_result ) {
 			response(0, '验证码错误');
 		}
 		
-		$account = App::getBackendService('Account');
-		$result	 = $account->checkAccount($phone, 'phone');
+		$result = $this->request('\\Min\\Service\\Account::checkAccount', ['name'=>$phone, 'type'=>'phone']);
+		 
 		if (2 === $result) {
 			return true;
 		} elseif (1 === $result) {
-			response(100, '账号已注册');
+			response(100, '该手机号码已被注册');
 		}else{
 			App::getService('logger')->log('Unknow Workflow', 'NOTICE', debug_backtrace(), 'Exception');
 		}

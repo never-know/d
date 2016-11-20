@@ -11,32 +11,29 @@ class AccountService
 	/**
 	* 检测账号是否存在
 	*
-	*
 	* @param string $name 账号
 	* @param string $type : phone/email/name				
 	*  
 	* @return int
 	*   2 账号不存在
 	*	1 账号存在
-	*	错误: 直接EXIT
-	*
-	*
-	*
 	*/
 
-	public function checkAccount($name,$type) {
+	public function checkAccount($r) {
 
-		if( !in_array($type,['phone','email','name'])){
-			trigger_error('parameter error' , E_USER_ERROR);
-		}else{
+		if( !in_array($r['type'],['phone','email','name'])) {
 		
-			$key		= $type.md5($name);
-			$result 	= App::cacheManager('checkAccount')->get($key);
+			throw new \Exception('帐号类型错误');
+			
+		}else{	
+		
+			$key		= $r['type'] .md5($r['name']);
+			$result 	= retrieve('cacheManager', 'checkAccount')>get($key);
 			$this->clean_cache 	= true;
 			
 			if( empty($result) ){	
-				$sql = "SELECT 1 FROM user  WHERE  $type = ? limit 1";
-				$sql_result	= App::db('user#user')->query('single',$sql,'s',[$name]);
+				$sql = "SELECT 1 FROM user  WHERE  $r['type'] = ? limit 1";
+				$sql_result	= App::db('user#user')->query('single',$sql,'s',[$r['name']]);
 				if( !empty($sql_result) ){
 					$result = 1 ;
 				}elseif( $sql_result === null){
