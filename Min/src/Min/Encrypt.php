@@ -102,7 +102,7 @@ class Encrypt
 			$t_args = array(
 			  '@action' => ($op == 'decrypt') ? t('Decryption') : t('Encryption'),
 			);
-			throw new Exception(t('@action failed because the key is not the right size.', $t_args));
+			throw new \Exception(t('@action failed because the key is not the right size.', $t_args));
 		}
 
 		if ($op == 'decrypt') {
@@ -127,7 +127,7 @@ class Encrypt
 
 			// If the HMAC cannot be validated, throw an exception.
 			if ($calculated_hmac != $hmac) {
-				throw new Exception(t('Decryption failed because the HMAC could not be validated.'));
+				throw new \Exception(t('Decryption failed because the HMAC could not be validated.'));
 			}
 
 			$text = substr($text, $salt_size);

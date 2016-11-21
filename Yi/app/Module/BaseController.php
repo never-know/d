@@ -8,10 +8,6 @@ class BaseController
 
 	protected $sharedService = [];
 	
-	public function __construct()
-	{
-		
-	}
 	public function request($server, $params, $construct = null, $shared = false){
 	
 		if (empty($server)) {

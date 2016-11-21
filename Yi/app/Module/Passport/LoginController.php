@@ -19,7 +19,6 @@ use Min\App;
 
 class LoginController
 {    
-
     public function __construct($action){  
 		if ($action == 'islogged') {
 			$this->islogged();

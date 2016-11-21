@@ -13,6 +13,9 @@ class Di
 		}
 		
         if (isset($this->instances[$name])) {
+			if (!empty($params)) {	
+				$this->instances[$name]->init($params);
+			}
             return $this->instances[$name];
         }
 
@@ -25,10 +28,11 @@ class Di
         $obj = null;
 
         if ($concrete instanceof \Closure) {
-		
+
 			$obj = $concrete($params);
 			
         } elseif (is_string($concrete)) {
+			
 			try {
 				$obj = new $concrete;
 				if (!empty($params)) {
@@ -38,7 +42,7 @@ class Di
 				$obj = null;
 			}
 		}
-        if ($this->definitions[$name]['shared'] == true && !is_null($obj)) {
+        if (true === $this->definitions[$name]['shared']  && !is_null($obj)) {
             $this->instances[$name] = $obj;
         }
         
