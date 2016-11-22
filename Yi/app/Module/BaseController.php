@@ -8,8 +8,8 @@ class BaseController
 
 	protected $sharedService = [];
 	
-	public function request($server, $params, $construct = null, $shared = false){
-	
+	public function request($server, $params, $construct = null, $shared = false)
+	{
 		if (empty($server)) {
 			return null;
 		}
@@ -21,7 +21,6 @@ class BaseController
 		}
 		
 		$class	= $concrete[0] .'Service';
-		$method = $concrete[1];
 		
 		if (isset($this->sharedService[$class])) {
 			$obj = $sharedService[$class];
@@ -41,7 +40,7 @@ class BaseController
 		} 
 		
 		try {
-			return $obj->{$method}($params);	
+			return $obj->{$concrete[1]}($params);	
 		} catch (\Throwable $t) {
 			return null;
 		}
