@@ -4,13 +4,13 @@
 ****/
 namespace Min\Database;
 
-class Mysqli{
-
+class Mysqli
+{
 	private $active_db	= 'default';
 	private $intrans = '';
 	private $ref; 
-	private $conf = array();
-	private $connections = array();
+	private $conf = [];
+	private $connections = [];
 	private $rw_separate = true;
 
 	public function  __construct($db_key = '') 

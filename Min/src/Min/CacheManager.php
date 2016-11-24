@@ -12,9 +12,9 @@ class CacheManager
 		if (!empty($key)) $this->setActive($key);
 	}
 	 
-	public function setActive($key)
+	public function init($key)
 	{	
-		$this->active = $key;	
+		$this->init = $key;	
 	}
 	public function connect()
 	{
