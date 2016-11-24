@@ -15,6 +15,7 @@ class Mysqli
 	private $conf = [];
 	private $connections = [];
 	private $rw_separate = true;
+	private $fix	= 100000;
 
 	public function  __construct($db_key = '') 
 	{
@@ -38,11 +39,11 @@ class Mysqli
 			$this->connections[$linkid] = $this->parse($type);
 			
 			if (!$this->connections[$linkid]) {
-                throw new \Exception(mysqli_connect_error());
+                throw new \Exception(mysqli_connect_error(), mysqli_connect_errno()+$this->fix);
             }	
 			
 			if (!$this->connections[$linkid]->set_charset('utf8')) {
-                throw new \Exception(mysqli_error($this->connections[$linkid]));
+                throw new \Exception(json_encode(mysqli_error_list($this->connections[$linkid])), mysqli_errno($this->connections[$linkid]) + $this->fix);
             }	
 		}
 	
@@ -54,7 +55,7 @@ class Mysqli
 	{
 		$info	= $this->conf[$this->active_db][$type];
 
-		if (empty($info))  throw new \Exception('error get mysql connect info '.$info);
+		if (empty($info))  throw new \Exception('can not get mysql connect info when type ='.$type, $this->fix+1);
 		
 		do {
 			if (is_array($info)) {
@@ -79,7 +80,7 @@ class Mysqli
 		} while (!$connect && is_array($info) && !empty($info));
 		
 		if(!$connect){	
-			throw new \Exception('all mysql servers have gone away');
+			throw new \Exception('all mysql servers have gone away', $this->fix + 2);
 		}
 		return $connect;
 	}
@@ -92,7 +93,8 @@ class Mysqli
 				return true;
 			}
 		} 
-		throw new \Exception(mysqli_error($this->connect($type)));
+		
+		throw new \Exception(json_encode(mysqli_error_list($this->connect($type))), mysqli_errno($this->connect($type)) + $this->fix);
 	}
 	
 	public function query($sql, $type, $marker = '', $param = [])
@@ -188,9 +190,10 @@ class Mysqli
 		
 	}
 	
-	public function transaction_start($type='master', $db = '') 
+	public function transaction_start($db = '', $type = 'master') 
 	{
-		if (isset($db)) $this->set_active_db($db);
+		if (isset($db)) $this->init($db);
+		
 		while (true) {
 			if (mysqli_begin_transaction($this->connect($type))) {
 				$this->intrans = $type;
@@ -198,9 +201,7 @@ class Mysqli
 			} else {
 				if (true === $this->retry($type)) {
 					continue;
-				} else {
-					throw new \Exception('transaction_start failed');
-				}
+				} 
 			}
 		}
 	}
@@ -221,13 +222,13 @@ class Mysqli
 			$this->intrans = '';
 			return true;
 		} else {
-			throw new \Exception('transaction_rollback failed');
+			throw new \Exception(json_encode(mysqli_error_list($this->connect($this->intrans))), mysqli_errno($this->connect($this->intrans)) + $this->fix);
 		}
 	}
 	
 	public function autocommit($type, $mode)
 	{
-		return mysqli_autocommit($this->connect($type),$mode);
+		return mysqli_autocommit($this->connect($type), $mode);
 	}
 		
 }
