@@ -1,7 +1,7 @@
 <?php
 namespace Min\Cache;
 
-class redis{
+class Redis{
 	
 	private $active	= 'default';
 	private $conf 	= [];
