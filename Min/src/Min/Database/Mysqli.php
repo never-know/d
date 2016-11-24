@@ -1,6 +1,9 @@
 <?php
 /*****
 数据库连接成功，但在查询时断掉。。。。。。
+
+query(user')->;
+
 ****/
 namespace Min\Database;
 
@@ -15,20 +18,17 @@ class Mysqli
 
 	public function  __construct($db_key = '') 
 	{
-		$this->init($db_key);
+		$this->conf = parse_ini_file(CONF_PATH.'/mysql.ini');	
 	}
 	 
-	public function init($db_key) 
+	public function init($active_db) 
 	{
-		
-		if (!empty($db_key)) $this->active_db = $db_key;
-		
-		if (empty($this->conf[$this->active_db])) {
-			$conf_array	= explode('#',$this->active_db);
-			$conf_key	= empty($conf_array[1]) ? 'default': $conf_array[0];
-			require MIN_ROOT.'/conf/mysql/'.$conf_key.'.conf';		
-		}	 	
+		if (!empty($active_db) && !empty($this->conf[$active_db])) {
+			$this->active_db = $active_db;
+		}
+		return $this;		
 	}
+	
 	private function connect($type = 'master')
 	{
 		$linkid = $type.$this->active_db;
@@ -53,13 +53,13 @@ class Mysqli
 	private function parse($type)
 	{
 		$info	= $this->conf[$this->active_db][$type];
-		
+
 		if (empty($info))  throw new \Exception('error get mysql connect info '.$info);
 		
 		do {
 			if (is_array($info)) {
 				$db_index = mt_rand(0, count($info) - 1);
-				$tmp =  array_splice($this->conf[$this->active_db][$type], $db_index, 1);
+				$tmp =  array_splice($info, $db_index, 1);
 				$selected_db =  $tmp[0];	
 			} else {
 				$selected_db = $info;
@@ -78,36 +78,30 @@ class Mysqli
 			
 		} while (!$connect && is_array($info) && !empty($info));
 		
-		if(!$connect){
-		
-			if ($type !='secondary') {
-				$connect = $this->parse('secondary');
-			} else {
-				throw new \Exception('all mysql servers have gone away');
-			}
+		if(!$connect){	
+			throw new \Exception('all mysql servers have gone away');
 		}
 		return $connect;
 	}
 	
-	private function retry($db_type)
+	private function retry($type)
 	{
-		if (true == $this->intrans) {
-			return false;
-		} elseif (2006 == mysqli_errno($this->connect($db_type)) || false == mysqli_ping($this->connect($db_type))) {
-			 unset($this->connections[$db_type.$ths->active_db]);
-			 return true;
-		} else {			 
-			throw new \Exception(mysqli_error($this->connect($db_type)));
-		}
-	
+		if (2006 == mysqli_errno($this->connect($type)) || false == mysqli_ping($this->connect($type))) {
+			if (empty($this->trans)) {
+				unset($this->connections[$type.$ths->active_db]);
+				return true;
+			}
+		} 
+		throw new \Exception(mysqli_error($this->connect($type)));
 	}
 	
 	public function query($sql, $type, $marker = '', $param = [])
 	{
-	
-		if (empty($marker)) return $this->queryNP($sql, $type);
-	
-		$db_type = empty($this->intrans) ? (($this->rw_separate == true && ($type=='single' || $type == 'couple')) ? 'slave' : 'master') : $this->intrans; 
+		if (empty($marker)) {
+			return $this->queryNP($sql, $type);
+		}
+		
+		$db_type = $this->intrans ?: (($this->rw_separate == true && ($type=='single' || $type == 'couple')) ? 'slave' : 'master'); 
 		
 		while (true) {
 		
@@ -117,10 +111,12 @@ class Mysqli
 				if(true === $this->retry($db_type)) continue;
 			}
 			
-			$merge		= [$stmt,$marker];
+			$merge		= [$stmt, $marker];
+			
 			foreach ($param as &$value) {
 				$merge[] = $value;		
 			}
+			
 			if (empty($this->ref)) {
 				$this->ref	= new \ReflectionFunction('mysqli_stmt_bind_param');		
 			}
@@ -157,6 +153,7 @@ class Mysqli
 				
 			} else {		
 				if (true === $this->retry($db_type)) continue;
+				 
 			}
 		}
 	} 
