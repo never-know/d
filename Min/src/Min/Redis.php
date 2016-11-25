@@ -7,38 +7,36 @@ class Redis{
 	private $conf 	= [];
 	private $pools 	= [];
 
-	public function  __construct($key='')
+	public function  __construct($key = '')
 	{
-		$this->setActive($key);
+		$this->conf = parse_ini_file(CONF_PATH.'/redis.ini');
 	}
 	 
-	public function setActive($key)
+	public function init($key)
 	{
-		if (!empty($key)) {
+		if (!empty($key) && empty($this->conf[$key])) {
 			$this->active = $key;
 		}
+		return $this;
 	}
 	public function connect()
-	{	
-		if (empty($this->conf)) {
-			$this->conf = parse_ini_file(APP_PATH.'/conf/cache/redis.ini');
-			if (empty($this->conf[$this->active])) {
-				throw new \Exception('can not get active '.$this->active.' info in file redic.inc, default selected');
-				$this->active = 'default';
-			}			
-		}
-		
+	{		
+		if (empty($this->conf[$this->active])) {
+			throw new \Exception('can not get active '.$this->active.' info in file redic.inc, default selected');
+		}			
+
 		$info	= $this->conf[$this->active];
+		
 		if (empty($this->pools[$info['host']])) {
 			$reids = new \Redis(); 
 			$reids->connect($info['host'], $info['port'],$info['timeout'],null,$info['delay']);		
 			$reids->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
-			$this->pools[$this->key] = $redis;			
+			$this->pools[$info['host']] = $redis;			
 		}
 	
-		if (isset($info['auth'])) $this->pools[$this->key]->auth($info['auth']);
-		if (isset($info['db']))   $this->pools[$this->key]->select($info['db']); 
-		return $this->pools[$this->key];
+		if (isset($info['auth'])) $this->pools[$info['host']]->auth($info['auth']);
+		if (isset($info['db']))   $this->pools[$info['host']]->select($info['db']); 
+		return $this->pools[$info['host']];
 	}
 	 
 	

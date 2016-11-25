@@ -85,16 +85,25 @@ class Mysqli
 		return $connect;
 	}
 	
-	private function retry($type)
+	private function retry($type, $stmt = null)
 	{
 		if (2006 == mysqli_errno($this->connect($type)) || false == mysqli_ping($this->connect($type))) {
 			if (empty($this->trans)) {
+				if (!empty($stmt)) mysqli_stmt_close($stmt);
 				unset($this->connections[$type.$ths->active_db]);
 				return true;
 			}
 		} 
-		
-		throw new \Exception(json_encode(mysqli_error_list($this->connect($type))), mysqli_errno($this->connect($type)) + $this->fix);
+
+		if (!empty($stmt)) {
+			$error_message = json_encode(mysqli_stmt_error_list($stmt));
+			$error_no = mysqli_stmt_errno($stmt);
+			mysqli_stmt_close($stmt);	
+		} else {
+			$error_message = json_encode(mysqli_error_list($this->connect($type)));
+			$error_no = mysqli_errno($this->connect($type)) ;
+		}
+		throw new \Exception($error_message, $error_no + $this->fix);
 	}
 	
 	public function query($sql, $type, $marker = '', $param = [])
@@ -138,24 +147,24 @@ class Mysqli
 					case 'single' :	
 						if ($result_single = mysqli_stmt_get_result($stmt)) {
 							$result	= mysqli_fetch_assoc($result_single);
-						} else {
-							if (true === $this->retry($db_type)) continue;
+						} elseif (true === $this->retry($db_type, $stmt))  {
+							continue; 
 						}
 						break;
 					case 'couple' :
 						if ($result_couple = mysqli_stmt_get_result($stmt)) {
 							$result	= mysqli_fetch_all($result_couple);
-						} else {
-							if (true === $this->retry($db_type)) continue;
+						} elseif (true === $this->retry($db_type, $stmt)) {
+							continue;
 						}
 						break;				
 				}
+				
 				mysqli_stmt_close($stmt);
 				return $result;
 				
-			} else {		
-				if (true === $this->retry($db_type)) continue;
-				 
+			} elseif (true === $this->retry($db_type, $stmt)) {			
+				 continue; 
 			}
 		}
 	} 
@@ -206,8 +215,8 @@ class Mysqli
 		}
 	}
 	
-	public function transaction_commit() {
-	
+	public function transaction_commit() 
+	{
 		if (mysqli_commit($this->connect($this->intrans))) {
 			$this->intrans = '';
 			return true;

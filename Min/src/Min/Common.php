@@ -316,26 +316,3 @@ function usr_error($code = 0, $msg = '', $level = 'INFO', $extra = [], $channel 
 	response($code, $msg);
 	exit;
 }
-
-function cache_manager($key){
-	
-	static $conf;
-	if(empty($conf)){
-		$conf = parse_ini_file(CONF_PATH.'/cache.ini');
-	}
-	if (empty($conf[$key])) {	
-		$key = 'default';
-	}
-	
-	switch ($conf[$key]['bin']) {
-		case 'File' :
-			return retrieve('FileCache',$conf[$key]);
-			break;
-		default:
-			return retrieve('RedisCache',$conf[$key]);
-		
-	}
-	
-}	
-
-	

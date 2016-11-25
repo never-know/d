@@ -13,7 +13,7 @@ class File
 	const BAK_EXT = '.bak';
     private $cache_dir = '/tmp/cache';
   
-	public function setOption($option)
+	public function init($option)
     { 
 		if (isset($option['cache_dir'])) {
 			$this->cache_dir = $option['cache_dir'];
