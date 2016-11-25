@@ -316,3 +316,12 @@ function usr_error($code = 0, $msg = '', $level = 'INFO', $extra = [], $channel 
 	response($code, $msg);
 	exit;
 }
+
+function watchdog($code = 0, $msg = '', $level = 'INFO', $extra = [], $channel = '')
+{
+	App::getService('logger')->log($msg, $level, $extra, $channel);		
+}
+function DB($key)
+{
+	App::getService('DB')->init($key);		
+}
