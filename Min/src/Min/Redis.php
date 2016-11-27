@@ -1,5 +1,5 @@
 <?php
-namespace Min\Cache;
+namespace Min;
 
 class Redis{
 	
@@ -9,7 +9,7 @@ class Redis{
 
 	public function  __construct($key = '')
 	{
-		$this->conf = parse_ini_file(CONF_PATH.'/redis.ini');
+		$this->conf = get_config('Redis');;
 	}
 	 
 	public function init($key)

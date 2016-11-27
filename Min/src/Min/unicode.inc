@@ -5,7 +5,7 @@
  * Contains \Drupal\Component\Utility\Unicode.
  */
 
-namespace min\inc;
+namespace Min;
 
 /**
  * Provides Unicode-related conversions and operations.

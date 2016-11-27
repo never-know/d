@@ -1,5 +1,5 @@
 <?php
-namespace Min\Cache;
+namespace Min;
 
 /**
  * file as cache 
@@ -7,17 +7,22 @@ namespace Min\Cache;
  * @author  yb
  */
 
-class File
+class FileCache
 {
- 
-	const BAK_EXT = '.bak';
-    private $cache_dir = '/tmp/cache';
-  
-	public function init($option)
+    private $option = [];
+	
+	public function  __construct($db_key = '') 
+	{
+		$this->option = get_config('filecache');	
+	}
+	 
+	
+	public function init($option = null)
     { 
-		if (isset($option['cache_dir'])) {
-			$this->cache_dir = $option['cache_dir'];
+		if (is_array($option)) {
+			arrray_merge($this->option, $option);
 		}
+		return $this;
     }
 
     /**
@@ -78,7 +83,7 @@ class File
     {
         $hash = md5($id);
         $dirs = [
-            $this->cache_dir,
+            $this->option['cache_dir'],
             substr($hash, 0, 2),
             substr($hash, 2, 2),
             substr($hash, 4, 2),

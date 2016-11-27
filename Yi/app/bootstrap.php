@@ -16,6 +16,7 @@
 
 	define('APP_PATH', __DIR__);
 	define('LOG_PATH', APP_PATH.'/../log');	
+	define('CACHE_PATH', APP_PATH.'/../cache');	
 	
 	define('CONF_PATH', APP_PATH.'/Conf');	
 	define('VIEW_PATH', APP_PATH.'/View');
@@ -36,8 +37,9 @@
 	register_shutdown_function('app_tails');
 		
 	$di = new \Min\Di;
-	$di->setShared('db', '\\Min\\Db');
-	$di->setShared('cacheManager', '\\Min\\CacheManager');
-	$di->setShared('logger', '\\Min\\Logger');
+	$di->setShared('DB', '\\Min\\Db');
+	$di->setShared('RedisCache', '\\Min\\Redis');
+	$di->setShared('FileCache', '\\Min\\FileCache');
+	$di->setShared('Logger', '\\Min\\Logger');
 	
 	\Min\App::bootstrap($di);

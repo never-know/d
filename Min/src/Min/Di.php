@@ -51,18 +51,14 @@ class Di
 
     public function hasService($name)
 	{
-		if (empty($name)) {	
-			throw new \Exception('service name can not be empty');
-		}
-        return isset($this->definitions[$name]) || isset($this->instances[$name]);
+        return (!empty($name) && (isset($this->definitions[$name]) || isset($this->instances[$name])));
     }
 
     public function removeService($name)
 	{	
-		if (empty($name)) {	
-			throw new \Exception('service name can not be empty');
+		if (!empty($name)) {	
+			unset($this->definitions[$name], $this->instances[$name]);
 		}
-        unset($this->definitions[$name], $this->instances[$name]);
     }
 
     public function setService($name,$class)

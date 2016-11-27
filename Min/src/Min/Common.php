@@ -22,11 +22,7 @@ function autoload($class)
 		throw new \Exception($file.' can not be autoloaded');
 	}	
 }
- 
-function retrieve($name, $params = []){
-	return App::getService($name, $params);
-}
- 
+  
 function ip_address() 
 {
 	static  $ip_address = '';
@@ -123,9 +119,9 @@ function redirect($url, $time=0, $msg='')
 	}
 }
 
-function response($code=0, $msg='', $flag=0)
+function response($code = 0, $msg = '', $flag = 0)
 {
-	$result = ['status'=>$code];
+	$result = ['status' => $code];
 	if ('' != $msg) $result['message'] = $msg;
 	if (1 === $flag) return $result;
 
@@ -149,7 +145,7 @@ function response($code=0, $msg='', $flag=0)
 	exit;
 }
 
-function view($path = '')
+function view($result, $path = '')
 {
 	if (empty($path)) {
 		$path =  App::getModule().'/'.  App::getController().'/'.  App::getAction();
@@ -157,7 +153,7 @@ function view($path = '')
 	require APP_PATH.'/View/'.$path.VIEW_EXT;
 }
 
-function layout($name = 'frame')
+function layout($result, $name = 'frame')
 {
 	require APP_PATH.'/View/layout/'.$name.VIEW_EXT;
 }
@@ -174,7 +170,7 @@ function validate($type,$value)
 {
 	if (!validate_utf8($value)) return false;
 	
-	if ('email' == $type )
+	if ('email' == $type)
 	return (bool)filter_var($value, FILTER_VALIDATE_EMAIL);
 	
 	$pattern = [
@@ -206,7 +202,9 @@ function ajax_return($arr)
 function jsonp_return($arr)
 { 
 	if (is_numeric($_GET['callback'])) {
-		if (!headers_sent()) header('Content-Type:application/html; charset=utf-8');
+		if (!headers_sent()) {
+			header('Content-Type:application/html; charset=utf-8');
+		}
 		echo 'callback',$_GET['callback'],'(',json_encode($arr),')';
 	}
 	exit;
@@ -214,52 +212,43 @@ function jsonp_return($arr)
 	
 function check_plain($text) 
 {
-	return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+	return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 	
-function t($string, array $args = array(), array $options = array()) 
+function t($string, array $args = [], array $options = []) 
 { 
-	  if (empty($args)) {
-		return $string;
-	  }
-	  else {
-		return format_string($string, $args);
-	  }
-}
+	if (empty($args)) {
+		return $string;		
+	} else {
+		foreach ($args as $key => &$value) {
+			switch ($key[0]) {
+				case '@':
+					// Escaped only.
+					$value = check_plain($value);
+					break;
+				case ':':
+					// Escaped only.
+					$value = check_url($value);
+					break;
+				case '%':
+				default:
+					// Escaped and placeholder.
+					$value = '<em class="placeholder">' . check_plain($value) . '</em>';
+					break;
 
-function format_string($string, array $args = array())
-{
-	  foreach ($args as $key => $value) {
-		switch ($key[0]) {
-		  case '@':
-			// Escaped only.
-			$args[$key] = check_plain($value);
-			break;
-
-		  case '%':
-		  default:
-			// Escaped and placeholder.
-			$args[$key] = drupal_placeholder($value);
-			break;
-
-		  case '!':
-			// Pass-through.
+				case '!':
+					// Pass-through.
+			}
 		}
-	  }
-	  return strtr($string, $args);
+		return strtr($string, $args);
+	}
 }
-
-function drupal_placeholder($text) 
-{
-	return '<em class="placeholder">' . check_plain($text) . '</em>';
-}
-
 
 function app_tails()
 {
 	// fatal errors 
 	$error = error_get_last();
-	$log = App::getService('logger');
+	$log = App::getService('Logger');
 	if ($error['type'] == E_ERROR) {
 		$error['title'] = 'Fatal Error';
 		$message = error_message($error);
@@ -288,7 +277,7 @@ function app_error($errno, $errstr, $errfile, $errline)
 								'type'		=> $errno
 							]);
 	
-	App::getService('logger')->log($message, $type, [], 'default');
+	App::getService('Logger')->log($message, $type, [], 'default');
 	
 	if ($type == 'error') {
 		response(-1);
@@ -304,24 +293,36 @@ function app_exception($e)
 								'line'		=> $e->getLine(),
 								'type'		=> $e->getCode()
 							]);
-	App::getService('logger')->log($message, 'CRITICA', debug_backtrace(), 'default');
+	App::getService('Logger')->log($message, 'CRITICA', debug_backtrace(), 'default');
 	response(-1); 
 }
 
 
 function usr_error($code = 0, $msg = '', $level = 'INFO', $extra = [], $channel = '')
 {
-	App::getService('logger')->log($msg, $level, $extra, $channel);		
+	App::getService('Logger')->log($msg, $level, $extra, $channel);		
 	if ($code == -999) return;
 	response($code, $msg);
 	exit;
 }
 
-function watchdog($code = 0, $msg = '', $level = 'INFO', $extra = [], $channel = '')
+function watchdog($msg = '', $level = 'INFO', $extra = [], $channel = '')
 {
-	App::getService('logger')->log($msg, $level, $extra, $channel);		
+	App::getService('Logger')->log($msg, $level, $extra, $channel);		
 }
 function DB($key)
 {
-	App::getService('DB')->init($key);		
+	return App::getService('DB')->init($key);		
+}
+function cache_manager($type, $key = null){
+	$type = ucfirst($type).'Cache';
+	return App::getService($type)->init($key);
+}
+
+function get_config($section){
+	static $conf;
+	if(empty($conf)) {
+		require CONF_PATH.'/settings.php';
+	}
+	return $conf[$section]?:null;
 }

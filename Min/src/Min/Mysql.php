@@ -7,7 +7,7 @@ query(user')->;
 ****/
 namespace Min\Database;
 
-class Mysqli
+class Mysql
 {
 	private $active_db	= 'default';
 	private $intrans = '';
@@ -19,7 +19,7 @@ class Mysqli
 
 	public function  __construct($db_key = '') 
 	{
-		$this->conf = parse_ini_file(CONF_PATH.'/mysql.ini');	
+		$this->conf = get_config('mysql');;
 	}
 	 
 	public function init($active_db) 
@@ -147,14 +147,16 @@ class Mysqli
 					case 'single' :	
 						if ($result_single = mysqli_stmt_get_result($stmt)) {
 							$result	= mysqli_fetch_assoc($result_single);
-						} elseif (true === $this->retry($db_type, $stmt))  {
+							mysqli_free_result($result_single);
+						} elseif (true === $this->retry($db_type))  {
 							continue; 
 						}
 						break;
 					case 'couple' :
 						if ($result_couple = mysqli_stmt_get_result($stmt)) {
 							$result	= mysqli_fetch_all($result_couple);
-						} elseif (true === $this->retry($db_type, $stmt)) {
+							mysqli_free_result($result_couple);
+						} elseif (true === $this->retry($db_type)) {
 							continue;
 						}
 						break;				
@@ -175,7 +177,7 @@ class Mysqli
 		
 		while (true) {
 		
-			if ($result	= mysqli_query($this->connect($db_type),$sql)) {
+			if ($result	= mysqli_query($this->connect($db_type), $sql, MYSQLI_STORE_RESULT)) {
 				switch ( $type ) {
 					case 'update' :
 					case 'delete' :

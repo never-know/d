@@ -5,14 +5,14 @@
  * Contains \Drupal\Component\Utility\Xss.
  */
 
-namespace min\inc;
+namespace Min;
 
 /**
  * Provides helper to filter for cross-site scripting.
  *
  * @ingroup utility
  */
-class xss {
+class Xss {
 
   /**
    * The list of HTML tags allowed by filterAdmin().

@@ -19,7 +19,7 @@ class Logger{
 	
 	public function __construct($option = [])
     {
-		if (empty($option)) $option = parse_ini_file(CONF_PATH.'/logger.ini');
+		if (empty($option)) $option = get_config('Logger');
         foreach ($this->levels as $key => $value) {
 			if (!empty($option[$key])) $this->allowed[$key] = $option[$key];
 		}
