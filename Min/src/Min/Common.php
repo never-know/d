@@ -171,6 +171,28 @@ function jsonp_return($arr)
 	}
 	exit;
 }
+function drupal_hmac_base64($data, $key) 
+{
+  // Casting $data and $key to strings here is necessary to avoid empty string
+  // results of the hash function if they are not scalar values. As this
+  // function is used in security-critical contexts like token validation it is
+  // important that it never returns an empty string.
+  $hmac = base64_encode(hash_hmac('sha256', (string) $data, (string) $key, TRUE));
+  // Modify the hmac so it's safe to use in URLs.
+  return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
+}
+
+function drupal_get_token($value = '') 
+{
+  return drupal_hmac_base64($value, session_id() . drupal_get_private_key() . drupal_get_hash_salt());
+}
+
+function drupal_valid_token($token, $value = '', $skip_anonymous = FALSE) 
+{
+  global $user;
+  return (($skip_anonymous && $user->uid == 0) || ($token === drupal_get_token($value)));
+}
+
 	
 function check_plain($text) 
 {

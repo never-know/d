@@ -39,29 +39,34 @@ function drupal_validate_utf8($text) {
 
 
 
-function filter_xss($string, $allowed_tags = ['a', 'em', 'strong', 'cite', 'blockquote', 'code', 'ul', 'ol', 'li', 'dl', 'dt', 'dd']) {
-  // Only operate on valid UTF-8 strings. This is necessary to prevent cross
-  // site scripting issues on Internet Explorer 6.
-  if (!drupal_validate_utf8($string)) {
-    return '';
-  }
-  // Store the text format.
-  _filter_xss_split($allowed_tags, TRUE);
-  // Remove NULL characters (ignored by some browsers).
-  $string = str_replace(chr(0), '', $string);
-  // Remove Netscape 4 JS entities.
-  $string = preg_replace('%&\s*\{[^}]*(\}\s*;?|$)%', '', $string);
+function filter_xss($string, $allowed_tags = ['a', 'em', 'strong', 'cite', 'blockquote', 'code', 'ul', 'ol', 'li', 'dl', 'dt', 'dd']) 
+{
+	// Only operate on valid UTF-8 strings. This is necessary to prevent cross
+	// site scripting issues on Internet Explorer 6.
+	if (!validate_utf8($string)) {
+	return '';
+	}
+	// Store the text format.
+	//_filter_xss_split($allowed_tags, TRUE);
+	// Remove NULL characters (ignored by some browsers).
+	$string = str_replace(chr(0), '', $string);
+	// Remove Netscape 4 JS entities.
+	$string = preg_replace('%&\s*\{[^}]*(\}\s*;?|$)%', '', $string);
 
-  // Defuse all HTML entities.
-  $string = str_replace('&', '&amp;', $string);
-  // Change back only well-formed entities in our whitelist:
-  // Decimal numeric entities.
-  $string = preg_replace('/&amp;#([0-9]+;)/', '&#\1', $string);
-  // Hexadecimal numeric entities.
-  $string = preg_replace('/&amp;#[Xx]0*((?:[0-9A-Fa-f]{2})+;)/', '&#x\1', $string);
-  // Named entities.
-  $string = preg_replace('/&amp;([A-Za-z][A-Za-z0-9]*;)/', '&\1', $string);
-
+	// Defuse all HTML entities.
+	$string = str_replace('&', '&amp;', $string);
+	// Change back only well-formed entities in our whitelist:
+	// Decimal numeric entities.
+	$string = preg_replace('/&amp;#([0-9]+;)/', '&#\1', $string);
+	// Hexadecimal numeric entities.
+	$string = preg_replace('/&amp;#[Xx]0*((?:[0-9A-Fa-f]{2})+;)/', '&#x\1', $string);
+	// Named entities.
+	$string = preg_replace('/&amp;([A-Za-z][A-Za-z0-9]*;)/', '&\1', $string);
+  
+	$splitter = function ($matches) use ($allowed_tags) {
+		return _filter_xss_split($matches[1], $allowed_tags);
+    };
+	
   return preg_replace_callback('%
     (
     <(?=[^a-zA-Z!/])  # a lone <
@@ -73,60 +78,53 @@ function filter_xss($string, $allowed_tags = ['a', 'em', 'strong', 'cite', 'bloc
     >                 # just a >
     )%x', '_filter_xss_split', $string);
 }
-function _filter_xss_split($m, $store = FALSE) {
-  static $allowed_html;
 
-  if ($store) {
-    $allowed_html = array_flip($m);
-    return;
-  }
+function _filter_xss_split($string, $allowed_html) 
+{
+  
+	if (substr($string, 0, 1) != '<') {
+		// We matched a lone ">" character.
+		return '&gt;';
+	} elseif (strlen($string) == 1) {
+		// We matched a lone "<" character.
+		return '&lt;';
+	}
 
-  $string = $m[1];
+	if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9\-]+)([^>]*)>?|(<!--.*?-->)$%', $string, $matches)) {
+		// Seriously malformed.
+		return '';
+	}
 
-  if (substr($string, 0, 1) != '<') {
-    // We matched a lone ">" character.
-    return '&gt;';
-  }
-  elseif (strlen($string) == 1) {
-    // We matched a lone "<" character.
-    return '&lt;';
-  }
+	$slash		= 	trim($matches[1]);
+	$elem		= 	&$matches[2];
+	$attrlist	= 	&$matches[3];
+	$comment	= 	&$matches[4];
 
-  if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9\-]+)([^>]*)>?|(<!--.*?-->)$%', $string, $matches)) {
-    // Seriously malformed.
-    return '';
-  }
+	if ($comment) {
+		$elem = '!--';
+	}
 
-  $slash = trim($matches[1]);
-  $elem = &$matches[2];
-  $attrlist = &$matches[3];
-  $comment = &$matches[4];
+	if (!isset($allowed_html[strtolower($elem)])) {
+		// Disallowed HTML element.
+		return '';
+	}
 
-  if ($comment) {
-    $elem = '!--';
-  }
+	if ($comment) {
+		return $comment;
+	}
 
-  if (!isset($allowed_html[strtolower($elem)])) {
-    // Disallowed HTML element.
-    return '';
-  }
+	if ($slash != '') {
+		return "</$elem>";
+	}
 
-  if ($comment) {
-    return $comment;
-  }
+	// Is there a closing XHTML slash at the end of the attributes?
+	$attrlist = preg_replace('%(\s?)/\s*$%', '\1', $attrlist, -1, $count);
+	$xhtml_slash = $count ? ' /' : '';
 
-  if ($slash != '') {
-    return "</$elem>";
-  }
+	// Clean up attributes.
+	$attr2 = implode(' ', _filter_xss_attributes($attrlist));
+	$attr2 = preg_replace('/[<>]/', '', $attr2);
+	$attr2 = strlen($attr2) ? ' ' . $attr2 : '';
 
-  // Is there a closing XHTML slash at the end of the attributes?
-  $attrlist = preg_replace('%(\s?)/\s*$%', '\1', $attrlist, -1, $count);
-  $xhtml_slash = $count ? ' /' : '';
-
-  // Clean up attributes.
-  $attr2 = implode(' ', _filter_xss_attributes($attrlist));
-  $attr2 = preg_replace('/[<>]/', '', $attr2);
-  $attr2 = strlen($attr2) ? ' ' . $attr2 : '';
-
-  return "<$elem$attr2$xhtml_slash>";
+	return "<$elem$attr2$xhtml_slash>";
 }
