@@ -79,7 +79,7 @@ function error_message($error)
 
 function request_not_found() 
 {	
-	response(0, '请求错误', ERROR_PAGE);	
+	response(['redirect'=>ERROR_PAGE]);	
 }
 	
 function request_error_found($arr) 
@@ -98,11 +98,10 @@ function request_error_found($arr)
 	 
 function redirect($url, $time=0, $msg='') 
 {
-//多行URL地址支持
 	$url        = str_replace(array('\n', '\r'), '', $url);
 	$url 		= strip_tags($url);
 	if (empty($msg))
-		$msg   = "系统将在{$time}秒之后自动跳转到{$url}！";
+		$msg   = '系统跳转中！';
 	if (!headers_sent()) {
 		if (0 === $time) {
 			header('Location: ' . $url);
@@ -117,45 +116,6 @@ function redirect($url, $time=0, $msg='')
 			$str .= $msg;
 		exit($str);
 	}
-}
-
-function response($code = 0, $msg = '', $flag = 0)
-{
-	$result = ['status' => $code];
-	if ('' != $msg) $result['message'] = $msg;
-	if (1 === $flag) return $result;
-
-	defined('IS_AJAX') && IS_AJAX  && ajax_return($result); 		
-	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
-	
-	// 系统错误 跳转ERROR PAGE
-	
-	if ( -1 == $code ) { 
-		redirect(ERROR_PAGE);
-	} else {
-		if (stripos($flag, 'http') !== 0) {
-			if (isset($_SERVER['HTTP_REFERER']) && preg_match('@^http[s]?://[a-z][a-z0-9\.]*\.'.explode('.',HOME_PAGE,2)[1] .'(?:/[a-zA-Z0-9]+)+\.html@', $_SERVER['HTTP_REFERER'])) {
-				$flag = strip_tags($_SERVER['HTTP_REFERER']);
-			} else {
-				$flag = HOME_PAGE;
-			}
-		}
-		redirect($flag);
-	}
-	exit;
-}
-
-function view($result, $path = '')
-{
-	if (empty($path)) {
-		$path =  App::getModule().'/'.  App::getController().'/'.  App::getAction();
-	}
-	require APP_PATH.'/View/'.$path.VIEW_EXT;
-}
-
-function layout($result, $name = 'frame')
-{
-	require APP_PATH.'/View/layout/'.$name.VIEW_EXT;
 }
 
 function save_gz($data, $filename)
@@ -195,7 +155,9 @@ function validate_utf8($text)
 	
 function ajax_return($arr)
 {
-	if (!headers_sent()) header('Content-Type:application/json; charset=utf-8');
+	if (!headers_sent()) {
+		header('Content-Type:application/json; charset=utf-8');
+	}
 	exit(json_encode($arr));	
 }
 
@@ -213,6 +175,49 @@ function jsonp_return($arr)
 function check_plain($text) 
 {
 	return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function check_plain_from_html($string) {
+    return html_entity_decode(strip_tags($string));
+}
+
+function check_url($uri) 
+{
+    $string = html_entity_decode($uri, ENT_QUOTES, 'UTF-8');
+    return check_plain(strip_dangerous_protocols($uri));
+}
+
+function strip_dangerous_protocols($uri) 
+{
+  static $allowed_protocols;
+
+  if (!isset($allowed_protocols)) {
+    //$allowed_protocols = array_flip(['ftp', 'http', 'https', 'irc', 'mailto', 'news', 'nntp', 'rtsp', 'sftp', 'ssh', 'tel', 'telnet', 'webcal']);
+    $allowed_protocols = array_flip(['http', 'https']);
+  }
+
+  // Iteratively remove any invalid protocol found.
+  do {
+    $before = $uri;
+    $colonpos = strpos($uri, ':');
+    if ($colonpos > 0) {
+      // We found a colon, possibly a protocol. Verify.
+      $protocol = substr($uri, 0, $colonpos);
+      // If a colon is preceded by a slash, question mark or hash, it cannot
+      // possibly be part of the URL scheme. This must be a relative URL, which
+      // inherits the (safe) protocol of the base document.
+      if (preg_match('![/?#]!', $protocol)) {
+        break;
+      }
+      // Check if this is a disallowed protocol. Per RFC2616, section 3.2.3
+      // (URI Comparison) scheme comparison must be case-insensitive.
+      if (!isset($allowed_protocols[strtolower($protocol)])) {
+        $uri = substr($uri, $colonpos + 1);
+      }
+    }
+  } while ($before != $uri);
+
+  return $uri;
 }
 	
 function t($string, array $args = [], array $options = []) 
@@ -297,7 +302,6 @@ function app_exception($e)
 	response(-1); 
 }
 
-
 function usr_error($code = 0, $msg = '', $level = 'INFO', $extra = [], $channel = '')
 {
 	App::getService('Logger')->log($msg, $level, $extra, $channel);		
@@ -314,12 +318,14 @@ function DB($key)
 {
 	return App::getService('DB')->init($key);		
 }
-function cache_manager($type, $key = null){
+function cache_manager($type, $key = null)
+{
 	$type = ucfirst($type).'Cache';
 	return App::getService($type)->init($key);
 }
 
-function get_config($section){
+function get_config($section)
+{
 	static $conf;
 	if(empty($conf)) {
 		require CONF_PATH.'/settings.php';

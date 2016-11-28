@@ -65,7 +65,7 @@ class Xss {
     }
     // Only operate on valid UTF-8 strings. This is necessary to prevent cross
     // site scripting issues on Internet Explorer 6.
-    if (!Unicode::validateUtf8($string)) {
+    if (!validate_utf8($string)) {
       return '';
     }
     // Remove NULL characters (ignored by some browsers).
@@ -257,7 +257,7 @@ class Xss {
         case 2:
           // Attribute value, a URL after href= for instance.
           if (preg_match('/^"([^"]*)"(\s+|$)/', $attributes, $match)) {
-            $thisval = $skip_protocol_filtering ? $match[1] : UrlHelper::filterBadProtocol($match[1]);
+            $thisval = $skip_protocol_filtering ? $match[1] : check_url($match[1]);
 
             if (!$skip) {
               $attributes_array[] = "$attribute_name=\"$thisval\"";
@@ -269,7 +269,7 @@ class Xss {
           }
 
           if (preg_match("/^'([^']*)'(\s+|$)/", $attributes, $match)) {
-            $thisval = $skip_protocol_filtering ? $match[1] : UrlHelper::filterBadProtocol($match[1]);
+            $thisval = $skip_protocol_filtering ? $match[1] : check_url($match[1]);
 
             if (!$skip) {
               $attributes_array[] = "$attribute_name='$thisval'";
@@ -280,7 +280,7 @@ class Xss {
           }
 
           if (preg_match("%^([^\s\"']+)(\s+|$)%", $attributes, $match)) {
-            $thisval = $skip_protocol_filtering ? $match[1] : UrlHelper::filterBadProtocol($match[1]);
+            $thisval = $skip_protocol_filtering ? $match[1] : check_url($match[1]);
 
             if (!$skip) {
               $attributes_array[] = "$attribute_name=\"$thisval\"";

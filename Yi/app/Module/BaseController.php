@@ -44,5 +44,29 @@ class BaseController
 		} catch (\Throwable $t) {
 			return null;
 		}
-	}	
+	}
+
+	public function response(array $result = [], $layout = 'frame'){
+   
+		defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
+		defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
+	
+		if(isset($result['redirect'])) {
+			redirect($result['redirect']);
+			exit;
+		}
+	
+		require APP_PATH.'/View/layout/'.$layout.VIEW_EXT;
+		exit;
+	
+	}
+
+	public function view($result, $path = '')
+	{
+		if (empty($path)) {
+			$path =  App::getModule().'/'.  App::getController().'/'.  App::getAction();
+		}
+		require APP_PATH.'/View/'.$path.VIEW_EXT;
+	}
+
 }

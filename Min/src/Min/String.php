@@ -33,41 +33,6 @@ function drupal_validate_utf8($text) {
 
 // url
 
-function check_url($uri) {
-  return escape(drupal_strip_dangerous_protocols($uri));
-}
-
-function drupal_strip_dangerous_protocols($uri) {
-
-  static $allowed_protocols;
-
-  if (!isset($allowed_protocols)) {
-    $allowed_protocols = array_flip(['ftp', 'http', 'https', 'irc', 'mailto', 'news', 'nntp', 'rtsp', 'sftp', 'ssh', 'tel', 'telnet', 'webcal']);
-  }
-
-  // Iteratively remove any invalid protocol found.
-  do {
-    $before = $uri;
-    $colonpos = strpos($uri, ':');
-    if ($colonpos > 0) {
-      // We found a colon, possibly a protocol. Verify.
-      $protocol = substr($uri, 0, $colonpos);
-      // If a colon is preceded by a slash, question mark or hash, it cannot
-      // possibly be part of the URL scheme. This must be a relative URL, which
-      // inherits the (safe) protocol of the base document.
-      if (preg_match('![/?#]!', $protocol)) {
-        break;
-      }
-      // Check if this is a disallowed protocol. Per RFC2616, section 3.2.3
-      // (URI Comparison) scheme comparison must be case-insensitive.
-      if (!isset($allowed_protocols[strtolower($protocol)])) {
-        $uri = substr($uri, $colonpos + 1);
-      }
-    }
-  } while ($before != $uri);
-
-  return $uri;
-}
 
 
 
