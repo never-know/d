@@ -1,7 +1,7 @@
 <?php 
 namespace Min;
-class Logger{
-
+class Logger
+{
 	private $logs 				= [];
 	private $allowed 			= [];
 	private $channel 			= 'default';
@@ -19,7 +19,7 @@ class Logger{
 	
 	public function __construct($option = [])
     {
-		if (empty($option)) $option = get_config('Logger');
+		if (empty($option)) $option = get_config('logger');
         foreach ($this->levels as $key => $value) {
 			if (!empty($option[$key])) $this->allowed[$key] = $option[$key];
 		}
@@ -33,6 +33,7 @@ class Logger{
 	
 	public function log($message, $level = 'ERROR', $extra = [], $channel = '')
 	{	
+		echo $level;
 		$level = strtoupper($level);
 		if (empty($this->allowed[$level])) return;
 		if (empty($channel)) $channel = $this->channel;

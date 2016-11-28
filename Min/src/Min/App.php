@@ -18,17 +18,21 @@ class App
 	protected static function dispatch()
 	{
 		// path info 在服务器完成配置
-		if (empty($_SERVER['PATH_INFO']) || !preg_match('/^(?:\/[a-zA-Z0-9]+){2,}$/', $_SERVER['PATH_INFO'])) {	
-			request_not_found();
-		} else {	
+		if (!empty($_SERVER['PATH_INFO']) && preg_match('/^(?:\/[a-zA-Z0-9]+){2,}$/', $_SERVER['PATH_INFO'])) {	
+				
 			$pathinfo 	= explode('/', $_SERVER['PATH_INFO'], 5);
 			if (empty($pathinfo[4])) $pathinfo[4]	= '';
 			if (empty($pathinfo[3])) $pathinfo[3]	= DEFAULT_ACTION;
 			list( , self::$module, self::$controller, self::$action, self::$args) = $pathinfo; 
-		} 
-		$controller_name = '\\App\\Module\\'.ucfirst(self::$module).'\\'.ucfirst(self::$controller).'Controller';
-		 
-		new $controller_name(self::$action);
+		
+			$controller_name = '\\App\\Module\\'.ucfirst(self::$module).'\\'.ucfirst(self::$controller).'Controller';
+			if (class_exists($controller_name)) {
+				new $controller_name(self::$action);
+			}
+		} else {			
+			$c = new \Min\Controller;
+			$c->response();		
+		}
 	}
 		
 	public static function getContainer()
@@ -39,10 +43,6 @@ class App
 	public static function getService($name = '', $arguments = [])
 	{
 		return self::$container->getService($name, $arguments);			
-	}
-	public static function getBackendService($name = '', $arguments = [])
-	{
-		return self::$container->getBackendService($name, $arguments);			
 	}
 
 	public static function getModule()
@@ -109,5 +109,6 @@ class App
 		
 		self::initSession($force);	
 		self::dispatch();
+		exit;
 	}
 }

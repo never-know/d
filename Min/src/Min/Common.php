@@ -4,6 +4,7 @@ use Min\App;
 
 function autoload($class)
 {
+	echo $class;
 	// new \min\service\login;
 	// new \min\module\passport\login;
 	$path 	= strtr($class, '\\', '/');
@@ -56,25 +57,6 @@ function ip_address()
 	}
 
 	return $ip_address;
-}
-	
-function error_message($error)
-{
-	$message = '{ ['
-		.	$error['title']
-		.	': '
-	//	.	rtrim($error['message'],PHP_EOL)
-		.	$error['message']
-		.	'] in file ['
-		.	$error['file']
-		.	']  at line ['
-		.	$error['line']
-		.	'] [error code/type: '
-		.	$error['type']
-		.	'] }';
-	
-	return $message;
-
 }
 
 function request_not_found() 
@@ -271,65 +253,22 @@ function t($string, array $args = [], array $options = [])
 	}
 }
 
-function app_tails()
+function error_message_format($error)
 {
-	// fatal errors 
-	$error = error_get_last();
-	$log = App::getService('Logger');
-	if ($error['type'] == E_ERROR) {
-		$error['title'] = 'Fatal Error';
-		$message = error_message($error);
-		$log->log($message, 'CRITICA', debug_backtrace(), 'default');
-	}
-	$log->record();
-}
-
-function app_error($errno, $errstr, $errfile, $errline)
-{	
-	$level = [  E_WARNING => 1,
-				E_NOTICE => 1,
-				E_USER_WARNING => 1,
-				E_USER_NOTICE => 1,
-				E_STRICT => 1,
-				E_DEPRECATED => 1,
-				E_USER_DEPRECATED => 1
-			];
-			
-	$type = isset($level[$errno]) ? 'WARNING' : 'ERROR'; 
-
-	$message = error_message([	'title'		=> 'Unexpected Error', 
-								'message'	=> $errstr, 
-								'file'		=> $errfile, 
-								'line'		=> $errline, 
-								'type'		=> $errno
-							]);
+	$message = '{ ['
+		.	$error['title']
+		.	': '
+	//	.	rtrim($error['message'],PHP_EOL)
+		.	$error['message']
+		.	'] in file ['
+		.	$error['file']
+		.	']  at line ['
+		.	$error['line']
+		.	'] [error code/type: '
+		.	$error['type']
+		.	'] }';
 	
-	App::getService('Logger')->log($message, $type, [], 'default');
-	
-	if ($type == 'error') {
-		response(-1);
-	}
-	return true;
-}
-
-function app_exception($e)
-{	
-	$message = error_message([	'title'		=> 'Unexpected Expection', 
-								'message'	=> $e->getMessage(), 
-								'file'		=> $e->getFile(), 
-								'line'		=> $e->getLine(),
-								'type'		=> $e->getCode()
-							]);
-	App::getService('Logger')->log($message, 'CRITICA', debug_backtrace(), 'default');
-	response(-1); 
-}
-
-function usr_error($code = 0, $msg = '', $level = 'INFO', $extra = [], $channel = '')
-{
-	App::getService('Logger')->log($msg, $level, $extra, $channel);		
-	if ($code == -999) return;
-	response($code, $msg);
-	exit;
+	return $message;
 }
 
 function watchdog($msg = '', $level = 'INFO', $extra = [], $channel = '')
