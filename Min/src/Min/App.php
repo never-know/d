@@ -28,11 +28,13 @@ class App
 			$controller_name = '\\App\\Module\\'.ucfirst(self::$module).'\\'.ucfirst(self::$controller).'Controller';
 			if (class_exists($controller_name)) {
 				new $controller_name(self::$action);
+				exit;
 			}
-		} else {			
-			$c = new \Min\Controller;
-			$c->response();		
-		}
+		} 
+		
+		$c = new \Min\Controller;
+		$c->response(101); // request not found		
+		exit;
 	}
 		
 	public static function getContainer()
@@ -109,6 +111,5 @@ class App
 		
 		self::initSession($force);	
 		self::dispatch();
-		exit;
 	}
 }

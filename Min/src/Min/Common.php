@@ -59,31 +59,19 @@ function ip_address()
 	return $ip_address;
 }
 
-function request_not_found() 
-{	
-	response(['redirect'=>ERROR_PAGE]);	
-}
-	
-function request_error_found($arr) 
+function view($result, $path = '')
 {
-	if (defined('IS_AJAX') && IS_AJAX) {
-		ajax_return($arr);	 
-	} elseif (defined('IS_JSONP') && IS_JSONP) {
-		if (is_numeric($_GET['callback'])) {
-			echo 'callback'.$_GET['callback'].'(-1);';
-		}
-	} else {
-		header('Location: '. ERROR_PAGE);
+	if (empty($path)) {
+		$path =  App::getModule().'/'.  App::getController().'/'.  App::getAction();
 	}
-	exit();
+	require VIEW_PATH.$path.VIEW_EXT;
 }
 	 
-function redirect($url, $time=0, $msg='') 
+function redirect($url, $time = 0, $msg = '') 
 {
-	$url        = str_replace(array('\n', '\r'), '', $url);
-	$url 		= strip_tags($url);
-	if (empty($msg))
-		$msg   = '系统跳转中！';
+	$url = str_replace(array('\n', '\r'), '', $url);
+	$url = check_url($url);
+	$msg = $msg ?: '系统跳转中！';
 	if (!headers_sent()) {
 		if (0 === $time) {
 			header('Location: ' . $url);
@@ -94,8 +82,7 @@ function redirect($url, $time=0, $msg='')
 		exit();
 	} else {
 		$str  = "<meta http-equiv='Refresh' content='{$time};URL={$url}'>";
-		if ($time != 0)
-			$str .= $msg;
+		if ($time != 0) $str .= $msg;
 		exit($str);
 	}
 }
@@ -103,7 +90,7 @@ function redirect($url, $time=0, $msg='')
 function save_gz($data, $filename)
 {
 	$gzdata = gzencode($data,6);
-	$fp = fopen($filename, 'w');
+	$fp 	= fopen($filename, 'w');
 	fwrite($fp, $gzdata);
 	fclose($fp);	
 }
@@ -112,8 +99,7 @@ function validate($type,$value)
 {
 	if (!validate_utf8($value)) return false;
 	
-	if ('email' == $type)
-	return (bool)filter_var($value, FILTER_VALIDATE_EMAIL);
+	if ('email' == $type) return (bool)filter_var($value, FILTER_VALIDATE_EMAIL);
 	
 	$pattern = [
 		'quotes'=>'/["\'\s]+/u',
@@ -153,28 +139,18 @@ function jsonp_return($arr)
 	}
 	exit;
 }
-function drupal_hmac_base64($data, $key) 
-{
-  // Casting $data and $key to strings here is necessary to avoid empty string
-  // results of the hash function if they are not scalar values. As this
-  // function is used in security-critical contexts like token validation it is
-  // important that it never returns an empty string.
-  $hmac = base64_encode(hash_hmac('sha256', (string) $data, (string) $key, TRUE));
-  // Modify the hmac so it's safe to use in URLs.
-  return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
-}
 
-function drupal_get_token($value = '') 
+function get_token($value = '') 
 {
-  return drupal_hmac_base64($value, session_id() . drupal_get_private_key() . drupal_get_hash_salt());
+	$key = session_id() . conf_get['private_key'] . conf_get['hash_salt'];
+	$hmac = base64_encode(hash_hmac('sha256', $value, $key, TRUE));
+	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
 }
 
 function drupal_valid_token($token, $value = '', $skip_anonymous = FALSE) 
 {
-  global $user;
-  return (($skip_anonymous && $user->uid == 0) || ($token === drupal_get_token($value)));
+  return ($skip || ($token === get_token($value)));
 }
-
 	
 function check_plain($text) 
 {
@@ -187,7 +163,7 @@ function check_plain_from_html($string) {
 
 function check_url($uri) 
 {
-    $string = html_entity_decode($uri, ENT_QUOTES, 'UTF-8');
+    $uri = html_entity_decode($uri, ENT_QUOTES, 'UTF-8');
     return check_plain(strip_dangerous_protocols($uri));
 }
 
@@ -253,7 +229,7 @@ function t($string, array $args = [], array $options = [])
 	}
 }
 
-function error_message_format($error)
+function error_message_format(array $error)
 {
 	$message = '{ ['
 		.	$error['title']
@@ -271,14 +247,16 @@ function error_message_format($error)
 	return $message;
 }
 
-function watchdog($msg = '', $level = 'INFO', $extra = [], $channel = '')
+function watchdog($msg = '', $level = 'INFO', $extra = [], $channel = null)
 {
-	App::getService('Logger')->log($msg, $level, $extra, $channel);		
+	App::getService('Logger')->init($channel)->log($msg, $level, $extra, $channel);		
 }
+
 function DB($key)
 {
 	return App::getService('DB')->init($key);		
 }
+
 function cache_manager($type, $key = null)
 {
 	$type = ucfirst($type).'Cache';

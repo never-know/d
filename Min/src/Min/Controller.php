@@ -53,7 +53,9 @@ class Controller
 	}
 
 	final public function response($result = [], $layout = 'frame')
-	{
+	{	
+		if (is_numeric($result)) $result['status'] = $result;
+		
 		defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 		defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 	
@@ -64,21 +66,11 @@ class Controller
 
 		if ( -1 == $result['status']) {
 			$path = '/common/request_error_found';
-		} elseif (1 == $result['status']) {
-			$path = '/common/request_not_found';
 		}
 		require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
 		exit;
 	}
 
-	final public function view($result, $path = '')
-	{
-		if (empty($path)) {
-			$path =  App::getModule().'/'.  App::getController().'/'.  App::getAction();
-		}
-		require VIEW_PATH.$path.VIEW_EXT;
-	}
-	
 	final public function appTails()
 	{
 		// fatal errors 
@@ -105,14 +97,15 @@ class Controller
 				
 		$type = isset($level[$errno]) ? 'WARNING' : 'ERROR'; 
 
-		$message = error_message_format([	'title'		=> 'Unexpected Error', 
-									'message'	=> $errstr, 
-									'file'		=> $errfile, 
-									'line'		=> $errline, 
-									'type'		=> $errno
-								]);
+		$me	=  [	
+			'title'		=> 'Unexpected Error', 
+			'message'	=> $errstr, 
+			'file'		=> $errfile, 
+			'line'		=> $errline, 
+			'type'		=> $errno
+		];
 		
-		watchdog($message, $type, [], 'default');
+		watchdog(error_message_format($me), $type, [], 'default');
 		
 		if ($type == 'ERROR') {
 			$this->response(-1);
@@ -122,13 +115,14 @@ class Controller
 
 	final public function appException($e)
 	{	
-		$message = error_message_format([	'title'		=> 'Unexpected Expection', 
-									'message'	=> $e->getMessage(), 
-									'file'		=> $e->getFile(), 
-									'line'		=> $e->getLine(),
-									'type'		=> $e->getCode()
-								]);
-		watchdog($message, 'CRITICAL', debug_backtrace(), 'default');
+		$me  =  [	
+			'title'		=> 'Unexpected Expection', 
+			'message'	=> $e->getMessage(), 
+			'file'		=> $e->getFile(), 
+			'line'		=> $e->getLine(),
+			'type'		=> $e->getCode()
+		];
+		watchdog(error_message_format($me), 'CRITICAL', debug_backtrace(), 'default');
 		$this->response(-1); 
 	}
 
