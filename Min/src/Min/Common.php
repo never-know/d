@@ -273,23 +273,23 @@ function view($result, $path = '')
 
 function request_not_found() 
 {	
-	$result['status'] = 101;
+	$result['status'] = 404;
 	
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 
-	redirect(NOT_FOUND_PAGE);
+	require VIEW_APTH.'/common/404.'.VIEW_EXT;;
 	exit;
 }	
 
 function request_error_found() 
 {	
-	$result['status'] = -1;
+	$result['status'] = 500;
 	
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 	
-	redirect(ERROR_PAGE);
+	require VIEW_APTH.'/common/500.'.VIEW_EXT;
 	exit;
 } 
 

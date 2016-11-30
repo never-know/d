@@ -31,7 +31,7 @@ class App
 				exit;
 			}
 		} 
-		request_not_found();	 
+		request_error_found(404);	 
 	}
 		
 	public static function getContainer()
