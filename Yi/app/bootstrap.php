@@ -7,6 +7,11 @@
 	define('SITE_DOMAIN', 'yi.com');
 	define('HOME_PAGE', 'http://www.'.SITE_DOMAIN );
 	define('ERROR_PAGE', HOME_PAGE.'/error.html');
+	define('OFFLINE_PAGE', HOME_PAGE.'/offline.html');
+	define('NOT_FOUND_PAGE', HOME_PAGE.'/not_found.html');
+	
+	
+	
 	define('COOKIE_DOMAIN', '.'.SITE_DOMAIN);
 	define('CDN_DOMAIN', 'cnd.'.SITE_DOMAIN);
 
@@ -32,6 +37,10 @@
 	require MIN_PATH.'/Min/Common.php';	
 	
 	spl_autoload_register('autoload');
+	
+	set_error_handler('app_error');
+	set_exception_handler('app_exception');
+	register_shutdown_function('app_tails');
 	
 	$di = new \Min\Di;
 	$di->setShared('DB', '\\Min\\Db');

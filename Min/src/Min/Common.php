@@ -4,19 +4,22 @@ use Min\App;
 
 function autoload($class)
 {
-	echo $class;
 	// new \min\service\login;
 	// new \min\module\passport\login;
 	$path 	= strtr($class, '\\', '/');
 	$path_info 	= explode('/', $path, 2);
-	if ('App' == $path_info[0]) {	
-		$file	= APP_PATH .'/'. $path_info[1] . PHP_EXT;
-		
-	} elseif ('Min' == $path_info[0]) {
-		$file	= MIN_PATH . '/' . $path . PHP_EXT;
-	} else {
-		return;
+	
+	switch ($path_info[0]) {
+		case 'App' :
+			$file	= APP_PATH .'/'. $path . PHP_EXT;
+			break;
+		case 'Min' :
+			$file	= MIN_PATH . '/' . $path . PHP_EXT;
+			break;
+		default :
+			return;
 	}
+
 	if (is_file($file)) {
 		require $file;
 	}else{
@@ -27,11 +30,12 @@ function autoload($class)
 function ip_address() 
 {
 	static  $ip_address = '';
-	Global $reverse_proxy_addresses;
+	
 	if (!isset($ip_address)) {
+		
 		$ip_address = $_SERVER['REMOTE_ADDR'];
 
-		if ( $conf['reverse_proxy']==1 ) {
+		if ( 1 == REVERSE_PROXY) {
    
 			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 				// If an array of known reverse proxy IPs is provided, then trust
@@ -48,7 +52,7 @@ function ip_address()
 				$forwarded[] = $ip_address;
 
 				// Eliminate all trusted IPs.
-				$untrusted = array_diff($forwarded, $reverse_proxy_addresses);
+				$untrusted = array_diff($forwarded, get_config('reverse_proxy_addresses', []));
 
 				// The right-most IP is the most specific we can trust.
 				$ip_address = array_pop($untrusted);
@@ -59,14 +63,6 @@ function ip_address()
 	return $ip_address;
 }
 
-function view($result, $path = '')
-{
-	if (empty($path)) {
-		$path =  App::getModule().'/'.  App::getController().'/'.  App::getAction();
-	}
-	require VIEW_PATH.$path.VIEW_EXT;
-}
-	 
 function redirect($url, $time = 0, $msg = '') 
 {
 	$url = str_replace(array('\n', '\r'), '', $url);
@@ -263,11 +259,104 @@ function cache_manager($type, $key = null)
 	return App::getService($type)->init($key);
 }
 
-function get_config($section)
+function get_config($section, $default = null)
 {
 	static $conf;
 	if(empty($conf)) {
 		require CONF_PATH.'/settings.php';
 	}
-	return $conf[$section]?:null;
+	return $conf[$section]?:$default;
+}
+
+function view($result, $path = '')
+{
+	if (empty($path)) {
+		$path =  App::getModule().'/'.  App::getController().'/'.  App::getAction();
+	}
+	require VIEW_PATH.$path.VIEW_EXT;
+}
+
+function request_not_found(){
+	
+	$result['status'] = 101;
+	
+	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
+	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
+
+	if(isset($result['redirect'])) {
+		redirect(NOT_FOUND_PAGE);
+	}
+	exit;
+}	
+
+function request_error_found(){
+	
+	$result['status'] = -1;
+	
+	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
+	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
+
+	if(isset($result['redirect'])) {
+		redirect(ERROR_PAGE);
+	}
+	exit;
+} 
+
+function site_offline() {
+    redirect(OFFLINE_PAGE);
+}
+
+function app_tails()
+{
+	// fatal errors 
+	$error = error_get_last();
+	$log = App::getService('Logger');
+	if ($error['type'] == E_ERROR) {
+		$error['title'] = 'Fatal Error';
+		$message = error_message_format($error);
+		$log->log($message, 'CRITICAL', debug_backtrace(), 'default');
+	}
+	$log->record();
+}
+
+function app_error($errno, $errstr, $errfile, $errline)
+{	
+	$level = [  E_WARNING => 1,
+				E_NOTICE => 1,
+				E_USER_WARNING => 1,
+				E_USER_NOTICE => 1,
+				E_STRICT => 1,
+				E_DEPRECATED => 1,
+				E_USER_DEPRECATED => 1
+			];
+			
+	$type = isset($level[$errno]) ? 'WARNING' : 'ERROR'; 
+
+	$me	=  [	
+		'title'		=> 'Unexpected Error', 
+		'message'	=> $errstr, 
+		'file'		=> $errfile, 
+		'line'		=> $errline, 
+		'type'		=> $errno
+	];
+	
+	watchdog(error_message_format($me), $type, [], 'default');
+	
+	if ($type == 'ERROR') {
+		request_error_found();
+	}
+	return true;
+}
+
+function app_exception($e)
+{	
+	$me  =  [	
+		'title'		=> 'Unexpected Expection', 
+		'message'	=> $e->getMessage(), 
+		'file'		=> $e->getFile(), 
+		'line'		=> $e->getLine(),
+		'type'		=> $e->getCode()
+	];
+	watchdog(error_message_format($me), 'CRITICAL', debug_backtrace(), 'default');
+	request_error_found();
 }

@@ -32,9 +32,7 @@ class App
 			}
 		} 
 		
-		$c = new \Min\Controller;
-		$c->response(101); // request not found		
-		exit;
+		request_not_found();	 
 	}
 		
 	public static function getContainer()
