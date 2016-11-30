@@ -56,7 +56,11 @@ class Controller
 			redirect($result['redirect']);
 			exit;
 		}
-
+		
+		// 读缓存
+		
+		
+		
 		require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
 		exit;
 	}

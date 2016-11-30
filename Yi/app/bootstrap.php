@@ -7,11 +7,10 @@
 	define('SITE_DOMAIN', 'yi.com');
 	define('HOME_PAGE', 'http://www.'.SITE_DOMAIN );
 	define('ERROR_PAGE', HOME_PAGE.'/error.html');
-	define('OFFLINE_PAGE', HOME_PAGE.'/offline.html');
-	define('NOT_FOUND_PAGE', HOME_PAGE.'/not_found.html');
-	
-	
-	
+	define('OFFLINE_PAGE', HOME_PAGE.'/error/offline.html');
+	define('NOT_FOUND_PAGE', HOME_PAGE.'/error/not_found.html');
+	define('ACCESS_DENY_PAGE', HOME_PAGE.'/error/access_deny.html');
+
 	define('COOKIE_DOMAIN', '.'.SITE_DOMAIN);
 	define('CDN_DOMAIN', 'cnd.'.SITE_DOMAIN);
 

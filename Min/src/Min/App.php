@@ -31,7 +31,6 @@ class App
 				exit;
 			}
 		} 
-		
 		request_not_found();	 
 	}
 		

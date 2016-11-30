@@ -204,21 +204,17 @@ function t($string, array $args = [], array $options = [])
 		foreach ($args as $key => &$value) {
 			switch ($key[0]) {
 				case '@':
-					// Escaped only.
 					$value = check_plain($value);
 					break;
 				case ':':
-					// Escaped only.
 					$value = check_url($value);
 					break;
 				case '%':
 				default:
-					// Escaped and placeholder.
 					$value = '<em class="placeholder">' . check_plain($value) . '</em>';
 					break;
 
 				case '!':
-					// Pass-through.
 			}
 		}
 		return strtr($string, $args);
@@ -230,8 +226,7 @@ function error_message_format(array $error)
 	$message = '{ ['
 		.	$error['title']
 		.	': '
-	//	.	rtrim($error['message'],PHP_EOL)
-		.	$error['message']
+		.	rtrim($error['message'],PHP_EOL)
 		.	'] in file ['
 		.	$error['file']
 		.	']  at line ['
@@ -245,7 +240,7 @@ function error_message_format(array $error)
 
 function watchdog($msg = '', $level = 'INFO', $extra = [], $channel = null)
 {
-	App::getService('Logger')->init($channel)->log($msg, $level, $extra, $channel);		
+	App::getService('Logger')->init($channel)->log($msg, $level, $extra);		
 }
 
 function DB($key)
@@ -276,33 +271,30 @@ function view($result, $path = '')
 	require VIEW_PATH.$path.VIEW_EXT;
 }
 
-function request_not_found(){
-	
+function request_not_found() 
+{	
 	$result['status'] = 101;
 	
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 
-	if(isset($result['redirect'])) {
-		redirect(NOT_FOUND_PAGE);
-	}
+	redirect(NOT_FOUND_PAGE);
 	exit;
 }	
 
-function request_error_found(){
-	
+function request_error_found() 
+{	
 	$result['status'] = -1;
 	
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
-
-	if(isset($result['redirect'])) {
-		redirect(ERROR_PAGE);
-	}
+	
+	redirect(ERROR_PAGE);
 	exit;
 } 
 
-function site_offline() {
+function site_offline() 
+{
     redirect(OFFLINE_PAGE);
 }
 
@@ -311,12 +303,15 @@ function app_tails()
 	// fatal errors 
 	$error = error_get_last();
 	$log = App::getService('Logger');
-	if ($error['type'] == E_ERROR) {
-		$error['title'] = 'Fatal Error';
+	if (isset($error['type']) && $error['type'] == E_ERROR) {
+		$error['title'] = 'Fatal Error Catched By app_tails ';
 		$message = error_message_format($error);
 		$log->log($message, 'CRITICAL', debug_backtrace(), 'default');
 	}
 	$log->record();
+	if (isset($error['type']) && $error['type'] == E_ERROR) {
+		request_error_found();
+	}
 }
 
 function app_error($errno, $errstr, $errfile, $errline)
