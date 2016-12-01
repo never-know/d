@@ -56,9 +56,8 @@ a {
          <p>找不到北啦。。。。</p>
          <hr>
          <p>
-           <a href="/">返回首页</a>
-           <span>或者</span>
-           <a href="javascript:;" id="js-history-back">返回上页</a>
+           <span>即将为您跳转至</span>
+		   <?php echo t('<a href=":url" id="js-history-back2">@title</a>',$result);?>
          </p>
        </div>
       </div>

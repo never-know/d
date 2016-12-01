@@ -165,35 +165,31 @@ function check_url($uri)
 
 function strip_dangerous_protocols($uri) 
 {
-  static $allowed_protocols;
-
-  if (!isset($allowed_protocols)) {
+	$allowed_protocols = array_flip(['http', 'https']);
     //$allowed_protocols = array_flip(['ftp', 'http', 'https', 'irc', 'mailto', 'news', 'nntp', 'rtsp', 'sftp', 'ssh', 'tel', 'telnet', 'webcal']);
-    $allowed_protocols = array_flip(['http', 'https']);
-  }
-
+  
   // Iteratively remove any invalid protocol found.
-  do {
-    $before = $uri;
-    $colonpos = strpos($uri, ':');
-    if ($colonpos > 0) {
-      // We found a colon, possibly a protocol. Verify.
-      $protocol = substr($uri, 0, $colonpos);
-      // If a colon is preceded by a slash, question mark or hash, it cannot
-      // possibly be part of the URL scheme. This must be a relative URL, which
-      // inherits the (safe) protocol of the base document.
-      if (preg_match('![/?#]!', $protocol)) {
-        break;
-      }
-      // Check if this is a disallowed protocol. Per RFC2616, section 3.2.3
-      // (URI Comparison) scheme comparison must be case-insensitive.
-      if (!isset($allowed_protocols[strtolower($protocol)])) {
-        $uri = substr($uri, $colonpos + 1);
-      }
-    }
-  } while ($before != $uri);
+	do {
+		$before = $uri;
+		$colonpos = strpos($uri, ':');
+		if ($colonpos > 0) {
+		// We found a colon, possibly a protocol. Verify.
+			$protocol = substr($uri, 0, $colonpos);
+			// If a colon is preceded by a slash, question mark or hash, it cannot
+			// possibly be part of the URL scheme. This must be a relative URL, which
+			// inherits the (safe) protocol of the base document.
+			if (preg_match('![/?#]!', $protocol)) {
+				break;
+			}
+			// Check if this is a disallowed protocol. Per RFC2616, section 3.2.3
+			// (URI Comparison) scheme comparison must be case-insensitive.
+			if (!isset($allowed_protocols[strtolower($protocol)])) {
+				$uri = substr($uri, $colonpos + 1);
+			}
+		}
+	} while ($before != $uri);
 
-  return $uri;
+	return $uri;
 }
 	
 function t($string, array $args = [], array $options = []) 
@@ -201,7 +197,7 @@ function t($string, array $args = [], array $options = [])
 	if (empty($args)) {
 		return $string;		
 	} else {
-		foreach ($args as $key => &$value) {
+		foreach ($args as $key => $value) {
 			switch ($key[0]) {
 				case '@':
 					$value = check_plain($value);
@@ -278,7 +274,10 @@ function request_not_found()
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 
-	require VIEW_PATH.'/layout/404'.VIEW_EXT;
+	$url = empty($_SERVER['HTTP_REFERER'])?'':check_plain($_SERVER['HTTP_REFERER']);
+	$result = (!empty($url) || preg_match('!^http[s]?\:[a-z]+\.'.SITE_DOMAIN.'!', $url))?[':url'=>$url, '@title'=>t('上一页')]:[':url'=>HOME_PAGE, '@title'=> t('首页')];
+	
+	view($result, '/layout/404');
 	exit;
 }	
 
