@@ -19,7 +19,7 @@
 			<?php include APP_PATH.'/View/layout/menu.tpl'; ?>	
 			<div class="main">
 				<div class="main-content">
-					<?php view(); ?> 
+					<?php view($result); ?> 
 				</div>
 			</div>		
 		</div>

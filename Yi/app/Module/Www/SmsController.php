@@ -5,16 +5,6 @@ use Min\App;
 
 class SmsController
 {
-	public function __construct($action) 
-	{	
-		if ($action=='get') {
-			$this->get();
-		} elseif ($action=='check') {
-			$this->check();
-		}
-		exit;
-	}
-	
 	private function send(){
 	
 		if (true === $this->check()){

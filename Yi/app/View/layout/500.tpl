@@ -51,9 +51,9 @@ a {
         </h1>
         <div class="content">
          <p>
-           <strong>我们来到了南极还是北极...</strong>
+           <strong>服务器遇到一个问题...</strong>
          </p>
-         <p>找不到北啦。。。。</p>
+         <p>懵啦。。。。</p>
          <hr>
          <p>
            <a href="/">返回首页</a>

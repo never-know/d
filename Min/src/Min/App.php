@@ -24,14 +24,16 @@ class App
 			if (empty($pathinfo[4])) $pathinfo[4]	= '';
 			if (empty($pathinfo[3])) $pathinfo[3]	= DEFAULT_ACTION;
 			list( , self::$module, self::$controller, self::$action, self::$args) = $pathinfo; 
-		
+			
+			$file_name = APP_PATH.'/Module/'.ucfirst(self::$module).'/'.ucfirst(self::$controller).'Controller'.PHP_EXT;
 			$controller_name = '\\App\\Module\\'.ucfirst(self::$module).'\\'.ucfirst(self::$controller).'Controller';
-			if (class_exists($controller_name)) {
+			
+			if (file_exists($file_name)) {
 				new $controller_name(self::$action);
 				exit;
 			}
 		} 
-		request_error_found(404);	 
+		request_not_found();	 
 	}
 		
 	public static function getContainer()

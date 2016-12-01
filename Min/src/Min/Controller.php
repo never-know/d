@@ -7,6 +7,18 @@ class Controller
 {	
 	protected $sharedService = [];
 	
+	public function __construct($action)
+	{	
+		$key = $action.'_'.(strtolower($_SERVER['REQUEST_METHOD'])?:'get');
+		
+		if (method_exists($this, $key)){
+			$this->{$key}();
+		}else{
+			$this->response(404);
+		}
+		exit; 
+	}
+	
 	final public function request($server, $params, $construct = null, $shared = false)
 	{
 		if (empty($server)) {
@@ -45,23 +57,24 @@ class Controller
 		}
 	}
 
-	final public function response($result = [], $layout = 'frame')
+	final public function response($result = null, $layout = 'frame')
 	{	
-		if (is_numeric($result)) $result['status'] = $result;
+		if ($result == 404) {
+			request_not_found();
+		} elseif ($result == 500) {
+			request_error_found();
+		} else {
+			
+			defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
+			defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 		
-		defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
-		defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
-	
-		if(isset($result['redirect'])) {
-			redirect($result['redirect']);
-			exit;
+			if(isset($result['redirect'])) {
+				redirect($result['redirect']);
+				exit;
+			}
+		
+			require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
 		}
-		
-		// 读缓存
-		
-		
-		
-		require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
 		exit;
 	}
 

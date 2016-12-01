@@ -3,25 +3,18 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class IndexController
+class IndexController extends \Min\Controller
 {
-	public function __construct($args)
-	{
-		if ($args=='index') {
-			$this->index();
-		} elseif ($args=='test') {
-			$this->test();
-		}
-		exit;
-	}
+	 
 
-	private function index()
+	public function index_get()
 	{
-		layout();
+		$this->response();
 	}
-	private function test()
+	
+	public function test()
 	{
-		layout();
+		$this->response();
 	}
 
 

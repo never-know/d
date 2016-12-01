@@ -3,19 +3,9 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class RegistController extends \App\Module\BaseController
+class RegistController extends \Min\Controller
 {
-	public function __construct($action) 
-	{	
-		if ($action == 'index') {
-			$this->index();
-		} elseif ($action=='send') {
-			$this->send();
-		}
-		exit;
-	}
-
-	private function index()
+	private function index_get()
 	{
 		if(!isset($_SESSION)){
 			App::initSession(true);  

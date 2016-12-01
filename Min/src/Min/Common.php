@@ -11,7 +11,7 @@ function autoload($class)
 	
 	switch ($path_info[0]) {
 		case 'App' :
-			$file	= APP_PATH .'/'. $path . PHP_EXT;
+			$file	= APP_PATH .'/'. $path_info[1] . PHP_EXT;
 			break;
 		case 'Min' :
 			$file	= MIN_PATH . '/' . $path . PHP_EXT;
@@ -266,7 +266,7 @@ function get_config($section, $default = null)
 function view($result, $path = '')
 {
 	if (empty($path)) {
-		$path =  App::getModule().'/'.  App::getController().'/'.  App::getAction();
+		$path =  '/'.App::getModule().'/'.  App::getController().'/'.  App::getAction();
 	}
 	require VIEW_PATH.$path.VIEW_EXT;
 }
@@ -278,7 +278,7 @@ function request_not_found()
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 
-	require VIEW_APTH.'/common/404.'.VIEW_EXT;;
+	require VIEW_PATH.'/layout/404'.VIEW_EXT;
 	exit;
 }	
 
@@ -289,7 +289,7 @@ function request_error_found()
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 	
-	require VIEW_APTH.'/common/500.'.VIEW_EXT;
+	require VIEW_PATH.'/layout/500'.VIEW_EXT;
 	exit;
 } 
 
