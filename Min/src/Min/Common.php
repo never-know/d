@@ -275,7 +275,7 @@ function request_not_found()
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 
 	$url = empty($_SERVER['HTTP_REFERER'])?'':check_plain($_SERVER['HTTP_REFERER']);
-	$result = (!empty($url) || preg_match('!^http[s]?\:[a-z]+\.'.SITE_DOMAIN.'!', $url))?[':url'=>$url, '@title'=>t('上一页')]:[':url'=>HOME_PAGE, '@title'=> t('首页')];
+	$result = (!empty($url) || preg_match('!^http[s]?\:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url))?[':url'=>$url, '!title'=>'上一页']:[':url'=>HOME_PAGE, '!title'=> '首页'];
 	
 	view($result, '/layout/404');
 	exit;
@@ -288,7 +288,11 @@ function request_error_found()
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 	
-	require VIEW_PATH.'/layout/500'.VIEW_EXT;
+	$url = empty($_SERVER['HTTP_REFERER']) ? '' : check_plain($_SERVER['HTTP_REFERER']);
+	
+	$result = (!empty($url) && preg_match('!^http[s]?\:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? [':url'=>$url, '!title'=>'上一页'] : [':url'=>HOME_PAGE, '!title'=> '首页'];
+	
+	view($result, '/layout/500');
 	exit;
 } 
 

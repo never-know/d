@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
 <head>
 <meta charset="utf-8">
+<?php echo t('<meta http-equiv="Refresh" content="1.5;URL=:url">',$result);?>
 <link rel="stylesheet" href="/public/css/reset.css">
 <link rel="stylesheet" href="/public/font/iconfont.css">
 <link rel="stylesheet" href="/public/css/yi.css">
@@ -56,9 +57,8 @@ a {
          <p>懵啦。。。。</p>
          <hr>
          <p>
-           <a href="/">返回首页</a>
-           <span>或者</span>
-           <a href="javascript:;" id="js-history-back">返回上页</a>
+           <span>即将为您跳转至</span>
+		   <?php echo t('<a href=":url" id="js-history-back">!title</a>',$result);?>
          </p>
        </div>
       </div>
