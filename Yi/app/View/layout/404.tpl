@@ -2,8 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
 <head>
 <meta charset="utf-8">
-<?php echo t('<meta http-equiv="Refresh" content="2; URL=:url">',$result);?>
-<link rel="stylesheet" href="/public/css/reset.css">
+<meta http-equiv="Refresh" content="2; URL=<?=$result['url'];?>">
 <link rel="stylesheet" href="/public/font/iconfont.css">
 <link rel="stylesheet" href="/public/css/yi.css">
 <style>
@@ -58,7 +57,7 @@ a {
          <hr>
          <p>
            <span>即将为您跳转至</span>
-		   <?php echo t('<a href=":url" id="js-history-back">!title</a>',$result);?>
+		   <a href="<?=$result['url'];?>" id="js-history-back"><?=$result['title'];?></a>
          </p>
        </div>
       </div>

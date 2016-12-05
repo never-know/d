@@ -143,20 +143,25 @@ function get_token($value = '')
 	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
 }
 
-function drupal_valid_token($token, $value = '', $skip_anonymous = FALSE) 
+function valid_token($token, $value = '', $skip_anonymous = FALSE) 
 {
   return ($skip || ($token === get_token($value)));
 }
-	
+// 安全的在html中输出字符串	
 function check_plain($text) 
 {
 	return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
-
+// 安全的在js中插入Php代码
+function min_json_encode($var) 
+{ 
+    return json_encode($var, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+}
+// 从php, html 代码中提取文本
 function check_plain_from_html($string) {
     return html_entity_decode(strip_tags($string));
 }
-
+// 处理url
 function check_url($uri) 
 {
     $uri = html_entity_decode($uri, ENT_QUOTES, 'UTF-8');
@@ -274,8 +279,8 @@ function request_not_found()
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 
-	$url = empty($_SERVER['HTTP_REFERER'])?'':check_plain($_SERVER['HTTP_REFERER']);
-	$result = (!empty($url) || preg_match('!^http[s]?\:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url))?[':url'=>$url, '!title'=>'上一页']:[':url'=>HOME_PAGE, '!title'=> '首页'];
+	$url = empty($_SERVER['HTTP_REFERER'])? null : check_url($_SERVER['HTTP_REFERER']);
+	$result = (!empty($url) || preg_match('!^http[s]?:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url))?['url'=>$url, 'title'=>'上一页']:['url'=>HOME_PAGE, 'title'=> '首页'];
 	
 	view($result, '/layout/404');
 	exit;
@@ -288,9 +293,9 @@ function request_error_found()
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 	
-	$url = empty($_SERVER['HTTP_REFERER']) ? '' : check_plain($_SERVER['HTTP_REFERER']);
+	$url = empty($_SERVER['HTTP_REFERER']) ? null : check_url($_SERVER['HTTP_REFERER']);
 	
-	$result = (!empty($url) && preg_match('!^http[s]?\:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? [':url'=>$url, '!title'=>'上一页'] : [':url'=>HOME_PAGE, '!title'=> '首页'];
+	$result = (!empty($url) && preg_match('!^http[s]?:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? ['url'=>$url, 'title'=>'上一页'] : ['url'=>HOME_PAGE, 'title'=> '首页'];
 	
 	view($result, '/layout/500');
 	exit;
