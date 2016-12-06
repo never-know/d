@@ -9,6 +9,8 @@ class Controller
 	
 	public function __construct($action)
 	{	
+		$this->validToken();
+		
 		$key = $action.'_'.(strtolower($_SERVER['REQUEST_METHOD'])?:'get');
 		
 		if (method_exists($this, $key)){
@@ -59,12 +61,9 @@ class Controller
 
 	final public function response($result = null, $layout = 'frame')
 	{	
-		if ($result == 404) {
-			request_not_found();
-		} elseif ($result == 500) {
-			request_error_found();
-		} else {
-			
+		if ($result == 404 || $result == 500) {
+			request_not_found($result);
+		} else {			
 			defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 			defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 		
@@ -76,6 +75,12 @@ class Controller
 			require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
 		}
 		exit;
+	}
+	final public function validToken(){
+		
+		if (IS_POST && (empty($_POST['crsf_token']) || !valid_token($_POST['crsf_token']))) {
+			$this->response(100000);
+		}
 	}
 
 }

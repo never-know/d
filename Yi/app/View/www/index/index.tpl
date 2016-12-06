@@ -10,13 +10,16 @@
 
 <?php  $url = 'http://www.yi.com';  echo str_replace('.', '\.', SITE_DOMAIN);  var_dump(preg_match('!^http[s]?://[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)); ?>
 
-<?php $c ='123;alert(1);
-var b = \'';?>
+<?php $c ='123";alert(1);</script><script>\\;var b = \'';?>
 
 <script>
 
- var a = '<?=$c;?>';
- var a = <?=check_plain($c);?>;
+ 
+ 
+ var b = <?=safe_json_encode($c);?>;
+ var a = <?=min_json_encode($c);?>;
+ 
+ 
 
 </script>
  

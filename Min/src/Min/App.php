@@ -8,7 +8,6 @@ class App
 	protected  static $action;
 	protected  static $args;
 	protected  static $container;
-	protected  static $variables;
 	protected  static $booted = false;
 	
 	protected static function setContainer($di)
@@ -16,7 +15,7 @@ class App
 		self::$container = $di;
 	}
 	protected static function dispatch()
-	{
+	{	
 		// path info 在服务器完成配置
 		if (!empty($_SERVER['PATH_INFO']) && preg_match('/^(?:\/[a-zA-Z0-9]+){2,}$/', $_SERVER['PATH_INFO'])) {	
 				
@@ -62,17 +61,9 @@ class App
 	{
 		return self::$args;		 
 	}
-	public static function setVar($key, $value)
-	{
-		self::$variables[$key] = $value;
-	}
-	public static function getVar($key)
-	{	
-		return self::$variables[$key] ?? null;
-	}
 	public static function __callStatic($name, $arguments = [])
 	{  
-		return self::$container->get($name, $arguments);
+		return null;
 	}
 	public static function initSession($force = false)
 	{

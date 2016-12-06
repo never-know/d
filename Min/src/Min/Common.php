@@ -72,12 +72,12 @@ function redirect($url, $time = 0, $msg = '')
 		if (0 === $time) {
 			header('Location: ' . $url);
 		} else {
-			header("refresh:{$time};url={$url}");
+			header('refresh:'. $time. ';url='. $url);
 			echo($msg);
 		}
 		exit();
 	} else {
-		$str  = "<meta http-equiv='Refresh' content='{$time};URL={$url}'>";
+		$str  = '<meta http-equiv="Refresh" content="'. $time. ';URL='. $url. '">';
 		if ($time != 0) $str .= $msg;
 		exit($str);
 	}
@@ -122,7 +122,7 @@ function ajax_return($arr)
 	if (!headers_sent()) {
 		header('Content-Type:application/json; charset=utf-8');
 	}
-	exit(json_encode($arr));	
+	exit(safe_json_encode($arr));	
 }
 
 function jsonp_return($arr)
@@ -131,11 +131,14 @@ function jsonp_return($arr)
 		if (!headers_sent()) {
 			header('Content-Type:application/html; charset=utf-8');
 		}
-		echo 'callback',$_GET['callback'],'(',json_encode($arr),')';
+		echo 'callback',$_GET['callback'],'(',safe_json_encode($arr),')';
 	}
 	exit;
 }
-
+function current_path() 
+{
+  return $_SERVER['PATH_INFO_ORIGIN'].'.html';
+}
 function get_token($value = '') 
 {
 	$key = session_id() . conf_get['private_key'] . conf_get['hash_salt'];
@@ -143,9 +146,9 @@ function get_token($value = '')
 	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
 }
 
-function valid_token($token, $value = '', $skip_anonymous = FALSE) 
+function valid_token($token, $value = '', $skip = FALSE) 
 {
-  return ($skip || ($token === get_token($value)));
+  return ($token === get_token($value));
 }
 // 安全的在html中输出字符串	
 function check_plain($text) 
@@ -153,7 +156,7 @@ function check_plain($text)
 	return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 // 安全的在js中插入Php代码
-function min_json_encode($var) 
+function safe_json_encode($var) 
 { 
     return json_encode($var, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 }
@@ -170,7 +173,7 @@ function check_url($uri)
 
 function strip_dangerous_protocols($uri) 
 {
-	$allowed_protocols = array_flip(['http', 'https']);
+	$allowed_protocols = array_flip(['http', 'https', 'tel']);
     //$allowed_protocols = array_flip(['ftp', 'http', 'https', 'irc', 'mailto', 'news', 'nntp', 'rtsp', 'sftp', 'ssh', 'tel', 'telnet', 'webcal']);
   
   // Iteratively remove any invalid protocol found.
@@ -272,34 +275,19 @@ function view($result, $path = '')
 	require VIEW_PATH.$path.VIEW_EXT;
 }
 
-function request_not_found() 
+function request_not_found($code = 404) 
 {	
-	$result['status'] = 404;
+	$result['status'] = $code;
 	
 	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
 	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
 
 	$url = empty($_SERVER['HTTP_REFERER'])? null : check_url($_SERVER['HTTP_REFERER']);
-	$result = (!empty($url) || preg_match('!^http[s]?:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url))?['url'=>$url, 'title'=>'上一页']:['url'=>HOME_PAGE, 'title'=> '首页'];
+	$result = (!empty($url) || preg_match('!^http[s]?:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? ['url'=> $url, 'title'=> '上一页'] : ['url'=> HOME_PAGE, 'title'=> '首页'];
 	
-	view($result, '/layout/404');
+	view($result, '/layout/'.$code);
 	exit;
 }	
-
-function request_error_found() 
-{	
-	$result['status'] = 500;
-	
-	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
-	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
-	
-	$url = empty($_SERVER['HTTP_REFERER']) ? null : check_url($_SERVER['HTTP_REFERER']);
-	
-	$result = (!empty($url) && preg_match('!^http[s]?:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? ['url'=>$url, 'title'=>'上一页'] : ['url'=>HOME_PAGE, 'title'=> '首页'];
-	
-	view($result, '/layout/500');
-	exit;
-} 
 
 function site_offline() 
 {
@@ -318,7 +306,7 @@ function app_tails()
 	}
 	$log->record();
 	if (isset($error['type']) && $error['type'] == E_ERROR) {
-		request_error_found();
+		request_not_found(500);
 	}
 }
 
@@ -346,7 +334,7 @@ function app_error($errno, $errstr, $errfile, $errline)
 	watchdog(error_message_format($me), $type, [], 'default');
 	
 	if ($type == 'ERROR') {
-		request_error_found();
+		request_not_found(500);
 	}
 	return true;
 }
@@ -361,5 +349,5 @@ function app_exception($e)
 		'type'		=> $e->getCode()
 	];
 	watchdog(error_message_format($me), 'CRITICAL', debug_backtrace(), 'default');
-	request_error_found();
+	request_not_found(500);
 }
