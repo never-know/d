@@ -275,17 +275,36 @@ function view($result, $path = '')
 	require VIEW_PATH.$path.VIEW_EXT;
 }
 
-function request_not_found($code = 404) 
+function request_not_found($code, $message = '请求失败', $redirect = '') 
 {	
-	$result['status'] = $code;
+	if (IS_AJAX || IS_JSONP) {
+		$result['code'] = $code;
+		$result['message'] = $message;
+		if (!empty($redirect)) $result['redirect'] = $redirect;
 	
-	defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
-	defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
+		IS_AJAX  && ajax_return($result); 		
+		IS_JSONP && jsonp_return($result);
+	}
 
 	$url = empty($_SERVER['HTTP_REFERER'])? null : check_url($_SERVER['HTTP_REFERER']);
-	$result = (!empty($url) || preg_match('!^http[s]?:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? ['url'=> $url, 'title'=> '上一页'] : ['url'=> HOME_PAGE, 'title'=> '首页'];
 	
-	view($result, '/layout/'.$code);
+	$result = (!empty($url) || preg_match('!^http[s]?:[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? ['url'=> $url, 'title'=> '上一页'] : ['url'=> HOME_PAGE, 'title'=> '首页'];
+	if ($code == 500) {
+		$result['message'] = '<p>
+           <strong>服务器遇到一个问题...</strong>
+         </p>
+         <p>懵啦。。。麻烦您再来一次</p>
+		<hr>
+		 ';
+	} else {
+		$result['message'] = ' <p>
+           <strong>页面找不到了</strong>
+         </p>
+         <p>页面可能已经被移出，或者您请求的链接存在错误</p>
+         <hr>';
+	}
+	
+	view($result, '/layout/404');
 	exit;
 }	
 

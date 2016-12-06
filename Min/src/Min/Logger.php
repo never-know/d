@@ -33,7 +33,6 @@ class Logger
 	
 	public function log($message, $level = 'ERROR', $extra = [], $channel = '')
 	{	
-		echo $level;
 		$level = strtoupper($level);
 		if (empty($this->allowed[$level])) return;
 		if (empty($channel)) $channel = $this->channel;

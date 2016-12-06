@@ -58,28 +58,27 @@ class Controller
 			return null;
 		}
 	}
-
-	final public function response($result = null, $layout = 'frame')
+	
+	final public function success($result = [], $layout = 'frame')
 	{	
-		if ($result == 404 || $result == 500) {
-			request_not_found($result);
-		} else {			
-			defined('IS_AJAX') 	&& IS_AJAX  && ajax_return($result); 		
-			defined('IS_JSONP') && IS_JSONP && jsonp_return($result);
+		$result['code'] = 0;		
+		IS_AJAX  && ajax_return($result); 		
+		IS_JSONP && jsonp_return($result);
 		
-			if(isset($result['redirect'])) {
-				redirect($result['redirect']);
-				exit;
-			}
-		
-			require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
-		}
+		require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
 		exit;
 	}
+	
+	final public function error($code, $message = '', $redirect = '')
+	{	
+		request_not_found($code, $message, $redirect);
+	}
+	
+	
 	final public function validToken(){
 		
 		if (IS_POST && (empty($_POST['crsf_token']) || !valid_token($_POST['crsf_token']))) {
-			$this->response(100000);
+			$this->response(30101);
 		}
 	}
 

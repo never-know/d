@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
 <head>
 <meta charset="utf-8">
-<?php echo t('<meta http-equiv="Refresh" content="1.5;URL=:url">',$result);?>
+<?php echo t('<meta http-equiv="Refresh" content="2;URL=:url">',$result);?>
 <link rel="stylesheet" href="/public/css/reset.css">
 <link rel="stylesheet" href="/public/font/iconfont.css">
 <link rel="stylesheet" href="/public/css/yi.css">
