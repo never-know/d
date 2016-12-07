@@ -16,7 +16,7 @@ class Controller
 		if (method_exists($this, $key)){
 			$this->{$key}();
 		}else{
-			$this->response(404);
+			$this->error(404);
 		}
 		exit; 
 	}
@@ -78,7 +78,7 @@ class Controller
 	final public function validToken(){
 		
 		if (IS_POST && (empty($_POST['crsf_token']) || !valid_token($_POST['crsf_token']))) {
-			$this->response(30101);
+			$this->error(30101);
 		}
 	}
 

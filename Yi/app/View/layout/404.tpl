@@ -45,16 +45,12 @@ a {
       <div class="error">
         <h1 class="header">
           <a href="/" class="logo">
-            <img src="/public/images/logo.jpg" srcset="/public/images/logo.jpg" alt="知乎">
+            <img src="/public/images/logo.jpg" srcset="/public/images/logo.jpg" alt="">
           </a>
           - 404
         </h1>
         <div class="content">
-         <p>
-           <strong>我们来到了南极还是北极...</strong>
-         </p>
-         <p>找不到北啦。。。。</p>
-         <hr>
+         <?=$result['message'];?>
          <p>
            <span>即将为您跳转至</span>
 		   <a href="<?=$result['url'];?>" id="js-history-back"><?=$result['title'];?></a>
@@ -62,16 +58,8 @@ a {
        </div>
       </div>
     </div>
-	<!--
-    <script type="text/javascript" async="" src="https://ssl.google-analytics.com/ga.js"></script>
-	<script src="//zhstatic.zhihu.com/assets/zap/2.1.2/zap.js"></script>
-    <script src="//static.zhihu.com/static/js/desktop/404.js"></script>
-	-->
 </body>
 <script>
- var backButton = document.getElementById('js-history-back')
-  backButton.onclick = function() {
-    history.go(-1);
-  }
+
 </script>
 </html>
