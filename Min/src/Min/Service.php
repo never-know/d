@@ -3,8 +3,9 @@ namespace Min;
 
 class Service
 {	
-	final public function success($result = [], $message = '操作成功')
+	final public function success($message = '操作成功', $body = [])
 	{	
+		if (!empty($body)) $result['body'] = $body;
 		$result['code'] = 0;
 		$result['message'] = $message;
 		return $result;

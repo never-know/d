@@ -31,8 +31,8 @@ class AccountService
 			$this->clean_cache 	= true;
 			
 			if (empty($cache_result)){	
-				$sql = "SELECT 1 FROM user  WHERE  {$r['type']} = ? limit 1";
-				$sql_result	= DB('user#user')->query('single',$sql,'s',[$r['name']]);
+				$sql = 'SELECT 1 FROM user  WHERE '. $r['type'].' = ? limit 1 ';
+				$sql_result	= DM('user')->query('single',$sql,'s',[$r['name']]);
 				
 				if (!empty($sql_result)) {
 					$result = 1 ;
@@ -53,7 +53,7 @@ class AccountService
 		if ($reg_result > 1) {
 			//清理 注册缓存
 			if($this->clean_cache) CM('checkaccount')->delete('{phone:}'.md5($_user['phone']));
-			$this->success('注册成功');
+			$this->success('注册成功', ['uid' => $reg_result]);
 		} else {
 			$this->error(301100, '注册失败');
 		}

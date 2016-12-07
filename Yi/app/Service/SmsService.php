@@ -18,7 +18,7 @@ class Sms extends Min\Service
 	public function realSend($code, $phone)
 	{
 		if (empty($code) || empty($phone)) {
-			throw new \Exception('parameter error');
+			throw new \Exception('smsService realSend parameter error');
 		} else {
 			include VENDOR_PATH . '/Alidayu/TopSdk.php';
 
@@ -45,16 +45,16 @@ class Sms extends Min\Service
 			
 			$code = mt_rand(111111, 999999);
  
-			$result = $this->realSend();
+			$result = $this->realSend($code, $phone);
 			if (isset($result->code)) {
 				// $result->code = 15  ==> 每个号码每小时最多发送7次 
-				return $this->error(30112, '发送失败');
+				return $this->error('发送失败', 30112);
 			} else {
 				$this->set($phone, ['code' => $code, 'ctime' => $_SERVER['REQUEST_TIME']]);
 				return $this->success('发送成功');
 			}
 		} else {
-			return $this->error(30113, '短信验证码已发送');
+			return $this->error('短信验证码已发送', 30113);
 		}
 	}
 	
@@ -82,15 +82,15 @@ class Sms extends Min\Service
 		if (isset($sc['ctime']) && isset($sc['code'])) {
 			
 			if (600 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
-				return $this->error(30110, '验证码已过期');
+				return $this->error('验证码已过期', 30110);
 			} elseif ($sc['code'] == $arr['code']){
 				return $this->success();
 			} else {
-				return $this->error(30110, '验证码错误');
+				return $this->error('验证码错误', 30110);
 			}
 			
 		} else {
-			return (30110,'验证码错误或超时，请重试' );
+			return $this->error('验证码错误或超时，请重试', 30110);
 		}
 	}
 	
