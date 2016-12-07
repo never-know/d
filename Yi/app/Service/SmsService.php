@@ -4,30 +4,22 @@
 */
 namespace App\Service;
 
-use Min\App;
-
-class Sms
+class Sms extends Min\Service
 {	
 	private $appkey ='23314175';
 	private $secretkey ='e1aecb8048afb006b3d03937b8743972' ;
 	private $type;
 
-	public function __construct($type = '')
-	{
-		if (!empty($type)) {
-			$this->type = $type;
-		}
-	}
 	public function init($type)
 	{
 		$this->type = $type;
 		return $this;
 	}
-	public function regSend($arr)
+	public function realSend($code, $phone)
 	{
-		if (empty($arr['code']) || empty($arr['phone'])) {
+		if (empty($code) || empty($phone)) {
 			throw new \Exception('parameter error');
-		}else{
+		} else {
 			include VENDOR_PATH . '/Alidayu/TopSdk.php';
 
 			$c = new \TopClient($this->appkey, $this->secretkey);
@@ -45,36 +37,60 @@ class Sms
 		}		
 	}
 	
+	public function send($phone)
+	{
+		$sc =  $this->get($phone); 
+		
+		if (empty($sc) || 60 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
+			
+			$code = mt_rand(111111, 999999);
+ 
+			$result = $this->realSend();
+			if (isset($result->code)) {
+				// $result->code = 15  ==> 每个号码每小时最多发送7次 
+				return $this->error(30112, '发送失败');
+			} else {
+				$this->set($phone, ['code' => $code, 'ctime' => $_SERVER['REQUEST_TIME']]);
+				return $this->success('发送成功');
+			}
+		} else {
+			return $this->error(30113, '短信验证码已发送');
+		}
+	}
+	
 	public function get($name)
 	{
 		$regkey = '{sms:}' .$this->type .$name;
-		return   cache_manager('sms')->get($regkey);
+		return   CM('sms')->get($regkey);
 	}
 	
 	public function set($name, $value)
 	{
 		$regkey = '{sms:}'.$this->type.$name;
-		return   cache_manager('sms')->set( $regkey, $value);
+		return   CM('sms')->set( $regkey, $value);
 	}
 	public function move($name,$value)
 	{	
 		$regkey = '{sms:}'.$this->type.$name.':'.$value['ctime'];
-		cache_manager('sms_out')->set($regkey,$value['code']);
+		CM('sms_out')->set($regkey,$value['code']);
 	}
 	
-	public function check($name,$code)
+	public function check($arr)
 	{
-		$sc = $this->get($name);		
+		$sc = $this->get($arr['phone']);	
+		
 		if (isset($sc['ctime']) && isset($sc['code'])) {
+			
 			if (600 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
-				app::usrerror( 3,'验证码超时，请重新发送' );
-			}elseif($sc['code'] == $code){
-				return true;
-			}else{
-				app::usrerror( 3,'验证码错误，请重试' );
-			}	
-		}else{
-			app::usrerror( 3,'验证码错误或超时，请重试' );
+				return $this->error(30110, '验证码已过期');
+			} elseif ($sc['code'] == $arr['code']){
+				return $this->success();
+			} else {
+				return $this->error(30110, '验证码错误');
+			}
+			
+		} else {
+			return (30110,'验证码错误或超时，请重试' );
 		}
 	}
 	

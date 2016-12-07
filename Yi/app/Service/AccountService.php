@@ -45,11 +45,18 @@ class AccountService
 		}
 	}
 
-	public function addUserByPhone($phone,$pwd) {
+	public function addUserByPhone($regist_data) {
 	
-		$pwd = password_hash($pwd, PASSWORD_BCRYPT,['cost'=>9]);
-		$sql = 'insert into user ( phone, pwd ) values(? ,?)';
-		return DB('user#user')->query('insert',$sql,'ss',[$phone,$pwd]);
+		$regist_data['pwd'] = password_hash($regist_data['pwd'], PASSWORD_BCRYPT, ['cost' => 9]);		
+		$sql = 'insert into user (phone, pwd, regtime, regip) values(?,?,?,?)';
+		$reg_result =  DM('user')->query('insert',$sql,'isii',$regist_data);
+		if ($reg_result > 1) {
+			//清理 注册缓存
+			if($this->clean_cache) CM('checkaccount')->delete('{phone:}'.md5($_user['phone']));
+			$this->success('注册成功');
+		} else {
+			$this->error(301100, '注册失败');
+		}
 	}
 	
 	public function checkPwd($name) {
@@ -64,35 +71,9 @@ class AccountService
 			app::usrerror(0,'用户名或密码错误',['loginname'=>$name]);	
 		 }
 
-		$sql_result	= DB('user#user')->query('single',$sql);
+		$sql_result	= DM('user')->query('single',$sql);
 		
 		return $sql_result;	
 	}
 	
-	public function initUser($user){
-	
-		if($user['uid']>0){
-			// 每次登陆都需要更换session id ;
-			session_regenerate_id();
-			 
-			$nickname = empty($user['name']) ? $user['phone'] : $user['name'];
-			
-			app::usrerror(-999,$nickname,$user);
-			setcookie('nickname',$nickname,0,'/',COOKIE_DOMAIN);
-			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
-			// 此处应与 logincontroller islogged 相同
-			
-			setcookie('logged',1, time()+ ini_get('session.gc_maxlifetime')-10,'/',COOKIE_DOMAIN);
-			$_SESSION['logined'] = true;
-			$_SESSION['UID'] = $user['uid'];
-
-			//清理 注册缓存
-			if($this->clean_cache)
-			app::cache('checkaccount')->delete('{phone:}'.md5($_user['phone']));
-	
-		}
-	}
-
-
-
 }
