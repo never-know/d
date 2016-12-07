@@ -18,7 +18,7 @@ class Sms
 			$this->type = $type;
 		}
 	}
-	public function setType($type)
+	public function init($type)
 	{
 		$this->type = $type;
 		return $this;
@@ -48,18 +48,18 @@ class Sms
 	public function get($name)
 	{
 		$regkey = '{sms:}' .$this->type .$name;
-		return   App::cache('sms')->get($regkey);
+		return   cache_manager('sms')->get($regkey);
 	}
 	
 	public function set($name, $value)
 	{
 		$regkey = '{sms:}'.$this->type.$name;
-		return   App::cache('sms')->set( $regkey, $value);
+		return   cache_manager('sms')->set( $regkey, $value);
 	}
 	public function move($name,$value)
 	{	
 		$regkey = '{sms:}'.$this->type.$name.':'.$value['ctime'];
-		App::cache('sms_out')->set($regkey,$value['code']);
+		cache_manager('sms_out')->set($regkey,$value['code']);
 	}
 	
 	public function check($name,$code)

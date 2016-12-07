@@ -147,7 +147,7 @@ function get_token($value = '')
 	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
 }
 
-function valid_token($token, $value = '', $skip = FALSE) 
+function valid_token($token, $value = '') 
 {
   return ($token === get_token($value));
 }
@@ -248,15 +248,18 @@ function watchdog($msg = '', $level = 'INFO', $extra = [], $channel = null)
 	App::getService('Logger')->init($channel)->log($msg, $level, $extra);		
 }
 
-function DB($key)
-{
-	return App::getService('DB')->init($key);		
+function DM($type, $key = null)
+{		
+	$db_setting = get_config('backend');
+	$value = $db_setting[$type]?:$db_setting['default'];
+	return App::getService($value['bin'])->init($value['key']);
 }
 
-function cache_manager($type, $key = null)
+function CM($type, $key = null)
 {
-	$type = ucfirst($type).'Cache';
-	return App::getService($type)->init($key);
+	$cache_setting = get_config('cache');
+	$value = $cache_setting[$type]?:$cache_setting['default'];
+	return App::getService($value['bin'])->init($value['key']);
 }
 
 function get_config($section, $default = null)

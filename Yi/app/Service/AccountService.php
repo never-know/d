@@ -23,25 +23,23 @@ class AccountService
 
 		if( !in_array($r['type'],['phone','email','name'])) {
 		
-			throw new \Exception('帐号类型错误');
+			throw new \Exception('帐号类型错误');	
 			
 		}else{	
-		
 			$key		= $r['type'] .md5($r['name']);
-			$result 	= retrieve('cacheManager', 'checkAccount')>get($key);
+			$cache_result 	= CM('checkAccount')->get($key);
 			$this->clean_cache 	= true;
 			
-			if( empty($result) ){	
-				$sql = "SELECT 1 FROM user  WHERE  $r['type'] = ? limit 1";
-				$sql_result	= App::db('user#user')->query('single',$sql,'s',[$r['name']]);
-				if( !empty($sql_result) ){
+			if (empty($cache_result)){	
+				$sql = "SELECT 1 FROM user  WHERE  {$r['type']} = ? limit 1";
+				$sql_result	= DB('user#user')->query('single',$sql,'s',[$r['name']]);
+				
+				if (!empty($sql_result)) {
 					$result = 1 ;
-				}elseif( $sql_result === null){
+				} elseif ($sql_result === null) {
 					$result = 2 ;	
-				}else{
-					trigger_error('system error', E_USER_ERROR);
 				}
-				app::cache()->set($key,$result,3600);
+				app::cache()->set($key, $result, 3600);
 			}
 			return $result;
 		}
@@ -49,9 +47,9 @@ class AccountService
 
 	public function addUserByPhone($phone,$pwd) {
 	
-		$pwd = password_hash($pwd, PASSWORD_BCRYPT,['cost'=>10]);
-		$sql = 'insert into user (phone,pwd) values(? ,?)';
-		return app::mysqli('user#user')->query('insert',$sql,'ss',[$phone,$pwd]);
+		$pwd = password_hash($pwd, PASSWORD_BCRYPT,['cost'=>9]);
+		$sql = 'insert into user ( phone, pwd ) values(? ,?)';
+		return DB('user#user')->query('insert',$sql,'ss',[$phone,$pwd]);
 	}
 	
 	public function checkPwd($name) {
@@ -66,7 +64,7 @@ class AccountService
 			app::usrerror(0,'用户名或密码错误',['loginname'=>$name]);	
 		 }
 
-		$sql_result	= app::mysqli('user#user')->query('single',$sql);
+		$sql_result	= DB('user#user')->query('single',$sql);
 		
 		return $sql_result;	
 	}

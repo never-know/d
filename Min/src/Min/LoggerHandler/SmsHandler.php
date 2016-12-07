@@ -1,5 +1,5 @@
 <?php
-namespace Min\Logger;
+namespace Min\LoggerHandler;
 
 class SmsHandler
 {

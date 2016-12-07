@@ -9,7 +9,7 @@ class Controller
 	
 	public function __construct($action)
 	{	
-		$this->validToken();
+		$this->validToken('form_'.$action);
 		
 		$key = $action.'_'.(strtolower($_SERVER['REQUEST_METHOD'])?:'get');
 		
@@ -58,6 +58,11 @@ class Controller
 			return null;
 		}
 	}
+	final public function layout($layout = 'frame')
+	{	
+		require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
+		exit;
+	}
 	
 	final public function success($result = [], $layout = 'frame')
 	{	
@@ -69,13 +74,14 @@ class Controller
 		exit;
 	}
 	
+	
 	final public function error($code, $message = '', $redirect = '')
 	{	
 		request_not_found($code, $message, $redirect);
 	}
 	
 	
-	final public function validToken(){
+	final public function validToken($value){
 		
 		if (IS_POST && (empty($_POST['crsf_token']) || !valid_token($_POST['crsf_token']))) {
 			$this->error(30101);

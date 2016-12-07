@@ -1,5 +1,5 @@
 <?php
-namespace Min;
+namespace Min\Cache;
 
 /**
  * file as cache 
@@ -10,20 +10,20 @@ namespace Min;
 class FileCache
 {
     private $option = [];
+	private $active	= 'default';
 	
 	public function  __construct($db_key = '') 
 	{
-		$this->option = get_config('filecache');	
+		$this->option = get_config('FileCache');	
 	}
 	 
-	
-	public function init($option = null)
-    { 
-		if (is_array($option)) {
-			arrray_merge($this->option, $option);
+	public function init($key)
+	{
+		if (!empty($key) && empty($this->conf[$key])) {
+			$this->active = $key;
 		}
 		return $this;
-    }
+	}
 
     /**
      * Fetches an entry from the cache.
@@ -83,7 +83,7 @@ class FileCache
     {
         $hash = md5($id);
         $dirs = [
-            $this->option['cache_dir'],
+            $this->option[$this->active]['cache_dir'],
             substr($hash, 0, 2),
             substr($hash, 2, 2),
             substr($hash, 4, 2),

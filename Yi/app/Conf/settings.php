@@ -1,8 +1,40 @@
 <?php
 
+# backend
+
+$conf['backend'] = array (
+	'default' => array (
+		'bin' => 'Mysql',
+		'key' => 'default'
+	),
+	'user' => array (
+		'bin' => 'Mysql',
+		'key' => 'default'
+	)
+);
+
+# backend
+
+$conf['cache'] = array (
+	'default' => array (
+		'bin' => 'RedisCache',
+		'key' => 'default'
+	),
+	'user' => array (
+		'bin' => 'RedisCache',
+		'key' => 'default'
+	),
+	'content' => array (
+		'bin' => 'FileCache',
+		'key' => 'default',
+	)
+);
+
+
+
 # mysql
  
-$conf['mysql'] = array (
+$conf['Mysql'] = array (
 	'default' => array (
 		'master' => array (
 			'database' => 'D72',
@@ -36,7 +68,7 @@ $conf['mysql'] = array (
 
 # logger
 
-$conf['logger'] = array (
+$conf['Logger'] = array (
 	'DEBUG' => 100,
     'INFO' => 200,
 	'NOTICE' => 250,
@@ -52,13 +84,13 @@ $conf['logger'] = array (
 
 # filecache
 
-$conf['filecache'] = array (
+$conf['FileCache'] = array (
 	'cache_dir' => CACHE_PATH,
 );
 
 # redis
 
-$conf['redis'] = array (
+$conf['Redis'] = array (
 	'default' => array (
 		'host' => 'D72',
 		'port' => 'localhost',

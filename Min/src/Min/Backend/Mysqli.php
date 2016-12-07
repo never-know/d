@@ -5,9 +5,9 @@
 query(user')->;
 
 ****/
-namespace Min\Database;
+namespace Min\Backend;
 
-class Mysql
+class Mysqli
 {
 	private $active_db	= 'default';
 	private $intrans = '';
@@ -19,7 +19,7 @@ class Mysql
 
 	public function  __construct($db_key = '') 
 	{
-		$this->conf = get_config('mysql');;
+		$this->conf = get_config('Mysql');;
 	}
 	 
 	public function init($active_db) 
