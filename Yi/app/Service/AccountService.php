@@ -3,7 +3,7 @@ namespace App\Service;
 
 use Min\App;
 
-class AccountService
+class AccountService extends \Min\Service
 {
 	// 是否清理 checkaccount 产生的缓存
 	private $clean_cache = false;

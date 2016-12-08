@@ -368,11 +368,10 @@ function code_check(){
 		setError(_$('regcode-error'),'','hide');
 		 
 	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {code:code,type:'reg'}, function(data){
-		 
 			if(_$('regcode').value != code) return;
-			 if( data.status == 1 ) { 
+			 if( data.code == 0 ) { 
 				code_tag(1);
-			 }else if( data.status == 0 ){
+			 } else {
 				code_tag(2);
 				Min.print.log(data.message);
 				setError(_$('regcode-error'),data.message,'errors');

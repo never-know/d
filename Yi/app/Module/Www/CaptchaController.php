@@ -3,19 +3,9 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class CaptchaController
+class CaptchaController extends \Min\Controller
 {
-	public function __construct($action) 
-	{	
-		if ($action == 'get') {
-			$this->get();
-		} elseif ($action == 'check') {
-			$this->check();
-		}
-		exit;
-	}
-	
-	private function get()
+	public function get_get()
 	{
 		if (preg_match('/^[a-z]+$/',$_GET['type'])) {
 			$code = new \Min\Captcha;
@@ -23,16 +13,15 @@ class CaptchaController
 		}
 	}
 	
-	
-	private function check()
+	public function check_get()
 	{ 
 		if (is_numeric($_GET['callback']) && preg_match('/^[a-z]+$/',$_GET['type'])) { 
 			$code = new \Min\Captcha;
 			if (true === $code->checkCode($_GET['code'], $_GET['type'])) {
-				response(1);
+				$this->success();
 			}
 		}
-		response(0, '验证码错误');	
+		$this->error('验证码错误', 30102);	
 	}
 
 }

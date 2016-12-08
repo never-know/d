@@ -271,12 +271,13 @@ function get_config($section, $default = null)
 	return $conf[$section]?:$default;
 }
 
-function view($result, $path = '')
+function view($result = [], $path = '')
 {
 	if (empty($path)) {
 		$path =  '/'.App::getModule().'/'.  App::getController().'/'.  App::getAction();
 	}
 	require VIEW_PATH.$path.VIEW_EXT;
+	 
 }
 
 function request_not_found($code, $message = '请求失败', $redirect = '') 
@@ -320,13 +321,13 @@ function app_tails()
 	// fatal errors 
 	$error = error_get_last();
 	$log = App::getService('Logger');
-	if (isset($error['type']) && $error['type'] == E_ERROR) {
+	if (isset($error['type'])) {
 		$error['title'] = 'Fatal Error Catched By app_tails ';
 		$message = error_message_format($error);
 		$log->log($message, 'CRITICAL', debug_backtrace(), 'default');
 	}
 	$log->record();
-	if (isset($error['type']) && $error['type'] == E_ERROR) {
+	if (isset($error['type'])) {
 		request_not_found(500);
 	}
 }
@@ -351,7 +352,6 @@ function app_error($errno, $errstr, $errfile, $errline)
 		'line'		=> $errline, 
 		'type'		=> $errno
 	];
-	
 	watchdog(error_message_format($me), $type, [], 'default');
 	
 	if ($type == 'ERROR') {

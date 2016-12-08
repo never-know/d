@@ -7,7 +7,7 @@ class RegistController extends \Min\Controller
 {
 	public function index_get()
 	{
-		if (PHP_SESSION_NONE === session_status())) {
+		if (PHP_SESSION_NONE === session_status()) {
 			App::initSession(true);  
 		} 
 		$this->layout('type-login');

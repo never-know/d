@@ -18,6 +18,6 @@
 	<?php view(); ?> 			
 </div>
 <?php include APP_PATH.'/View/layout/footer.tpl'; ?>	
-<script type="text/javascript" src="/public/js/<?php echo  \Min\App::getAction();?>.js"></script>
+<script type="text/javascript" src="/public/js/<?=\Min\App::getController();?>.js"></script>
 </body>
 </html>

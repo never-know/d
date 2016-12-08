@@ -44,7 +44,7 @@ class Captcha{
 	{	
 		header('Pragma: no-cache'); 
 		Header('Content-type: image/PNG');  
-		$this->width = $this->length * $this->fontsize + 16;
+		$this->width = $this->length * $this->fontsize + 6;
 		$im = imagecreate($this->width, $this->height);       
         imagecolorallocate($im, $this->bg[0], $this->bg[1], $this->bg[2]); 
 		
