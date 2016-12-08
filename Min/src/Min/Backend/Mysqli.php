@@ -124,7 +124,7 @@ class Mysqli
 			
 			$merge		= [$stmt, $marker];
 			
-			foreach ($param as &$value) {
+			foreach ($param as $key => &$value) {
 				$merge[] = $value;		
 			}
 			

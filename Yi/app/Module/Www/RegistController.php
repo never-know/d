@@ -31,43 +31,42 @@ class RegistController extends \Min\Controller
 		$repwd 		= $_POST['repwd'];
 		
 		if ($pwd != $repwd) {
-			$this->error(30203, '两次输入密码不相同');
+			$this->error('两次输入密码不相同', 30203);
 		}
 		$this->check($phone, $captcha);	
 		
 		$this->request('\\Min\\Service\\Sms::check', ['phone' => $phone, 'code' => $sms]);
-		// 不要更改 regist_data 中 key 的顺序
+
 		$regist_data = ['phone' => $phone, 'pwd' => $pwd, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip2long(ip_address())];
 		
-		$uid = $this->request('\\Min\\Service\\Account::addByPhone', $regist_data, false);
-		if($uid > 1){
-			$this->initUser($phone, $uid);
+		$regist_result = $this->request('\\Min\\Service\\Account::addByPhone', $regist_data, false);
+		if($regist_result['uid'] > 1){
+			$this->initUser($phone, $regist_result['uid']);
 			$this->success('注册成功');
 		}else{
-			$this->error(301100, '注册失败');
+			$this->error('注册失败', 30204);
 		}
-		
-		
-		 
-					
+			
 	}
 	
 	private function check($phone, $code){
 
 		if (true !== validate('phone', $phone)) {
-			$this->error(100, '手机号码格式错误');
+			$this->error('手机号码格式错误', 30120);
 		}
 
 		$code_result = $this->request('\\Min\\Captcha::checkCode', ['code'=>$code, 'type'=>'reg']);
 		
 		if (true !== $code_result ) {
-			$this->error(30101, '验证码错误');
+			$this->error('图片验证码错误', 30102);
 		}
 		
 		$exit_result = $this->request('\\Min\\Service\\Account::checkAccount', ['name'=>$phone, 'type'=>'phone']);
 		 
-		if (2 != $exit_result) {
-			$this->error(100, '该手机号码已被注册');
+		if (0 === $exit_result['code']) {
+			$this->error('该手机号码已被注册', 30205);
+		} elseif (30206 != $exit_result['code']) {
+			$this->response($exit_result);
 		}
 		
 	}

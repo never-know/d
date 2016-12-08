@@ -3,77 +3,78 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class LoginController extends \App\Module\BaseController
+class LoginController extends \App\Controller
 {
-	public function __construct($action) 
-	{	
-		if ($action == 'index') {
-			$this->index();
-		} elseif ($action=='check') {
-			$this->check();
-		}
-		exit;
-	}
-
-	private function index()
+	public function index_get()
 	{
-		if(!isset($_SESSION)){
+		if (PHP_SESSION_NONE === session_status())) {
 			App::initSession(true);  
 		} 
-		layout('type-login');
+		$this->layout('type-login');
 	}
 	
-	private function send(){
-	
-		$phone 		= $_POST['phone'];
-		$captcha 	= $_POST['code'];
+	public function index_post()
+	{
+		if (empty($_POST['name']) || empty($_POST['pwd'])) {	
+			$this->error('账号密码不能为空', 30208);		
+		}
+
+		if( $this->loginErrorTimes($_POST['name']) > 3){
+			if (empty($_POST['captcha'])) $this->error('请输入图片验证码', 30103);
+			
+			$code_result = $this->request('\\Min\\Captcha::checkCode', ['code'=>$_POST['captcha'], 'type'=>'login']);
+			if (true !== $code_result ) {
+				$this->error('图片验证码错误', 30102);
+			}	
+		}
+
+		$result = $this->request('\\Min\\Service\\Account::checkAccount', ['name' => $_POST['name'] ]);	
 		
-		if (true === $this->check($phone, $captcha)) {
+		if (0 === $result['code']) {	
+			if (password_verify($_POST['pwd'], $result['pwd'])) {				
+					if (isset($_SESSION['loginerror'])) unset($_SESSION['loginerror']);
+					$this->initUser($result);	
+					$this->success(['message'=>'登陆成功']);
+			} else {	
+				$result['message'] = '账号密码错误';
+				unset($result['body']);
+				$error_times = $this->loginErrorInc($arr['name']);
+				$result['code'] = ($error_times > 3) ? 30202 : 30201;
+			}
+		}
+		
+		$this->response($result);
+	}
+	
+	private function initUser($user){
+	
+		if($user['id'] > 0) {
+			// 每次登陆都需要更换session id ;
+			session_regenerate_id();
+			setcookie('nickname', $user['nickname'], 0, '/', COOKIE_DOMAIN);
+			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
+			// 此处应与 logincontroller islogged 相同
 			
-			$sms = new \Min\Sms('reg');	
-			
-			$sc = $sms->get($phone);
-					
-			if (false == $sc || 120 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
-				
-				$code = mt_rand(111111,999999);
-				$result = $sms->reg_send(['code'=>$code,'phone'=>$phone ]);
-				if (isset($result->code)) {
-					if ($result->code == 15) {
-						response(0,'发送失败，每个号码每小时最多发送7次');
-					}
-					response(0,'发送失败，请重试');
-				} else {
-					$regmsm = ['code'=>$code,'ctime'=> $_SERVER['REQUEST_TIME']];
-					$sms->set($phone,$regmsm);
-					//迁移以前记录
-					if(isset($sc['code']))	$sms->move($phone,$sc);
-					response(1); 
-				}
-			}elseif( 121 > ($_SERVER['REQUEST_TIME'] - $sc['ctime'])){
-				response(0, '请稍等，验证码已发送');
-			}			
+			setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 10, '/', COOKIE_DOMAIN);
+			$_SESSION['logined'] = true;
+			$_SESSION['UID'] = $user['id'];
+			$_SESSION['USER'] = $user;
+
 		}
 	}
 	
-	private function check($phone, $code){
-
-		if (validate('phone', $phone)) {
-			$code = new \Min\Captcha;
-			if( true === $code->checkCode($code, 'reg')){
-				$account = app::service('account');
-				$result = $account->checkAccount($phone,'phone');
-				if (1 == $result) {
-					response(100,'手机号码已被注册');
-				} elseif (2 == $result) {
-					return true;
-				}	
-			}
-			return false;
-		} else {
-			response(0, '手机号码格式错误');
+	private function loginErrorTimes($key)
+	{	 
+		$var = intval(CM('loginerror')->get(md5($key)));		 
+		if( $var > 9 ){
+			$this->error('账户已锁定，请2小时后再登录', 30207);
 		}
+		return $var;
 	}
-   
-
+	
+	private function loginErrorInc($key)
+	{
+		CM('loginerror')->incr(md5($key));
+	}
+ 
 }

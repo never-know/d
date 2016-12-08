@@ -49,9 +49,9 @@ class LoginController
    
     private function dologin(){
 		
-		if (!isset($_SESSION) ) {
-			App::initSession(true);
-		}
+		
+			
+		 
         if (empty($_POST['loginname']) || empty($_POST['loginpwd'])) {
             usr_error( 0,'用户名或密码不能为空');
         } elseif (validate('quotes',$_POST['loginname'])) {
@@ -114,7 +114,22 @@ class LoginController
 			   
     }
 	
-   
+   	private function initUser($result){
+	
+		if($uid > 0) {
+			// 每次登陆都需要更换session id ;
+			session_regenerate_id();
+			setcookie('nickname', $name, 0, '/', COOKIE_DOMAIN);
+			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
+			// 此处应与 logincontroller islogged 相同
+			
+			setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 10, '/', COOKIE_DOMAIN);
+			$_SESSION['logined'] = true;
+			$_SESSION['UID'] = $result['uid'];
+			$_SESSION['user'] =$result;
+
+		}
+	}
 
     public function islogged(){
 	

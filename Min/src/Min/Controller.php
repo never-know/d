@@ -7,26 +7,30 @@ class Controller
 {	
 	protected $sharedService = [];
 	
-	public function __construct($action)
+	final public function __construct($action)
 	{	
 		$this->validToken('form_'.$action);
+		
+		if (method_exists($this, 'onConstruct') === true) {
+            $this->onConstruct();
+        }
 		
 		$key = $action.'_'.(strtolower($_SERVER['REQUEST_METHOD'])?:'get');
 		
 		if (method_exists($this, $key)){
 			$this->{$key}();
 		}else{
-			$this->error(404);
+			$this->error('无效请求', 404);
 		}
 		exit; 
 	}
 	
-	final public function request($server, $params, $exit_when_error = true, $shared = false)
+	final public function request($server, $params, $exit_on_error = true, $shared = false)
 	{
 		$concrete = explode('::',$server);
 		
 		if (empty($concrete[0]) || empty($concrete[1])) {
-			$this->error(20500, 'request 参数错误');
+			$this->error('服务请求参数错误', 20101);
 		}
 		
 		$class	= $concrete[0] .'Service';
@@ -37,7 +41,7 @@ class Controller
 			try {
 				$obj = new $class;	
 			} catch (\Throwable $t) {
-				$this->error($t->getCode(), $t->getMessage());
+				$this->error($t->getMessage(), $t->getCode());
 			}
 			if (true === $shared) {
 				$this->sharedService[$class] = $obj;
@@ -52,14 +56,14 @@ class Controller
 		try {			
 			$result = $obj->{$concrete[1]}($params);
 			
-			if (isset($result['code']) && 0 !== $result['code'] &&  true === $exit_when_error) {
+			if (isset($result['code']) && 0 !== $result['code'] &&  true === $exit_on_error) {
 				$this->response($result);
 			}
 			
 			return $result;
 			
 		} catch (\Throwable $t) {
-			$this->error($t->getCode(), $t->getMessage());
+			$this->error($t->getMessage(), $t->getCode());
 		}
 	}
 	final public function layout($layout = 'frame')
@@ -74,7 +78,7 @@ class Controller
 		$this->response($result, $layout);
 	}
 
-	final public function error($code, $message = '', $redirect = '')
+	final public function error($message, $code, $redirect = '')
 	{	
 		request_not_found($code, $message, $redirect);
 	}
@@ -91,7 +95,7 @@ class Controller
 	final public function validToken($value){
 		
 		if (IS_POST && (empty($_POST['crsf_token']) || !valid_token($_POST['crsf_token']))) {
-			$this->error(30101);
+			$this->error('表单token无效或已过期', 30101);
 		}
 	}
 

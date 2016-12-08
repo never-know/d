@@ -3,7 +3,7 @@ namespace Min;
 
 class Service
 {	
-	final public function success($message = '操作成功', $body = [])
+	final public function success($body = [], $message = '操作成功')
 	{	
 		if (!empty($body)) $result['body'] = $body;
 		$result['code'] = 0;
@@ -11,7 +11,7 @@ class Service
 		return $result;
 	}
 
-	final public function error($code, $message = '')
+	final public function error($message, $code)
 	{	
 		return ['code' => $code, 'message' => $message];
 	}

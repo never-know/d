@@ -51,7 +51,7 @@ class Sms extends Min\Service
 				return $this->error('发送失败', 30112);
 			} else {
 				$this->set($phone, ['code' => $code, 'ctime' => $_SERVER['REQUEST_TIME']]);
-				return $this->success('发送成功');
+				return $this->success();
 			}
 		} else {
 			return $this->error('短信验证码已发送', 30113);
@@ -60,19 +60,19 @@ class Sms extends Min\Service
 	
 	public function get($name)
 	{
-		$regkey = '{sms:}' .$this->type .$name;
+		$regkey = '{sms:}'. $this->type. $name;
 		return   CM('sms')->get($regkey);
 	}
 	
 	public function set($name, $value)
 	{
-		$regkey = '{sms:}'.$this->type.$name;
-		return   CM('sms')->set( $regkey, $value);
+		$regkey = '{sms:}'. $this->type. $name;
+		return   CM('sms')->set($regkey, $value);
 	}
 	public function move($name,$value)
 	{	
-		$regkey = '{sms:}'.$this->type.$name.':'.$value['ctime'];
-		CM('sms_out')->set($regkey,$value['code']);
+		$regkey = '{sms:}'. $this->type. $name. ':'. $value['ctime'];
+		CM('sms_out')->set($regkey, $value['code']);
 	}
 	
 	public function check($arr)
@@ -82,15 +82,14 @@ class Sms extends Min\Service
 		if (isset($sc['ctime']) && isset($sc['code'])) {
 			
 			if (600 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
-				return $this->error('验证码已过期', 30110);
+				return $this->error('验证码已过期', 30111);
 			} elseif ($sc['code'] == $arr['code']){
 				return $this->success();
 			} else {
-				return $this->error('验证码错误', 30110);
-			}
-			
+				return $this->error('短信验证码错误', 30110);
+			}	
 		} else {
-			return $this->error('验证码错误或超时，请重试', 30110);
+			return $this->error('短信验证码错误或超时，请重试', 30114);
 		}
 	}
 	
@@ -98,7 +97,7 @@ class Sms extends Min\Service
 	{
 		$sc = $this->get($name);
 		$this->move($name,$sc);
-		app::cache('sms')->delete('{sms:}'.$this->type.$name);
+		CM('sms')->delete('{sms:}'.$this->type.$name);
 	}
 	
 }
