@@ -1,6 +1,8 @@
 <?php
 namespace Min;
 
+use Min\MinException as MinException;
+
 class Encrypt 
 {
   
@@ -84,7 +86,7 @@ class Encrypt
 	private function _encrypt_encryption_methods_mcrypt_aes_cbc($op, $text) 
 	{
 		if (!function_exists('mcrypt_encrypt')) {
-			throw new \Exception('Mcrypt library not installed.');
+			throw new MinException('Mcrypt library not installed.');
 		}
 		// Open the Mcrypt handle.
 		$mcrypt = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
@@ -102,7 +104,7 @@ class Encrypt
 			$t_args = array(
 			  '@action' => ($op == 'decrypt') ? t('Decryption') : t('Encryption'),
 			);
-			throw new \Exception(t('@action failed because the key is not the right size.', $t_args));
+			throw new MinException(t('@action failed because the key is not the right size.', $t_args));
 		}
 
 		if ($op == 'decrypt') {
@@ -127,7 +129,7 @@ class Encrypt
 
 			// If the HMAC cannot be validated, throw an exception.
 			if ($calculated_hmac != $hmac) {
-				throw new \Exception(t('Decryption failed because the HMAC could not be validated.'));
+				throw new MinException(t('Decryption failed because the HMAC could not be validated.'));
 			}
 
 			$text = substr($text, $salt_size);

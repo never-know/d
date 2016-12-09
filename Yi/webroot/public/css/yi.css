@@ -245,7 +245,7 @@ box-sizing:border-box;
 padding:20px;
 }
 .login-box i.error{
-border-color: #e4393c;
+border-right-color: #e4393c;
 background: #FFF2F2;
 color: #FF7777;
 }
@@ -281,6 +281,7 @@ font-size:14px;
 }
 .login-name, .login-pwd, .login-code{
 margin:20px 0 18px 0;
+overflow:hidden;
 } 
 .loginname, .loginpwd, .regname, .regpwd, .regmcode, .regcode, .regphone, .logincode{
 padding: 8px 0px 6px 10px;
@@ -398,13 +399,13 @@ width:136px;
 display:block;
 text-align:right;
 color: #999;
-padding :9px 0 0 6px;
+padding :8px 0 0 6px;
 float:left;
 }
 .reg-form span , .reg-form em{
-padding:2px 12px 2px 12px;;
+padding:4px 12px 2px 12px;;
 font-size:12px;
-line-height: 32px;
+line-height: 30px;
 }
 .reg-form span{
 min-width:200px;
@@ -444,7 +445,7 @@ margin-top:32px;
     width: 112px;
     float: left;
     text-align: center;
-    padding: 7px 12px;
+    padding: 4px 12px;
     background-color: #f4f4f4;
     margin-left: 10px;
     border: 1px solid #dddddd;

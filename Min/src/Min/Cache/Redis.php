@@ -22,7 +22,7 @@ class Redis{
 	public function connect()
 	{		
 		if (empty($this->conf[$this->active])) {
-			throw new \Exception('can not get active '.$this->active.' info in file redic.inc, default selected');
+			throw new \Min\MinException('can not get active '.$this->active.' info in file redic.inc, default selected');
 		}			
 
 		$info	= $this->conf[$this->active];

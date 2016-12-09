@@ -7,6 +7,8 @@ query(user')->;
 ****/
 namespace Min\Backend;
 
+use Min\MinException as MinException;
+
 class Mysqli
 {
 	private $active_db	= 'default';
@@ -38,12 +40,8 @@ class Mysqli
 
 			$this->connections[$linkid] = $this->parse($type);
 			
-			if (!$this->connections[$linkid]) {
-                throw new \Exception(mysqli_connect_error(), mysqli_connect_errno()+$this->fix);
-            }	
-			
 			if (!$this->connections[$linkid]->set_charset('utf8')) {
-                throw new \Exception(json_encode(mysqli_error_list($this->connections[$linkid])), mysqli_errno($this->connections[$linkid]) + $this->fix);
+                throw new MinException(json_encode($this->connections[$linkid]->error_list), $this->connections[$linkid]->errno + $this->fix);
             }	
 		}
 	
@@ -55,7 +53,7 @@ class Mysqli
 	{
 		$info	= $this->conf[$this->active_db][$type];
 
-		if (empty($info))  throw new \Exception('can not get mysql connect info when type ='.$type, $this->fix+1);
+		if (empty($info))  throw new MinException('can not get mysql connect info when type ='.$type, $this->fix+1);
 		
 		do {
 			if (is_array($info)) {
@@ -74,52 +72,53 @@ class Mysqli
 			$selected_db['path'] = urldecode($selected_db['path']);
 			if (!isset($selected_db['port'])) {
 				$selected_db['port'] = NULL;
-			}			
-			$connect = mysqli_connect($selected_db['host'], $selected_db['user'], $selected_db['pass'], substr($selected_db['path'], 1), $selected_db['port']);
+			}	
 			
-		} while (!$connect && is_array($info) && !empty($info));
+			$connect = new mysqli($selected_db['host'], $selected_db['user'], $selected_db['pass'], substr($selected_db['path'], 1), $selected_db['port']);
+			
+		} while ($connect->connect_error && is_array($info) && !empty($info));
 		
-		if(!$connect){	
-			throw new \Exception('all mysql servers have gone away', $this->fix + 2);
+		if ($connect->connect_error) {	
+			throw new MinException('all mysql servers have gone away', $this->fix + 2);
 		}
 		return $connect;
 	}
 	
 	private function retry($type, $stmt = null)
 	{
-		if (2006 == mysqli_errno($this->connect($type)) || false == mysqli_ping($this->connect($type))) {
+		if (2006 == $this->connect($type)->errno || false == $this->connect($type)->ping()){
 			if (empty($this->trans)) {
-				if (!empty($stmt)) mysqli_stmt_close($stmt);
-				unset($this->connections[$type.$ths->active_db]);
+				if (!empty($stmt)) $stmt->close();
+				unset($this->connections[$type.$this->active_db]);
 				return true;
 			}
 		} 
 
 		if (!empty($stmt)) {
-			$error_message = json_encode(mysqli_stmt_error_list($stmt));
-			$error_no = mysqli_stmt_errno($stmt);
-			mysqli_stmt_close($stmt);	
+			$error_message = json_encode($stmt->error_list);
+			$error_no = $stmt->errno;
+			$stmt->close();	
 		} else {
-			$error_message = json_encode(mysqli_error_list($this->connect($type)));
-			$error_no = mysqli_errno($this->connect($type)) ;
+			$error_message = json_encode($this->connect($type)->error_list);
+			$error_no = $this->connect($type)->errno;
 		}
-		throw new \Exception($error_message, $error_no + $this->fix);
+		throw new MinException($error_message, $error_no + $this->fix);
 	}
 	
-	public function query($sql, $type, $marker = '', $param = [])
+	public function query($sql, $action, $marker = '', $param = [])
 	{
 		if (empty($marker)) {
-			return $this->queryNP($sql, $type);
+			return $this->queryNP($sql, $action);
 		}
 		
-		$db_type = $this->intrans ?: (($this->rw_separate == true && ($type=='single' || $type == 'couple')) ? 'slave' : 'master'); 
+		$type = $this->intrans ?: (($this->rw_separate == true && ($action=='single' || $action == 'couple')) ? 'slave' : 'master'); 
 		
 		while (true) {
 		
-			$stmt = mysqli_prepare($this->connect($db_type), $sql);
+			$stmt =  $this->connect($type)->prepare($sql);
 			
 			if (!$stmt) { 
-				if(true === $this->retry($db_type)) continue;
+				if(true === $this->retry($type)) continue;
 			}
 			
 			$merge		= [$stmt, $marker];
@@ -134,68 +133,68 @@ class Mysqli
 			
 			 $this->ref->invokeArgs($merge);
 				
-			if (mysqli_stmt_execute($stmt)) {
+			if ($stmt->execute()) {
 
-				switch ($type) {
+				switch ($action) {
 					case 'update' :	
 					case 'delete' :
-						$result	= mysqli_stmt_affected_rows($stmt);
+						$result	= $stmt->affected_rows;
 						break;	
 					case 'insert' :
-						$result	= mysqli_stmt_insert_id($stmt);
+						$result	= $stmt->insert_id;
 						break;
 					case 'single' :	
-						if ($result_single = mysqli_stmt_get_result($stmt)) {
-							$result	= mysqli_fetch_assoc($result_single);
-							mysqli_free_result($result_single);
-						} elseif (true === $this->retry($db_type))  {
+						if ($result_single = $stmt->get_result()) {
+							$result	= $result_single->fetch_assoc();
+							$result_single->free_result();
+						} elseif (true === $this->retry($type))  {
 							continue; 
 						}
 						break;
 					case 'couple' :
-						if ($result_couple = mysqli_stmt_get_result($stmt)) {
-							$result	= mysqli_fetch_all($result_couple);
-							mysqli_free_result($result_couple);
-						} elseif (true === $this->retry($db_type)) {
+						if ($result_couple = $stmt->get_result()) {
+							$result	= $result_couple->fetch_all();
+							$result_couple->free_result();
+						} elseif (true === $this->retry($type)) {
 							continue;
 						}
 						break;				
 				}
 				
-				mysqli_stmt_close($stmt);
+				$stmt->close();
 				return $result;
 				
-			} elseif (true === $this->retry($db_type, $stmt)) {			
+			} elseif (true === $this->retry($type, $stmt)) {			
 				 continue; 
 			}
 		}
 	} 
 	
-	public function queryNP($sql, $type)
+	public function queryNP($sql, $action)
 	{		
-		$db_type = empty($this->intrans) ? (($this->rw_separate == true && ($type == 'single' || $type=='couple')) ? 'slave' : 'master') : $this->intrans;
+		$type = empty($this->intrans) ? (($this->rw_separate == true && ($action == 'single' || $action=='couple')) ? 'slave' : 'master') : $this->intrans;
 		
 		while (true) {
 		
-			if ($result	= mysqli_query($this->connect($db_type), $sql, MYSQLI_STORE_RESULT)) {
-				switch ( $type ) {
+			if ($result	= $this->connect($type)->query($sql, MYSQLI_STORE_RESULT)) {
+				switch ( $action ) {
 					case 'update' :
 					case 'delete' :
-						$result	= mysqli_affected_rows($this->connect($db_type));
+						$result	= $this->connect($type)->affected_rows;
 						break;
 					case 'insert' :
-						$result	= mysqli_insert_id($this->connect($db_type));
+						$result	= $this->connect($type)->insert_id;
 						break;
 					case 'single' :	
-						$result	= mysqli_fetch_assoc($result);
+						$result	= $result->fetc_assoc();
 						break;
 					case 'couple' :
-						$result	= mysqli_fetch_all($result);
+						$result	= $result->fetch_all();
 						break;
 				}
 				return $result;
 			} else {
-				if (true === $this->retry($db_type)) continue;
+				if (true === $this->retry($type)) continue;
 			}
 		}
 		
@@ -206,7 +205,7 @@ class Mysqli
 		if (isset($db)) $this->init($db);
 		
 		while (true) {
-			if (mysqli_begin_transaction($this->connect($type))) {
+			if ($this->connect($type)->begin_transaction()) {
 				$this->intrans = $type;
 				return true;
 			} else {
@@ -219,27 +218,27 @@ class Mysqli
 	
 	public function transaction_commit() 
 	{
-		if (mysqli_commit($this->connect($this->intrans))) {
+		if ($this->connect($this->intrans)->commit()) {
 			$this->intrans = '';
 			return true;
 		} else {
-			throw new \Exception('transaction_commit failed');
+			throw new MinException(json_encode($this->connect($this->intrans)->error_list), $this->connect($this->intrans)->errno + $this->fix);
 		}
 	}
 		 
 	public function transaction_rollback()
 	{ 
-		if (mysqli_rollback($this->connect($this->intrans))) {
+		if ($this->connect($this->intrans)->rollback()) {
 			$this->intrans = '';
 			return true;
 		} else {
-			throw new \Exception(json_encode(mysqli_error_list($this->connect($this->intrans))), mysqli_errno($this->connect($this->intrans)) + $this->fix);
+			throw new MinException(json_encode($this->connect($this->intrans)->error_list), $this->connect($this->intrans)->errno + $this->fix);
 		}
 	}
 	
 	public function autocommit($type, $mode)
 	{
-		return mysqli_autocommit($this->connect($type), $mode);
+		return $this->connect($type)->autocommit($mode);
 	}
 		
 }

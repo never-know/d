@@ -33,6 +33,13 @@ foreach($ips as $ip) {
 }
 var_dump($finals);
 
+var_dump(filter_var('a2b\';ced@qq.com',FILTER_VALIDATE_EMAIL));
+
+echo preg_match('!\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*!','a2b";ced@qq.com');
+echo preg_match('/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/','a2b";ced@qq.com');
+echo preg_match('/^[a-zA-Z0-9\-_\x{4e00}-\x{9fa5}]{3,31}$/u','a2中hb";ced@qq.com');
+//echo preg_match('/^[a-zA-Z0-9\-_\u4e00-\u9fa5]{3,31}$/u','a2中hb";ced@qq.com');
+
 ?>
 
 <?php $c ='123";alert(1);</script><script>\\;var b = \'';?>

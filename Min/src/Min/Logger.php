@@ -65,7 +65,7 @@ class Logger
 			chmod($dest_file, 0777);
 		}
 		
-		$dest_file .= date('/Y-m-d-').'.log';
+		$dest_file .= date('/Y-m-d').'.log';
 		
 		if (is_file($dest_file) && ($this->default_file_size < filesize($dest_file))) {
 			rename($dest_file, $dest_file.'-BAK-'.time().'.log');

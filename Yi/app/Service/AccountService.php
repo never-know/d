@@ -33,7 +33,7 @@ class AccountService extends \Min\Service
 			}
 			
 		} elseif (!in_array($arr['type'], ['phone','email','name'])) {
-			throw new \Exception('帐号类型错误', 20100);		
+			throw new \Min\MinException('帐号类型错误', 20100);		
 		}
 		
 		$key	= md5(implode(':',$arr));
@@ -54,36 +54,22 @@ class AccountService extends \Min\Service
 
 	public function addUserByPhone($regist_data) {
 	
-		$regist_data['pwd'] = password_hash($regist_data['pwd'], PASSWORD_BCRYPT, ['cost' => 9]);	
+		if ($regist_data['pwd'] = password_hash($regist_data['pwd'], PASSWORD_BCRYPT, ['cost' => 9])) {	
 		
-		$sql = 'insert into user (phone, pwd, regtime, regip) values('. intval($regist_data['phone']).',\''.$regist_data['pwd'].',\''.intval($regist_data['regtime']).','.intval($regist_data['regip']).')';
-		
-		$reg_result =  DM('user')->query('insert',$sql);
-		
-		if ($reg_result > 1) {
-			//清理 注册缓存
-			if($this->clean_cache) CM('checkaccount')->delete('{phone:}'.md5($_user['phone']));
-			$this->success(['uid' => $reg_result], '注册成功');
-		} else {
-			$this->error('注册失败', 30204);
-		}
-	}
-	
-	public function checkPwd($arr) {
-	
-		if( !in_array($arr['type'],['phone','email','name'])) {
-		
-			throw new \Exception('帐号类型错误', 20100);	
+			$sql = 'insert into user (phone, pwd, regtime, regip) values ('. intval($regist_data['phone']). ',\''. $regist_data['pwd']. ',\''. intval($regist_data['regtime']). ','. intval($regist_data['regip']). ')';
 			
+			$reg_result =  DM('user')->query('insert',$sql);
+			
+			if ($reg_result > 1) {
+				//清理 注册缓存
+				if($this->clean_cache) CM('checkaccount')->delete('{phone:}'.md5($_user['phone']));
+				$this->success(['uid' => $reg_result], '注册成功');
+			} else {
+				$this->error('注册失败', 30204);
+			}
+		} else {
+			throw new \Min\MinException('password_hash failed', );
 		}
-		
-		$mark = ($arr['type'] == 'phone') ? 'i': 's';
-		
-		$sql = 'SELECT uid, name, email, phone, pwd FROM user  WHERE '.$arr['type'].' = ? ';
-       
-		$sql_result	= DM('user')->query('single', $sql, $mark, [$arr['name']]);
-		
-		return $sql_result;	
 	}
-	
+
 }

@@ -40,9 +40,12 @@ class Controller
 		} else {
 			try {
 				$obj = new $class;	
+			} catch (\Min\MinException $t) {
+				app_exception($e, 'Catched Exception');
 			} catch (\Throwable $t) {
-				$this->error($t->getMessage(), $t->getCode());
+				app_exception($e);
 			}
+			
 			if (true === $shared) {
 				$this->sharedService[$class] = $obj;
 			}
@@ -62,8 +65,10 @@ class Controller
 			
 			return $result;
 			
+		} catch (\Min\MinException $t) {
+				app_exception($e, 'Catched Exception');
 		} catch (\Throwable $t) {
-			$this->error($t->getMessage(), $t->getCode());
+			app_exception($e);
 		}
 	}
 	final public function layout($layout = 'frame')

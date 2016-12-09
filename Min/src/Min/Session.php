@@ -22,7 +22,7 @@ class Session implements \SessionHandlerInterface{
 			$info = empty($memcache->session)?$memcache->common:$memcache->session;
 			 
 			$this->store = memcache_connect($info->host, $info->port);
-			if(!$this->store) throw new Exception('Memcache连接失败');
+			if(!$this->store) throw new \Min\MinException('Memcache连接失败');
 			$this->started = true;
 		}
 		return  $this->store;

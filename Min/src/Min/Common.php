@@ -23,7 +23,7 @@ function autoload($class)
 	if (is_file($file)) {
 		require $file;
 	}else{
-		throw new \Exception($file.' can not be autoloaded');
+		throw new \Min\MinException($file.' can not be autoloaded');
 	}	
 }
   
@@ -360,10 +360,10 @@ function app_error($errno, $errstr, $errfile, $errline)
 	return true;
 }
 
-function app_exception($e)
+function app_exception($e, $title = 'Unexpected Expection')
 {	
 	$me  =  [	
-		'title'		=> 'Unexpected Expection', 
+		'title'		=> $title, 
 		'message'	=> $e->getMessage(), 
 		'file'		=> $e->getFile(), 
 		'line'		=> $e->getLine(),

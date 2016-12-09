@@ -81,10 +81,11 @@ font-size:14px;
     color: silver;
     background: white;
     z-index: 199;
-	padding: 6px 10px 4px 10px;
+	padding: 4px 10px 2px 10px;
 	margin-top: 1px;
     margin-left: -38px;
     float: left;
+	line-height:30px;
 	
 }
 .icon-white{
@@ -98,9 +99,11 @@ _margin-left:-187px;
     position: absolute;
     margin-left: -295px;
     font-size: 14px;
+	border:none;
     border-right: 1px solid #cfcfcf;
-    padding: 7px 10px 7px 11px;
+    padding: 8px 10px 6px 11px;
     background: #F8F8F8;
+	line-height:22px;
 }
  
 .icon-warn{

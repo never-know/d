@@ -74,7 +74,7 @@ class Di
     private function registerService($name, $class, $shared = false)
 	{	
 		if (empty($name)) {	
-			throw new \Exception('service name can not be empty');
+			throw new \Min\MinException('service name can not be empty');
 		}
         $this->removeService($name);
         if (!($class instanceof \Closure) && is_object($class)) {
