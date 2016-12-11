@@ -57,10 +57,13 @@ try{
 	$stmt = $connect->prepare($query);
 
 	$stmt->bind_param('i', $code); 
-	$code = 2;sleep(10);
+	$code = 2;
 	$stmt->execute();
-	
-	$result_single = $stmt->get_result();$m = 'eeeeeeeee';
+	sleep(10);
+	$result_single = $stmt->get_result();	
+	echo mysqli_errno($connect);
+	echo mysqli_stmt_errno ($stmt);
+	$m = 'eeeeeeeee';
 	$result	= $result_single->fetch_assoc();
 	$result_single->free_result();
 	$stmt->close();
