@@ -29,9 +29,9 @@ class FileCache
      * Fetches an entry from the cache.
      * 
      * @param string $id
-     * @param string $type  
+     * @param int $expiration 0 means on limit  
      */
-    public function get($id,$expiration = 0)
+    public function get($id,$expiration = 3600)
     {
         $file_name = $this->getFileName($id);
 		if (is_file($file_name)) {
@@ -69,8 +69,8 @@ class FileCache
             }
         }
 		
-		$tmp = tempnam($dir, 'swap');;
-		if (file_put_contents($tmp, json_encode(['data'=>$data]))) {
+		$tmp = tempnam($dir, 'swap');
+		if (file_put_contents($tmp, safe_json_encode(['data'=>$data]))) {
 			if (rename($tmp,$file_name)) {
 				return true;
 			}
@@ -91,5 +91,42 @@ class FileCache
         ];
         return implode(DIRECTORY_SEPARATOR, $dirs);
     }
- 
+	
+	/**
+	 * 数据自增
+	 * @param string $key KEY名称
+	 */
+	public function incr($key) 
+	{
+		return $this->getAndModify($key, function($a){return $a++;}, 1);
+	}
+
+	/**
+	 * 数据自减
+	 * @param string $key KEY名称
+	 */
+	public function decrement($key) 
+	{
+		return $this->getAndModify($key, function($a){return $a--;});
+	}
+	// 不支持并发写，并发请用redis
+	
+	public function getAndModify($id, Closure $callback, $default_value = 0) 
+	{
+		$result = $this->get($id))
+
+		if ($result) {
+			$result['data'] = $callback($result['data']);
+		} else {
+			$result['data'] = $default_value;
+		}
+		
+		if ($this->set($id, $result)) {
+			return $result['data'];
+		} else {
+			return false;
+		}
+		
+	}
+	
 }

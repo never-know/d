@@ -369,6 +369,6 @@ function app_exception($e, $title = 'Unexpected Expection')
 		'line'		=> $e->getLine(),
 		'type'		=> $e->getCode()
 	];
-	watchdog(error_message_format($me), 'CRITICAL', debug_backtrace(), 'default');
+	watchdog(error_message_format($me), 'CRITICAL', $e->getTrace(), 'default');
 	request_not_found(500);
 }

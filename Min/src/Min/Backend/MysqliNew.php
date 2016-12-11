@@ -9,19 +9,18 @@ namespace Min\Backend;
 
 use Min\MinException as MinException;
 
-class Mysqli
+class MysqliNew
 {
 	private $active_db	= 'default';
 	private $intrans = '';
 	private $ref; 
 	private $conf = [];
 	private $connections = [];
-	private $rw_separate = true;
-	private $fix	= 100000;
 
 	public function  __construct($db_key = '') 
-	{
-		$this->conf = get_config('Mysql');;
+	{	
+		$this->conf = get_config('Mysql');
+		mysqli_report(MYSQLI_REPORT_ALL);
 	}
 	 
 	public function init($active_db) 
@@ -37,12 +36,8 @@ class Mysqli
 		$linkid = $type.$this->active_db;
 		
 		if (empty($this->connections[$linkid])) {
-
 			$this->connections[$linkid] = $this->parse($type);
-			
-			if (!$this->connections[$linkid]->set_charset('utf8')) {
-                throw new MinException(json_encode($this->connections[$linkid]->error_list), $this->connections[$linkid]->errno + $this->fix);
-            }	
+			$this->connections[$linkid]->set_charset('utf8'); 
 		}
 	
 		return $this->connections[$linkid];
@@ -53,7 +48,7 @@ class Mysqli
 	{
 		$info	= $this->conf[$this->active_db][$type];
 
-		if (empty($info))  throw new MinException('can not get mysql connect info when type ='.$type, $this->fix+1);
+		if (empty($info))  throw new MinException('mysql info not found when type ='.$type, 1);
 		
 		do {
 			if (is_array($info)) {
@@ -73,13 +68,17 @@ class Mysqli
 			if (!isset($selected_db['port'])) {
 				$selected_db['port'] = NULL;
 			}	
+			try {
+				$error_code = 0;
+				$connect = new mysqli($selected_db['host'], $selected_db['user'], $selected_db['pass'], substr($selected_db['path'], 1), $selected_db['port']);
+			} catch (\Throwable $t) {
+				$error_code = $t->getCode();
+			}
 			
-			$connect = new mysqli($selected_db['host'], $selected_db['user'], $selected_db['pass'], substr($selected_db['path'], 1), $selected_db['port']);
-			
-		} while ($connect->connect_error && is_array($info) && !empty($info));
+		} while ($error_code != 0 && is_array($info) && !empty($info));
 		
-		if ($connect->connect_error) {	
-			throw new MinException('all mysql servers have gone away', $this->fix + 2);
+		if ($error_code != 0) {	
+			throw new MinException('all mysql servers have gone away', 2);
 		}
 		return $connect;
 	}
@@ -123,27 +122,22 @@ class Mysqli
 	
 	public function realQuery($sql, $action, $marker = '', $param = [])
 	{
-		$type = $this->intrans ?: (($this->rw_separate == true && ($action=='single' || $action == 'couple')) ? 'slave' : 'master'); 
+		$type = $this->intrans ?: ((!empty($this->conf[$this->active]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'); 
 		$round = 10 ;
 		while ($round > 0) {
 			$round -- ;
-			$stmt =  $this->connect($type)->prepare($sql);
-			
-			if (!$stmt) { 
-				if(true === $this->retry($type)) continue;
-			}
-			
-			$merge		= [$stmt, $marker];
-			
-			foreach ($param as $key => &$value) {
-				$merge[] = $value;		
-			}
-			
-			if (empty($this->ref)) {
-				$this->ref	= new \ReflectionFunction('mysqli_stmt_bind_param');		
-			}
-		
-			if ($this->ref->invokeArgs($merge) && $stmt->execute()) {
+			try {
+				$stmt =  $this->connect($type)->prepare($sql); 
+				$merge		= [$stmt, $marker];
+				foreach ($param as $key => &$value) {
+					$merge[] = $value;		
+				}
+				if (empty($this->ref)) {
+					$this->ref	= new \ReflectionFunction('mysqli_stmt_bind_param');		
+				}
+				$this->ref->invokeArgs($merge);
+				$stmt->execute();
+				
 				switch ($action) {
 					case 'update' :	
 					case 'delete' :
@@ -153,35 +147,40 @@ class Mysqli
 						$result	= $stmt->insert_id;
 						break;
 					case 'single' :	
-						if ($result_single = $stmt->get_result()) {
-							$result	= $result_single->fetch_assoc();
-							$result_single->free_result();
-						} elseif (true === $this->retry($type))  {
-							continue; 
-						}
+						$get_result = $stmt->get_result()
+						$result	= $get_result->fetch_assoc();
 						break;
 					case 'couple' :
-						if ($result_couple = $stmt->get_result()) {
-							$result	= $result_couple->fetch_all();
-							$result_couple->free_result();
-						} elseif (true === $this->retry($type)) {
-							continue;
-						}
+						$get_result = $stmt->get_result();
+						$result	= $get_result->fetch_all();
 						break;				
 				}
 				
-				$stmt->close();
-				return $result;
+			} catch (\mysqli_sql_exception $e) {
+
+				if (in_array($e->getCode(),[2006, 2013]) || false == $this->connect($type)->ping()) {
+					if (empty($this->trans)) {
+						$this>connect($type)->close();
+						unset($this->connections[$type.$this->active_db]);
+						$retry = true;
+					}
+				} 
 				
-			} elseif (true === $this->retry($type, $stmt)) {			
-				 continue; 
+			} catch (\Throwable $t) {
+			
+			} finally {
+			
+				if (!empty($stmt)) $stmt->close();
+				if (!empty($get_result)) $get_result->free();
+				if (!empty($retry)) continue;
+				return $result;	
 			}
 		}
 	} 
 	
 	public function nonPrepareQuery($sql, $action)
 	{		
-		$type = empty($this->intrans) ? (($this->rw_separate == true && ($action == 'single' || $action=='couple')) ? 'slave' : 'master') : $this->intrans;
+		$type = $this->intrans ?: ((!empty($this->conf[$this->active]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'); 
 		
 		$round = 10 ;
 		while ($round > 0) {

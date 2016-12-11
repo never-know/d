@@ -36,7 +36,7 @@ class AccountService extends \Min\Service
 			throw new \Min\MinException('帐号类型错误', 20100);		
 		}
 		
-		$key	= md5(implode(':',$arr));
+		$key	= $arr['type']. ':'. $arr['name']);
 		$result = CM('Login')->get($key);
 			
 		if (empty($result)) {		
@@ -62,7 +62,7 @@ class AccountService extends \Min\Service
 			
 			if ($reg_result > 1) {
 				//清理 注册缓存
-				if($this->clean_cache) CM('checkaccount')->delete('{phone:}'.md5($_user['phone']));
+				CM('Login')->delete('phone:'. intval($regist_data['phone']));
 				$this->success(['uid' => $reg_result], '注册成功');
 			} else {
 				$this->error('注册失败', 30204);

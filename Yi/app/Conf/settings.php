@@ -17,11 +17,11 @@ $conf['backend'] = array (
 
 $conf['cache'] = array (
 	'default' => array (
-		'bin' => 'RedisCache',
+		'bin' => 'Redis',
 		'key' => 'default'
 	),
 	'user' => array (
-		'bin' => 'RedisCache',
+		'bin' => 'Redis',
 		'key' => 'default'
 	),
 	'content' => array (
@@ -36,31 +36,11 @@ $conf['cache'] = array (
  
 $conf['Mysql'] = array (
 	'default' => array (
-		'master' => array (
-			'database' => 'D72',
-			'username' => 'root',
-			'password' => 'adolf',
-			'host' => '127.0.0.1',
-			'port' => '',
-			'prefix' => '',
-		),
-		'slave' => array (
-			array (
-				'database' => 'D72',
-				'username' => 'root',
-				'password' => 'adolf',
-				'host' => 'localhost',
-				'port' => '',
-				'prefix' => '',
-			),
-			array (
-				'database' => 'D72',
-				'username' => 'root',
-				'password' => 'adolf',
-				'host' => 'localhost',
-				'port' => '',
-				'prefix' => '',
-			),
+		'rw_separate'	=> true,
+		'master' 		=> '//ts001:a123456@p:127.0.0.1:8080#annyi',
+		'slave'			=> array (
+			'//ts001:a123456@p:127.0.0.1:8080#annyi',
+			'//ts001:a123456@p:127.0.0.1:8080#annyi',
 		),
 	),
 );
@@ -85,20 +65,22 @@ $conf['Logger'] = array (
 # filecache
 
 $conf['FileCache'] = array (
-	'cache_dir' => CACHE_PATH,
+	'default' => array (
+		'cache_dir' => CACHE_PATH,
+	)
 );
 
 # redis
 
 $conf['Redis'] = array (
 	'default' => array (
-		'host' => 'D72',
+		'host' => '127.0.0.1',
 		'port' => 'localhost',
 		'timeout' => 'root',
 		'delay' => 'adolf',
 		'auth' => '',
 		'db' => '', 
-	),
+	)
 );
 
 

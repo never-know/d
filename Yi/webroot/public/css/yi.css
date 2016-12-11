@@ -263,7 +263,7 @@ margin:10px 0px;
 background: #ffebeb;
 color: #e4393c;
 border: 1px solid #e4393c;
-padding: 2px 0px;
+padding-top: 2px;
 display:none;
 }
 .msg-warn{

@@ -44,7 +44,7 @@
 	
 	$di = new \Min\Di;
 	$di->setShared('Mysql', '\\Min\\Backend\\Mysqli');
-	$di->setShared('RedisCache', '\\Min\\Cache\\Redis');
+	$di->setShared('Redis', '\\Min\\Cache\\Redis');
 	$di->setShared('FileCache', '\\Min\\Cache\\FileCache');
 	$di->setShared('Logger', '\\Min\\Logger');
 	

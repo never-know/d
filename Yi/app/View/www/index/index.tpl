@@ -7,7 +7,7 @@
 </p>
 
 <a href="http://www.baidu.com/&lt;?php echo 'abc';?>" >baidu</a>
-
+<!--
 <?php  $url = 'http://www.yi.com';  echo str_replace('.', '\.', SITE_DOMAIN);  var_dump(preg_match('!^http[s]?://[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)); 
 
 
@@ -40,9 +40,36 @@ echo preg_match('/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/','a2b";ced@qq
 echo preg_match('/^[a-zA-Z0-9\-_\x{4e00}-\x{9fa5}]{3,31}$/u','a2中hb";ced@qq.com');
 //echo preg_match('/^[a-zA-Z0-9\-_\u4e00-\u9fa5]{3,31}$/u','a2中hb";ced@qq.com');
 
+var_dump(parse_url('root:te001@p:127.0.0.1:8080#annyi'));
+var_dump(parse_url('//root:adolf@www.baidu.com:127.0.0.1:8080#p_test_5'));
+
 ?>
 
 <?php $c ='123";alert(1);</script><script>\\;var b = \'';?>
+ -->
+<?php 
+mysqli_report(MYSQLI_REPORT_ALL);
+try{
+   $k ='helloworld';
+	$connect = new mysqli('127.0.0.1', 'root', 'adolf', 'yycms', 3306);
+	$m = 'eeeeeeeee';
+} catch (\mysqli_sql_exception $e) {
+echo $e->getMessage(),$e->getCode(),$k;
+if(!empty($m)) echo 123;
+ 
+    
+} catch(\Throwable $t){
+	echo 12;
+	 
+}
+
+
+ 
+
+
+?>
+
+
 
 <script>
 

@@ -39,11 +39,11 @@ class RegistController extends \Min\Controller
 
 		$regist_data = ['phone' => $phone, 'pwd' => $pwd, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip2long(ip_address())];
 		
-		$regist_result = $this->request('\\Min\\Service\\Account::addByPhone', $regist_data, false);
-		if($regist_result['uid'] > 1){
+		$regist_result = $this->request('\\Min\\Service\\Account::addUserByPhone', $regist_data, false);
+		if ($regist_result['uid'] > 1) {
 			$this->initUser($phone, $regist_result['uid']);
 			$this->success('注册成功');
-		}else{
+		} else {
 			$this->error('注册失败', 30204);
 		}
 			
@@ -63,7 +63,7 @@ class RegistController extends \Min\Controller
 		
 		$exit_result = $this->request('\\Min\\Service\\Account::checkAccount', ['name'=>$phone, 'type'=>'phone']);
 		 
-		if (0 === $exit_result['code']) {
+		if (0 == $exit_result['code']) {
 			$this->error('该手机号码已被注册', 30205);
 		} elseif (30206 != $exit_result['code']) {
 			$this->response($exit_result);
@@ -83,7 +83,6 @@ class RegistController extends \Min\Controller
 			setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 10, '/', COOKIE_DOMAIN);
 			$_SESSION['logined'] = true;
 			$_SESSION['UID'] = $uid;
-
 		}
 	}
 

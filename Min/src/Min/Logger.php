@@ -49,14 +49,6 @@ class Logger
 	{
 		if(empty($this->logs)) return;
 		
-		$content = date( 'Y/m/d H:i:s',$_SERVER['REQUEST_TIME'])
-				. '  [IP: '
-				. ip_address()
-				. ']  [ '
-				. $_SERVER['REQUEST_URI']
-				. ' ] '
-				. PHP_EOL;
-				
 		$dest_file = LOG_PATH.date('/Y/m/');
 		
 		if (!is_dir($dest_file)) {
@@ -71,7 +63,16 @@ class Logger
 			rename($dest_file, $dest_file.'-BAK-'.time().'.log');
 		}
 		
-		$records = '';
+		$records = date( 'Y/m/d H:i:s',$_SERVER['REQUEST_TIME'])
+				. '  [IP: '
+				. ip_address()
+				. ']  [ '
+				. $_SERVER['REQUEST_URI']
+				. ' ] [ pid '
+				. getmypid()
+				.' ]'
+				. PHP_EOL;
+				
 		foreach ($this->logs as $log) {
 			$records .= '[' . $log['channel'] . '] [' . $log['level'] . '] ' . $log['message'] . '';
 			if (!empty($log['extra'])) {
@@ -80,7 +81,7 @@ class Logger
 			$records .= PHP_EOL;	
 		}
 		
-		error_log($content.$records, 3, $dest_file, '');
+		error_log($records, 3, $dest_file, '');
 	}
 	
 }
