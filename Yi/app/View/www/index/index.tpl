@@ -51,14 +51,31 @@ var_dump(parse_url('//root:adolf@www.baidu.com:127.0.0.1:8080#p_test_5'));
 mysqli_report(MYSQLI_REPORT_ALL);
 try{
    $k ='helloworld';
-	$connect = new mysqli('127.0.0.1', 'root', 'adolf', 'yycms', 3306);
-	$m = 'eeeeeeeee';
+	$connect = new mysqli('127.0.0.1', 'root', '123456', 'yycms', 3306);
+	
+	$query = "SELECT * from yy_active WHERE id=?   LIMIT 1";
+	$stmt = $connect->prepare($query);
+
+	$stmt->bind_param('i', $code); 
+	$code = 2;sleep(10);
+	$stmt->execute();
+	
+	$result_single = $stmt->get_result();$m = 'eeeeeeeee';
+	$result	= $result_single->fetch_assoc();
+	$result_single->free_result();
+	$stmt->close();
+	print_r($result);
+	
 } catch (\mysqli_sql_exception $e) {
-echo $e->getMessage(),$e->getCode(),$k;
-if(!empty($m)) echo 123;
+
+	echo $e->getMessage(),$e->getCode();
+	if(!empty($m)) echo $m;
  
     
 } catch(\Throwable $t){
+	print_r($connect->errno);
+	print_r($stmt->errno);
+		echo $t->getMessage(),$t->getCode();
 	echo 12;
 	 
 }
