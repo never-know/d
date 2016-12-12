@@ -48,45 +48,63 @@ var_dump(parse_url('//root:adolf@www.baidu.com:127.0.0.1:8080#p_test_5'));
 <?php $c ='123";alert(1);</script><script>\\;var b = \'';?>
  -->
 <?php 
-mysqli_report(MYSQLI_REPORT_ALL);
-try{
-   $k ='helloworld';
-	$connect = new mysqli('127.0.0.1', 'root', '123456', 'yycms', 3306);
+ 
+//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+//try{
+	$k ='helloworld';
+	$connect = new mysqli('127.0.0.1', 'root', '', 'mysql', 3306);
+	$connect->set_charset('utf-8');
 	
-	$query = "SELECT * from yy_active WHERE id=?   LIMIT 1";
+	$query = "SELECT * from user WHERE user=?   LIMIT 1";
 	$stmt = $connect->prepare($query);
-
-	$stmt->bind_param('i', $code); 
-	$code = 2;
+	$code = 'root';
+	$stmt->bind_param('s', $code); 
 	$stmt->execute();
-	sleep(10);
-	$result_single = $stmt->get_result();	
+
+	$result_single = $stmt->get_result();
+    echo time();	
+	echo 'before;';
+	sleep(5);
+	echo 'after;';
+	echo time();
 	echo mysqli_errno($connect);
-	echo mysqli_stmt_errno ($stmt);
+	echo mysqli_stmt_errno($stmt);
 	$m = 'eeeeeeeee';
 	$result	= $result_single->fetch_assoc();
 	$result_single->free_result();
 	$stmt->close();
 	print_r($result);
 	
+/*	
 } catch (\mysqli_sql_exception $e) {
-
+		echo '<br>';
+		echo "mysqli_sql_exception";
 	echo $e->getMessage(),$e->getCode();
 	if(!empty($m)) echo $m;
  
     
 } catch(\Throwable $t){
-	print_r($connect->errno);
-	print_r($stmt->errno);
+		echo '<br>';
+		echo "Throwable";
+		print_r($connect->errno);
+		print_r($stmt->errno);
 		echo $t->getMessage(),$t->getCode();
-	echo 12;
+		echo 12;
 	 
 }
+*/
+ /*
 
+$a = null;
 
+try{
+$a->fetch_assoc();
+} catch (Throwable $t){
+var_dump($t);
+}
  
 
-
+*/
 ?>
 
 
