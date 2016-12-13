@@ -12,9 +12,9 @@ use Min\MinException as MinException;
 class MysqliNew
 {
 	private $active_db	= 'default';
-	private $intrans = '';
-	private $ref; 
+	private $ref = null; 
 	private $conf = [];
+	private $intrans = [];
 	private $connections = [];
 
 	public function  __construct($db_key = '') 
@@ -33,7 +33,7 @@ class MysqliNew
 	
 	private function connect($type = 'master')
 	{
-		$linkid = $type.$this->active_db;
+		$linkid = $this->getLinkId($type);
 		
 		if (empty($this->connections[$linkid])) {
 			$this->connections[$linkid] = $this->parse($type);
@@ -82,7 +82,7 @@ class MysqliNew
 	 
 	public function query($sql, $action, $marker = '', $param = [])
 	{
-		$type = $this->intrans ?: ((!empty($this->conf[$this->active]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'); 
+		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
 
 		if (empty($marker)) {
 			return $this->nonPrepareQuery($type, $sql, $action);
@@ -136,14 +136,14 @@ class MysqliNew
 				if (empty($this->trans) && ($e instanceof \mysqli_sql_exception) && (in_array($e->getCode(), [2006, 2013]) || false == $this->connect($type)->ping())) {
 					continue; 
 				} 
-				throw new MinException($e->getMessage(), $e->getCode());
+				throw $e;
 				
 			} finally {
 				if (!empty($stmt)) $stmt->close();
 				if (!empty($get_result)) $get_result->free();
 				if (true === $on_error) {
 					$this>connect($type)->close();
-					unset($this->connections[$type.$this->active_db]);
+					unset($this->connections[$this->getLinkId($type)]);
 				}
 			}
 		}
@@ -179,51 +179,65 @@ class MysqliNew
 					continue; 
 				} 
 				
-				throw new MinException($e->getMessage(), $e->getCode());
+				throw $e;
 				
 			} finally {
 				if ($get_result instanceof \mysqli_result) $get_result->free();
 				if (true === $on_error) {
 					$this>connect($type)->close();
-					unset($this->connections[$type. $this->active_db]);
+					unset($this->connections[$this->getLinkId($type)]);
 				}
 			}
 		}	
 	}
 	
-	public function transaction_start($db = null, $type = 'master') 
+	public function transaction_start() 
 	{
-		if (isset($db)) $this->init($db);
-
-		if ($this->connect($type)->begin_transaction()) {
-			$this->intrans = $type;
+		$type = 'master';
+		if(empty($this->intrans[$this->active_db])) {
+			$this->intrans[$this->active_db] = 1;
+			$round = 5;
+			while ($round > 0) {
+				$round--;
+				try {
+					$this->connect($type)->begin_transaction();
+					return true;
+				} catch (\Throwable $e) {
+					if (empty($this->trans) && ($e instanceof \mysqli_sql_exception) && (in_array($e->getCode(), [2006, 2013]) || false == $this->connect($type)->ping())) {
+						continue; 
+					} else {
+						throw $e;
+					}
+				}
+			}
+		} else {
+			$this->intrans[$this->active_db]++;
 			return true;
-		}   
+		}	 
 	}
 	
 	public function transaction_commit() 
-	{
-		if ($this->connect($this->intrans)->commit()) {
-			$this->intrans = '';
-			return true;
-		} else {
-			throw new MinException(json_encode($this->connect($this->intrans)->error_list), $this->connect($this->intrans)->errno + $this->fix);
-		}
+	{	
+		$type = 'master';
+		if ($this->intrans[$this->active_db] == 1 ) {
+			$this->connect($type)->commit(); 
+		} 
+		
+		$this->intrans[$this->active_db]--;
+		 
 	}
 		 
 	public function transaction_rollback()
 	{ 
-		if ($this->connect($this->intrans)->rollback()) {
-			$this->intrans = '';
-			return true;
-		} else {
-			throw new MinException(json_encode($this->connect($this->intrans)->error_list), $this->connect($this->intrans)->errno + $this->fix);
-		}
+		$type = 'master';
+		$this->connect($type)->rollback();
+		$this->intrans[$this->active_db] = 0;
+		 
 	}
 	
-	public function autocommit($type, $mode)
-	{
-		return $this->connect($type)->autocommit($mode);
+	private function getLinkId($type){
+		
+		return $type.$this->active_db
 	}
 		
 }
