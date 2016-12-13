@@ -320,6 +320,7 @@ function app_tails()
 {
 	// fatal errors 
 	$error = error_get_last();
+	var_dump($error);
 	$log = App::getService('Logger');
 	if (isset($error['type'])) {
 		$error['title'] = 'Fatal Error Catched By app_tails ';
