@@ -58,7 +58,8 @@
 							<span id="regpwd1-error"></span>
 						 
 						</div>
-
+		
+						<input id="crsf_token" type="hidden" value="<?=get_token();?>" name="crsf_token" />
 						<div class="service-agreement">请阅读<a href="" >《QI用户注册协议》</a></div>
 						<div id="reg-error" class="reg-error">注册失败,请重试</div> 
 						<button href="javascript:;" class="btn-img btn-entry reg-btn" id="regsubmit" tabindex="6" type="submit"  sindex=0>同意协议并注册</button>

@@ -9,6 +9,7 @@
 <script type="text/javascript" src="/public/js/event.js"></script>
 <script type="text/javascript" src="/public/js/cookie.js"></script>
 <script type="text/javascript" src="/public/js/jsonp.js"></script>
+<script type="text/javascript" src="/public/js/minajax.js"></script>
 <script type="text/javascript" src="/public/js/domready.js"></script>
 
 </head>

@@ -451,11 +451,12 @@ Min.event.bind('getcode','click',function(e){
 	this.setAttribute("sindex", 1);
 
 	minAjax({
-		url:'http://www.' + site_domain + '/regist/sendsms.html', 
+		url:'http://www.' + site_domain + '/regist/send.html', 
 		type:'POST', 
 		data:{
 			phone:phone,
-			code:code
+			code:code,
+			crsf_token:_$('crsf_token').value
 		},
 		success: function(data){
 			if(data.status == 1) {

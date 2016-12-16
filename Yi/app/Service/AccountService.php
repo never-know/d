@@ -36,7 +36,7 @@ class AccountService extends \Min\Service
 			throw new \Min\MinException('帐号类型错误', 20100);		
 		}
 		
-		$key	= $arr['type']. ':'. $arr['name']);
+		$key	= $arr['type']. ':'. $arr['name'];
 		$result = CM('Login')->get($key);
 			
 		if (empty($result)) {		
@@ -68,7 +68,7 @@ class AccountService extends \Min\Service
 				$this->error('注册失败', 30204);
 			}
 		} else {
-			throw new \Min\MinException('password_hash failed', );
+			throw new \Min\MinException('password_hash failed', 30000);
 		}
 	}
 

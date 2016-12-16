@@ -142,7 +142,7 @@ function current_path()
  
 function get_token($value = '') 
 {
-	$key = session_id() . conf_get['private_key'] . conf_get['hash_salt'];
+	$key = session_id() . get_config('private_key') . get_config('hash_salt');
 	$hmac = base64_encode(hash_hmac('sha256', $value, $key, TRUE));
 	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
 }
@@ -258,7 +258,7 @@ function DM($type, $key = null)
 function CM($type, $key = null)
 {
 	$cache_setting = get_config('cache');
-	$value = $cache_setting[$type]?:$cache_setting['default'];
+	$value = $cache_setting[$type]??$cache_setting['default'];
 	return App::getService($value['bin'])->init($value['key']);
 }
 
@@ -320,7 +320,6 @@ function app_tails()
 {
 	// fatal errors 
 	$error = error_get_last();
-	var_dump($error);
 	$log = App::getService('Logger');
 	if (isset($error['type'])) {
 		$error['title'] = 'Fatal Error Catched By app_tails ';

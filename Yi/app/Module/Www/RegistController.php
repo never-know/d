@@ -19,7 +19,7 @@ class RegistController extends \Min\Controller
 		$captcha 	= $_POST['code'];
 		$this->check($phone, $captcha);	
 		
-		$this->response($this->request('\\Min\\Service\\Sms::send', ['phone' => $phone]));	
+		$this->response($this->request('\\App\\Service\\Sms::send', ['phone' => $phone]));	
 	}
 	
 	public function index_post()
@@ -35,11 +35,11 @@ class RegistController extends \Min\Controller
 		}
 		$this->check($phone, $captcha);	
 		
-		$this->request('\\Min\\Service\\Sms::check', ['phone' => $phone, 'code' => $sms]);
+		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'code' => $sms]);
 
 		$regist_data = ['phone' => $phone, 'pwd' => $pwd, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip2long(ip_address())];
 		
-		$regist_result = $this->request('\\Min\\Service\\Account::addUserByPhone', $regist_data, false);
+		$regist_result = $this->request('\\App\\Service\\Account::addUserByPhone', $regist_data, false);
 		if ($regist_result['uid'] > 1) {
 			$this->initUser($phone, $regist_result['uid']);
 			$this->success('注册成功');
@@ -50,18 +50,17 @@ class RegistController extends \Min\Controller
 	}
 	
 	private function check($phone, $code){
-
-		if (true !== validate('phone', $phone)) {
+		
+		if (1 !== validate('phone', $phone)) {
 			$this->error('手机号码格式错误', 30120);
 		}
-
-		$code_result = $this->request('\\Min\\Captcha::checkCode', ['code'=>$code, 'type'=>'reg']);
 		
-		if (true !== $code_result ) {
+		$captcha = new \Min\Captcha;
+		if (true !== $captcha->checkCode($code, 'reg')) {
 			$this->error('图片验证码错误', 30102);
 		}
 		
-		$exit_result = $this->request('\\Min\\Service\\Account::checkAccount', ['name'=>$phone, 'type'=>'phone']);
+		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', ['name'=>$phone, 'type'=>'phone']);
 		 
 		if (0 == $exit_result['code']) {
 			$this->error('该手机号码已被注册', 30205);

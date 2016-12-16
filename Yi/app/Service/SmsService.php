@@ -17,8 +17,9 @@ class Sms extends Min\Service
 	}
 	public function realSend($code, $phone)
 	{
+		return true;
 		if (empty($code) || empty($phone)) {
-			throw new \Exception('smsService realSend parameter error');
+			throw new \Min\MinException('smsService realSend parameter error',30000);
 		} else {
 			return $this->aliSms($phone, $code);
 		}		
@@ -33,13 +34,11 @@ class Sms extends Min\Service
 			$code = mt_rand(111111, 999999);
  
 			$result = $this->realSend($code, $phone);
-			if (isset($result->code)) {
-				// $result->code = 15  ==> 每个号码每小时最多发送7次 
-				return $this->error('发送失败', 30112);
-			} else {
-				$this->set($phone, ['code' => $code, 'ctime' => $_SERVER['REQUEST_TIME']]);
-				return $this->success();
-			}
+
+			$this->set($phone, ['code' => $code, 'ctime' => $_SERVER['REQUEST_TIME']]);
+			
+			return $this->success();
+
 		} else {
 			return $this->error('短信验证码已发送', 30113);
 		}
@@ -56,6 +55,7 @@ class Sms extends Min\Service
 		$regkey = '{sms:}'. $this->type. $name;
 		return   CM('sms')->set($regkey, $value);
 	}
+	
 	public function move($name,$value)
 	{	
 		$regkey = '{sms:}'. $this->type. $name. ':'. $value['ctime'];
@@ -88,15 +88,16 @@ class Sms extends Min\Service
 	}
 	
 	private function aliSms($phone, $code){
+		
 		include VENDOR_PATH. 'aliyun-php-sdk-core/Config.php';
 		use Sms\Request\V20160927 as Sms;            
 		$iClientProfile = DefaultProfile::getProfile("cn-hangzhou", "LTAIMERSujNfnvLi", "3VlFq7xmdaKxfcz5DfguYLfJ813Zfz");        
 		$client = new DefaultAcsClient($iClientProfile);    
 		$request = new Sms\SingleSendSmsRequest();
-		$request->setSignName("注册验证码");/*签名名称*/
-		$request->setTemplateCode("SMS_33465600");/*模板code*/
-		$request->setRecNum($phone);/*目标手机号*/
-		$request->setParamString('{"code":"'.$code.'"}');/*模板变量，数字一定要转换为字符串*/
+		$request->setSignName("注册验证码");	/*签名名称*/
+		$request->setTemplateCode("SMS_33465600");	/*模板code*/
+		$request->setRecNum($phone);	/*目标手机号*/
+		$request->setParamString('{"code":"'.$code.'"}');	/*模板变量，数字一定要转换为字符串*/
 		try {
 			$response = $client->getAcsResponse($request);
 			print_r($response);
@@ -113,20 +114,33 @@ class Sms extends Min\Service
 	}
 	
 	private function alidayuSms(){
+		
 		include VENDOR_PATH . '/Alidayu/TopSdk.php';
 
-			$c = new \TopClient($this->appkey, $this->secretkey);
-			
-			$req = new \AlibabaAliqinFcSmsNumSendRequest;
-			//$req->setExtend("123456");
-			$req->setSmsType('normal');
-			$req->setSmsFreeSignName('注册验证');
-			$p = json_encode(['code'=> (string) $arr['code'],'product'=>'【张三测试】']);
-			$req->setSmsParam($p);
-			$req->setRecNum($arr['phone']);
-			$req->setSmsTemplateCode('SMS_5059050');
-			
-			return $c->execute($req);
+		$c = new \TopClient($this->appkey, $this->secretkey);
+		
+		$req = new \AlibabaAliqinFcSmsNumSendRequest;
+		//$req->setExtend("123456");
+		$req->setSmsType('normal');
+		$req->setSmsFreeSignName('注册验证');
+		$p = json_encode(['code'=> (string) $arr['code'],'product'=>'【张三测试】']);
+		$req->setSmsParam($p);
+		$req->setRecNum($arr['phone']);
+		$req->setSmsTemplateCode('SMS_5059050');
+		
+		return $c->execute($req);
+		/*
+		
+			if (isset($result->code)) {
+				// $result->code = 15  ==> 每个号码每小时最多发送7次 
+				return $this->error('发送失败', 30112);
+			} else {
+				$this->set($phone, ['code' => $code, 'ctime' => $_SERVER['REQUEST_TIME']]);
+				return $this->success();
+			}
+		
+		
+		*/
 		
 	}
 	

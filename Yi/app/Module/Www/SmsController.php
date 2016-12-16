@@ -3,7 +3,7 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class SmsController
+class SmsController extends \Min\Controller
 {
 	private function send(){
 	

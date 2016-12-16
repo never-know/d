@@ -1,5 +1,5 @@
 <?php
-
+ 
 # backend
 
 $conf['backend'] = array (
@@ -32,7 +32,7 @@ $conf['cache'] = array (
 
 
 
-# mysql
+# mysql 
  
 $conf['Mysql'] = array (
 	'default' => array (
@@ -75,9 +75,9 @@ $conf['FileCache'] = array (
 $conf['Redis'] = array (
 	'default' => array (
 		'host' => '127.0.0.1',
-		'port' => 'localhost',
-		'timeout' => 'root',
-		'delay' => 'adolf',
+		'port' => '6379',
+		'timeout' => '1',
+		'delay' => '200',
 		'auth' => '',
 		'db' => '', 
 	)

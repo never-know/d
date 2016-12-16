@@ -22,21 +22,22 @@ class Redis{
 	public function connect()
 	{		
 		if (empty($this->conf[$this->active])) {
-			throw new \Min\MinException('can not get active '.$this->active.' info in file redic.inc, default selected');
+			throw new \Min\MinException('redis info not found when type ='.$this->active,10000);
 		}			
 
 		$info	= $this->conf[$this->active];
+		$linkId = $info['host'].$info['port'];
 		
-		if (empty($this->pools[$info['host']])) {
-			$reids = new \Redis(); 
+		if (empty($this->pools[$linkId])) {		
+			$redis = new \Redis(); 
 			$reids->connect($info['host'], $info['port'],$info['timeout'],null,$info['delay']);		
 			$reids->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
-			$this->pools[$info['host']] = $redis;			
+			$this->pools[$linkId] = $redis;	
 		}
 	
-		if (isset($info['auth'])) $this->pools[$info['host']]->auth($info['auth']);
-		if (isset($info['db']))   $this->pools[$info['host']]->select($info['db']); 
-		return $this->pools[$info['host']];
+		if (isset($info['auth'])) $this->pools[$linkId]->auth($info['auth']);
+		if (isset($info['db']))   $this->pools[$linkId]->select($info['db']); 
+		return $this->pools[$linkId];
 	}
 	 
 	

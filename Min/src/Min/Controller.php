@@ -40,10 +40,10 @@ class Controller
 		} else {
 			try {
 				$obj = new $class;	
-			} catch (\Min\MinException $t) {
+			} catch (\Min\MinException $e) {
 				app_exception($e, 'Catched Exception');
 			} catch (\Throwable $t) {
-				app_exception($e);
+				app_exception($t);
 			}
 			
 			if (true === $shared) {
