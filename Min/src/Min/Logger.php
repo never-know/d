@@ -76,7 +76,7 @@ class Logger
 		foreach ($this->logs as $log) {
 			$records .= '[' . $log['channel'] . '] [' . $log['level'] . '] ' . $log['message'] . '';
 			if (!empty($log['extra'])) {
-				$records .=  json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
+				$records .=  json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 			}
 			$records .= PHP_EOL;	
 		}

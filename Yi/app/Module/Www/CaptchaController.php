@@ -17,7 +17,7 @@ class CaptchaController extends \Min\Controller
 	{ 
 		if (is_numeric($_GET['callback']) && preg_match('/^[a-z]+$/',$_GET['type'])) { 
 			$code = new \Min\Captcha;
-			if (true === $code->checkCode($_GET['code'], $_GET['type'])) {
+			if (true === $code->checkCode($_GET['code'], $_GET['type'], false)) {
 				$this->success();
 			}
 		}

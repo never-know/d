@@ -65,10 +65,10 @@ class Controller
 			
 			return $result;
 			
-		} catch (\Min\MinException $t) {
+		} catch (\Min\MinException $e) {
 				app_exception($e, 'Catched Exception');
 		} catch (\Throwable $t) {
-			app_exception($e);
+			app_exception($t);
 		}
 	}
 	final public function layout($layout = 'frame')

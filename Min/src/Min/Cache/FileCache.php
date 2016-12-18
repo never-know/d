@@ -31,19 +31,20 @@ class FileCache
      * @param string $id
      * @param int $expiration 0 means on limit  
      */
-    public function get($id,$expiration = 3600)
+    public function get($id, $expiration = 3600)
     {
         $file_name = $this->getFileName($id);
 		if (is_file($file_name)) {
-			if ($expiration > 0 && filemtime($file_name) < (time() - $expiration)) {
-				unlink($file_name);	 
-			} elseif ($cache = file_get_contents($file_name)) {
-				if ($cache = json_decode($cache, true)) {
-					if (isset($cache['data'])) {
-						return $cache['data'];
+			if (empty($expiration) || ($expiration > 0 && filemtime($file_name) > (time() - $expiration))) {
+				if ($cache = file_get_contents($file_name)) {
+					if ($cache = json_decode($cache, true)) {
+						if (isset($cache['data'])) {
+							return $cache['data'];
+						}
 					}
 				}
 			}
+			unlink($file_name);	 
 		} 
 		return false;	
 		 
@@ -72,10 +73,12 @@ class FileCache
 		$tmp = tempnam($dir, 'swap');
 		if (file_put_contents($tmp, safe_json_encode(['data'=>$data]))) {
 			if (rename($tmp,$file_name)) {
+				unlink($tmp);
 				return true;
 			}
-			unlink($tmp);
+			if (is_file($file_name)) unlink($file_name);
 		}
+		unlink($tmp);
 		return false;	 
     }
 

@@ -11,7 +11,6 @@ class Di
 		if (empty($name)) {
 			return null;
 		}
-		
         if (isset($this->instances[$name])) {
 			if (!empty($params)) {	
 				$this->instances[$name]->init($params);
@@ -39,6 +38,7 @@ class Di
 					$obj->init($params);
 				}
 			} catch (\Throwable $t) {
+				var_dump($t);
 				$obj = null;
 			}
 		}

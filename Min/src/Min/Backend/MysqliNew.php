@@ -80,7 +80,7 @@ class MysqliNew
 		return $connect;
 	}
 	 
-	public function query($sql, $action, $marker = '', $param = [])
+	public function query($sql, $action, $marker, $param)
 	{
 		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
 
@@ -120,7 +120,7 @@ class MysqliNew
 						$result	= $stmt->insert_id;
 						break;
 					case 'single' :	
-						$get_result = $stmt->get_result()
+						$get_result = $stmt->get_result();
 						$result	= $get_result->fetch_assoc();
 						break;
 					case 'couple' :
@@ -133,7 +133,7 @@ class MysqliNew
 				
 			} catch (\Throwable $e) {
 				$on_error = true;
-				if (empty($this->trans) && ($e instanceof \mysqli_sql_exception) && (in_array($e->getCode(), [2006, 2013]) || false == $this->connect($type)->ping())) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \mysqli_sql_exception) && (in_array($e->getCode(), [2006, 2013]) || false == $this->connect($type)->ping())) {
 					continue; 
 				} 
 				throw $e;
@@ -175,7 +175,7 @@ class MysqliNew
 				return $result;
 			} catch (\Throwable $e) {
 				$on_error = true;
-				if (empty($this->trans) && ($e instanceof \mysqli_sql_exception) && (in_array($e->getCode(), [2006, 2013]) || false == $this->connect($type)->ping())) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \mysqli_sql_exception) && (in_array($e->getCode(), [2006, 2013]) || false == $this->connect($type)->ping())) {
 					continue; 
 				} 
 				
@@ -222,22 +222,21 @@ class MysqliNew
 		if ($this->intrans[$this->active_db] == 1 ) {
 			$this->connect($type)->commit(); 
 		} 
-		
-		$this->intrans[$this->active_db]--;
-		 
+		$this->intrans[$this->active_db]--;	 
 	}
 		 
 	public function transaction_rollback()
 	{ 
 		$type = 'master';
-		$this->connect($type)->rollback();
-		$this->intrans[$this->active_db] = 0;
-		 
+		if ($this->intrans[$this->active_db] == 1 ) {
+			$this->connect($type)->rollback();
+		} 
+		$this->intrans[$this->active_db]--;
 	}
 	
 	private function getLinkId($type){
 		
-		return $type.$this->active_db
+		return $type.$this->active_db;
 	}
 		
 }

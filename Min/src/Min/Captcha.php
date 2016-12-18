@@ -145,9 +145,13 @@ class Captcha{
 		imagedestroy($im);
 	}
 	
-	public function checkCode($code, $type) 
+	public function checkCode($code, $type, $remove = true) 
 	{ 	 
-		return (!empty($_SESSION[$type.'_code']) && $_SESSION[$type.'_code'] === strtolower($code));
+		if (!empty($_SESSION[$type.'_code']) && $_SESSION[$type.'_code'] === strtolower($code)) {
+			if (true === $remove) unset($_SESSION[$type.'_code']);
+			return true;
+		}
+		return false;
 	}
 	
 }

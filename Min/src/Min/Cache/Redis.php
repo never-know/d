@@ -22,7 +22,7 @@ class Redis{
 	public function connect()
 	{		
 		if (empty($this->conf[$this->active])) {
-			throw new \Min\MinException('redis info not found when type ='.$this->active,10000);
+			throw new \Min\MinException('redis info not found when type ='.$this->active, 10000);
 		}			
 
 		$info	= $this->conf[$this->active];
@@ -30,13 +30,13 @@ class Redis{
 		
 		if (empty($this->pools[$linkId])) {		
 			$redis = new \Redis(); 
-			$reids->connect($info['host'], $info['port'],$info['timeout'],null,$info['delay']);		
-			$reids->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+			$redis->connect($info['host'], $info['port'],$info['timeout'],null,$info['delay']);		
+			$redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
 			$this->pools[$linkId] = $redis;	
 		}
 	
-		if (isset($info['auth'])) $this->pools[$linkId]->auth($info['auth']);
-		if (isset($info['db']))   $this->pools[$linkId]->select($info['db']); 
+		if (!empty($info['auth'])) $this->pools[$linkId]->auth($info['auth']);
+		if (!empty($info['db']))   $this->pools[$linkId]->select($info['db']); 
 		return $this->pools[$linkId];
 	}
 	 

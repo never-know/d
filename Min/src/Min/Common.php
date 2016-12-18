@@ -248,20 +248,6 @@ function watchdog($msg = '', $level = 'INFO', $extra = [], $channel = null)
 	App::getService('Logger')->init($channel)->log($msg, $level, $extra);		
 }
 
-function DM($type, $key = null)
-{		
-	$db_setting = get_config('backend');
-	$value = $db_setting[$type]?:$db_setting['default'];
-	return App::getService($value['bin'])->init($value['key']);
-}
-
-function CM($type, $key = null)
-{
-	$cache_setting = get_config('cache');
-	$value = $cache_setting[$type]??$cache_setting['default'];
-	return App::getService($value['bin'])->init($value['key']);
-}
-
 function get_config($section, $default = null)
 {
 	static $conf;
@@ -324,7 +310,7 @@ function app_tails()
 	if (isset($error['type'])) {
 		$error['title'] = 'Fatal Error Catched By app_tails ';
 		$message = error_message_format($error);
-		$log->log($message, 'CRITICAL', debug_backtrace(), 'default');
+		$log->log($message, 'CRITICAL', [], 'Fatal Error');
 	}
 	$log->record();
 	if (isset($error['type'])) {
@@ -352,7 +338,7 @@ function app_error($errno, $errstr, $errfile, $errline)
 		'line'		=> $errline, 
 		'type'		=> $errno
 	];
-	watchdog(error_message_format($me), $type, [], 'default');
+	watchdog(error_message_format($me), $type, [], 'Unexpected Error');
 	
 	if ($type == 'ERROR') {
 		request_not_found(500);
@@ -370,5 +356,6 @@ function app_exception($e, $title = 'Unexpected Expection')
 		'type'		=> $e->getCode()
 	];
 	watchdog(error_message_format($me), 'CRITICAL', $e->getTrace(), 'default');
+	//watchdog(error_message_format($me), 'CRITICAL', [], 'Unexpected Expection');
 	request_not_found(500);
 }

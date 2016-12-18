@@ -4,7 +4,7 @@
 
 $conf['backend'] = array (
 	'default' => array (
-		'bin' => 'Mysql',
+		'bin' => 'Mysql', // DI server name
 		'key' => 'default'
 	),
 	'user' => array (
@@ -79,7 +79,7 @@ $conf['Redis'] = array (
 		'timeout' => '1',
 		'delay' => '200',
 		'auth' => '',
-		'db' => '', 
+		'db' => 1, 
 	)
 );
 
