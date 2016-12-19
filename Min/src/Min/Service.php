@@ -21,10 +21,10 @@ class Service
 	
 	final public function query($sql, $action, $marker = '', $param = [])
 	{	
-		return $this->databaseManager()->query($sql, $action, $marker, $param);
+		return $this->DBManager()->query($sql, $action, $marker, $param);
 	}
 	
-	final public function selectDB($key)
+	final public function changeDB($key)
 	{	
 		if (!empty($key)) {
 			$this->db_key = $key;
@@ -32,20 +32,19 @@ class Service
 		return $this;
 	}
 	
-	final public function selectCache($key)
+	final public function changeCache($key)
 	{	
 		if (!empty($key)) {
 			$this->cache_key = $key;
 		}
 		return $this;
 	}
-	
-	
-	final public function databaseManager()
+
+	final public function DBManager()
 	{		
 		$db_setting = get_config('backend');
 		$value = $db_setting[$this->db_key]?:$db_setting['default'];
-		return \Min\App::getService($value['bin'])->init($value['key']);
+		return \Min\App::getService($value['bin'])->init(['active_db' => $value['key'], 'prefix' => $value['prefix']]);
 	}
 
 	final public function cache($key = null, $key = null)

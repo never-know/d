@@ -4,7 +4,6 @@ class Logger
 {
 	private $logs 				= [];
 	private $allowed 			= [];
-	private $channel 			= 'default';
 	private $default_file_size 	= '1024000';
 	private $levels = [
         'DEBUG' => 100,
@@ -19,24 +18,17 @@ class Logger
 	
 	public function __construct($option = [])
     {
-		if (empty($option)) $option = get_config('Logger');
+		if (empty($option)) $option = get_config('logger');
         foreach ($this->levels as $key => $value) {
 			if (!empty($option[$key])) $this->allowed[$key] = $option[$key];
 		}
     }
-
-	public function init($channel = '')
-	{
-		if (!empty($channel)) $this->channel = $channel;
-		return $this;
-	}
-	
-	public function log($message, $level = 'ERROR', $extra = [], $channel = '')
+	 
+	public function log($message, $level = 'ERROR', $channel = 'default', $extra = [])
 	{	
 		$level = strtoupper($level);
 		if (empty($this->allowed[$level])) return;
-		if (empty($channel)) $channel = $this->channel;
-		
+	
 		$this->logs[] = ['level'=>$level, 'channel'=> $channel, 'message'=> $message, 'extra'=> $extra];
 		
 		if (isset($this->allowed[$level]['handler'])) {

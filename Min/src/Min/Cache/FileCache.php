@@ -10,21 +10,12 @@ namespace Min\Cache;
 class FileCache
 {
     private $option = [];
-	private $active	= 'default';
 	
 	public function  __construct($db_key = '') 
 	{
-		$this->option = get_config('FileCache');	
+		$this->option = get_config('file_cache');	
 	}
 	 
-	public function init($key)
-	{
-		if (!empty($key) && empty($this->conf[$key])) {
-			$this->active = $key;
-		}
-		return $this;
-	}
-
     /**
      * Fetches an entry from the cache.
      * 

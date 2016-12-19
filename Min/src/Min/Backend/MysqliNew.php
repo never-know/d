@@ -19,7 +19,7 @@ class MysqliNew
 
 	public function  __construct($db_key = '') 
 	{	
-		$this->conf = get_config('Mysql');
+		$this->conf = get_config('mysql');
 		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 	}
 	 
@@ -83,6 +83,8 @@ class MysqliNew
 	public function query($sql, $action, $marker, $param)
 	{
 		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
+		
+		$sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
 
 		if (empty($marker)) {
 			return $this->nonPrepareQuery($type, $sql, $action);
@@ -92,7 +94,7 @@ class MysqliNew
 
 	}
 	
-	public function realQuery($type, $sql, $action, $marker, $param)
+	private function realQuery($type, $sql, $action, $marker, $param)
 	{
 		$round = 5;
 		while ($round > 0) {
@@ -149,7 +151,7 @@ class MysqliNew
 		}
 	} 
 	
-	public function nonPrepareQuery($type, $sql, $action)
+	private function nonPrepareQuery($type, $sql, $action)
 	{		
 		$round = 5 ;
 		while ($round > 0) {

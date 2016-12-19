@@ -43,9 +43,9 @@
 	register_shutdown_function('app_tails');
 	
 	$di = new \Min\Di;
-	$di->setShared('Mysql', '\\Min\\Backend\\MysqliNew');
-	$di->setShared('Redis', '\\Min\\Cache\\Redis');
-	$di->setShared('FileCache', '\\Min\\Cache\\FileCache');
-	$di->setShared('Logger', '\\Min\\Logger');
+	$di->setShared('mysql', '\\Min\\Backend\\MysqliNew');
+	$di->setShared('redis', '\\Min\\Cache\\Redis');
+	$di->setShared('file_cache', '\\Min\\Cache\\FileCache');
+	$di->setShared('logger', '\\Min\\Logger');
 	
 	\Min\App::bootstrap($di);

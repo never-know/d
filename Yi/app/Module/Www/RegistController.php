@@ -66,8 +66,7 @@ class RegistController extends \Min\Controller
 			$this->error('该手机号码已被注册', 30205);
 		} elseif (30206 != $exit_result['code']) {
 			$this->response($exit_result);
-		}
-		
+		}	
 	}
 	
 	private function initUser($name, $uid){

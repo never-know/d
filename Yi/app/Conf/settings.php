@@ -1,31 +1,33 @@
 <?php
- 
-# backend
+
+/*
+ * 全部小写
+ */
+
 
 $conf['backend'] = array (
 	'default' => array (
-		'bin' => 'Mysql', // DI server name
+		'bin' => 'mysql', // DI server name
 		'key' => 'default'
 	),
 	'user' => array (
-		'bin' => 'Mysql',
+		'bin' => 'mysql',
 		'key' => 'default'
 	)
 );
 
-# backend
 
 $conf['cache'] = array (
 	'default' => array (
-		'bin' => 'Redis',
+		'bin' => 'redis',
 		'key' => 'default'
 	),
 	'user' => array (
-		'bin' => 'Redis',
+		'bin' => 'redis',
 		'key' => 'default'
 	),
 	'content' => array (
-		'bin' => 'FileCache',
+		'bin' => 'file_cache',
 		'key' => 'default',
 	)
 );
@@ -34,8 +36,9 @@ $conf['cache'] = array (
 
 # mysql 
  
-$conf['Mysql'] = array (
+$conf['mysql'] = array (
 	'default' => array (
+		'prefix' => 'yi_',
 		'rw_separate'	=> true,
 		'master' 		=> '//ts001:a123456@p:127.0.0.1:8080#annyi',
 		'slave'			=> array (
@@ -48,7 +51,7 @@ $conf['Mysql'] = array (
 
 # logger
 
-$conf['Logger'] = array (
+$conf['logger'] = array (
 	'DEBUG' => 100,
     'INFO' => 200,
 	'NOTICE' => 250,
@@ -64,7 +67,7 @@ $conf['Logger'] = array (
 
 # filecache
 
-$conf['FileCache'] = array (
+$conf['file_cache'] = array (
 	'default' => array (
 		'cache_dir' => CACHE_PATH,
 	)
@@ -72,7 +75,7 @@ $conf['FileCache'] = array (
 
 # redis
 
-$conf['Redis'] = array (
+$conf['redis'] = array (
 	'default' => array (
 		'host' => '127.0.0.1',
 		'port' => '6379',

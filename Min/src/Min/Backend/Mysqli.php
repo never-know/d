@@ -21,7 +21,7 @@ class Mysqli
 
 	public function  __construct($db_key = '') 
 	{
-		$this->conf = get_config('Mysql');;
+		$this->conf = get_config('mysql');;
 	}
 	 
 	public function init($active_db) 

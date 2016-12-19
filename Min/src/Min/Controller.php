@@ -40,8 +40,6 @@ class Controller
 		} else {
 			try {
 				$obj = new $class;	
-			} catch (\Min\MinException $e) {
-				app_exception($e, 'Catched Exception');
 			} catch (\Throwable $t) {
 				app_exception($t);
 			}
@@ -65,8 +63,6 @@ class Controller
 			
 			return $result;
 			
-		} catch (\Min\MinException $e) {
-				app_exception($e, 'Catched Exception');
 		} catch (\Throwable $t) {
 			app_exception($t);
 		}
@@ -99,7 +95,7 @@ class Controller
 	
 	final public function validToken($value){
 		
-		if (IS_POST && (empty($_POST['crsf_token']) || !valid_token($_POST['crsf_token']))) {
+		if (IS_POST && (empty($_POST['crsf_token']) || !valid_token($_POST['crsf_token'], $value))) {
 			$this->error('表单token无效或已过期', 30101);
 		}
 	}

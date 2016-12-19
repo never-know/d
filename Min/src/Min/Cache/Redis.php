@@ -9,7 +9,7 @@ class Redis{
 
 	public function  __construct($key = '')
 	{
-		$this->conf = get_config('Redis');;
+		$this->conf = get_config('redis');;
 	}
 	 
 	public function init($key)
@@ -49,7 +49,7 @@ class Redis{
 	 */
 	public function set($key, $value, $timeOut = 0)
 	{	
-		try{ 
+		try { 
 			if ($timeOut > 0) {
 				$retRes = $this->connect()->set($key, $value, $timeOut);
 			} else {
@@ -57,7 +57,7 @@ class Redis{
 			}
 			return $retRes;
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 	}
@@ -68,22 +68,22 @@ class Redis{
 	 */
 	public function get($key) 
 	{	
-		try{ 
+		try { 
 			$result = $this->connect()->get($key);
 			return $result;
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 	}
 	
 	public function setTimeout($key, $ttl)
 	{
-		try{ 
+		try { 
 			$result = $this->connect()->setTimeout($key, $ttl);
 			return $result;
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 		
@@ -95,10 +95,10 @@ class Redis{
 	 */
 	public function delete($key) 
 	{
-		try{ 
+		try { 
 			return $this->connect()->delete($key);
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 	}
@@ -108,10 +108,10 @@ class Redis{
 	 */
 	public function flushAll() 
 	{
-		try{ 
+		try { 
 			return $this->connect()->flushAll();
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 	}
@@ -124,10 +124,10 @@ class Redis{
 	 */
 	public function push($key, $value, $right = true) 
 	{
-		try{ 
+		try { 
 			return $right ? $this->connect()->rPush($key, $value) : $this->connect()->lPush($key, $value);
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 	}
@@ -139,11 +139,11 @@ class Redis{
 	 */
 	public function pop($key, $left = true) 
 	{
-		try{ 
+		try { 
 			$val = $left ? $this->connect()->lPop($key) : $this->connect()->rPop($key);
 			return $val;
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 	}
@@ -154,10 +154,10 @@ class Redis{
 	 */
 	public function incr($key) 
 	{
-		try{ 
+		try { 
 			return $this->connect()->incr($key);
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 	}
@@ -168,10 +168,10 @@ class Redis{
 	 */
 	public function decrement($key) 
 	{
-		try{ 
+		try { 
 			return $this->connect()->decr($key);
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 	}
@@ -182,10 +182,10 @@ class Redis{
 	 */
 	public function exists($key) 
 	{
-		try{ 
+		try { 
 			return $this->connect()->exists($key);
 		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			watchdog($t->getMessage(), 'NOTICE', 'redis');
 			return false;
 		} 
 	}

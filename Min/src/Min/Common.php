@@ -1,6 +1,40 @@
 <?php
 
 use Min\App;
+	
+function t($string, array $args = [], array $options = []) 
+{ 
+	if (empty($args)) {
+		return $string;		
+	} else {
+		foreach ($args as $key => $value) {
+			switch ($key[0]) {
+				case '@':
+					$value = check_plain($value);
+					break;
+				case ':':
+					$value = check_url($value);
+					break;
+				case '%':
+				default:
+					$value = '<em class="placeholder">' . check_plain($value) . '</em>';
+					break;
+
+				case '!':
+			}
+		}
+		return strtr($string, $args);
+	}
+}
+
+function view($result = [], $path = '')
+{
+	if (empty($path)) {
+		$path =  '/'.App::getModule().'/'.  App::getController().'/'.  App::getAction();
+	}
+	require VIEW_PATH.$path.VIEW_EXT;
+	 
+}
 
 function autoload($class)
 {
@@ -26,7 +60,12 @@ function autoload($class)
 		throw new \Min\MinException($file.' can not be autoloaded');
 	}	
 }
-  
+
+function current_path() 
+{
+  return $_SERVER['PATH_INFO_ORIGIN'].'.html?'.http_build_query($_GET);
+}
+ 
 function ip_address() 
 {
 	static  $ip_address = '';
@@ -135,21 +174,25 @@ function jsonp_return($arr)
 	}
 	exit;
 }
-function current_path() 
-{
-  return $_SERVER['PATH_INFO_ORIGIN'].'.html?'.http_build_query($_GET);
-}
- 
-function get_token($value = '') 
-{
-	$key = session_id() . get_config('private_key') . get_config('hash_salt');
+
+function get_token($value = '_FORM') 
+{	
+	$form_id = App::getAction. $value;
+	$_SESSION[$form_id] = mt_rand(111111, 999999);
+	$key = session_id() . get_config('private_key') .$_SESSION[$form_id]. get_config('hash_salt');
 	$hmac = base64_encode(hash_hmac('sha256', $value, $key, TRUE));
 	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
 }
 
-function valid_token($token, $value = '') 
+function valid_token($token, $value = '_FORM') 
 {
   return ($token === get_token($value));
+}
+// 处理url
+function check_url($uri) 
+{
+    $uri = html_entity_decode($uri, ENT_QUOTES, 'UTF-8');
+    return check_plain(strip_dangerous_protocols($uri));
 }
 // 安全的在html中输出字符串	
 function check_plain($text) 
@@ -165,12 +208,7 @@ function safe_json_encode($var)
 function check_plain_from_html($string) {
     return html_entity_decode(strip_tags($string));
 }
-// 处理url
-function check_url($uri) 
-{
-    $uri = html_entity_decode($uri, ENT_QUOTES, 'UTF-8');
-    return check_plain(strip_dangerous_protocols($uri));
-}
+
 
 function strip_dangerous_protocols($uri) 
 {
@@ -200,52 +238,10 @@ function strip_dangerous_protocols($uri)
 
 	return $uri;
 }
-	
-function t($string, array $args = [], array $options = []) 
-{ 
-	if (empty($args)) {
-		return $string;		
-	} else {
-		foreach ($args as $key => $value) {
-			switch ($key[0]) {
-				case '@':
-					$value = check_plain($value);
-					break;
-				case ':':
-					$value = check_url($value);
-					break;
-				case '%':
-				default:
-					$value = '<em class="placeholder">' . check_plain($value) . '</em>';
-					break;
 
-				case '!':
-			}
-		}
-		return strtr($string, $args);
-	}
-}
-
-function error_message_format(array $error)
+function watchdog($msg = '', $level = 'INFO', $channel = 'default', $extra = [])
 {
-	$message = ' ['
-		.	$error['title']
-		.	': '
-		.	rtrim($error['message'],PHP_EOL)
-		.	' in file '
-		.	$error['file']
-		.	'  at line '
-		.	$error['line']
-		.	' error code/type: '
-		.	$error['type']
-		.	'] ';
-	
-	return $message;
-}
-
-function watchdog($msg = '', $level = 'INFO', $extra = [], $channel = null)
-{
-	App::getService('Logger')->init($channel)->log($msg, $level, $extra);		
+	App::getService('Logger')->log($msg, $level, $channel, $extra);		
 }
 
 function get_config($section, $default = null)
@@ -257,13 +253,9 @@ function get_config($section, $default = null)
 	return $conf[$section]?:$default;
 }
 
-function view($result = [], $path = '')
+function site_offline() 
 {
-	if (empty($path)) {
-		$path =  '/'.App::getModule().'/'.  App::getController().'/'.  App::getAction();
-	}
-	require VIEW_PATH.$path.VIEW_EXT;
-	 
+    redirect(OFFLINE_PAGE);
 }
 
 function request_not_found($code, $message = '请求失败', $redirect = '') 
@@ -297,11 +289,6 @@ function request_not_found($code, $message = '请求失败', $redirect = '')
 	exit;
 }	
 
-function site_offline() 
-{
-    redirect(OFFLINE_PAGE);
-}
-
 function app_tails()
 {
 	// fatal errors 
@@ -310,7 +297,7 @@ function app_tails()
 	if (isset($error['type'])) {
 		$error['title'] = 'Fatal Error Catched By app_tails ';
 		$message = error_message_format($error);
-		$log->log($message, 'CRITICAL', [], 'Fatal Error');
+		$log->log($message, 'CRITICAL', 'Fatal_Error', debug_backtrace());
 	}
 	$log->record();
 	if (isset($error['type'])) {
@@ -338,7 +325,8 @@ function app_error($errno, $errstr, $errfile, $errline)
 		'line'		=> $errline, 
 		'type'		=> $errno
 	];
-	watchdog(error_message_format($me), $type, [], 'Unexpected Error');
+	
+	watchdog(error_message_format($me), $type, 'Unexpected_Error');
 	
 	if ($type == 'ERROR') {
 		request_not_found(500);
@@ -346,16 +334,39 @@ function app_error($errno, $errstr, $errfile, $errline)
 	return true;
 }
 
-function app_exception($e, $title = 'Unexpected Expection')
+function app_exception($e, $channel = 'Unexpected_Expection')
 {	
+	if ($e instanceof \mysqli_sql_exception) {
+		$channel = 'Mysql_Exception';
+	} elseif ($e instanceof \Min\MinException) {
+		$channel = 'Catched_Exception';
+	}  
+	
 	$me  =  [	
-		'title'		=> $title, 
+		'title'		=> $channel, 
 		'message'	=> $e->getMessage(), 
 		'file'		=> $e->getFile(), 
 		'line'		=> $e->getLine(),
 		'type'		=> $e->getCode()
 	];
-	watchdog(error_message_format($me), 'CRITICAL', $e->getTrace(), 'default');
-	//watchdog(error_message_format($me), 'CRITICAL', [], 'Unexpected Expection');
+
+	watchdog(error_message_format($me), 'CRITICAL', $channel, $e->getTrace());
 	request_not_found(500);
+}
+
+function error_message_format(array $error)
+{
+	$message = ' ['
+		.	$error['title']
+		.	': '
+		.	rtrim($error['message'],PHP_EOL)
+		.	' in file '
+		.	$error['file']
+		.	'  at line '
+		.	$error['line']
+		.	' error code/type: '
+		.	$error['type']
+		.	'] ';
+	
+	return $message;
 }
