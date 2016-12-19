@@ -79,8 +79,13 @@ class Redis{
 	
 	public function setTimeout($key, $ttl)
 	{
-		$result = $this->connect()->setTimeout($key, $ttl);
-		return $result;
+		try{ 
+			$result = $this->connect()->setTimeout($key, $ttl);
+			return $result;
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 		
 	}
 	
@@ -88,15 +93,27 @@ class Redis{
 	 * 删除一条数据
 	 * @param string $key KEY名称
 	 */
-	public function delete($key) {
-		return $this->connect()->delete($key);
+	public function delete($key) 
+	{
+		try{ 
+			return $this->connect()->delete($key);
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 	}
 	
 	/**
 	 * 清空数据
 	 */
-	public function flushAll() {
-		return $this->connect()->flushAll();
+	public function flushAll() 
+	{
+		try{ 
+			return $this->connect()->flushAll();
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 	}
 	
 	/**
@@ -107,7 +124,12 @@ class Redis{
 	 */
 	public function push($key, $value, $right = true) 
 	{
-		return $right ? $this->connect()->rPush($key, $value) : $this->connect()->lPush($key, $value);
+		try{ 
+			return $right ? $this->connect()->rPush($key, $value) : $this->connect()->lPush($key, $value);
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 	}
 	
 	/**
@@ -117,8 +139,13 @@ class Redis{
 	 */
 	public function pop($key, $left = true) 
 	{
-		$val = $left ? $this->connect()->lPop($key) : $this->connect()->rPop($key);
-		return $val;
+		try{ 
+			$val = $left ? $this->connect()->lPop($key) : $this->connect()->rPop($key);
+			return $val;
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 	}
 	
 	/**
@@ -127,7 +154,12 @@ class Redis{
 	 */
 	public function incr($key) 
 	{
-		return $this->connect()->incr($key);
+		try{ 
+			return $this->connect()->incr($key);
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 	}
 
 	/**
@@ -136,7 +168,12 @@ class Redis{
 	 */
 	public function decrement($key) 
 	{
-		return $this->connect()->decr($key);
+		try{ 
+			return $this->connect()->decr($key);
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 	}
 	
 	/**
@@ -145,7 +182,12 @@ class Redis{
 	 */
 	public function exists($key) 
 	{
-		return $this->connect()->exists($key);
+		try{ 
+			return $this->connect()->exists($key);
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 	}
 	 
 }
