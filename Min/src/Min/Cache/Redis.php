@@ -48,13 +48,18 @@ class Redis{
 	 * @param int $timeOut 时间
 	 */
 	public function set($key, $value, $timeOut = 0)
-	{
-		if ($timeOut > 0) {
-			$retRes = $this->connect()->set($key, $value, $timeOut);
-		} else {
-			$retRes = $this->connect()->set($key, $value);
-		}
-		return $retRes;
+	{	
+		try{ 
+			if ($timeOut > 0) {
+				$retRes = $this->connect()->set($key, $value, $timeOut);
+			} else {
+				$retRes = $this->connect()->set($key, $value);
+			}
+			return $retRes;
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 	}
 
 	/**
@@ -62,15 +67,21 @@ class Redis{
 	 * @param string $key KEY名称
 	 */
 	public function get($key) 
-	{
-		$result = $this->connect()->get($key);
-		return $result;
+	{	
+		try{ 
+			$result = $this->connect()->get($key);
+			return $result;
+		} catch (\Throwable $t){
+			watchdog($t->getMessage(), 'NOTICE', [], 'redis');
+			return false;
+		} 
 	}
 	
 	public function setTimeout($key, $ttl)
 	{
 		$result = $this->connect()->setTimeout($key, $ttl);
 		return $result;
+		
 	}
 	
 	/**
