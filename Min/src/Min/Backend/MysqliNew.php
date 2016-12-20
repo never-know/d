@@ -104,7 +104,7 @@ class MysqliNew
 			try {
 				$stmt =  $this->connect($type)->prepare($sql); 
 				$merge		= [$stmt, $marker];
-				foreach ($param as $key => $value) {
+				foreach ($param as $value) {
 					$merge[] = &$value;		
 				}
 				if (empty($this->ref)) {
