@@ -42,14 +42,15 @@ class AccountService extends \Min\Service
 			
 		if (empty($result)) {		
 			$mark = ($arr['type'] == 'phone') ? 'i': 's';
-			$sql = 'SELECT uid, name, email, phone, pwd FROM user  WHERE '.$arr['type'].' = ? ';
-			$result	= $this->query('single', $sql, $mark, [$arr['name']]);
+			$sql = 'SELECT * FROM {user}  WHERE '.$arr['type'].' = ? ';
+			$result	= $this->query( $sql, 'single', $mark, [$arr['name']]);
 		}
+		
 		if (!empty($result)) {	
 			$this->cache()->set($key, $result);
-			$this->success($result);
+			return $this->success($result);
 		} else {
-			$this->error('账号不存在', 30206);
+			return $this->error('账号不存在', 30206);
 		}
 	}
 
@@ -57,16 +58,16 @@ class AccountService extends \Min\Service
 	
 		if ($regist_data['pwd'] = password_hash($regist_data['pwd'], PASSWORD_BCRYPT, ['cost' => 9])) {	
 		
-			$sql = 'insert into user (phone, pwd, regtime, regip) values ('. intval($regist_data['phone']). ',\''. $regist_data['pwd']. ',\''. intval($regist_data['regtime']). ','. intval($regist_data['regip']). ')';
+			$sql = 'insert into {user} (phone, regtime, regip, pwd) values ('. intval($regist_data['phone']). ' , '. intval($regist_data['regtime']). ' , '. intval($regist_data['regip']). ' , \''. $regist_data['pwd']. '\')';
 			
-			$reg_result =  $this->query('insert',$sql);
+			$reg_result =  $this->query($sql, 'insert');
 			
 			if ($reg_result > 1) {
 				//清理 注册缓存
 				$this->cache()->delete('phone:'. intval($regist_data['phone']));
-				$this->success(['uid' => $reg_result], '注册成功');
+				return $this->success(['uid' => $reg_result], '注册成功');
 			} else {
-				$this->error('注册失败', 30204);
+				return $this->error('注册失败', 30204);
 			}
 		} else {
 			throw new \Min\MinException('password_hash failed', 30000);

@@ -56,8 +56,8 @@ class Redis{
 				$retRes = $this->connect()->set($key, $value);
 			}
 			return $retRes;
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 	}
@@ -71,8 +71,8 @@ class Redis{
 		try { 
 			$result = $this->connect()->get($key);
 			return $result;
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 	}
@@ -82,8 +82,8 @@ class Redis{
 		try { 
 			$result = $this->connect()->setTimeout($key, $ttl);
 			return $result;
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 		
@@ -97,8 +97,8 @@ class Redis{
 	{
 		try { 
 			return $this->connect()->delete($key);
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 	}
@@ -110,8 +110,8 @@ class Redis{
 	{
 		try { 
 			return $this->connect()->flushAll();
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 	}
@@ -126,8 +126,8 @@ class Redis{
 	{
 		try { 
 			return $right ? $this->connect()->rPush($key, $value) : $this->connect()->lPush($key, $value);
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 	}
@@ -142,8 +142,8 @@ class Redis{
 		try { 
 			$val = $left ? $this->connect()->lPop($key) : $this->connect()->rPop($key);
 			return $val;
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 	}
@@ -156,8 +156,8 @@ class Redis{
 	{
 		try { 
 			return $this->connect()->incr($key);
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 	}
@@ -170,8 +170,8 @@ class Redis{
 	{
 		try { 
 			return $this->connect()->decr($key);
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 	}
@@ -184,8 +184,8 @@ class Redis{
 	{
 		try { 
 			return $this->connect()->exists($key);
-		} catch (\Throwable $t){
-			watchdog($t->getMessage(), 'NOTICE', 'redis');
+		} catch (\Throwable $t) {
+			watchdog($t, 'redis', 'CRITICAL');
 			return false;
 		} 
 	}

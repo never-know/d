@@ -17,7 +17,7 @@ class RegistController extends \Min\Controller
 	{
 		$phone 		= $_POST['phone'];
 		$captcha 	= $_POST['code'];
-		$this->check($phone, $captcha, 'reg');	
+		$this->check($phone, $captcha, '1');	
 		
 		$this->response($this->request('\\App\\Service\\Sms::send', ['phone' => $phone]));	
 	}
@@ -54,7 +54,6 @@ class RegistController extends \Min\Controller
 		if (1 !== validate('phone', $phone)) {
 			$this->error('手机号码格式错误', 30120);
 		}
-		watchdog(json_encode($_SESSION));
 		$captcha = new \Min\Captcha;
 		if (true !== $captcha->checkCode($code, $type)) {
 			$this->error('图片验证码错误', 30102);
@@ -62,7 +61,7 @@ class RegistController extends \Min\Controller
 		
 		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', ['name'=>$phone, 'type'=>'phone']);
 		 
-		if (0 == $exit_result['code']) {
+		if (0 === $exit_result['code']) {
 			$this->error('该手机号码已被注册', 30205);
 		} elseif (30206 != $exit_result['code']) {
 			$this->response($exit_result);

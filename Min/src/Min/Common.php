@@ -194,7 +194,6 @@ function get_token($value = '', $seed = false)
 function valid_token($token, $value) 
 {
 	$form_id = $value. '_FORM';
-	watchdog($form_id, 'DEBUG');
 	if (empty( $_SESSION[$form_id])) return false;
 	return ($token === get_token($value, true));
 }
@@ -249,12 +248,10 @@ function strip_dangerous_protocols($uri)
 	return $uri;
 }
 
-function watchdog($msg = '', $level = 'DEBUG', $channel = 'debug', $extra = [])
+function watchdog($msg = '', $channel = 'debug', $level = 'DEBUG',  $extra = [])
 {
 	if ($msg instanceof \Throwable) {
 		$msg = error_message_format($msg);
-		$channel = 'Unexpected_Expection';
-		$level = 'CRITICAL';
 	}
 	App::getService('logger')->log($msg, $level, $channel, $extra);		
 }
@@ -308,13 +305,12 @@ function app_tails()
 {
 	// fatal errors 
 	$error = error_get_last();
-	$log = App::getService('logger');
 	if (isset($error['type'])) {
 		$error['title'] = 'Fatal Error Catched By app_tails ';
 		$message = error_message_format($error);
-		$log->log($message, 'CRITICAL', 'Fatal_Error', debug_backtrace());
+		watchdog($message, 'Fatal_Error', 'CRITICAL', debug_backtrace());
 	}
-	$log->record();
+	App::getService('logger')->record();
 	if (isset($error['type'])) {
 		request_not_found(500);
 	}
@@ -343,7 +339,7 @@ function app_error($errno, $errstr, $errfile, $errline)
 		.	$errno
 		.	'] ';
 	
-	watchdog($message, $type, 'Unexpected_Error');
+	watchdog($message, 'unexpected_error', $type);
 	
 	if ($type == 'ERROR') {
 		request_not_found(500);
@@ -351,15 +347,15 @@ function app_error($errno, $errstr, $errfile, $errline)
 	return true;
 }
 
-function app_exception($e, $channel = 'Unexpected_Expection')
+function app_exception($e, $channel = 'unexpected_expection')
 {	
 	if ($e instanceof \mysqli_sql_exception) {
-		$channel = 'Mysql_Exception';
+		$channel = 'mysql_exception';
 	} elseif ($e instanceof \Min\MinException) {
-		$channel = 'Catched_Exception';
+		$channel = 'catched_exception';
 	}  
 	
-	watchdog(error_message_format($e), 'CRITICAL', $channel, $e->getTrace());
+	watchdog(error_message_format($e), $channel, 'CRITICAL', $e->getTrace());
 	request_not_found(500);
 }
 

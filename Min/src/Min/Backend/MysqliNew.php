@@ -16,6 +16,7 @@ class MysqliNew
 	private $conf = [];
 	private $intrans = [];
 	private $connections = [];
+	private $query_log = [];
 
 	public function  __construct($db_key = '') 
 	{	
@@ -71,8 +72,7 @@ class MysqliNew
 			} catch (\Throwable $t) {
 				watchdog($t);
 				$error_code = 1;
-			}
-			
+			}	
 		} while ($error_code != 0 && is_array($info) && !empty($info));
 		
 		if ($error_code != 0) {	
@@ -85,8 +85,8 @@ class MysqliNew
 	{
 		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active_db]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
 		
-		$sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
-
+		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
+		watchdog($sql, );
 		if (empty($marker)) {
 			return $this->nonPrepareQuery($type, $sql, $action);
 		} else {
@@ -104,8 +104,8 @@ class MysqliNew
 			try {
 				$stmt =  $this->connect($type)->prepare($sql); 
 				$merge		= [$stmt, $marker];
-				foreach ($param as $key => &$value) {
-					$merge[] = $value;		
+				foreach ($param as $key => $value) {
+					$merge[] = &$value;		
 				}
 				if (empty($this->ref)) {
 					$this->ref	= new \ReflectionFunction('mysqli_stmt_bind_param');		

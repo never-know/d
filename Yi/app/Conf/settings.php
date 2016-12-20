@@ -40,10 +40,10 @@ $conf['mysql'] = array (
 	'default' => array (
 		'prefix' => 'yi_',
 		'rw_separate'	=> true,
-		'master' 		=> '//ts001:a123456@p:127.0.0.1:8080#annyi',
+		'master' 		=> '//ts001:a123456@p:121.43.182.222:3306#annyi',
 		'slave'			=> array (
-			'//ts001:a123456@p:127.0.0.1:8080#annyi',
-			'//ts001:a123456@p:127.0.0.1:8080#annyi',
+			'//ts001:a123456@p:121.43.182.222:3306#annyi',
+			'//ts001:a123456@p:121.43.182.222:3306#annyi',
 		),
 	),
 );
