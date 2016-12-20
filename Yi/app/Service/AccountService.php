@@ -41,7 +41,7 @@ class AccountService extends \Min\Service
 		$result = $this->cache()->get($key);
 			
 		if (empty($result)) {		
-			$mark = ($arr['type'] == 'phone') ? 'i': 's';
+			$mark = ($arr['type'] == 'phone') ? 'd': 's';
 			$sql = 'SELECT * FROM {user}  WHERE '.$arr['type'].' = ? ';
 			$result	= $this->query( $sql, 'single', $mark, [$arr['name']]);
 		}

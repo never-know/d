@@ -86,7 +86,7 @@ class MysqliNew
 		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active_db]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
 		
 		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
-		watchdog($sql, );
+		watchdog($sql);
 		if (empty($marker)) {
 			return $this->nonPrepareQuery($type, $sql, $action);
 		} else {
