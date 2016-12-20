@@ -9,7 +9,8 @@ class Controller
 	
 	final public function __construct($action)
 	{	
-		$this->validToken('form_'.$action);
+		$csrf_key = implode('_', [App::getModule(), App::getController(), App::getAction()]);
+		$this->validToken($csrf_key);
 		
 		if (method_exists($this, 'onConstruct') === true) {
             $this->onConstruct();
@@ -19,7 +20,7 @@ class Controller
 		
 		if (method_exists($this, $key)){
 			$this->{$key}();
-		}else{
+		} else {
 			$this->error('无效请求', 404);
 		}
 		exit; 
@@ -93,10 +94,10 @@ class Controller
 		exit;
 	}
 	
-	final public function validToken($value){
-		
-		if (IS_POST && (empty($_POST['crsf_token']) || !valid_token($_POST['crsf_token'], $value))) {
-			$this->error('表单token无效或已过期', 30101);
+	final public function validToken($value)
+	{	
+		if (!IS_GET && (empty($_POST['csrf_token']) || !valid_token($_POST['csrf_token'], $value))) {
+			$this->error($value, 30101);
 		}
 	}
 

@@ -55,7 +55,7 @@ class Logger
 			rename($dest_file, $dest_file.'-BAK-'.time().'.log');
 		}
 		
-		$records = date( 'Y/m/d H:i:s',$_SERVER['REQUEST_TIME'])
+		$records =  date( 'Y/m/d H:i:s',$_SERVER['REQUEST_TIME'])
 				. '  [IP: '
 				. ip_address()
 				. ']  [ '
@@ -70,7 +70,7 @@ class Logger
 			if (!empty($log['extra'])) {
 				$records .=  json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 			}
-			$records .= PHP_EOL;	
+			$records .= PHP_EOL .PHP_EOL;	
 		}
 		
 		error_log($records, 3, $dest_file, '');

@@ -404,7 +404,7 @@ Min.event.bind('regcode','keyup',function(event){
 });
 	
 Min.event.bind('reg-code','click',{handler:function(e){
-	e.currentTarget.getElementsByTagName('IMG')[0].src='http://www.' + site_domain + '/captcha/get.html?type=reg&v='+new Date().getTime();
+	e.currentTarget.getElementsByTagName('IMG')[0].src='http://www.' + site_domain + '/captcha/get.html?type=reg_1_2&v='+new Date().getTime();
 	e.currentTarget.getElementsByTagName('i')[0].removeAttribute('style');
 	e.currentTarget.getElementsByTagName('i')[0].innerHTML='';
 	_$('regcode').value='';
@@ -456,7 +456,7 @@ Min.event.bind('getcode','click',function(e){
 		data:{
 			phone:phone,
 			code:code,
-			crsf_token:_$('crsf_token').value
+			csrf_token:this.getAttribute('token')
 		},
 		success: function(data){
 			if(data.status == 1) {

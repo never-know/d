@@ -44,10 +44,10 @@ class Service
 	{		
 		$db_setting = get_config('backend');
 		$value = $db_setting[$this->db_key]?:$db_setting['default'];
-		return \Min\App::getService($value['bin'])->init(['active_db' => $value['key'], 'prefix' => $value['prefix']]);
+		return \Min\App::getService($value['bin'])->init($value['key']);
 	}
 
-	final public function cache($key = null, $key = null)
+	final public function cache($key = null)
 	{
 		if (!empty($key)) {
 			$this->cache_key = $key;

@@ -17,7 +17,7 @@ class RegistController extends \Min\Controller
 	{
 		$phone 		= $_POST['phone'];
 		$captcha 	= $_POST['code'];
-		$this->check($phone, $captcha);	
+		$this->check($phone, $captcha, 'reg');	
 		
 		$this->response($this->request('\\App\\Service\\Sms::send', ['phone' => $phone]));	
 	}
@@ -33,7 +33,7 @@ class RegistController extends \Min\Controller
 		if ($pwd != $repwd) {
 			$this->error('两次输入密码不相同', 30203);
 		}
-		$this->check($phone, $captcha);	
+		$this->check($phone, $captcha, '2');	
 		
 		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'code' => $sms]);
 
@@ -49,14 +49,14 @@ class RegistController extends \Min\Controller
 			
 	}
 	
-	private function check($phone, $code){
+	private function check($phone, $code, $type){
 		
 		if (1 !== validate('phone', $phone)) {
 			$this->error('手机号码格式错误', 30120);
 		}
-		
+		watchdog(json_encode($_SESSION));
 		$captcha = new \Min\Captcha;
-		if (true !== $captcha->checkCode($code, 'reg')) {
+		if (true !== $captcha->checkCode($code, $type)) {
 			$this->error('图片验证码错误', 30102);
 		}
 		

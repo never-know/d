@@ -31,7 +31,11 @@ class Captcha{
         for ($i = 0; $i < $this->length; $i++) {
             $code .= $this->charset[mt_rand(0, $charset_len)];
         }
-		$_SESSION[$key .'_code'] = strtolower($code);		
+		$code = strtolower($code);
+		
+		foreach (explode('_', $key) as $k => $v){
+			$_SESSION[$v .'_code'] = $code;	
+		}		
 		return $code;		 
     }
 

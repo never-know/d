@@ -31,6 +31,7 @@
 	define('VENDOR_PATH', APP_PATH.'/../../Min/vendor');
 	
 	define('IS_JSONP', !empty($_REQUEST['isJsonp']));
+	define('IS_GET', 'GET' == strtoupper($_SERVER['REQUEST_METHOD']));
 	define('IS_POST', 'POST' == strtoupper($_SERVER['REQUEST_METHOD']));
 	define('IS_AJAX', (!empty($_REQUEST['isAjax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')));
 			

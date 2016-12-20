@@ -42,7 +42,7 @@ function autoload($class)
 	// new \min\module\passport\login;
 	$path 	= strtr($class, '\\', '/');
 	$path_info 	= explode('/', $path, 2);
-	
+
 	switch ($path_info[0]) {
 		case 'App' :
 			$file	= APP_PATH .'/'. $path_info[1] . PHP_EXT;
@@ -175,18 +175,28 @@ function jsonp_return($arr)
 	exit;
 }
 
-function get_token($value = '_FORM') 
+function get_token($value = '', $seed = false) 
 {	
-	$form_id = App::getAction. $value;
-	$_SESSION[$form_id] = mt_rand(111111, 999999);
+	if (empty($value)) {
+		$value = implode('_', [App::getModule(), App::getController(), App::getAction()]);
+	}
+	
+	$form_id = $value. '_FORM';
+	
+	if (false === $seed) {
+		 $_SESSION[$form_id] = mt_rand(111111, 999999);
+	}
 	$key = session_id() . get_config('private_key') .$_SESSION[$form_id]. get_config('hash_salt');
 	$hmac = base64_encode(hash_hmac('sha256', $value, $key, TRUE));
 	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
 }
 
-function valid_token($token, $value = '_FORM') 
+function valid_token($token, $value) 
 {
-  return ($token === get_token($value));
+	$form_id = $value. '_FORM';
+	watchdog($form_id, 'DEBUG');
+	if (empty( $_SESSION[$form_id])) return false;
+	return ($token === get_token($value, true));
 }
 // 处理url
 function check_url($uri) 
@@ -239,9 +249,14 @@ function strip_dangerous_protocols($uri)
 	return $uri;
 }
 
-function watchdog($msg = '', $level = 'INFO', $channel = 'default', $extra = [])
+function watchdog($msg = '', $level = 'DEBUG', $channel = 'debug', $extra = [])
 {
-	App::getService('Logger')->log($msg, $level, $channel, $extra);		
+	if ($msg instanceof \Throwable) {
+		$msg = error_message_format($msg);
+		$channel = 'Unexpected_Expection';
+		$level = 'CRITICAL';
+	}
+	App::getService('logger')->log($msg, $level, $channel, $extra);		
 }
 
 function get_config($section, $default = null)
@@ -293,7 +308,7 @@ function app_tails()
 {
 	// fatal errors 
 	$error = error_get_last();
-	$log = App::getService('Logger');
+	$log = App::getService('logger');
 	if (isset($error['type'])) {
 		$error['title'] = 'Fatal Error Catched By app_tails ';
 		$message = error_message_format($error);
@@ -317,16 +332,18 @@ function app_error($errno, $errstr, $errfile, $errline)
 			];
 			
 	$type = isset($level[$errno]) ? 'WARNING' : 'ERROR'; 
-
-	$me	=  [	
-		'title'		=> 'Unexpected Error', 
-		'message'	=> $errstr, 
-		'file'		=> $errfile, 
-		'line'		=> $errline, 
-		'type'		=> $errno
-	];
 	
-	watchdog(error_message_format($me), $type, 'Unexpected_Error');
+	$message = ' ['
+		.	rtrim($errstr,PHP_EOL)
+		.	' in file '
+		.	$errfile
+		.	'  at line '
+		.	$errline
+		.	' error code/type: '
+		.	$errno
+		.	'] ';
+	
+	watchdog($message, $type, 'Unexpected_Error');
 	
 	if ($type == 'ERROR') {
 		request_not_found(500);
@@ -342,30 +359,20 @@ function app_exception($e, $channel = 'Unexpected_Expection')
 		$channel = 'Catched_Exception';
 	}  
 	
-	$me  =  [	
-		'title'		=> $channel, 
-		'message'	=> $e->getMessage(), 
-		'file'		=> $e->getFile(), 
-		'line'		=> $e->getLine(),
-		'type'		=> $e->getCode()
-	];
-
-	watchdog(error_message_format($me), 'CRITICAL', $channel, $e->getTrace());
+	watchdog(error_message_format($e), 'CRITICAL', $channel, $e->getTrace());
 	request_not_found(500);
 }
 
-function error_message_format(array $error)
+function error_message_format(\Throwable $e)
 {
 	$message = ' ['
-		.	$error['title']
-		.	': '
-		.	rtrim($error['message'],PHP_EOL)
+		.	rtrim($e->getMessage(),PHP_EOL)
 		.	' in file '
-		.	$error['file']
+		.	$e->getFile()
 		.	'  at line '
-		.	$error['line']
+		.	$e->getLine()
 		.	' error code/type: '
-		.	$error['type']
+		.	$e->getCode()
 		.	'] ';
 	
 	return $message;

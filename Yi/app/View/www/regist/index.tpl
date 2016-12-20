@@ -33,7 +33,7 @@
 							<input id="regcode" type="text" class="regcode" name="regcode" tabindex="1" autocomplete="off"  maxlength="4" /> 
 							<i class="icon-reg iconfont icon-white" >&#xe619;</i>
 							<div class="code-change">
-								<img  class="reg-captcha" src="/captcha/get.html?type=reg" />
+								<img  class="reg-captcha" src="/captcha/get.html?type=reg_1_2" />
 								<em>换一张</em>
 							 </div>
 							 <span id="regcode-error"></span>
@@ -42,7 +42,7 @@
 							<label for="regmcode"><b class="red">*</b>短信验证码：</label>
 							<input id="regmcode" type="text" class="regmcode" name="regmcode" tabindex="1" autocomplete="off"  maxlength="6" /> 
 							<i class="icon-reg iconfont icon-white" >&#xe619;</i>
-							<a  href="javascript:void(0)" class="getcode" id="getcode" sindex="0" >获取短信验证码</a>
+							<a href="javascript:void(0)" class="getcode" id="getcode" sindex="0" token="<?=get_token('www_regist_send');?>">获取短信验证码</a>
 							<span id="regmcode-error"></span>
 						</div>
 						<div class="reg-pwd">
@@ -59,7 +59,8 @@
 						 
 						</div>
 		
-						<input id="crsf_token" type="hidden" value="<?=get_token();?>" name="crsf_token" />
+						<input type="hidden" value="<?=get_token();?>" name="csrf_token" />
+						
 						<div class="service-agreement">请阅读<a href="" >《QI用户注册协议》</a></div>
 						<div id="reg-error" class="reg-error">注册失败,请重试</div> 
 						<button href="javascript:;" class="btn-img btn-entry reg-btn" id="regsubmit" tabindex="6" type="submit"  sindex=0>同意协议并注册</button>
@@ -67,6 +68,7 @@
 						
 
 					</form>
+					 
 				 
 				</div>
 			</div>

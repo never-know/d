@@ -7,8 +7,8 @@ class AccountService extends \Min\Service
 {
 	// 是否清理 checkaccount 产生的缓存
 	private $clean_cache = false;
-	private $db_key = 'user';
-	private $cache_key = 'login';
+	public $db_key = 'user';
+	public $cache_key = 'login';
 	/**
 	* 检测账号是否存在
 	*

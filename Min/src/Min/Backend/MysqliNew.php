@@ -47,7 +47,7 @@ class MysqliNew
 	{
 		$info	= $this->conf[$this->active_db][$type];
 
-		if (empty($info))  throw new MinException('mysql info not found when type ='.$type, 1);
+		if (empty($info))  throw new \mysqli_sql_exception('mysql info not found when type ='.$type, 1);
 		
 		do {
 			if (is_array($info)) {
@@ -65,24 +65,25 @@ class MysqliNew
 			$selected_db['fragment'] = urldecode($selected_db['fragment']);
 			$selected_db['port'] = $selected_db['port'] ?? null;
 		 
-			try {
+			try {		
 				$error_code = 0;
-				$connect = new mysqli($selected_db['host'], $selected_db['user'], $selected_db['pass'], $selected_db['fragment'], $selected_db['port']);
+				$connect = new \mysqli($selected_db['host'], $selected_db['user'], $selected_db['pass'], $selected_db['fragment'], $selected_db['port']);
 			} catch (\Throwable $t) {
-				$error_code = $t->getCode();
+				watchdog($t);
+				$error_code = 1;
 			}
 			
 		} while ($error_code != 0 && is_array($info) && !empty($info));
 		
 		if ($error_code != 0) {	
-			throw new MinException('all mysql servers have gone away', 2);
+			throw new \mysqli_sql_exception('all mysql servers have gone away', 2);
 		}
 		return $connect;
 	}
 	 
 	public function query($sql, $action, $marker, $param)
 	{
-		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
+		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active_db]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
 		
 		$sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
 
@@ -144,7 +145,7 @@ class MysqliNew
 				if (!empty($stmt)) $stmt->close();
 				if (!empty($get_result)) $get_result->free();
 				if (true === $on_error) {
-					$this>connect($type)->close();
+					$this->connect($type)->close();
 					unset($this->connections[$this->getLinkId($type)]);
 				}
 			}
@@ -186,7 +187,7 @@ class MysqliNew
 			} finally {
 				if ($get_result instanceof \mysqli_result) $get_result->free();
 				if (true === $on_error) {
-					$this>connect($type)->close();
+					$this->connect($type)->close();
 					unset($this->connections[$this->getLinkId($type)]);
 				}
 			}
