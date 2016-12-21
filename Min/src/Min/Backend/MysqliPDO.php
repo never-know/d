@@ -9,7 +9,7 @@ namespace Min\Backend;
 
 use Min\MinException as MinException;
 
-class MysqliNew
+class MysqliPDO
 {
 	private $active_db	= 'default';
 	private $ref = null; 
@@ -38,7 +38,6 @@ class MysqliNew
 		
 		if (empty($this->connections[$linkid])) {
 			$this->connections[$linkid] = $this->parse($type);
-			$this->connections[$linkid]->set_charset('utf8'); 
 		}
 		return $this->connections[$linkid];
 	}
@@ -48,7 +47,7 @@ class MysqliNew
 	{
 		$info	= $this->conf[$this->active_db][$type];
 
-		if (empty($info))  throw new \mysqli_sql_exception('mysql info not found when type ='.$type, 1);
+		if (empty($info))  throw new \MinException('mysql info not found when type ='.$type, 1);
 		
 		do {
 			if (is_array($info)) {
@@ -63,20 +62,29 @@ class MysqliNew
 			$selected_db['host'] = urldecode($selected_db['host']);
 			$selected_db['user'] = urldecode($selected_db['user']);
 			$selected_db['pass'] = isset($selected_db['pass']) ? urldecode($selected_db['pass']) : '';
-			$selected_db['fragment'] = urldecode($selected_db['fragment']);
-			$selected_db['port'] = $selected_db['port'] ?? null;
-		 
-			try {		
+			$selected_db['port'] = $selected_db['port'] ?? '3306';
+			$selected_db['db'] = urldecode($selected_db['fragment']);
+			
+			$dsn = 'mysql:dbname='. $selected_db['db']. ';host='. $selected_db['host']. ':'. $selected_db['port'];
+			try {
 				$error_code = 0;
-				$connect = new \mysqli($selected_db['host'], $selected_db['user'], $selected_db['pass'], $selected_db['fragment'], $selected_db['port']);
-			} catch (\Throwable $t) {
-				watchdog($t);
-				$error_code = 1;
+				$connect = new \PDO($dsn, $selected_db['user'], $selected_db['pass'], array(
+                \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+            
+				# We can now log any exceptions on Fatal error. 
+				$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
+				# Disable emulation of prepared statements, use REAL prepared statements instead.
+				$this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            
+				} catch (\Throwable $t) {
+					watchdog($t);
+					$error_code = 1;
 			}	
 		} while ($error_code != 0 && is_array($info) && !empty($info));
 		
 		if ($error_code != 0) {	
-			throw new \mysqli_sql_exception('all mysql servers have gone away', 2);
+			throw new \MinException('all mysql servers have gone away', 2);
 		}
 		return $connect;
 	}
@@ -86,7 +94,9 @@ class MysqliNew
 		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active_db]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
 		
 		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
+		
 		watchdog($sql);
+		
 		if (empty($marker)) {
 			return $this->nonPrepareQuery($type, $sql, $action);
 		} else {
@@ -95,43 +105,49 @@ class MysqliNew
 
 	}
 	
-	private function realQuery($type, $sql, $action, $marker, $param)
+	private function realQuery($type, $sql, $param = [])
 	{
 		$round = 5;
 		while ($round > 0) {
 			$round -- ;
 			$on_error = false;	
 			try {
-				$stmt =  $this->connect($type)->prepare($sql); 
-				$merge		= [$stmt, $marker];
-				foreach ($param as $value) {
-					$merge[] = &$value;		
-				}
-				if (empty($this->ref)) {
-					$this->ref	= new \ReflectionFunction('mysqli_stmt_bind_param');		
-				}
+				$this->stmt =  $this->connect($type)->prepare($sql); 
+				foreach ($param as $key => $value) {
 				
-				$this->ref->invokeArgs($merge);
-				$stmt->execute();
-				sleep(10);
-				switch ($action) {
-					case 'update' :	
-					case 'delete' :
-						$result	= $stmt->affected_rows;
-						break;	
-					case 'insert' :
-						$result	= $stmt->insert_id;
-						break;
-					case 'single' :	
-						$get_result = $stmt->get_result();
-						$result	= $get_result->fetch_assoc();
-						break;
-					case 'couple' :
-						$get_result = $stmt->get_result();
-						$result	= $get_result->fetch_all();
-						break;				
+					$type = PDO::PARAM_STR;
+                    switch ($key) {
+                        case is_int($key):
+                            $type = PDO::PARAM_INT;
+                            break;
+                        case is_bool($key):
+                            $type = PDO::PARAM_BOOL;
+                            break;
+                        case is_null($key):
+                            $type = PDO::PARAM_NULL;
+                            break;
+                    }
+                    // Add type when binding the values to the column
+                    $this->stmt->bindValue(':'. $key, $value, $type);
 				}
-				 
+
+				# Execute SQL 
+				$this->stmt->execute();
+				
+				$rawStatement = explode(" ", preg_replace("/\s+|\t+|\n+/", " ", $sql));
+        
+				# Which SQL statement is used 
+				$statement = strtolower($rawStatement[0]);
+        
+				if ($statement === 'select' || $statement === 'show') {
+					return $this->sQuery->fetchAll($fetchmode);
+				} elseif ($statement === 'insert') {
+					return $this->lastInsertId($type);
+				} elseif ($statement === 'update' || $statement === 'delete') {
+					return $this->sQuery->rowCount();
+				} else {
+					return NULL;
+				}
 				return $result;	
 				
 			} catch (\Throwable $e) {
@@ -241,5 +257,10 @@ class MysqliNew
 		
 		return $type.$this->active_db;
 	}
+	
+	public function lastInsertId($type)
+    {
+        return $this->connect($type)->lastInsertId();
+    }
 		
 }

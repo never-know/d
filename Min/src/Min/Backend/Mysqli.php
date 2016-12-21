@@ -108,22 +108,23 @@ class Mysqli
 	
 	public function query($sql, $action, $marker = '', $param = [])
 	{
-		try {
-			if (empty($marker)) {
-				return $this->nonPrepareQuery($sql, $action);
-			} else {
-				return $this->realQuery($sql, $action, $marker, $param);
-			}
-			
-		} catch (MinE) {
+		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active_db]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
 		
+		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
 		
+		watchdog($sql);
+		
+		if (empty($marker)) {
+			return $this->nonPrepareQuery($sql, $action);
+		} else {
+			return $this->realQuery($sql, $action, $marker, $param);
 		}
+			
+		
 	}
 	
 	public function realQuery($sql, $action, $marker = '', $param = [])
 	{
-		$type = $this->intrans ?: (($this->rw_separate == true && ($action=='single' || $action == 'couple')) ? 'slave' : 'master'); 
 		$round = 10 ;
 		while ($round > 0) {
 			$round -- ;
