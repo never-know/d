@@ -80,18 +80,28 @@ class MysqliNew
 		return $connect;
 	}
 	 
-	public function query($sql, $action, $marker, $param)
+	public function query($sql, $marker, $param)
 	{
-		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active_db]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
-		
+
 		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
+		
 		watchdog($sql);
+		
+		$sql_splite = explode(' ', preg_replace('/\s+|\t+|\n+/', ' ', $sql), 2);
+
+		$action = strtolower($sql_splite[0]);
+		
+		if (!in_array($action, ['select', 'insert', 'update', 'delete'])) {
+			throw new \mysqli_sql_exception('Can not recognize action in sql: '. $sql, -4);
+		}
+		
+		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active_db]['rw_separate']) && 'select' == $action) ? 'slave' : 'master'; 
+
 		if (empty($marker)) {
 			return $this->nonPrepareQuery($type, $sql, $action);
 		} else {
 			return $this->realQuery($type, $sql, $action, $marker, $param);
 		}
-
 	}
 	
 	private function realQuery($type, $sql, $action, $marker, $param)
@@ -112,7 +122,8 @@ class MysqliNew
 				
 				$this->ref->invokeArgs($merge);
 				$stmt->execute();
- 
+				$result = false;
+				
 				switch ($action) {
 					case 'update' :	
 					case 'delete' :
@@ -122,12 +133,11 @@ class MysqliNew
 						$result	= $stmt->insert_id;
 						break;
 					case 'single' :	
-						$get_result = $stmt->get_result();
-						$result	= $get_result->fetch_assoc();
-						break;
 					case 'couple' :
-						$get_result = $stmt->get_result();
-						$result	= $get_result->fetch_all();
+						if ($get_result = $stmt->get_result()) {
+							$result	= $get_result->fetch_all();
+						}
+						
 						break;				
 				}
 				 
@@ -167,10 +177,7 @@ class MysqliNew
 					case 'insert' :
 						$result	= $this->connect($type)->insert_id;
 						break;
-					case 'single' :	
-						$result	= $get_result->fetc_assoc();
-						break;
-					case 'couple' :
+					case 'select' :		
 						$result	= $get_result->fetch_all();
 						break;
 				}
@@ -192,7 +199,7 @@ class MysqliNew
 		}	
 	}
 	
-	public function transaction_start() 
+	public function tStart() 
 	{
 		$type = 'master';
 		if(empty($this->intrans[$this->active_db])) {
@@ -204,7 +211,7 @@ class MysqliNew
 					$this->connect($type)->begin_transaction();
 					return true;
 				} catch (\Throwable $e) {
-					if (empty($this->trans) && ($e instanceof \mysqli_sql_exception) && in_array($e->getCode(), [2006, 2013])) {
+					if (empty($this->intrans[$this->active_db]) && ($e instanceof \mysqli_sql_exception) && in_array($e->getCode(), [2006, 2013])) {
 						continue; 
 					} else {
 						throw $e;
@@ -217,7 +224,7 @@ class MysqliNew
 		}	 
 	}
 	
-	public function transaction_commit() 
+	public function tCommit() 
 	{	
 		$type = 'master';
 		if ($this->intrans[$this->active_db] == 1 ) {
@@ -226,7 +233,7 @@ class MysqliNew
 		$this->intrans[$this->active_db]--;	 
 	}
 		 
-	public function transaction_rollback()
+	public function tRollback()
 	{ 
 		$type = 'master';
 		if ($this->intrans[$this->active_db] == 1 ) {
@@ -235,14 +242,19 @@ class MysqliNew
 		$this->intrans[$this->active_db]--;
 	}
 	
+	private function inTransaction(){
+		return (!empty($this->intrans[$this->active_db]));
+	}
 	private function getLinkId($type){
-		
 		return $type.$this->active_db;
 	}
+	
 	public function close($type)
 	{
-		if ($link_id = $this->getLinkId($type)) && !empty($this->connections[$link_id]) {
-		  unset($this->connections[$link_id])
+		$link_id = $this->getLinkId($type);
+		if (!empty($this->connections[$link_id]) {
+			$this->connections[$link_id]->close();
+			unset($this->connections[$link_id]);
 		}
 		
 	}

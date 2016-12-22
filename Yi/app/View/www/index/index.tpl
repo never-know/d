@@ -191,7 +191,7 @@ echo test();
 }
 */
 
-
+/*
 mysqli_report(MYSQLI_REPORT_ALL);
 try{
    $k ='helloworld';
@@ -206,8 +206,7 @@ try{
 	$stmt->execute();
 	$thread_id = $connect->thread_id;
 
-		/* Kill connection */
-		$connect->kill($thread_id);
+		 
 	echo time();	
 		echo 'before;';
 		
@@ -245,8 +244,12 @@ try{
 }
 
 
+*/
+var_dump(parse_url('//ts001:a123456@host=121.43.182.222;port=3306;dbname=annyi;charset=utf8;'));
 
-
+var_dump(false==[]);
+var_dump(is_array([]));
+var_dump([] === array());
 ?>
 
 
