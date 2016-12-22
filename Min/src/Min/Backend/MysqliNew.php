@@ -47,9 +47,8 @@ class MysqliNew
 	private function parse($type)
 	{
 		$info	= $this->conf[$this->active_db][$type];
-
-		if (empty($info))  throw new \mysqli_sql_exception('mysql info not found when type ='.$type, 1);
 		
+		if (empty($info))  throw new \mysqli_sql_exception('mysql info not found when type ='.$type, 1);
 		do {
 			if (is_array($info)) {
 				$db_index = mt_rand(0, count($info) - 1);
@@ -70,7 +69,7 @@ class MysqliNew
 				$error_code = 0;
 				$connect = new \mysqli($selected_db['host'], $selected_db['user'], $selected_db['pass'], $selected_db['fragment'], $selected_db['port']);
 			} catch (\Throwable $t) {
-				watchdog($t);
+				//watchdog($t);
 				$error_code = 1;
 			}	
 		} while ($error_code != 0 && is_array($info) && !empty($info));
@@ -113,7 +112,7 @@ class MysqliNew
 				
 				$this->ref->invokeArgs($merge);
 				$stmt->execute();
-				
+				 
 				switch ($action) {
 					case 'update' :	
 					case 'delete' :
@@ -136,7 +135,7 @@ class MysqliNew
 				
 			} catch (\Throwable $e) {
 				$on_error = true;
-				if (empty($this->intrans[$this->active_db]) && ($e instanceof \mysqli_sql_exception) && (in_array($e->getCode(), [2006, 2013]) || false == $this->connect($type)->ping())) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \mysqli_sql_exception) && in_array($e->getCode(), [2006, 2013])) {
 					continue; 
 				} 
 				throw $e;
@@ -144,9 +143,10 @@ class MysqliNew
 			} finally {
 				if (!empty($stmt)) $stmt->close();
 				if (!empty($get_result)) $get_result->free();
-				if (true === $on_error) {
-					$this->connect($type)->close();
-					unset($this->connections[$this->getLinkId($type)]);
+				
+				if (true === $on_error && ($link_id = $this->getLinkId($type)) && !empty($this->connections[$link_id])) {
+					$this->connections[$link_id]->close();
+					unset($this->connections[$link_id]);
 				}
 			}
 		}
@@ -178,7 +178,7 @@ class MysqliNew
 				return $result;
 			} catch (\Throwable $e) {
 				$on_error = true;
-				if (empty($this->intrans[$this->active_db]) && ($e instanceof \mysqli_sql_exception) && (in_array($e->getCode(), [2006, 2013]) || false == $this->connect($type)->ping())) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \mysqli_sql_exception) && in_array($e->getCode(), [2006, 2013])) {
 					continue; 
 				} 
 				
@@ -186,9 +186,9 @@ class MysqliNew
 				
 			} finally {
 				if ($get_result instanceof \mysqli_result) $get_result->free();
-				if (true === $on_error) {
-					$this->connect($type)->close();
-					unset($this->connections[$this->getLinkId($type)]);
+				if (true === $on_error && ($link_id = $this->getLinkId($type)) && !empty($this->connections[$link_id])) {
+					$this->connections[$link_id]->close();
+					unset($this->connections[$link_id]);
 				}
 			}
 		}	
@@ -206,7 +206,7 @@ class MysqliNew
 					$this->connect($type)->begin_transaction();
 					return true;
 				} catch (\Throwable $e) {
-					if (empty($this->trans) && ($e instanceof \mysqli_sql_exception) && (in_array($e->getCode(), [2006, 2013]) || false == $this->connect($type)->ping())) {
+					if (empty($this->trans) && ($e instanceof \mysqli_sql_exception) && in_array($e->getCode(), [2006, 2013])) {
 						continue; 
 					} else {
 						throw $e;
