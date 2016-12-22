@@ -11,12 +11,12 @@ use Min\MinException as MinException;
 
 class MysqliNew
 {
-	private $active_db	= 'default';
-	private $ref = null; 
+	private $ref; 
 	private $conf = [];
 	private $intrans = [];
-	private $connections = [];
 	private $query_log = [];
+	private $connections = [];
+	private $active_db	= 'default';
 
 	public function  __construct($db_key = '') 
 	{	

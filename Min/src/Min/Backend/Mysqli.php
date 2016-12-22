@@ -14,6 +14,7 @@ class Mysqli
 	private $ref; 
 	private $conf = [];
 	private $intrans = [];
+	private $query_log = [];
 	private $connections = [];
 	private $active_db	= 'default';
 
