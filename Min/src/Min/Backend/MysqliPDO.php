@@ -9,7 +9,7 @@ namespace Min\Backend;
 
 use Min\MinException as MinException;
 
-class MysqliNew
+class MysqliPDO
 {
 	private $active_db	= 'default';
 	private $ref = null; 
@@ -21,7 +21,6 @@ class MysqliNew
 	public function  __construct($db_key = '') 
 	{	
 		$this->conf = get_config('mysql');
-		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 	}
 	 
 	public function init($active_db) 
@@ -38,7 +37,6 @@ class MysqliNew
 		
 		if (empty($this->connections[$linkid])) {
 			$this->connections[$linkid] = $this->parse($type);
-			$this->connections[$linkid]->set_charset('utf8'); 
 		}
 		return $this->connections[$linkid];
 	}
@@ -47,8 +45,9 @@ class MysqliNew
 	private function parse($type)
 	{
 		$info	= $this->conf[$this->active_db][$type];
+
+		if (empty($info))  throw new \PDOException('mysql info not found when type ='.$type, -1);
 		
-		if (empty($info))  throw new \mysqli_sql_exception('mysql info not found when type ='.$type, 1);
 		do {
 			if (is_array($info)) {
 				$db_index = mt_rand(0, count($info) - 1);
@@ -62,39 +61,58 @@ class MysqliNew
 			$selected_db['host'] = urldecode($selected_db['host']);
 			$selected_db['user'] = urldecode($selected_db['user']);
 			$selected_db['pass'] = isset($selected_db['pass']) ? urldecode($selected_db['pass']) : '';
-			$selected_db['fragment'] = urldecode($selected_db['fragment']);
-			$selected_db['port'] = $selected_db['port'] ?? null;
-		 
-			try {		
+			$selected_db['port'] = $selected_db['port'] ?? '3306';
+			$selected_db['db'] = urldecode($selected_db['fragment']);
+			
+			$dsn = 'mysql:dbname='. $selected_db['db']. ';host='. $selected_db['host']. ':'. $selected_db['port'].';charset=utf8';
+			
+			try {
 				$error_code = 0;
-				$connect = new \mysqli($selected_db['host'], $selected_db['user'], $selected_db['pass'], $selected_db['fragment'], $selected_db['port']);
+				$connect = new \PDO($dsn, $selected_db['user'], $selected_db['pass'], array(
+					\PDO::ATTR_EMULATE_PREPARES => false,
+					\PDO::ATTR_PERSISTENT => true,
+					\PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+					\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+				));
+            
 			} catch (\Throwable $t) {
-				//watchdog($t);
+				watchdog($t);
 				$error_code = 1;
 			}	
+			
 		} while ($error_code != 0 && is_array($info) && !empty($info));
 		
 		if ($error_code != 0) {	
-			throw new \mysqli_sql_exception('all mysql servers have gone away', 2);
+			throw new \PDOException('all mysql servers have gone away', -2);
 		}
 		return $connect;
 	}
 	 
-	public function query($sql, $action, $marker, $param)
+	public function query($sql, $param)
 	{
 		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active_db]['rw_separate']) && in_array($action, ['single', 'couple'])) ? 'slave' : 'master'; 
 		
 		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
+		
 		watchdog($sql);
-		if (empty($marker)) {
+		
+		$sql_splite = explode(' ', preg_replace('/\s+|\t+|\n+/', ' ', $sql), 2);
+
+		$action = strtolower($sql_splite[0]);
+
+		if (!in_array($action, ['select', 'show', 'insert', 'update', 'delete'])) {
+			throw new \PDOException('Can not recognize action in sql '. $sql, -3);
+		}
+	
+		if (empty($param)) {
 			return $this->nonPrepareQuery($type, $sql, $action);
 		} else {
-			return $this->realQuery($type, $sql, $action, $marker, $param);
+			return $this->realQuery($type, $sql, $action, $param);
 		}
 
 	}
 	
-	private function realQuery($type, $sql, $action, $marker, $param)
+	private function realQuery($type, $sql, $action, $param = [])
 	{
 		$round = 5;
 		while ($round > 0) {
@@ -102,51 +120,49 @@ class MysqliNew
 			$on_error = false;	
 			try {
 				$stmt =  $this->connect($type)->prepare($sql); 
-				$merge		= [$stmt, $marker];
-				foreach ($param as $value) {
-					$merge[] = &$value;		
+				foreach ($param as $key => $value) {
+					$vaule_type = PDO::PARAM_STR;
+                    switch ($key) {
+                        case is_int($key):
+                            $vaule_type = PDO::PARAM_INT;
+                            break;
+                        case is_bool($key):
+                            $vaule_type = PDO::PARAM_BOOL;
+                            break;
+                        case is_null($key):
+                            $vaule_type = PDO::PARAM_NULL;
+                            break;
+                    }
+					
+                    $stmt->bindValue($key, $value, $vaule_type);
 				}
-				if (empty($this->ref)) {
-					$this->ref	= new \ReflectionFunction('mysqli_stmt_bind_param');		
-				}
-				
-				$this->ref->invokeArgs($merge);
+
 				$stmt->execute();
- 
-				switch ($action) {
-					case 'update' :	
+				
+				switch ( $action ) {
+					case 'update' :
 					case 'delete' :
-						$result	= $stmt->affected_rows;
-						break;	
+						$result	= $stmt->rowCount();
+						break;
 					case 'insert' :
-						$result	= $stmt->insert_id;
+						$result	= $this->lastInsertId($type);
 						break;
-					case 'single' :	
-						$get_result = $stmt->get_result();
-						$result	= $get_result->fetch_assoc();
+					case 'select' :
+					case 'show' :
+						$result	= $stmt->fetchAll(\PDO::FETCH_ASSOC);
 						break;
-					case 'couple' :
-						$get_result = $stmt->get_result();
-						$result	= $get_result->fetch_all();
-						break;				
 				}
-				 
 				return $result;	
 				
 			} catch (\Throwable $e) {
 				$on_error = true;
-				if (empty($this->intrans[$this->active_db]) && ($e instanceof \mysqli_sql_exception) && in_array($e->getCode(), [2006, 2013])) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013]) {
 					continue; 
 				} 
-				throw $e;
-				
+				throw $e;				
 			} finally {
-				if (!empty($stmt)) $stmt->close();
-				if (!empty($get_result)) $get_result->free();
-				
-				if (true === $on_error) {
-					$this->close($type);
-				}
+				if (!empty($stmt)) 	$stmt->closeCursor();
+				if (true === $on_error) $this->close($type);
 			}
 		}
 	} 
@@ -158,36 +174,33 @@ class MysqliNew
 			$round -- ;
 			$on_error = false;
 			try {
-				$get_result	= $this->connect($type)->query($sql, MYSQLI_STORE_RESULT);
-				switch ( $action ) {
+
+				switch ($action) {
 					case 'update' :
 					case 'delete' :
-						$result	= $this->connect($type)->affected_rows;
-						break;
 					case 'insert' :
-						$result	= $this->connect($type)->insert_id;
+						$result	= $this->connect($type)->exe($sql);
 						break;
-					case 'single' :	
-						$result	= $get_result->fetc_assoc();
+					case 'show' :	
+					case 'select' :	
+						$result	= $this->connect($type)->query($sql);
 						break;
-					case 'couple' :
-						$result	= $get_result->fetch_all();
-						break;
+				}
+				
+				if ($action == 'insert') {
+					$result = $this->lastInsertId($type);
 				}
 				return $result;
+				
 			} catch (\Throwable $e) {
 				$on_error = true;
-				if (empty($this->intrans[$this->active_db]) && ($e instanceof \mysqli_sql_exception) && in_array($e->getCode(), [2006, 2013])) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013])) {
 					continue; 
 				} 
-				
 				throw $e;
 				
-			} finally {
-				if ($get_result instanceof \mysqli_result) $get_result->free();
-				if (true === $on_error) {
-					$this->close($type);
-				}
+			} finally {	
+				if (true === $on_error) $this->close($type);
 			}
 		}	
 	}
@@ -201,14 +214,15 @@ class MysqliNew
 			while ($round > 0) {
 				$round--;
 				try {
-					$this->connect($type)->begin_transaction();
+					$this->connect($type)->beginTransaction();
 					return true;
 				} catch (\Throwable $e) {
-					if (empty($this->trans) && ($e instanceof \mysqli_sql_exception) && in_array($e->getCode(), [2006, 2013])) {
+					if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013])) {
 						continue; 
-					} else {
-						throw $e;
-					}
+					}  
+					throw $e; 
+				} finally {	
+					if (true === $on_error) $this->close($type);
 				}
 			}
 		} else {
@@ -230,7 +244,7 @@ class MysqliNew
 	{ 
 		$type = 'master';
 		if ($this->intrans[$this->active_db] == 1 ) {
-			$this->connect($type)->rollback();
+			$this->connect($type)->rollBack();
 		} 
 		$this->intrans[$this->active_db]--;
 	}
@@ -239,12 +253,10 @@ class MysqliNew
 		
 		return $type.$this->active_db;
 	}
-	public function close($type)
-	{
-		if ($link_id = $this->getLinkId($type)) && !empty($this->connections[$link_id]) {
-		  unset($this->connections[$link_id])
-		}
-		
-	}
+	
+	public function lastInsertId($type)
+    {
+        return $this->connect($type)->lastInsertId();
+    }
 		
 }
