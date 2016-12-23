@@ -19,9 +19,20 @@ class Service
 		return ['code' => $code, 'message' => $message];
 	}
 	
-	final public function query($sql, $action, $marker = '', $param = [])
+	final public function queryi($sql, $marker = '', $param = [])
 	{	
-		return $this->DBManager()->query($sql, $action, $marker, $param);
+		$time1 = microtime(true);
+		$result =  $this->DBManager()->query($sql, $marker, $param);
+		watchdog('db time cost:'. (microtime(true) - $time1) * 1000 .'ms');
+		return $result;
+	}
+	
+	final public function query($sql, $param = [])
+	{	
+		$time1 = microtime(true);
+		$result = $this->DBManager()->query($sql, $param);
+		watchdog('db time cost:'. (microtime(true) - $time1) * 1000 .'ms');
+		return $result;
 	}
 	
 	final public function changeDB($key)

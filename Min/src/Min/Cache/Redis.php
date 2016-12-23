@@ -30,7 +30,7 @@ class Redis{
 		
 		if (empty($this->pools[$linkId])) {		
 			$redis = new \Redis(); 
-			$redis->connect($info['host'], $info['port'],$info['timeout'],null,$info['delay']);		
+			$redis->pconnect($info['host'], $info['port'],$info['timeout'],null,$info['delay']);		
 			$redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
 			$this->pools[$linkId] = $redis;	
 		}

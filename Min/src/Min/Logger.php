@@ -26,6 +26,7 @@ class Logger
 	 
 	public function log($message, $level = 'ERROR', $channel = 'default', $extra = [])
 	{	
+		//var_dump($message);
 		$level = strtoupper($level);
 		if (empty($this->allowed[$level])) return;
 	
@@ -66,9 +67,9 @@ class Logger
 				. PHP_EOL;
 				
 		foreach ($this->logs as $log) {
-			$records .= '[channel:' . $log['channel'] . '] [' . $log['level'] . '] ' . $log['message'] . '';
+			$records .= '[channel:' . $log['channel'] . '] [' . $log['level'] . '] [info:' . $log['message'] . ']';
 			if (!empty($log['extra'])) {
-				$records .=  json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+				$records .= ' [extra: '. safe_json_encode($log['extra']).' ###]';
 			}
 			$records .= PHP_EOL;	
 		}

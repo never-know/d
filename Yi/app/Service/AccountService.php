@@ -40,14 +40,37 @@ class AccountService extends \Min\Service
 		$key	= $arr['type']. ':'. $arr['name'];
 		$result = $this->cache()->get($key);
 			
-		if (empty($result)) {		
+		if (empty($result)) {
+			
+			if($arr['type'] == 'phone') $arr['name'] = intval($arr['name']);
+
+			// mysqli prepare
+			
+			/* 
 			$mark = ($arr['type'] == 'phone') ? 'd': 's';
 			$sql = 'SELECT * FROM {user}  WHERE '.$arr['type'].' = ? ';
-			$result	= $this->query( $sql, 'single', $mark, [$arr['name']]);
+			$result	= $this->queryi($sql, $mark, [$arr['name']]);
+			 */
+			
+			// mysqli normal 
+			/*
+			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name'];
+			$result	= $this->queryi($sql);
+			*/
+			// pdo
+			 
+			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = :type ';
+			$result	= $this->query($sql, [':type' => $arr['name']]);
+			 
+			// pdo normal 
+			/*
+			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name'];
+			$result	= $this->query($sql);
+ 			*/
+			if (!empty($result))  $this->cache()->set($key, $result);
 		}
 		
 		if (!empty($result)) {	
-			$this->cache()->set($key, $result);
 			return $this->success($result);
 		} else {
 			return $this->error('账号不存在', 30206);

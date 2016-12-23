@@ -51,13 +51,15 @@ class Controller
 		}
 		
 		if (!empty($params['init'])) {
-			$obj->init($construct);	
+			$obj->init($params['init']);	
 			unset($params['init']);
 		} 
 		
-		try {			
+		try {	
+		
+			$time1 = microtime(true);
 			$result = $obj->{$concrete[1]}($params);
-			
+			watchdog('controller time cost:'. (microtime(true) - $time1) * 1000 .'ms');
 			if (isset($result['code']) && 0 !== $result['code'] &&  true === $exit_on_error) {
 				$this->response($result);
 			}

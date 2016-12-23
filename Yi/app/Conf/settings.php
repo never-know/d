@@ -36,14 +36,29 @@ $conf['cache'] = array (
 
 # mysql 
  
-$conf['mysql'] = array (
+$conf['mysqli'] = array (
 	'default' => array (
 		'prefix' => 'yi_',
 		'rw_separate'	=> true,
 		'master' 		=> '//ts001:a123456@p:121.43.182.222:3306#annyi',
 		'slave'			=> array (
 			//'//ts001:a123456@p:121.43.182.222:3306#annyi',
-			'//ts001:a123456@host=121.43.182.222;port=3306;dbname=annyi;charset=utf8',
+			//'//ts001:a123456@host=121.43.182.222;port=3306;dbname=annyi;charset=utf8',
+			//'//root:@mysql:host=127.0.0.1;port=3306;dbname=test;charset=utf8:80',
+			'//root:@127.0.0.1:3306#test' 
+		),
+	),
+);
+
+$conf['mysqlpdo'] = array (
+	'default' => array (
+		'prefix' => 'yi_',
+		'rw_separate'	=> true,
+		'master' 		=> '//ts001:a123456@p:121.43.182.222:3306#annyi',
+		'slave'			=> array (
+			//'//ts001:a123456@p:121.43.182.222:3306#annyi',
+			//'//ts001:a123456@host=121.43.182.222;port=3306;dbname=annyi;charset=utf8',
+			'//root:@mysql:host=127.0.0.1;port=3306;dbname=test;charset=utf8:80',
 			//'//root:@127.0.0.1:3306#test' 
 		),
 	),

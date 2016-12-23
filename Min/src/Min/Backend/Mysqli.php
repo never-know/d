@@ -20,7 +20,7 @@ class Mysqli
 
 	public function  __construct($db_key = '') 
 	{
-		$this->conf = get_config('mysql');;
+		$this->conf = get_config('mysqli');;
 	}
 	 
 	public function init($active_db) 
@@ -33,18 +33,18 @@ class Mysqli
 	
 	private function connect($type = 'master')
 	{
-		$linkid = $type.$this->active_db;
+		$link_id = $this->getLinkId($type);
 		
-		if (empty($this->connections[$linkid])) {
+		if (empty($this->connections[$link_id])) {
 
-			$this->connections[$linkid] = $this->parse($type);
+			$this->connections[$link_id] = $this->parse($type);
 			
-			if (!$this->connections[$linkid]->set_charset('utf8')) {
+			if (!$this->connections[$link_id]->set_charset('utf8')) {
                 throw $this->genException($type);
             }	
 		}
 	
-		return $this->connections[$linkid];
+		return $this->connections[$link_id];
 	}
 	
 	
@@ -52,7 +52,7 @@ class Mysqli
 	{
 		$info	= $this->conf[$this->active_db][$type];
 
-		if (empty($info))  throw new MinException('can not get mysql connect info when type ='.$type, -2);
+		if (empty($info))  throw new MinException('mysql info not found when type ='.$type, -2);
 		
 		do {
 			if (is_array($info)) {
@@ -84,7 +84,8 @@ class Mysqli
 	private function retry($type)
 	{
 		if (empty($this->intrans[$this->active_db]) &&
-			(in_array($this>connect($type)->errno, [2006, 2013]) || false == $this->connect($type)->ping())) {
+			(in_array($this->connect($type)->errno, [2006, 2013]) || false == $this->connect($type)->ping())) {
+				watchdog('retry true');
 				$this->close($type);
 				return true;
 			}
@@ -115,7 +116,7 @@ class Mysqli
 		}	
 	}
 	
-	public function realQuery($sql, $action, $marker, $param)
+	public function realQuery($type, $sql, $action, $marker, $param)
 	{
 		$round = 5;
 		while ($round > 0) {
@@ -130,13 +131,13 @@ class Mysqli
 				foreach ($param as $key => $value) {
 					$merge[] = &$value;		
 				}
-			
+				 
 				if (empty($this->ref)) {
 					$this->ref	= new \ReflectionFunction('mysqli_stmt_bind_param');		
 				}
-		
+					 
 				if ($this->ref->invokeArgs($merge) && $stmt->execute()) {
-				
+					sleep(10);
 					switch ($action) {
 						case 'update' :	
 						case 'delete' :
@@ -144,10 +145,11 @@ class Mysqli
 							break;	
 						case 'insert' :
 							$result	= $stmt->insert_id;
+							if (-1 == $result) $result = false;
 							break;
 						case 'select' :	
 							if ($result_single = $stmt->get_result()) {	
-								$result = $result_single->fetch_all();
+								$result = $result_single->fetch_all(MYSQLI_ASSOC);
 								$result_single->free_result();
 							}  
 							break;			
@@ -156,8 +158,8 @@ class Mysqli
 				
 				$stmt->close();
 			}
-			
-			if ((false == $result || -1 == $result) && !is_array($result) && $this->retry($type)) {
+			watchdog($result);
+			if (false == $result && !is_array($result) && $this->retry($type)) {
 				continue;
 			}
 			return $result;
@@ -180,15 +182,16 @@ class Mysqli
 						break;
 					case 'insert' :
 						$result	= $this->connect($type)->insert_id;
+						if (-1 == $result) $result = false;
 						break;
 					case 'select' :
-						$result	= $result_single->fetch_all();
+						$result	= $result_single->fetch_all(MYSQLI_ASSOC);
 						$result_single->free_result();
 						break;
 				}
 			}  
 			
-			if ((false == $result || -1 == $result) && !in_array($result) && $this->retry($type)) {
+			if (false == $result && !in_array($result) && $this->retry($type)) {
 				continue;
 			}	
 			return $result;
@@ -230,7 +233,8 @@ class Mysqli
 		$this->intrans[$this->active_db]--;
 	}
 	
-	private function inTransaction(){
+	private function inTransaction()
+	{
 		return (!empty($this->intrans[$this->active_db]));
 	}
 	
@@ -245,14 +249,15 @@ class Mysqli
 		return new MinException(safe_json_encode($this->connections[$link_id]->error_list), $this->connections[$link_id]->errno);
 	}
 	
-	private function getLinkId($type){
+	private function getLinkId($type)
+	{
 		return $type.$this->active_db;
 	}
 	
 	public function close($type)
 	{
 		$link_id = $this->getLinkId($type);
-		if (!empty($this->connections[$link_id]) {
+		if (!empty($this->connections[$link_id])) {
 			$this->connections[$link_id]->close();
 			unset($this->connections[$link_id]);
 		}

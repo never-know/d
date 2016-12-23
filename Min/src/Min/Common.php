@@ -248,11 +248,16 @@ function strip_dangerous_protocols($uri)
 	return $uri;
 }
 
-function watchdog($msg = '', $channel = 'debug', $level = 'DEBUG',  $extra = [])
+function watchdog($msg, $channel = 'debug', $level = 'DEBUG',  $extra = [])
 {
 	if ($msg instanceof \Throwable) {
 		$msg = error_message_format($msg);
+	} elseif (is_resource($msg)) {
+		$msg = 'this is a resource '. get_resource_type($msg);
+	} else {
+		$msg = safe_json_encode($msg);
 	}
+	
 	App::getService('logger')->log($msg, $level, $channel, $extra);		
 }
 
@@ -303,8 +308,10 @@ function request_not_found($code, $message = '请求失败', $redirect = '')
 
 function app_tails()
 {
+	global $start;
+	watchdog('cost:'. (microtime(true) - $start) * 1000 . 'ms');
 	// fatal errors 
-	$error = error_get_last();
+	$error = error_get_last(); 
 	if (isset($error['type'])) {
 		$error['title'] = 'Fatal Error Catched By app_tails ';
 		$message = error_message_format($error);
@@ -329,15 +336,13 @@ function app_error($errno, $errstr, $errfile, $errline)
 			
 	$type = isset($level[$errno]) ? 'WARNING' : 'ERROR'; 
 	
-	$message = ' ['
-		.	rtrim($errstr,PHP_EOL)
+	$message = rtrim($errstr,PHP_EOL)
 		.	' in file '
 		.	$errfile
 		.	'  at line '
 		.	$errline
 		.	' error code/type: '
-		.	$errno
-		.	'] ';
+		.	$errno;
 	
 	watchdog($message, 'unexpected_error', $type);
 	
@@ -361,15 +366,13 @@ function app_exception($e, $channel = 'unexpected_expection')
 
 function error_message_format(\Throwable $e)
 {
-	$message = ' ['
-		.	rtrim($e->getMessage(),PHP_EOL)
+	$message =	rtrim($e->getMessage(),PHP_EOL)
 		.	' in file '
 		.	$e->getFile()
 		.	'  at line '
 		.	$e->getLine()
 		.	' error code/type: '
-		.	$e->getCode()
-		.	'] ';
+		.	$e->getCode();
 	
 	return $message;
 }

@@ -122,7 +122,6 @@ class MysqliNew
 				
 				$this->ref->invokeArgs($merge);
 				$stmt->execute();
-				$result = false;
 				
 				switch ($action) {
 					case 'update' :	
@@ -135,9 +134,8 @@ class MysqliNew
 					case 'single' :	
 					case 'couple' :
 						if ($get_result = $stmt->get_result()) {
-							$result	= $get_result->fetch_all();
+							$result	= $get_result->fetch_all(MYSQLI_ASSOC);
 						}
-						
 						break;				
 				}
 				 
@@ -178,7 +176,7 @@ class MysqliNew
 						$result	= $this->connect($type)->insert_id;
 						break;
 					case 'select' :		
-						$result	= $get_result->fetch_all();
+						$result	= $get_result->fetch_all(MYSQLI_ASSOC);
 						break;
 				}
 				return $result;

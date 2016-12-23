@@ -20,7 +20,7 @@ class MysqliPDO
 
 	public function  __construct($db_key = '') 
 	{	
-		$this->conf = get_config('mysql');
+		$this->conf = get_config('mysqlpdo');
 	}
 	 
 	public function init($active_db) 
@@ -61,7 +61,6 @@ class MysqliPDO
 			if (!$selected_db) {
 				throw new \PDOException('mysql info parse error when type ='.$type, -3);
 			}
-			
 			try {
 				$error_code = 0;
 				$connect = new \PDO($selected_db['host'], $selected_db['user'], $selected_db['pass'], array(
@@ -84,7 +83,7 @@ class MysqliPDO
 		return $connect;
 	}
 	 
-	public function query($sql, $param = [])
+	public function query($sql, $param)
 	{
 
 		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
@@ -134,8 +133,8 @@ class MysqliPDO
 				}
 
 				$stmt->execute();
-				
-				switch ( $action ) {
+	 
+				switch ($action) {
 					case 'update' :
 					case 'delete' :
 						$result	= $stmt->rowCount();
@@ -151,7 +150,7 @@ class MysqliPDO
 				
 			} catch (\Throwable $e) {
 				$on_error = true;
-				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013]) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013])) {
 					continue; 
 				} 
 				throw $e;				
@@ -163,21 +162,22 @@ class MysqliPDO
 	} 
 	
 	private function nonPrepareQuery($type, $sql, $action)
-	{		
+	{	
 		$round = 5 ;
 		while ($round > 0) {
 			$round -- ;
 			$on_error = false;
+			 
 			try {
-
 				switch ($action) {
 					case 'update' :
 					case 'delete' :
 					case 'insert' :
-						$result	= $this->connect($type)->exe($sql);
+						$result	= $this->connect($type)->exec($sql);
 						break;	
 					case 'select' :	
-						$result	= $this->connect($type)->query($sql);
+						$stmt	= $this->connect($type)->query($sql);
+						$result	= $stmt->fetchAll(\PDO::FETCH_ASSOC);
 						break;
 				}
 				
@@ -187,13 +187,14 @@ class MysqliPDO
 				return $result;
 				
 			} catch (\Throwable $e) {
+				watchdog($e);
 				$on_error = true;
 				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013])) {
 					continue; 
 				} 
-				throw $e;
-				
+				throw $e;	
 			} finally {	
+				if (!empty($stmt)) 	$stmt->closeCursor();
 				if (true === $on_error) $this->close($type);
 			}
 		}	
@@ -255,9 +256,9 @@ class MysqliPDO
 	
 	public function close($type)
 	{
-		$link_id = $this->getLinkId($type)
-		if (!empty($this->connections[$link_id]) {
-		  unset($this->connections[$link_id])
+		$link_id = $this->getLinkId($type);
+		if (!empty($this->connections[$link_id])) {
+		  unset($this->connections[$link_id]);
 		}
 		
 	}
