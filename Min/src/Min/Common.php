@@ -211,7 +211,7 @@ function check_plain($text)
 // 安全的在js中插入Php代码
 function safe_json_encode($var) 
 { 
-    return json_encode($var, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+    return json_encode($var, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 }
 // 从php, html 代码中提取文本
 function check_plain_from_html($string) {
