@@ -134,13 +134,13 @@ function validate($type,$value)
 {
 	if (!validate_utf8($value)) return false;
 	
-	if ('email' == $type) return (bool)filter_var($value, FILTER_VALIDATE_EMAIL);
+	//if ('email' == $type) return (bool)filter_var($value, FILTER_VALIDATE_EMAIL);
 	
 	$pattern = [
 		'quotes'=>'/["\'\s]+/u',
 		'nickname'	=> '/^[a-zA-Z0-9\-_\x{4e00}-\x{9fa5}]{3,31}$/u',
 		'username'=>'/^[a-zA-Z0-9\-_]{3,31}$/',
-		'email' => '/^\w+([-.]\w+)*@[A-Za-z0-9]+([.-][A-Za-z0-9]+)*\.[A-Za-z0-9]+$/',
+		'email' =>'/^\w+([\-\.]\w+)*@[A-Za-z0-9]+([\-\.][A-Za-z0-9]+)*\.[A-Za-z0-9]+$/',
 		'phone'		=> '/^(13|15|18|14|17)[\d]{9}$/',
 		'alphabet'	=> '/^[a-z]+$/i',
 	];
