@@ -68,9 +68,9 @@ function current_path()
  
 function ip_address() 
 {
-	static  $ip_address = '';
+	static  $ip = '';
 	
-	if (!isset($ip_address)) {
+	if (!isset($ip)) {
 		
 		$ip_address = $_SERVER['REMOTE_ADDR'];
 
@@ -97,9 +97,11 @@ function ip_address()
 				$ip_address = array_pop($untrusted);
 			}
 		}
+		
+		$ip = ip2long($ip_address);
 	}
 
-	return $ip_address;
+	return $ip;
 }
 
 function redirect($url, $time = 0, $msg = '') 

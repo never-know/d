@@ -21,9 +21,9 @@ class Service
 	
 	final public function queryi($sql, $marker = '', $param = [])
 	{	
-		$time1 = microtime(true);
+		record_time('query start');
 		$result =  $this->DBManager()->query($sql, $marker, $param);
-		watchdog('db time cost:'. (microtime(true) - $time1) * 1000 .'ms');
+		record_time('query end');
 		return $result;
 	}
 	

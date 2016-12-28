@@ -38,7 +38,6 @@ class Di
 					$obj->init($params);
 				}
 			} catch (\Throwable $t) {
-				var_dump($t);
 				$obj = null;
 			}
 		}

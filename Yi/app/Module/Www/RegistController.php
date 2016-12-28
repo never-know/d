@@ -37,7 +37,7 @@ class RegistController extends \Min\Controller
 		
 		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'code' => $sms]);
 
-		$regist_data = ['phone' => $phone, 'pwd' => $pwd, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip2long(ip_address())];
+		$regist_data = ['phone' => $phone, 'pwd' => $pwd, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip_address()];
 		
 		$regist_result = $this->request('\\App\\Service\\Account::addUserByPhone', $regist_data, false);
 		if ($regist_result['uid'] > 1) {
