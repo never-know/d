@@ -65,28 +65,31 @@ class Sms extends Min\Service
 	
 	private function get($name)
 	{
-		$regkey = '{sms:}'. $this->type. $name;
-		return   CM('sms')->get($regkey);
+		return  CM('sms')->get($this->getKey($name));
 	}
 	
 	private function set($name, $value)
 	{
-		$regkey = '{sms:}'. $this->type. $name;
-		return   CM('sms')->set($regkey, $value);
+		return  CM('sms')->set($this->getKey($name), $value);
 	}
 	
 	private function move($name, $value)
 	{	
 		$regkey = '{sms:}'. $this->type. $name. ':'. $value['ctime'];
-		CM('sms_out')->set($regkey, $value['code']);
+		$result = CM('sms_out')->set($regkey, $value['code']);
+		if (!$result) watchdog($regkey.' move fail ', 'redis', 'NOTICE');
 	}
 	
-	private function delete($name, $sc = [])
+	private function delete($name)
 	{
-		if (!empty($sc)) $this->move($name,$sc);
-		CM('sms')->delete('{sms:}'.$this->type.$name);
+		$result = CM('sms')->delete($this->getKey($name));
+		if (!$result) watchdog($regkey.' set fail ', 'redis', 'NOTICE');
 	}
 	
+	private function getKey($name)
+	{
+		return '{sms:}'. $this->type. $name;
+	}
 	private function aliSms($phone, $code){
 		
 		include VENDOR_PATH. 'aliyun-php-sdk-core/Config.php';
