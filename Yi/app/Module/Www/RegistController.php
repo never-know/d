@@ -51,8 +51,7 @@ class RegistController extends \Min\Controller
 	
 	private function check($phone, $code, $type){
 		
-		global $start;
-		watchdog('controller time cost:'. (microtime(true) - $start) * 1000 .'ms');
+		
 		if (1 !== validate('phone', $phone)) {
 			$this->error('手机号码格式错误', 30120);
 		}
@@ -60,9 +59,9 @@ class RegistController extends \Min\Controller
 		if (true !== $captcha->checkCode($code, $type)) {
 			$this->error('图片验证码错误', 30102);
 		}
-		watchdog('controller time cost:'. (microtime(true) - $start) * 1000 .'ms');
+	
 		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', ['name'=>$phone, 'type'=>'phone']);
-		watchdog('controller time cost:'. (microtime(true) - $start) * 1000 .'ms');
+
 		if (0 === $exit_result['code']) {
 			$this->error('该手机号码已被注册', 30205);
 		} 

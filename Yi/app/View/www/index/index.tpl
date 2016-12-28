@@ -245,7 +245,7 @@ try{
 
 
 */
-var_dump(parse_url('//ts001:a123456@host=121.43.182.222;port=3306;dbname=annyi;charset=utf8;'));
+var_dump(parse_url('//ts001:a123456@host=121.43.182.222;port=3306;dbname=annyi;charset=utf8'));
 
 var_dump(false==[]);
 var_dump(is_array([]));

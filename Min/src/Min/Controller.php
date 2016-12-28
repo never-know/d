@@ -56,10 +56,9 @@ class Controller
 		} 
 		
 		try {	
-		
-			$time1 = microtime(true);
+			record_time('controller start');
 			$result = $obj->{$concrete[1]}($params);
-			watchdog('controller time cost:'. (microtime(true) - $time1) * 1000 .'ms');
+			record_time('controller end');
 			if (isset($result['code']) && 0 !== $result['code'] &&  true === $exit_on_error) {
 				$this->response($result);
 			}

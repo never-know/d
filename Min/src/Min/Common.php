@@ -308,8 +308,7 @@ function request_not_found($code, $message = '请求失败', $redirect = '')
 
 function app_tails()
 {
-	global $start;
-	watchdog('cost:'. (microtime(true) - $start) * 1000 . 'ms');
+	record_time('request end');
 	// fatal errors 
 	$error = error_get_last(); 
 	if (isset($error['type'])) {
@@ -375,4 +374,9 @@ function error_message_format(\Throwable $e)
 		.	$e->getCode();
 	
 	return $message;
+}
+
+function  record_time($tag)
+{
+	watchdog($tag. ' cost:'. (microtime(true) - $_SERVER['REQUEST_TIME']) * 1000 .'ms');
 }
