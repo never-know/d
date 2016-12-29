@@ -60,7 +60,7 @@ class RegistController extends \Min\Controller
 			$this->error('图片验证码错误', 30102);
 		}
 	
-		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', ['name'=>$phone, 'type'=>'phone']);
+		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', ['name'=>$phone, 'type'=>'phone'], false);
 
 		if (0 === $exit_result['code']) {
 			$this->error('该手机号码已被注册', 30205);

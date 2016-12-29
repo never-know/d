@@ -35,7 +35,7 @@ class Controller
 		}
 		
 		$class	= $concrete[0] .'Service';
-		
+		watchdog($class);
 		if (isset($this->sharedService[$class])) {
 			$obj = $sharedService[$class];
 		} else {

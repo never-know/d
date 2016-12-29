@@ -257,7 +257,7 @@ function watchdog($msg, $channel = 'debug', $level = 'DEBUG',  $extra = [])
 	} elseif (is_resource($msg)) {
 		$msg = 'this is a resource '. get_resource_type($msg);
 	} else {
-		$msg = safe_json_encode($msg);
+		$msg = json_encode($msg, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 	}
 	
 	App::getService('logger')->log($msg, $level, $channel, $extra);		

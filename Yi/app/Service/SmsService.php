@@ -4,7 +4,7 @@
 */
 namespace App\Service;
 
-class Sms extends Min\Service
+class SmsService extends \Min\Service
 {	
 	private $appkey ='23314175';
 	private $secretkey ='e1aecb8048afb006b3d03937b8743972' ;
@@ -16,8 +16,9 @@ class Sms extends Min\Service
 		return $this;
 	}
 	
-	public function send($phone)
+	public function send($arr)
 	{
+		$phone = $arr['phone'];
 		$sc =  $this->get($phone); 
 		
 		if (empty($sc) || 60 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
@@ -57,7 +58,7 @@ class Sms extends Min\Service
 	private function realSend($code, $phone)
 	{
 		if (empty($code) || empty($phone)) {
-			throw new \Min\MinException('smsService parameter error', 20102);
+			throw new \Min\MinException('smsService realSend parameter error',30000);
 		} else {
 			return $this->aliSms($phone, $code);
 		}		
@@ -65,24 +66,24 @@ class Sms extends Min\Service
 	
 	private function get($name)
 	{
-		return  CM('sms')->get($this->getKey($name));
+		return  $this->cache('sms')->get($this->getKey($name));
 	}
 	
 	private function set($name, $value)
 	{
-		return  CM('sms')->set($this->getKey($name), $value);
+		return  $this->cache('sms')->set($this->getKey($name), $value);
 	}
 	
 	private function move($name, $value)
 	{	
 		$regkey = '{sms:}'. $this->type. $name. ':'. $value['ctime'];
-		$result = CM('sms_out')->set($regkey, $value['code']);
+		$result = $this->cache('sms_out')->set($regkey, $value['code']);
 		if (!$result) watchdog($regkey.' move fail ', 'redis', 'NOTICE');
 	}
 	
 	private function delete($name)
 	{
-		$result = CM('sms')->delete($this->getKey($name));
+		$result = $this->cache('sms')->delete($this->getKey($name));
 		if (!$result) watchdog($regkey.' set fail ', 'redis', 'NOTICE');
 	}
 	
@@ -90,13 +91,14 @@ class Sms extends Min\Service
 	{
 		return '{sms:}'. $this->type. $name;
 	}
+	
 	private function aliSms($phone, $code){
 		
-		include VENDOR_PATH. 'aliyun-php-sdk-core/Config.php';
-		use Sms\Request\V20160927 as Sms;            
-		$iClientProfile = DefaultProfile::getProfile("cn-hangzhou", "LTAIMERSujNfnvLi", "3VlFq7xmdaKxfcz5DfguYLfJ813Zfz");        
-		$client = new DefaultAcsClient($iClientProfile);    
-		$request = new Sms\SingleSendSmsRequest();
+		include VENDOR_PATH. '/aliyun-php-sdk/aliyun-php-sdk-core/Config.php';
+		         
+		$iClientProfile = \DefaultProfile::getProfile("cn-hangzhou", "LTAIMERSujNfnvLi", "3VlFq7xmdaKxfcz5DfguYLfJ813Zfz");        
+		$client = new \DefaultAcsClient($iClientProfile);    
+		$request = new \Sms\Request\V20160927\SingleSendSmsRequest();
 		$request->setSignName("注册验证码");	/*签名名称*/
 		$request->setTemplateCode("SMS_33465600");	/*模板code*/
 		$request->setRecNum($phone);	/*目标手机号*/

@@ -28,7 +28,7 @@
 	define('SERVICE_PATH', APP_PATH.'/Service');	
 	
 	define('MIN_PATH', APP_PATH.'/../../Min/src');
-	define('VENDOR_PATH', APP_PATH.'/../../Min/vendor');
+	define('VENDOR_PATH', MIN_PATH.'/../vendor');
 	
 	define('IS_JSONP', !empty($_REQUEST['isJsonp']));
 	define('IS_GET', 'GET' == strtoupper($_SERVER['REQUEST_METHOD']));
