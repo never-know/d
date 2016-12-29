@@ -19,7 +19,7 @@ class RegistController extends \Min\Controller
 		$captcha 	= $_POST['code'];
 		$this->check($phone, $captcha, '1');	
 		
-		$this->response($this->request('\\App\\Service\\Sms::send', ['phone' => $phone]));	
+		$this->response($this->request('\\App\\Service\\Sms::send', ['init' => 'reg', 'phone' => $phone]));	
 	}
 	
 	public function index_post()

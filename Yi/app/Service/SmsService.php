@@ -57,7 +57,7 @@ class Sms extends Min\Service
 	private function realSend($code, $phone)
 	{
 		if (empty($code) || empty($phone)) {
-			throw new \Min\MinException('smsService realSend parameter error',30000);
+			throw new \Min\MinException('smsService parameter error', 20102);
 		} else {
 			return $this->aliSms($phone, $code);
 		}		

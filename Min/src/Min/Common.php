@@ -355,7 +355,7 @@ function app_error($errno, $errstr, $errfile, $errline)
 
 function app_exception($e, $channel = 'unexpected_expection')
 {	
-	if ($e instanceof \mysqli_sql_exception) {
+	if ($e instanceof \PDOException) {
 		$channel = 'mysql_exception';
 	} elseif ($e instanceof \Min\MinException) {
 		$channel = 'catched_exception';

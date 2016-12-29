@@ -1,6 +1,6 @@
 <?php
-	error_reporting(E_ALL);
-	ini_set('display_errors', 'on');
+	error_reporting(0);
+	ini_set('display_errors', 'off');
 	$start = microtime(true);
 	require __DIR__ .'/../app/bootstrap.php';	
 	
