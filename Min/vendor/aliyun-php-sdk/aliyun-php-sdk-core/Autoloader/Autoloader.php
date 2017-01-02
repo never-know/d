@@ -34,7 +34,6 @@ class Autoloader
 		foreach (self::$autoloadPathArray as $path) {
 		
 			$file = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.$path.DIRECTORY_SEPARATOR.$className.".php";
-			watchdog($file);
 			$file = str_replace('\\', DIRECTORY_SEPARATOR, $file);
 			if(is_file($file)){
 				include_once $file;

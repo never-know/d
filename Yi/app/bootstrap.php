@@ -49,4 +49,4 @@
 	$di->setShared('file_cache', '\\Min\\Cache\\FileCache');
 	$di->setShared('logger', '\\Min\\Logger');
 	
-	\Min\App::bootstrap($di);
+	\Min\App::bootstrap($di, true);

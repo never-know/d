@@ -5,15 +5,19 @@ use Min\App;
 
 class RedisController extends \Min\Controller
 {
-	public function sms_get($name)
-	{
-		$regkey = '{sms:}reg'. $name;
-		echo   CM('sms')->get($regkey);
+	public function sms_get()
+	{	
+		$args = App::getArgs();
+		if (empty($args)) exit('参数错误');
+		$regkey = $this->cache()->get($args);
+		var_dump($regkey);
 	}
-	public function set($name, $value)
-	{
-		$regkey = '{sms:}'. $this->type. $name;
-		return   CM('sms')->set($regkey, $value);
+	public function set_get()
+	{ 
+		$args = App::getArgs();
+		if (empty($args)) exit('参数错误');
+		$tmp = explode('/', $args);
+		$this->cache()->set($tmp[0], $tmp[1]);
 	}
 	 
 }

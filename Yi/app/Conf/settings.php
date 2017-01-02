@@ -39,7 +39,7 @@ $conf['cache'] = array (
 $conf['mysqli'] = array (
 	'default' => array (
 		'prefix' => 'yi_',
-		'rw_separate'	=> true,
+		'rw_separate'	=> false,
 		'master' 		=> '//ts001:a123456@p:121.43.182.222:3306#annyi',
 		'slave'			=> array (
 			'//ts001:a123456@p:121.43.182.222:3306#annyi',  // remote
@@ -51,8 +51,8 @@ $conf['mysqli'] = array (
 $conf['mysqlpdo'] = array (
 	'default' => array (
 		'prefix' => 'yi_',
-		'rw_separate'	=> true,
-		'master' 		=> '//ts001:a123456@p:121.43.182.222:3306#annyi',
+		'rw_separate'	=> false,
+		'master' 		=> '//ts001:a123456@mysql:host=121.43.182.222;port=3306;dbname=annyi;charset=utf8:80',
 		'slave'			=> array (
 			'//ts001:a123456@mysql:host=121.43.182.222;port=3306;dbname=annyi;charset=utf8:80', //remote
 			//'//root:@mysql:host=127.0.0.1;port=3306;dbname=test;charset=utf8:80'   //localhost
@@ -99,5 +99,22 @@ $conf['redis'] = array (
 );
 
 
+$conf['sms'] = 'aliyun';
+
+$conf['aliyun'] = array (
+	'appkey' => '23314175',
+	'secretkey' => 'e1aecb8048afb006b3d03937b8743972',
+	'profile' => 'cn-hangzhou',
+	'reg' => array (
+		'signname' => '注册验证码', 	/*签名名称*/
+		'templateCode' => 'SMS_33465600'	/*模板code*/ 
+	),
+	'quicklogin' 	=> array (),
+	'resetpwd'		=> array (),
+	'notice' 		=> array()
+);
+
 $conf['hash_salt'] = 'cfDvVLhVONY5ijnnLJ0OusjqUTr_bcPPuHmlYji9F70';
 $conf['private_key'] = 'cfDvVLhVONY5ijnnLJ0OusjqUTr_bcPPuHmlYji9F70';
+
+$conf['reverse_proxy'] = 0;

@@ -508,7 +508,7 @@ Min.event.bind('regmcode','focus',function(e){
 Min.event.bind('regsubmit','click',function(){
 
 var phone = _$('regphone').value, code = _$('regcode').value, mcode = _$('regmcode').value,
-	pwd = _$('regpwd').value, pwd1 = _$('regpwd1').value;
+	pwd = _$('regpwd').value, pwd1 = _$('regpwd1').value, token = _$('csrf_token').value;
 	
 	
 	if(code == '') { 
@@ -559,7 +559,8 @@ var phone = _$('regphone').value, code = _$('regcode').value, mcode = _$('regmco
 			mcode:mcode,
 			pwd:pwd,
 			pwd1:pwd1,
-			reg:1
+			reg:1,
+			csrf_token:token
 		},
 		success: function(data){
 			if(data.status == 1) {

@@ -58,12 +58,14 @@ class Logger
 		
 		$records =  date('Y/m/d H:i:s', $_SERVER['REQUEST_TIME'])
 				. '  [IP: '
-				. ip_address()
-				. ']  [ '
+				. long2ip(ip_address())
+				. ']  ['
 				. $_SERVER['REQUEST_URI']
-				. ' ] [ pid '
+				. '] [pid '
 				. getmypid()
-				.' ]'
+				.' ] ['
+				. session_id()
+				.']'
 				. PHP_EOL;
 				
 		foreach ($this->logs as $log) {

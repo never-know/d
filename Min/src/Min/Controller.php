@@ -6,6 +6,7 @@ use Min\App;
 class Controller
 {	
 	protected $sharedService = [];
+	protected $cache_key = 'default';
 	
 	final public function __construct($action)
 	{	
@@ -35,7 +36,6 @@ class Controller
 		}
 		
 		$class	= $concrete[0] .'Service';
-		watchdog($class);
 		if (isset($this->sharedService[$class])) {
 			$obj = $sharedService[$class];
 		} else {
@@ -57,7 +57,11 @@ class Controller
 		
 		try {	
 			record_time('controller start');
-			$result = $obj->{$concrete[1]}($params);
+			if (1 === count($params)) {
+				$result = $obj->{$concrete[1]}(end($params));
+			} else {
+				$result = $obj->{$concrete[1]}($params);
+			}
 			record_time('controller end');
 			if (isset($result['code']) && 0 !== $result['code'] &&  true === $exit_on_error) {
 				$this->response($result);
@@ -77,6 +81,7 @@ class Controller
 	
 	final public function success($result = [], $layout = 'frame')
 	{	
+		if (is_string($result)) $result = ['message' => $result];
 		$result['code'] = 0;		
 		$this->response($result, $layout);
 	}
@@ -100,6 +105,17 @@ class Controller
 		if (!IS_GET && (empty($_POST['csrf_token']) || !valid_token($_POST['csrf_token'], $value))) {
 			$this->error($value, 30101);
 		}
+	}
+	
+	final public function cache($key = null)
+	{
+		if (!empty($key)) {
+			$this->cache_key = $key;
+		}
+		
+		$cache_setting = get_config('cache');
+		$value = $cache_setting[$this->cache_key] ?? $cache_setting['default'];
+		return App::getService($value['bin'])->init($value['key']);
 	}
 
 }
