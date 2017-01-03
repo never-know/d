@@ -46,7 +46,7 @@ class SmsService extends \Min\Service
 		
 		$sc =  $this->get($phone);  
 		
-		if (empty($sc) || 120 > ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
+		if (empty($sc) || 120 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
 			
 			$code = mt_rand(111111, 999999);
 			
@@ -236,13 +236,18 @@ class SmsService extends \Min\Service
 		
 		$key = $this->getKey($phone);
 		$result = $cache->get($key);
+		watchdog($result);
+		watchdog($cache->getDisc());
+		watchdog($cache->getDisc() == $result);
 		
-		if($result == $cache->getDisc()) {
-			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  phone =  '.$phone .' AND type = '. $this->pairs[$this->type]. ' AND used = 0 AND ctime > '. time() - 7200;
+		if ($cache->getDisc() === $result) {	// 注意 字符串和0和布尔值比较
+			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  phone =  '.$phone .' AND type = '. $this->pairs[$this->type]. ' AND used = 0 AND ctime > '. ($_SERVER['REQUEST_TIME'] - 7200);
 		
 			$result = $this->query($sql);
 			$result = intval($result[0]['no']);
-			$cache->set($key, 7210, $result);   // 7200m 过期时间
+			$cache->set($key, $result, 7210);   // 7200m 过期时间
+		} elseif (false == $result) {
+			$cache->set($key, 0, 7210);
 		}
 		
 		if (intval($result) > 2) {
@@ -256,13 +261,16 @@ class SmsService extends \Min\Service
 		$key = $this->getKey($phone, $ip);
 		$result = $cache->get($key);
 		
-		if($result == $cache->getDisc()) {
-			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. $ip. ' AND used = 0 AND ctime > '. time() - 7200 ;
+		if ($cache->getDisc() === $result) {
+			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. $ip. ' AND used = 0 AND ctime > '. ($_SERVER['REQUEST_TIME'] - 7200) ;
 		
 			$result = $this->query($sql);
 			$result = intval($result[0]['no']);
-			$cache->set($key, 7210, $result);   // 7210m 过期时间
+			$cache->set($key, $result, 7210);   // 7210m 过期时间
+		} elseif (false == $result) {
+			$cache->set($key, 0, 7210);
 		}
+		
 		
 		if (intval($result) > 300) {
 			watchdog('message has been sended 300 times from same ip in 2 hours', $this->log_type, 'NOTICE');
@@ -276,16 +284,18 @@ class SmsService extends \Min\Service
 		$key = $this->getKey($phone, $ip, $hash);
 		
 		$result = $cache->get($key);
+
+		if ($cache->getDisc() === $result) {
 		
-		if($result == $cache->getDisc()) {
-		
-			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. ip_address(). ' AND used = 0 AND ctime > '. time() - 7200 .' AND hash = \''. $hase .'\'';
+			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. ip_address(). ' AND used = 0 AND ctime > '. ($_SERVER['REQUEST_TIME'] - 7200) .' AND hash = \''. $hash .'\'';
 		
 			$result = $this->query($sql);
 			$result = intval($result[0]['no']);
-			$cache->set($key, 7210, $result);   // 7210m 过期时间
+			$cache->set($key, $result, 7210);   // 7210m 过期时间
+		} elseif (false == $result) {
+			$cache->set($key, 0, 7210);
 		}
-		
+
 		if (intval($result) > 50) {
 			watchdog('message has been  sended 50 times from same hash in 2 hours', $this->log_type, 'NOTICE');
 			return false; //$this->error('短信发送受限', 30116);

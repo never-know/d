@@ -31,6 +31,7 @@ class Service
 	{	
 		record_time('query start');
 		$result = $this->DBManager()->query($sql, $param);
+		watchdog($result);
 		record_time('query end');
 		return $result;
 	}

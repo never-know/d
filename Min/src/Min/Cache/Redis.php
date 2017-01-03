@@ -57,7 +57,7 @@ class Redis{
 			} else {
 				$retRes = $this->connect()->set($key, $value);
 			}
-			return $retRes;
+			watchdog($retRes, 'redis', 'CRITICAL');
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
 			return self::DISCONNECT;
@@ -72,6 +72,7 @@ class Redis{
 	{	
 		try { 
 			$result = $this->connect()->get($key);
+			watchdog($result);
 			return $result;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');

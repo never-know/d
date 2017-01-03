@@ -343,6 +343,13 @@ var_dump(($kkk ?? '123'));
 
 var_dump(0==false);
 
+
+
+echo $_SERVER['REQUEST_TIME'] - 1483365439;
+
+var_dump('a' == 1);
+var_dump(1 == 'a');
+
 ?>
 
 
