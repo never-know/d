@@ -48,9 +48,8 @@ class RegistController extends \Min\Controller
 		}		
 	}
 	
-	private function check($phone, $code, $type){
-		
-		
+	private function check($phone, $code, $type)
+	{	
 		if (1 !== validate('phone', $phone)) {
 			$this->error('手机号码格式错误', 30120);
 		}
@@ -66,8 +65,8 @@ class RegistController extends \Min\Controller
 		} 
 	}
 	
-	private function initUser($name, $uid){
-	
+	private function initUser($name, $uid)
+	{
 		if($uid > 0) {
 			// 每次登陆都需要更换session id ;
 			session_regenerate_id();

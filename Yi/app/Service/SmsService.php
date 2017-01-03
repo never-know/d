@@ -46,14 +46,12 @@ class SmsService extends \Min\Service
 		
 		$sc =  $this->get($phone);  
 		
-		if (empty($sc) || 120 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
+		if (empty($sc) || 120 > ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
 			
 			$code = mt_rand(111111, 999999);
-
-			if ($this->realSend($code, $phone) && $this->set($phone, $code)) {
 			
-				return $this->success();
-				
+			if ($this->realSend($phone, $code) && $this->set($phone, $code)) {
+				return $this->success();				
 			} else {
 				return $this->error('服务受限', 30112);
 			}	
@@ -103,7 +101,7 @@ class SmsService extends \Min\Service
 		}
 	}
 	
-	private function realSend($code, $phone)
+	private function realSend($phone, $code)
 	{
 		if (empty($code) || 1 !== validate('phone', $phone)) {
 			throw new \Min\MinException('smsService realSend parameter error', 20102);

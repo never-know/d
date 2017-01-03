@@ -303,7 +303,7 @@ _$('regphone').onkeyup = function(){
 		setError(_$('regphone-error'),'手机号码格式不对','errors');
 		current_phone = this.value;
 	}else{
-		phone_check(this.value);
+		//phone_check(this.value);
 	}
 }	
 Min.event.bind('regphone','paste',  function(e){
@@ -314,7 +314,7 @@ Min.event.bind('regphone','paste',  function(e){
     } else {
             pastedText = e.clipboardData.getData('text/plain');//e.originalEvent.clipboardData.getData('Text');//e.clipboardData.getData('text/plain');
           }
-	Min.print.log(pastedText);
+	//Min.print.log(pastedText);
 	
 	var itag = Min.dom.next(this);
 	if( (pastedText.length != 11 && /^1[\d]*$/.test(pastedText)) || pastedText == '' ){
@@ -329,7 +329,7 @@ Min.event.bind('regphone','paste',  function(e){
 		setError(_$('regphone-error'),'手机号码格式不对','errors');
 		current_phone = pastedText;
 	}else{
-		phone_check(pastedText);
+		//phone_check(pastedText);
 	}
 });	
 
@@ -459,7 +459,7 @@ Min.event.bind('getcode','click',function(e){
 			csrf_token:this.getAttribute('token')
 		},
 		success: function(data){
-			if(data.status == 1) {
+			if(data.status == 0) {
 				setTimeout(countDown, 1000);
 			}else{
 				_$('getcode').setAttribute("sindex", 0);
@@ -480,7 +480,7 @@ Min.event.bind('getcode','click',function(e){
 		},
 		fail:function(){
 			_$('getcode').setAttribute("sindex", 0);
-			setError(_$('regmcode-error'),'网络错误，请重试','errors');
+			setError(_$('regmcode-error'),'您的网络出现问题','errors');
 		
 		}
 	});
