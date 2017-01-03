@@ -25,9 +25,10 @@ class App
 			list( , self::$module, self::$controller, self::$action, self::$args) = $pathinfo; 
 			
 			$file_name = APP_PATH.'/Module/'.ucfirst(self::$module).'/'.ucfirst(self::$controller).'Controller'.PHP_EXT;
-			$controller_name = '\\App\\Module\\'.ucfirst(self::$module).'\\'.ucfirst(self::$controller).'Controller';
-			
+
 			if (file_exists($file_name)) {
+			
+				$controller_name = '\\App\\Module\\'.ucfirst(self::$module).'\\'.ucfirst(self::$controller).'Controller';
 				new $controller_name(self::$action);
 				exit;
 			}
@@ -65,6 +66,7 @@ class App
 	{  
 		return null;
 	}
+	
 	public static function initSession($force = false)
 	{
 		// 与 未登陆不使用session
@@ -90,6 +92,8 @@ class App
 		//ini_set('session.save_path', 'tcp://127.0.0.1:6379?weight=2, tcp://127.0.0.1:6380?weight=1, tcp://127.0.0.1:6381?weight=2');
 		session_name($session_name);
 		session_start();
+		
+		if (null === session_get('ip_address')) session_set('ip_address', ip_address());
 	}
 
 	public static function bootstrap($di, $force = false)

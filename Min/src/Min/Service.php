@@ -3,8 +3,8 @@ namespace Min;
 
 class Service
 {	
-	protected $db_key;
-	protected $cache_key;
+	protected $db_key = 'default';
+	protected $cache_key = 'default';
 	
 	final public function success($body = [], $message = '操作成功')
 	{	
@@ -66,7 +66,7 @@ class Service
 		
 		$cache_setting = get_config('cache');
 		$value = $cache_setting[$this->cache_key]??$cache_setting['default'];
-		return App::getService($value['bin'])->init($value['key']);
+		return \Min\App::getService($value['bin'])->init($value['key']);
 	}
 
 }

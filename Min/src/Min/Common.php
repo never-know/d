@@ -60,7 +60,21 @@ function autoload($class)
 		throw new \Min\MinException($file.' can not be autoloaded');
 	}	
 }
+function session_get($name)
+{
+	return $_SESSION[$name] ?? null;
+}
 
+function session_set($name, $value)
+{
+	$_SESSION[$name] = $value;
+}
+function session_inrc($name){
+	session_set($name, intval(session_get($name))+1);
+}
+function session_derc($name){
+	session_set($name, intval(session_get($name))-1);
+}
 function current_path() 
 {
   return $_SERVER['PATH_INFO_ORIGIN'].'.html?'.http_build_query($_GET);
@@ -68,13 +82,12 @@ function current_path()
  
 function ip_address() 
 {
-	static  $ip = '';
+	static  $ip = null;
 	
-	if (!isset($ip)) {
-		
+	if (!isset($ip)) {		
 		$ip_address = $_SERVER['REMOTE_ADDR'];
 
-		if ( 1 == REVERSE_PROXY) {
+		if (1 == get_config('reverse_proxy')) {
    
 			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 				// If an array of known reverse proxy IPs is provided, then trust
@@ -99,6 +112,9 @@ function ip_address()
 		}
 		
 		$ip = ip2long($ip_address);
+		if (false == $ip){
+			watchdog('invalid ip address : '.$ip_address, 'USER_ABNORMAL_IP', 'NOTICE');
+		}
 	}
 
 	return $ip;

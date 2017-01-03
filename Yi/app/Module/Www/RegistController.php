@@ -26,27 +26,26 @@ class RegistController extends \Min\Controller
 	{
 		$phone 		= $_POST['phone'];
 		$captcha 	= $_POST['code'];
-		$sms 		= $_POST['sms'];
+		$sms 		= $_POST['mcode'];
 		$pwd 		= $_POST['pwd'];
-		$repwd 		= $_POST['repwd'];
+		$repwd 		= $_POST['pwd1'];
 		
 		if ($pwd != $repwd) {
 			$this->error('两次输入密码不相同', 30203);
 		}
 		$this->check($phone, $captcha, '2');	
 		
-		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'code' => $sms]);
+		$this->request('\\App\\Service\\Sms::check', ['init' => 'reg', 'phone' => $phone, 'code' => $sms]);
 
 		$regist_data = ['phone' => $phone, 'pwd' => $pwd, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip_address()];
 		
 		$regist_result = $this->request('\\App\\Service\\Account::addUserByPhone', $regist_data, false);
-		if ($regist_result['uid'] > 1) {
-			$this->initUser($phone, $regist_result['uid']);
+		if ($regist_result['body']['uid'] > 1) {
+			$this->initUser($phone, $regist_result['body']['uid']);
 			$this->success('注册成功');
 		} else {
 			$this->error('注册失败', 30204);
-		}
-			
+		}		
 	}
 	
 	private function check($phone, $code, $type){

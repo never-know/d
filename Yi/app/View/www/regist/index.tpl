@@ -56,10 +56,9 @@
 							<input type="password" id="regpwd1" name="regpwd1" class="regpwd" tabindex="2" autocomplete="off"  onpaste="return  false"  onkeypress = "Min.util.checkCapslock (event,this)" maxlength="20"/>
 							<i class="icon-reg iconfont">&#xe63a;</i>
 							<span id="regpwd1-error"></span>
-						 
 						</div>
 		
-						<input type="hidden" value="<?=get_token();?>" name="csrf_token" />
+						<input type="hidden" value="<?=get_token();?>" name="csrf_token" id="csrf_token" />
 						
 						<div class="service-agreement">请阅读<a href="" >《QI用户注册协议》</a></div>
 						<div id="reg-error" class="reg-error">注册失败,请重试</div> 

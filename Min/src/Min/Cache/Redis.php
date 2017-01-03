@@ -2,10 +2,12 @@
 namespace Min\Cache;
 
 class Redis{
-	
+
+	const DISCONNECT = 'REDIS_DISCONNECT';
 	private $active	= 'default';
 	private $conf 	= [];
 	private $pools 	= [];
+
 
 	public function  __construct($key = '')
 	{
@@ -51,14 +53,14 @@ class Redis{
 	{	
 		try { 
 			if ($timeOut > 0) {
-				$retRes = $this->connect()->set($key, $value, $timeOut);
+				$retRes = $this->connect()->setEx($key, $timeOut, $value);
 			} else {
 				$retRes = $this->connect()->set($key, $value);
 			}
 			return $retRes;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
 	}
 
@@ -73,7 +75,7 @@ class Redis{
 			return $result;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
 	}
 	
@@ -84,7 +86,7 @@ class Redis{
 			return $result;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
 		
 	}
@@ -99,7 +101,7 @@ class Redis{
 			return $this->connect()->delete($key);
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
 	}
 	
@@ -112,7 +114,7 @@ class Redis{
 			return $this->connect()->flushAll();
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
 	}
 	
@@ -128,7 +130,7 @@ class Redis{
 			return $right ? $this->connect()->rPush($key, $value) : $this->connect()->lPush($key, $value);
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
 	}
 	
@@ -144,7 +146,7 @@ class Redis{
 			return $val;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
 	}
 	
@@ -158,7 +160,7 @@ class Redis{
 			return $this->connect()->incr($key);
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
 	}
 
@@ -166,13 +168,13 @@ class Redis{
 	 * 数据自减
 	 * @param string $key KEY名称
 	 */
-	public function decrement($key) 
+	public function decr($key) 
 	{
 		try { 
 			return $this->connect()->decr($key);
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
 	}
 	
@@ -186,8 +188,13 @@ class Redis{
 			return $this->connect()->exists($key);
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
-			return false;
+			return self::DISCONNECT;
 		} 
+	}
+	
+	public function getDisc() 
+	{
+		return self::DISCONNECT;
 	}
 	 
 }
