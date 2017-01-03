@@ -121,7 +121,7 @@ class SmsService extends \Min\Service
 		
 		if (empty($result)) {
 		
-			$sql = 'SELECT * FROM {sms}  WHERE  phone =  '.$phone .' and type = '. $this->pairs[$this->type]. ' ORDER BY ctime DESC LIMIT 1';
+			$sql = 'SELECT * FROM {sms} WHERE phone = '.$phone .' and type = '. $this->pairs[$this->type]. ' AND used = 0 ORDER BY ctime DESC LIMIT 1';
 			$result	= $this->query($sql);
 		}
 		
