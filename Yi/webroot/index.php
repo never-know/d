@@ -1,6 +1,5 @@
 <?php
-	error_reporting(0);
-	ini_set('display_errors', 'off');
+	
 	$start = microtime(true);
 	require __DIR__ .'/../app/bootstrap.php';	
 	

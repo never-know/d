@@ -63,6 +63,8 @@ class Logger
 				. $_SERVER['REQUEST_URI']
 				. ' ] [ pid '
 				. getmypid()
+				.' ] [ '
+				.session_id()
 				.' ]'
 				. PHP_EOL;
 				
