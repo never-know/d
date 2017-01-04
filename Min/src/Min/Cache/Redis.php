@@ -33,7 +33,6 @@ class Redis{
 		if (empty($this->pools[$linkId])) {		
 			$redis = new \Redis(); 
 			$redis->pconnect($info['host'], $info['port'],$info['timeout'],null,$info['delay']);		
-			$redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
 			$this->pools[$linkId] = $redis;	
 		}
 	
@@ -51,13 +50,14 @@ class Redis{
 	 */
 	public function set($key, $value, $timeOut = 0)
 	{	
+		$value = (is_object($value) || is_array($value)) ? json_encode($value) : $value;
 		try { 
 			if ($timeOut > 0) {
 				$retRes = $this->connect()->setEx($key, $timeOut, $value);
 			} else {
 				$retRes = $this->connect()->set($key, $value);
 			}
-			watchdog($retRes, 'redis', 'CRITICAL');
+			watchdog($retRes, 'redis', 'DEBUG', 'set key:'. $key. '@'. safe_json_encode($value));
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
 			return self::DISCONNECT;
@@ -68,11 +68,14 @@ class Redis{
 	 * 通过KEY获取数据
 	 * @param string $key KEY名称
 	 */
-	public function get($key) 
+	public function get($key, $decode = false) 
 	{	
 		try { 
 			$result = $this->connect()->get($key);
-			watchdog($result);
+			watchdog($result, 'redis', 'DEBUG', 'get key:'. $key );
+			if	( false !== $result && true === $decode) {
+				$result = json_decode($result, true);
+			}
 			return $result;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
@@ -84,6 +87,7 @@ class Redis{
 	{
 		try { 
 			$result = $this->connect()->setTimeout($key, $ttl);
+			watchdog($result, 'redis', 'DEBUG', 'set Timeout:'. $key. '@'. $ttl );
 			return $result;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
@@ -100,6 +104,7 @@ class Redis{
 	{
 		try { 
 			return $this->connect()->delete($key);
+			watchdog($result, 'redis', 'DEBUG', 'delete key:'. $key);
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
 			return self::DISCONNECT;
@@ -158,7 +163,9 @@ class Redis{
 	public function incr($key) 
 	{
 		try { 
-			return $this->connect()->incr($key);
+			$result = $this->connect()->incr($key);
+			watchdog($result, 'redis', 'DEBUG', 'incr key:'. $key);
+			return $result;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
 			return self::DISCONNECT;
@@ -172,7 +179,9 @@ class Redis{
 	public function decr($key) 
 	{
 		try { 
-			return $this->connect()->decr($key);
+			$result = $this->connect()->decr($key);
+			watchdog($result, 'redis', 'DEBUG', 'decr key:'. $key);
+			return $result;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
 			return self::DISCONNECT;

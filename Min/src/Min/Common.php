@@ -126,15 +126,15 @@ function redirect($url, $time = 0, $msg = '')
 	$url = check_url($url);
 	$msg = $msg ?: '系统跳转中！';
 	if (!headers_sent()) {
-		if (0 === $time) {
+		if (0 == $time) {
 			header('Location: ' . $url);
 		} else {
-			header('refresh:'. $time. ';url='. $url);
+			header('refresh:'. intval($time). ';url='. $url);
 			echo($msg);
 		}
 		exit();
 	} else {
-		$str  = '<meta http-equiv="Refresh" content="'. $time. ';URL='. $url. '">';
+		$str  = '<meta http-equiv="Refresh" content="'. intval($time). ';URL='. $url. '">';
 		if ($time != 0) $str .= $msg;
 		exit($str);
 	}

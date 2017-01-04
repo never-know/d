@@ -17,7 +17,7 @@ class RedisController extends \Min\Controller
 		$args = App::getArgs();
 		if (empty($args)) exit('参数错误');
 		$tmp = explode('/', $args);
-		$this->cache()->set($tmp[0], $tmp[1]);
+		$this->cache()->set($tmp[0], intval(1));
 	}
 	 
 }

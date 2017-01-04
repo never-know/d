@@ -236,10 +236,7 @@ class SmsService extends \Min\Service
 		
 		$key = $this->getKey($phone);
 		$result = $cache->get($key);
-		watchdog($result);
-		watchdog($cache->getDisc());
-		watchdog($cache->getDisc() == $result);
-		
+		 
 		if ($cache->getDisc() === $result) {	// 注意 字符串和0和布尔值比较
 			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  phone =  '.$phone .' AND type = '. $this->pairs[$this->type]. ' AND used = 0 AND ctime > '. ($_SERVER['REQUEST_TIME'] - 7200);
 		

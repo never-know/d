@@ -56,13 +56,13 @@ class Controller
 		} 
 		
 		try {	
-			record_time('controller start');
+			record_time('service start:'. $server);
 			if (1 === count($params)) {
 				$result = $obj->{$concrete[1]}(end($params));
 			} else {
 				$result = $obj->{$concrete[1]}($params);
 			}
-			record_time('controller end');
+			record_time('service end:'. $server);
 			if (isset($result['code']) && 0 !== $result['code'] &&  true === $exit_on_error) {
 				$this->response($result);
 			}
