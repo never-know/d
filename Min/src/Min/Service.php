@@ -21,7 +21,7 @@ class Service
 		return ['code' => $code, 'message' => $message];
 	}
 	
-	final public function query($sql, $marker = '', $param = [])
+	final public function queryi($sql, $marker = '', $param = [])
 	{	
 		record_time('query start');
 		$result =  $this->DBManager()->query($sql, $marker, $param);
@@ -29,7 +29,7 @@ class Service
 		return $result;
 	}
 	
-	final public function query_pdo($sql, $param = [])
+	final public function query($sql, $param = [])
 	{	
 		record_time('query start');
 		$result = $this->DBManager()->query($sql, $param);
