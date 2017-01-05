@@ -40,7 +40,7 @@ class Mysqli
 			$this->connections[$link_id] = $this->parse($type);
 			
 			if (!$this->connections[$link_id]->set_charset('utf8')) {
-                throw $this->genException($type);
+                $this->genException($type);
             }	
 		}
 	
@@ -90,7 +90,7 @@ class Mysqli
 				return true;
 			}
  
-		throw $this->genException($type);
+		$this->genException($type);
 	}
 	
 	public function query($sql, $marker = '', $param = [])
@@ -137,7 +137,7 @@ class Mysqli
 				}
 					 
 				if ($this->ref->invokeArgs($merge) && $stmt->execute()) {
-					sleep(10);
+			
 					switch ($action) {
 						case 'update' :	
 						case 'delete' :
@@ -145,7 +145,6 @@ class Mysqli
 							break;	
 						case 'insert' :
 							$result	= $stmt->insert_id;
-							if (-1 == $result) $result = false;
 							break;
 						case 'select' :	
 							if ($result_single = $stmt->get_result()) {	
@@ -158,8 +157,10 @@ class Mysqli
 				
 				$stmt->close();
 			}
-			watchdog($result);
-			if (false == $result && !is_array($result) && $this->retry($type)) {
+			
+			watchdog($result, 'query_result');
+			
+			if (false === $result && $this->retry($type)) {
 				continue;
 			}
 			return $result;
@@ -182,7 +183,6 @@ class Mysqli
 						break;
 					case 'insert' :
 						$result	= $this->connect($type)->insert_id;
-						if (-1 == $result) $result = false;
 						break;
 					case 'select' :
 						$result	= $result_single->fetch_all(MYSQLI_ASSOC);
@@ -190,8 +190,8 @@ class Mysqli
 						break;
 				}
 			}  
-			
-			if (false == $result && !in_array($result) && $this->retry($type)) {
+			watchdog($result, 'query_result');
+			if (false === $result && $this->retry($type)) {
 				continue;
 			}	
 			return $result;
@@ -200,53 +200,52 @@ class Mysqli
 	
 	public function tStart() 
 	{
-		$type = 'master';
+		$type = 'master'; // 只尝试一次
 		if (empty($this->intrans[$this->active_db])) {
 			if ($this->connect($type)->begin_transaction()) {
 				$this->intrans[$this->active_db] = 1;
 				return true;	
 			} else {
-				throw genException($type);
+				$this->genException($type);
 			}
 		} else {
 			$this->intrans[$this->active_db]++;
 			return true;
 		}
-
 	}
 	
 	public function tCommit() 
 	{	
 		$type = 'master';
+		$result = true;
 		if ($this->intrans[$this->active_db] == 1 ) {
-			$this->connect($type)->commit(); 
-		} 
-		$this->intrans[$this->active_db]--;	 
+			$result = $this->connect($type)->commit(); 
+		}  
+		$this->intrans[$this->active_db]--;	
+		return $result;
 	}
 		 
 	public function tRollback()
 	{ 
 		$type = 'master';
+		$result = true;
 		if ($this->intrans[$this->active_db] == 1 ) {
-			$this->connect($type)->rollback();
+			$result = $this->connect($type)->rollback();
 		} 
 		$this->intrans[$this->active_db]--;
+		return $result;
 	}
 	
 	private function inTransaction()
 	{
 		return (!empty($this->intrans[$this->active_db]));
 	}
-	
-	public function autocommit($type, $mode)
-	{
-		return $this->connect($type)->autocommit($mode);
-	}
-	
+	 
 	public function genException($type)
 	{
 		$link_id = $this->getLinkId($type);
-		return new MinException(safe_json_encode($this->connections[$link_id]->error_list), $this->connections[$link_id]->errno);
+		watchdog($this->connections[$link_id]->error_list, 'msyql_error');
+		throw new MinException('sql error', $this->connections[$link_id]->errno);
 	}
 	
 	private function getLinkId($type)
@@ -260,8 +259,6 @@ class Mysqli
 		if (!empty($this->connections[$link_id])) {
 			$this->connections[$link_id]->close();
 			unset($this->connections[$link_id]);
-		}
-		
-	}
-		
+		}	
+	}		
 }

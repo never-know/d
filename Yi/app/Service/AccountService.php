@@ -36,11 +36,11 @@ class AccountService extends \Min\Service
 		} elseif (!in_array($arr['type'], ['phone','email','name'])) {
 			throw new \Min\MinException('帐号类型错误', 20100);		
 		}
-		
-		$key	= $arr['type']. ':'. $arr['name'];
-		$result = $this->cache()->get($key);
+		$cache 	= $this->cache('account');
+		$key 	= $this->getCacheKey($arr['type'], $arr['name']);
+		$result = $cache->get($key);
 			
-		if (empty($result)) {
+		if (empty($result) || $cache->getDisc() === $result) {
 			
 			if($arr['type'] == 'phone') $arr['name'] = intval($arr['name']);
 
@@ -53,21 +53,21 @@ class AccountService extends \Min\Service
 			 */
 			
 			// mysqli normal 
-			/*
-			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name'];
-			$result	= $this->queryi($sql);
-			*/
-			// pdo
 			 
-			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = :type ';
-			$result	= $this->query($sql, [':type' => $arr['name']]);
-			 
-			// pdo normal 
-			/*
 			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name'];
 			$result	= $this->query($sql);
- 			*/
-			if (!empty($result))  $this->cache()->set($key, $result);
+
+			// pdo 
+			/*
+			$sql = 'SELECT phone FROM {user}  WHERE '. $arr['type']. ' = :type Limit 1';
+			$result	= $this->query($sql, [':type' => $arr['name']]);
+			 */
+			// pdo normal 
+			 /*
+			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name'];
+			$result	= $this->query($sql);
+ 			 */
+			if (!empty($result)) $cache->set($key, $result, 7200);
 		}
 		
 		if (!empty($result)) {	
@@ -88,7 +88,7 @@ class AccountService extends \Min\Service
 			watchdog($reg_result);
 			if ($reg_result > 1) {
 				//清理 注册缓存
-				$this->cache()->delete('phone:'. intval($regist_data['phone']));
+				$this->cache()->delete($this->getCacheKey('phone', intval($regist_data['phone'])));
 				return $this->success(['uid' => $reg_result]);
 			} else {
 				return $this->error('注册失败', 30204);
@@ -96,6 +96,12 @@ class AccountService extends \Min\Service
 		} else {
 			throw new \Min\MinException('password_hash failed', 20104);
 		}
+	}
+	
+	private function getCacheKey($type, $value)
+	{
+		
+		return '{account}:'.$type. ':'. $value;
 	}
 
 }

@@ -40,9 +40,9 @@ $conf['mysqli'] = array (
 	'default' => array (
 		'prefix' => 'yi_',
 		'rw_separate'	=> false,
-		'master' 		=> '//ts001:a123456@p:121.43.182.222:3306#annyi',
+		'master' 		=> '//ts001:a123456@121.43.182.222:3306#annyi',
 		'slave'			=> array (
-			'//ts001:a123456@p:121.43.182.222:3306#annyi',  // remote
+			'//ts001:a123456@121.43.182.222:3306#annyi',  // remote
 			//'//root:@127.0.0.1:3306#test' 				// localhost
 		),
 	),

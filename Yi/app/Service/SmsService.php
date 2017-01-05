@@ -6,10 +6,11 @@ namespace App\Service;
 
 class SmsService extends \Min\Service
 {	
-
+	protected $log_type = 'sms_error';
+	protected $log_level = 'NOTICE';
 	private $type;
 	private $conf;
-	private $log_type = 'sms_error';
+	private $timeout = 120;
 	private $pairs = [
 						'reg' 			=> 1,
 						'quicklogin' 	=> 2,
@@ -46,7 +47,7 @@ class SmsService extends \Min\Service
 		
 		$sc =  $this->get($phone);  
 		
-		if (empty($sc) || 120 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
+		if (empty($sc) || $this->timeout < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
 			
 			$code = mt_rand(111111, 999999);
 			
@@ -58,7 +59,7 @@ class SmsService extends \Min\Service
 			
 		} else {
 			//return $this->error('短信验证码已发送, 如未收到，请'. (120 + $sc['ctime'] - $_SERVER['REQUEST_TIME']).'秒后重发或者使用微信扫码登陆', 30113);
-			watchdog('will not send again in 120 seconds', $this->log_type, 'NOTICE');
+			$this->watchdog('will not send again in '. $this->timeout. ' seconds');
 			return $this->success();
 		}
 	}
@@ -156,7 +157,7 @@ class SmsService extends \Min\Service
 	
 	private function getKey($phone, $ip = '', $hash = '')
 	{
-		return '{sms:}'. $this->type. $phone.$ip.$hash;
+		return '{sms}:'. $this->type. $phone.$ip.$hash;
 	}
 	
 	private function aliyun_yzm($phone, $code)
@@ -178,10 +179,10 @@ class SmsService extends \Min\Service
 			$response = $client->getAcsResponse($request);
 			$response['code'] = $code;
 			$response['phone'] = $phone;
-			watchdog($response, $this->log_type, 'NOTICE');
+			$this->watchdog($response);
 			return true;
 		} catch (\Throwable  $t) {
-			watchdog($t, $this->log_type, 'NOTICE');  
+			$this->watchdog($t);  
 			return false;
 		}
 	}
@@ -220,14 +221,14 @@ class SmsService extends \Min\Service
 		
 		// 同一 SESSION 不超过 10
 		if( intval(session_get('sms_'. $this->type. '_times')) > 10) {
-			watchdog('session '. $this->type .'> 10', $this->log_type, 'NOTICE');
+			$this->watchdog('session '. $this->type .' > 10');
 			return false;
 		}
 		
 		// 无效地址
 		$ip = ip_address();
 		if(false == $ip || session_get('ip_address') != $ip) {
-			watchdog('invalid ip address : 30104', $this->log_type, 'NOTICE');
+			$this->watchdog('invalid ip address : 30104');
 			return false; 
 		}
 
@@ -248,7 +249,7 @@ class SmsService extends \Min\Service
 		}
 		
 		if (intval($result) > 2) {
-			watchdog('message has been sended to same phone 3 times in 2 hours', $this->log_type, 'NOTICE');
+			$this->watchdog('message has been sended to same phone 3 times in 2 hours');
 			return false; 
 		}
 	
@@ -270,7 +271,7 @@ class SmsService extends \Min\Service
 		
 		
 		if (intval($result) > 300) {
-			watchdog('message has been sended 300 times from same ip in 2 hours', $this->log_type, 'NOTICE');
+			$this->watchdog('message has been sended 300 times from same ip in 2 hours');
 			return false; //$this->error('短信发送受限', 30116);
 		}	
 		
@@ -294,7 +295,7 @@ class SmsService extends \Min\Service
 		}
 
 		if (intval($result) > 50) {
-			watchdog('message has been  sended 50 times from same hash in 2 hours', $this->log_type, 'NOTICE');
+			$this->watchdog('message has been  sended 50 times from same hash in 2 hours');
 			return false; //$this->error('短信发送受限', 30116);
 		}	
 		

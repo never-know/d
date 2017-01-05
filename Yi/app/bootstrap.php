@@ -44,7 +44,7 @@
 	register_shutdown_function('app_tails');
 	
 	$di = new \Min\Di;
-	$di->setShared('mysql', '\\Min\\Backend\\MysqliPDO');
+	$di->setShared('mysql', '\\Min\\Backend\\Mysqli');
 	$di->setShared('redis', '\\Min\\Cache\\Redis');
 	$di->setShared('file_cache', '\\Min\\Cache\\FileCache');
 	$di->setShared('logger', '\\Min\\Logger');

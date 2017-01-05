@@ -17,7 +17,7 @@ class RegistController extends \Min\Controller
 	{
 		$phone 		= $_POST['phone'];
 		$captcha 	= $_POST['code'];
-		$this->check($phone, $captcha, '1');	
+		$this->check($phone, $captcha, 'reg1');	
 		
 		$this->response($this->request('\\App\\Service\\Sms::send', ['init' => 'reg', 'phone' => $phone]));	
 	}
@@ -33,7 +33,7 @@ class RegistController extends \Min\Controller
 		if ($pwd != $repwd) {
 			$this->error('两次输入密码不相同', 30203);
 		}
-		$this->check($phone, $captcha, '2');	
+		$this->check($phone, $captcha, 'reg2');	
 		
 		$this->request('\\App\\Service\\Sms::check', ['init' => 'reg', 'phone' => $phone, 'code' => $sms]);
 

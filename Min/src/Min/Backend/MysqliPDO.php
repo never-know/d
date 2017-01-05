@@ -214,8 +214,10 @@ class MysqliPDO
 		if(empty($this->intrans[$this->active_db])) {
 			$this->intrans[$this->active_db] = 1;
 			$round = 5;
+			
 			while ($round > 0) {
 				$round--;
+				$on_error = false;
 				try {
 					$this->connect($type)->beginTransaction();
 					return true;
@@ -223,6 +225,7 @@ class MysqliPDO
 					if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013])) {
 						continue; 
 					}  
+					$on_error = true;
 					throw $e; 
 				} finally {	
 					if (true === $on_error) $this->close($type);
@@ -268,6 +271,5 @@ class MysqliPDO
 		if (!empty($this->connections[$link_id])) {
 		  unset($this->connections[$link_id]);
 		}
-		
 	}
 }

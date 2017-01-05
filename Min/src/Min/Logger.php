@@ -57,21 +57,25 @@ class Logger
 		}
 		
 		$records =  date('Y/m/d H:i:s', $_SERVER['REQUEST_TIME'])
-				. '  [IP: '
+				. ' [IP: '
 				. long2ip(ip_address())
-				. ']  ['
+				. '] ['
 				. $_SERVER['REQUEST_URI']
+				. '] ['
+				. $_SERVER['HTTP_REFERER']
 				. '] [pid '
 				. getmypid()
-				.' ] ['
-				.session_id()
-				.' ]'
+				. '] ['
+				. session_id()
+				. '] ['
+				. (session_get('UID') ?: 0)
+				. ']'
 				. PHP_EOL;
 				
 		foreach ($this->logs as $log) {
 			$records .= '[channel:' . $log['channel'] . '] [' . $log['level'] . '] [info:' . $log['message'] . ']';
 			if (!empty($log['extra'])) {
-				$records .= ' [extra: '. json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).' ###]';
+				$records .= ' [extra: '. json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).']';
 			}
 			$records .= PHP_EOL;	
 		}

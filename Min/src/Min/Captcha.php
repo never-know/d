@@ -32,9 +32,16 @@ class Captcha{
             $code .= $this->charset[mt_rand(0, $charset_len)];
         }
 		$code = strtolower($code);
-		
+		// for example reg_1_2;
 		foreach (explode('_', $key) as $k => $v){
-			$_SESSION[$v .'_code'] = $code;	
+			
+			if (is_numeric($v) && $k > 0) {
+				$v = $type.$v;
+			} else {
+				$type = $v;
+			}
+			
+			$_SESSION['code_'.$v] = $code;	
 		}		
 		return $code;		 
     }
@@ -151,8 +158,8 @@ class Captcha{
 	
 	public function checkCode($code, $type, $remove = true) 
 	{ 	 
-		if (!empty($_SESSION[$type.'_code']) && $_SESSION[$type.'_code'] === strtolower($code)) {
-			if (true === $remove) unset($_SESSION[$type.'_code']);
+		if (!empty($_SESSION['code_'.$type]) && $_SESSION['code_'.$type] === strtolower($code)) {
+			if (true === $remove) unset($_SESSION['code_'.$type]);
 			return true;
 		}
 		return false;

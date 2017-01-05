@@ -32,7 +32,8 @@ class Redis{
 		
 		if (empty($this->pools[$linkId])) {		
 			$redis = new \Redis(); 
-			$redis->pconnect($info['host'], $info['port'],$info['timeout'],null,$info['delay']);		
+			$redis->pconnect($info['host'], $info['port'],$info['timeout'],null,$info['delay']);	
+			$redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_NONE);			
 			$this->pools[$linkId] = $redis;	
 		}
 	
@@ -50,7 +51,7 @@ class Redis{
 	 */
 	public function set($key, $value, $timeOut = 0)
 	{	
-		$value = (is_object($value) || is_array($value)) ? json_encode($value) : $value;
+		$value = (is_object($value) || is_array($value)) ? safe_json_encode($value) : $value;
 		try { 
 			if ($timeOut > 0) {
 				$retRes = $this->connect()->setEx($key, $timeOut, $value);
@@ -72,11 +73,13 @@ class Redis{
 	{	
 		try { 
 			$result = $this->connect()->get($key);
-			watchdog($result, 'redis', 'DEBUG', 'get key:'. $key );
-			if	( false !== $result && true === $decode) {
-				$result = json_decode($result, true);
+			
+			watchdog($result, 'redis', 'DEBUG', 'get key:'. $key);
+			
+			if	(false !== $result && true === $decode) {
+				$d = json_decode($result, true);
 			}
-			return $result;
+			return ($d ?? $result);
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
 			return self::DISCONNECT;
@@ -103,8 +106,9 @@ class Redis{
 	public function delete($key) 
 	{
 		try { 
-			return $this->connect()->delete($key);
+			$result = $this->connect()->delete($key);
 			watchdog($result, 'redis', 'DEBUG', 'delete key:'. $key);
+			return $result;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
 			return self::DISCONNECT;

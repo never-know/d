@@ -152,8 +152,6 @@ function validate($type,$value)
 {
 	if (!validate_utf8($value)) return false;
 	
-	//if ('email' == $type) return (bool)filter_var($value, FILTER_VALIDATE_EMAIL);
-	
 	$pattern = [
 		'quotes'=>'/["\'\s]+/u',
 		'nickname'	=> '/^[a-zA-Z0-9\-_\x{4e00}-\x{9fa5}]{3,31}$/u',
@@ -395,6 +393,10 @@ function error_message_format(\Throwable $e)
 }
 
 function  record_time($tag)
-{
-	watchdog($tag. ' cost:'. (microtime(true) - $_SERVER['REQUEST_TIME']) * 1000 .'ms');
+{	
+	static $last_time;
+	if (is_null($last_time)) $last_time = $_SERVER['REQUEST_TIME_FLOAT'];
+	$now = microtime(true);
+	watchdog($tag. ' total:'. ($now - $_SERVER['REQUEST_TIME_FLOAT']) * 1000 . '#this:'. ($now - $last_time) * 1000, 'timelog' );
+	$last_time = $now;
 }
