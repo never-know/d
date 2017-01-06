@@ -44,9 +44,15 @@
 	register_shutdown_function('app_tails');
 	
 	$di = new \Min\Di;
-	$di->setShared('mysql', '\\Min\\Backend\\Mysqli');
+	// server name as xxx_xxx
+	$di->setShared('mysql', '\\Min\\Backend\\MysqliPDO');
 	$di->setShared('redis', '\\Min\\Cache\\Redis');
 	$di->setShared('file_cache', '\\Min\\Cache\\FileCache');
 	$di->setShared('logger', '\\Min\\Logger');
 	
-	\Min\App::bootstrap($di, true);
+	try {
+		\Min\App::bootstrap($di, true);
+		
+	} catch (\Throwable $t){
+		app_exception($t);
+	}

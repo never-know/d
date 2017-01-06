@@ -94,11 +94,11 @@ class MysqliPDO
 
 		$action = strtolower($sql_splite[0]);
 
-		if (!in_array($action, ['select', 'insert', 'update', 'delete'])) {
+		if (!in_array($action, ['select', 'insert', 'update', 'delete'], true)) {
 			throw new \PDOException('Can not recognize action in sql: '. $sql, -4);
 		}
 		
-		$type = (empty($this->intrans[$this->active_db]) && !empty($this->conf[$this->active_db]['rw_separate']) && 'select' == $action) ? 'slave' : 'master'; 
+		$type = (!empty($this->intrans[$this->active_db]) || empty($this->conf[$this->active_db]['rw_separate']) || 'select' !== $action) ? 'master' : 'slave'; 
 		
 		if (empty($param)) {
 			return $this->nonPrepareQuery($type, $sql, $action);
@@ -109,7 +109,7 @@ class MysqliPDO
 	
 	private function realQuery($type, $sql, $action, $param)
 	{
-		$round = 5;
+		$round = 3;
 		while ($round > 0) {
 			$round -- ;
 			$on_error = false;	
@@ -117,14 +117,14 @@ class MysqliPDO
 				$stmt =  $this->connect($type)->prepare($sql); 
 				foreach ($param as $key => $value) {
 					$vaule_type = \PDO::PARAM_STR;
-                    switch ($key) {
-                        case is_int($key):
+                    switch ($value) {
+                        case is_int($value):
                             $vaule_type = \PDO::PARAM_INT;
                             break;
-                        case is_bool($key):
+                        case is_bool($value):
                             $vaule_type = \PDO::PARAM_BOOL;
                             break;
-                        case is_null($key):
+                        case is_null($value):
                             $vaule_type = \PDO::PARAM_NULL;
                             break;
                     }
@@ -154,9 +154,10 @@ class MysqliPDO
 				
 			} catch (\Throwable $e) {
 				$on_error = true;
-				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013])) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->errorInfo[1], [2006, 2013])) {
 					continue; 
 				} 
+				
 				throw $e;				
 			} finally {
 				if (!empty($stmt)) 	$stmt->closeCursor();
@@ -167,11 +168,10 @@ class MysqliPDO
 	
 	private function nonPrepareQuery($type, $sql, $action)
 	{	
-		$round = 5 ;
+		$round = 3 ;
 		while ($round > 0) {
 			$round -- ;
 			$on_error = false;
-			 
 			try {
 				switch ($action) {
 					case 'update' :
@@ -197,9 +197,10 @@ class MysqliPDO
 			} catch (\Throwable $e) {
 				watchdog($e);
 				$on_error = true;
-				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013])) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->errorInfo[1], [2006, 2013])) {
 					continue; 
 				} 
+				
 				throw $e;	
 			} finally {	
 				if (!empty($stmt)) 	$stmt->closeCursor();
@@ -211,10 +212,10 @@ class MysqliPDO
 	public function transaction_start() 
 	{
 		$type = 'master';
+		
 		if(empty($this->intrans[$this->active_db])) {
 			$this->intrans[$this->active_db] = 1;
-			$round = 5;
-			
+			$round = 3;
 			while ($round > 0) {
 				$round--;
 				$on_error = false;
@@ -222,10 +223,11 @@ class MysqliPDO
 					$this->connect($type)->beginTransaction();
 					return true;
 				} catch (\Throwable $e) {
-					if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->getCode(), [2006, 2013])) {
-						continue; 
-					}  
 					$on_error = true;
+					if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->errorInfo[1], [2006, 2013])) {
+						continue; 
+					} 
+					
 					throw $e; 
 				} finally {	
 					if (true === $on_error) $this->close($type);
@@ -240,19 +242,21 @@ class MysqliPDO
 	public function transaction_commit() 
 	{	
 		$type = 'master';
-		if ($this->intrans[$this->active_db] == 1 ) {
-			$this->connect($type)->commit(); 
+		if (1 === $this->intrans[$this->active_db]) {
+			return $this->connect($type)->commit(); 
 		} 
 		$this->intrans[$this->active_db]--;	 
+		return true;
 	}
 		 
 	public function transaction_rollback()
 	{ 
 		$type = 'master';
 		if ($this->intrans[$this->active_db] == 1 ) {
-			$this->connect($type)->rollBack();
+			return $this->connect($type)->rollBack();
 		} 
 		$this->intrans[$this->active_db]--;
+		return true;
 	}
 	
 	private function getLinkId($type){

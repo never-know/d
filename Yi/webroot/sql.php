@@ -1,4 +1,6 @@
 <?php 
+
+/*
 mysqli_report(MYSQLI_REPORT_ALL);
 try{
    $k ='helloworld';
@@ -32,6 +34,30 @@ try{
 	echo 12;
 	
 }
+*/
 
+
+
+
+try{
+	
+	$dns = 'root:@mysql:host=127.0.0.1;port=3306;dbname=test;charset=utf8:80';
+	$selected_db = parse_url($dns);
+	$connect = new \PDO($selected_db['host'], $selected_db['user'], $selected_db['pass'], array(
+			\PDO::ATTR_EMULATE_PREPARES => false,
+			//\PDO::ATTR_PERSISTENT => true,
+			\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+			\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+	));	
+	
+ 
+	$sql = 'select * from yi_sms where id = 4';
+	$stmt	= $connect->query($sql);
+	
+	$result	= $stmt->fetch(\PDO::FETCH_ASSOC);
+	
+} catch (\Throwable $T) {
+	var_dump($T);
+}
 
 ?>
