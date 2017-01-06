@@ -51,7 +51,47 @@ try{
 	));	
 	
  
-	$sql = 'select * from yi_sms where id = 4';
+	$sql = 'select * from yi_sms where id = :id';
+	
+	
+	$stmt = $connect->prepare($sql); 
+				foreach ($param as $key => $value) {
+					$vaule_type = \PDO::PARAM_STR;
+                    switch ($key) {
+                        case is_int($key):
+                            $vaule_type = \PDO::PARAM_INT;
+                            break;
+                        case is_bool($key):
+                            $vaule_type = \PDO::PARAM_BOOL;
+                            break;
+                        case is_null($key):
+                            $vaule_type = \PDO::PARAM_NULL;
+                            break;
+                    }
+					
+                    $stmt->bindValue($key, $value, $vaule_type);
+				}
+
+				$stmt->execute();
+	 
+				switch ($action) {
+					case 'update' :
+					case 'delete' :
+						$result	= $stmt->rowCount();
+						break;
+					case 'insert' :
+						$result	= $this->lastInsertId($type);
+						break;
+					case 'select' :
+						if (preg_match('/limit\s+1\s*$/i',$sql)) {
+							$result	= $stmt->fetch(\PDO::FETCH_ASSOC);
+						} else {
+							$result	= $stmt->fetchAll(\PDO::FETCH_ASSOC);
+						}
+						break;
+	
+	
+	
 	$stmt	= $connect->query($sql);
 	
 	$result	= $stmt->fetch(\PDO::FETCH_ASSOC);

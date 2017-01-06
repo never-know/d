@@ -44,7 +44,9 @@
 	register_shutdown_function('app_tails');
 	
 	$di = new \Min\Di;
+ 
 	// server name as xxx_xxx
+ 
 	$di->setShared('mysql', '\\Min\\Backend\\MysqliPDO');
 	$di->setShared('redis', '\\Min\\Cache\\Redis');
 	$di->setShared('file_cache', '\\Min\\Cache\\FileCache');
