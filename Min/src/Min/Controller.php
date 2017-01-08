@@ -37,7 +37,7 @@ class Controller
 		
 		$class	= $concrete[0] .'Service';
 		if (isset($this->sharedService[$class])) {
-			$obj = $sharedService[$class];
+			$obj = $this->sharedService[$class];
 		} else {
 			try {
 				$obj = new $class;	
@@ -103,7 +103,7 @@ class Controller
 	final public function validToken($value)
 	{	
 		if (!IS_GET && (empty($_POST['csrf_token']) || !valid_token($_POST['csrf_token'], $value))) {
-			$this->error($value, 30101);
+			$this->error('表单已过期', 30101);
 		}
 	}
 	

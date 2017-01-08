@@ -66,14 +66,18 @@ function session_get($name)
 }
 
 function session_set($name, $value)
-{
+{	
 	$_SESSION[$name] = $value;
 }
 function session_inrc($name){
-	session_set($name, intval(session_get($name))+1);
+	$value = intval(session_get($name));
+	session_set($name, ++$value);
+	return $value;
 }
 function session_derc($name){
-	session_set($name, intval(session_get($name))-1);
+	$value = intval(session_get($name));
+	session_set($name, --$value);
+	return $value;
 }
 function current_path() 
 {

@@ -9,6 +9,9 @@
 <a href="http://www.baidu.com/&lt;?php echo 'abc';?>" >baidu</a>
 
 <?php  
+$name = safe_json_encode('1;ab中;"c');	
+var_dump($name);
+var_dump(in_array(1, ['phone','email','name']));
 /*
 $url = 'http://www.yi.com';  echo str_replace('.', '\.', SITE_DOMAIN);  var_dump(preg_match('!^http[s]?://[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)); 
 
@@ -282,7 +285,10 @@ var_dump($finals);
 
 */
 
+/*
+echo intval($newer);
 echo $_GET['a'],'<br>';
+var_dump(in_array($a,[]));
 //echo $result
 
 // var_dump(empty([[]]));
@@ -349,6 +355,13 @@ echo $_SERVER['REQUEST_TIME'] - 1483365439;
 
 var_dump('a' == 1);
 var_dump(1 == 'a');
+
+
+*/
+
+
+
+
 
 ?>
 

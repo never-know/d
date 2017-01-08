@@ -154,7 +154,7 @@ class MysqliPDO
 				
 			} catch (\Throwable $e) {
 				$on_error = true;
-				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->errorInfo[1], [2006, 2013])) {
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array(intval($e->errorInfo[1]), [2006, 2013])) {
 					continue; 
 				} 
 				

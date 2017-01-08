@@ -278,10 +278,15 @@ _$('regphone').onfocus=function(){
 _$('regphone').onblur=function(){
 	
 	var name = this.value;
-	if(name==''){
-	setError(_$('regphone-error'),'','hide');
-	return true;}
+	if (name=='') {
+		setError(_$('regphone-error'),'','hide');
+		return true;
+	}
 	if(phone_format(name)){
+		itag = Min.dom.next(this);
+		itag.innerHTML="&#xe634;"
+		itag.style.color="#7ABD54";
+		setError(_$('regphone-error'),'','hide'); 
 		return;
 	}else{ 
 		this.style.borderColor="#f00";	 
@@ -336,6 +341,10 @@ Min.event.bind('regphone','paste',  function(e){
 
 //          图片验证码 
 
+Min.event.bind('icon-reg','click',function(){
+	_$('regcode').focus(); 
+});
+
 var current_code = '';
 function code_tag(show){
 	var  code = _$('regcode'); itag = Min.dom.next(code);
@@ -373,7 +382,6 @@ function code_check(){
 				code_tag(1);
 			 } else {
 				code_tag(2);
-				Min.print.log(data.message);
 				setError(_$('regcode-error'),data.message,'errors');
 			 }
 		 }

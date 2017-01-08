@@ -62,7 +62,7 @@ class Logger
 				. '] ['
 				. $_SERVER['REQUEST_URI']
 				. '] ['
-				. $_SERVER['HTTP_REFERER']
+				. ($_SERVER['HTTP_REFERER']??'')
 				. '] [pid '
 				. getmypid()
 				. '] ['

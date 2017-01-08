@@ -20,32 +20,27 @@ class AccountService extends \Min\Service
 	*	1 账号存在
 	*/
 
-	public function checkAccount($arr) 
-	{	
-		if (empty($arr['type'])) {			
-			if (validate('phone',$arr['name'])) {	
-				$arr['type'] = 'phone';			
-			} elseif (validate('email',$arr['name'])) {			
-				$arr['type'] = 'email';		
-			} elseif (validate('username',$arr['name'])) {	 
-				$arr['type'] = 'username';	
-			} else {	 
-				$this->error('账号格式错误', 30200);		
-			}
-			
-		} elseif (!in_array($arr['type'], ['phone','email','name'])) {
-			throw new \Min\MinException('帐号类型错误', 20100);		
+	public function checkAccount($name) 
+	{			 		
+		if (validate('phone', $name)) {
+			$type = 'phone';
+		} elseif (validate('email', $name)) {			
+			$type = 'email';
+			$name = safe_json_encode($name);
+		} elseif (validate('username', $name)) {	 
+			$type = 'username';
+			$name = safe_json_encode($name);
+		} else {	 
+			return $this->error('账号格式错误', 30200);		
 		}
+		 
 		$cache 	= $this->cache('account');
-		$key 	= $this->getCacheKey($arr['type'], $arr['name']);
-		$result = $cache->get($key);
-			
+		$key 	= $this->getCacheKey($type, $name);
+		$result = $cache->get($key, true);
+		
 		if (empty($result) || $cache->getDisc() === $result) {
-			
-			if($arr['type'] == 'phone') $arr['name'] = intval($arr['name']);
 
 			// mysqli prepare
-			
 			/* 
 			$mark = ($arr['type'] == 'phone') ? 'd': 's';
 			$sql = 'SELECT * FROM {user}  WHERE '.$arr['type'].' = ? ';
@@ -53,20 +48,20 @@ class AccountService extends \Min\Service
 			 */
 			
 			// mysqli normal 
-			 
+			/*
 			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name'];
 			$result	= $this->query($sql);
-
+			*/
 			// pdo 
 			/*
 			$sql = 'SELECT phone FROM {user}  WHERE '. $arr['type']. ' = :type Limit 1';
 			$result	= $this->query($sql, [':type' => $arr['name']]);
 			 */
+			 
 			// pdo normal 
-			 /*
-			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name'];
+			$sql = 'SELECT * FROM {user} WHERE '. $type. ' = '. $name .' LIMIT 1';
 			$result	= $this->query($sql);
- 			 */
+ 			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
 		}
 		
@@ -102,6 +97,23 @@ class AccountService extends \Min\Service
 	{
 		
 		return '{account}:'.$type. ':'. $value;
+	}
+	
+	
+	public function initUser($user){
+	
+		if($user['uid'] > 0) {
+			// 每次登陆都需要更换session id ;
+			session_regenerate_id();
+			setcookie('nick', $user['nick'], 0, '/', COOKIE_DOMAIN);
+			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
+			// 此处应与 logincontroller islogged 相同
+			
+			setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 100, '/', COOKIE_DOMAIN);
+			session_set('logined', 1);
+			session_set('UID', $user['uid']);
+			session_set('user', $user);
+		}
 	}
 
 }

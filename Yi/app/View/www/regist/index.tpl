@@ -31,7 +31,7 @@
 							<label for="regcode"><b class="red">*</b>验证码：</label>
 							 
 							<input id="regcode" type="text" class="regcode" name="regcode" tabindex="1" autocomplete="off"  maxlength="4" /> 
-							<i class="icon-reg iconfont icon-white" >&#xe619;</i>
+							<i class="icon-reg iconfont icon-white" id = "icon-reg">&#xe619;</i>
 							<div class="code-change">
 								<img  class="reg-captcha" src="/captcha/get.html?type=reg_1_2" />
 								<em>换一张</em>
