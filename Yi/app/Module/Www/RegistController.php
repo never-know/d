@@ -16,39 +16,41 @@ class RegistController extends \Min\Controller
 	public function send_post()
 	{
 		$phone 		= $_POST['phone'];
-		$captcha 	= $_POST['code'];
+		$captcha 	= $_POST['captcha'];
 		$this->check($phone, $captcha, 'reg1');	
 		
-		$this->response($this->request('\\App\\Service\\Sms::send', ['init' => 'reg', 'phone' => $phone]));	
+		$this->response($this->request('\\App\\Service\\Sms::send', $phone, 'reg'));	
 	}
 	
 	public function index_post()
 	{
 		$phone 		= $_POST['phone'];
-		$captcha 	= $_POST['code'];
-		$sms 		= $_POST['mcode'];
+		$captcha 	= $_POST['captcha'];
+		$smscode 	= $_POST['smscode'];
 		$pwd 		= $_POST['pwd'];
-		$repwd 		= $_POST['pwd1'];
+		$repwd 		= $_POST['repwd'];
 		
 		if ($pwd != $repwd) {
 			$this->error('两次输入密码不相同', 30203);
 		}
-		$this->check($phone, $captcha, 'reg2');	
+		$this->check($phone, $captcha, 'reg2', true);	
 		
-		$this->request('\\App\\Service\\Sms::check', ['init' => 'reg', 'phone' => $phone, 'code' => $sms]);
+		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'smscode' => $smscode], 'reg');
 
 		$regist_data = ['phone' => $phone, 'pwd' => $pwd, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip_address()];
 		
-		$regist_result = $this->request('\\App\\Service\\Account::addUserByPhone', $regist_data, false);
+		$account =  $this->request('\\App\\Service\\Account');
+		$regist_result = $account->addUserByPhone($regist_data);
+
 		if ($regist_result['body']['uid'] > 1) {
-			$this->initUser($phone, $regist_result['body']['uid']);
+			$account->initUser($regist_result['body']);
 			$this->success('注册成功');
 		} else {
 			$this->error('注册失败', 30204);
 		}		
 	}
 	
-	private function check($phone, $code, $type)
+	private function check($phone, $code, $type, $shared = false)
 	{	
 		if (1 !== validate('phone', $phone)) {
 			$this->error('手机号码格式错误', 30120);
@@ -58,28 +60,11 @@ class RegistController extends \Min\Controller
 			$this->error('图片验证码错误', 30102);
 		}
 	
-		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', ['name' => $phone], false);
+		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', $phone, null, false, $shared);
 
 		if (0 === $exit_result['code']) {
 			$this->error('该手机号码已被注册', 30205);
 		} 
 	}
 	
-	private function initUser($name, $uid)
-	{
-		if($uid > 0) {
-			// 每次登陆都需要更换session id ;
-			session_regenerate_id();
-			setcookie('nickname', $name, 0, '/', COOKIE_DOMAIN);
-			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
-			// 此处应与 logincontroller islogged 相同
-			
-			setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 10, '/', COOKIE_DOMAIN);
-			$_SESSION['logined'] = true;
-			$_SESSION['UID'] = $uid;
-		}
-	}
-
-   
-
 }

@@ -9,12 +9,12 @@ class IndexController extends \Min\Controller
 
 	public function index_get()
 	{
-		$this->success();
+		$this->response();
 	}
 	
 	public function test()
 	{
-		$this->success();
+		$this->response();
 	}
 
 

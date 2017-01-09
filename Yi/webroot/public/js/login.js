@@ -73,11 +73,11 @@ Min.event.bind('loginsubmit','click', function(){
 			data:{
 				name:name.value,
 				pwd:pwd.value,
-				code:code,
-				'csrf_token' : _$('csrf_token').value
+				captcha:code,
+				csrf_token : _$('csrf_token').value
 			},
 			success: function(data){
-				if(data.code == 0 ){
+				if(data.statusCode == 0 ){
 					/* 
 					var ReturnUrl = Min.util.getQueryString('ReturnUrl');
 					var location = 'http://www.' + site_domain;
@@ -89,12 +89,12 @@ Min.event.bind('loginsubmit','click', function(){
 					window.location.href = location;
 					
 				} else {
-					if (data.code != 30207) {
+					if (data.statusCode != 30207) {
 						var a = _$('login-code');
 						if(a) {
 							a.getElementsByTagName('img')[0].src=code_url+new Date().getTime();
 						}
-						if( data.code == 30202 || data.code ==  30103 || data.code ==  30102){
+						if( data.statusCode == 30202 || data.statusCode ==  30103 || data.statusCode ==  30102){
 								
 							if (a) {
 								var ai = a.getElementsByTagName('i')[0], logincode = _$('logincode');
@@ -126,7 +126,7 @@ Min.event.bind('loginsubmit','click', function(){
 							
 						} 
 						*/
-						else if (data.code == 500){
+						else if (data.statusCode == 500){
 							data.message='系统忙，请重试 ';
 						}
 					}
@@ -167,9 +167,9 @@ function code_check(){
 	var code = _$('logincode').value;
 	if(code == current_code) return;
 	current_code = code;
-	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {code:code,type:'login'}, function(data){
+	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {captcha:code,type:'login'}, function(data){
 			if(_$('logincode').value != code) return;
-			 code_tag((data.code==0?1:2))
+			 code_tag((data.statusCode==0?1:2))
 		 }
 	); 
 }

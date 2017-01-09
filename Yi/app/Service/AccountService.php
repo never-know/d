@@ -77,6 +77,7 @@ class AccountService extends \Min\Service
 		if ($regist_data['pwd'] = password_hash($regist_data['pwd'], PASSWORD_BCRYPT, ['cost' => 9])) {	
 		
 			$sql = 'INSERT INTO {user} (phone, regtime, regip, pwd) VALUES ('. 
+			
 			implode(',', [intval($regist_data['phone']), intval($regist_data['regtime']), intval($regist_data['regip']), "'". $regist_data['pwd']. "')"]);
 			
 			$reg_result =  $this->query($sql);
@@ -84,7 +85,7 @@ class AccountService extends \Min\Service
 			if ($reg_result > 1) {
 				//清理 注册缓存
 				$this->cache()->delete($this->getCacheKey('phone', intval($regist_data['phone'])));
-				return $this->success(['uid' => $reg_result]);
+				return $this->success(['uid' => $reg_result, 'nick' => $regist_data['phone']]);
 			} else {
 				return $this->error('注册失败', 30204);
 			}
@@ -92,13 +93,6 @@ class AccountService extends \Min\Service
 			throw new \Min\MinException('password_hash failed', 20104);
 		}
 	}
-	
-	private function getCacheKey($type, $value)
-	{
-		
-		return '{account}:'.$type. ':'. $value;
-	}
-	
 	
 	public function initUser($user){
 	
@@ -115,5 +109,9 @@ class AccountService extends \Min\Service
 			session_set('user', $user);
 		}
 	}
-
+	
+	private function getCacheKey($type, $value)
+	{
+		return '{account}:'.$type. ':'. $value;
+	}
 }

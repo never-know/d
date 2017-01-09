@@ -11,14 +11,14 @@ class Service
 	final public function success($body = [], $message = '操作成功')
 	{	
 		if (!empty($body)) $result['body'] = $body;
-		$result['code'] = 0;
+		$result['statusCode'] = 0;
 		$result['message'] = $message;
 		return $result;
 	}
 
 	final public function error($message, $code)
 	{	
-		return ['code' => $code, 'message' => $message];
+		return ['statusCode' => $code, 'message' => $message];
 	}
 	
 	final public function queryi($sql, $marker = '', $param = [])
@@ -71,6 +71,7 @@ class Service
 		$value = $cache_setting[$this->cache_key]??$cache_setting['default'];
 		return \Min\App::getService($value['bin'])->init($value['key']);
 	}
+	
 	final public function watchdog($data, $extra = null)
 	{	
 		watchdog($data, $this->log_type, $this->log_level, $extra);

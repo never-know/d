@@ -27,11 +27,11 @@ class Controller
 		exit; 
 	}
 	
-	final public function request($server, $params, $exit_on_error = true, $shared = false)
+	final public function request($server, $params = null, $init = null, $exit_on_error = true, $shared = false)
 	{
 		$concrete = explode('::',$server);
 		
-		if (empty($concrete[0]) || empty($concrete[1])) {
+		if (empty($concrete[0])) {
 			$this->error('服务请求参数错误', 20101);
 		}
 		
@@ -50,25 +50,22 @@ class Controller
 			}
 		}
 		
-		if (!empty($params['init'])) {
-			$obj->init($params['init']);	
-			unset($params['init']);
-		} 
+		if (!empty($init)) {
+			$obj->init($init);	
+		}
 		
+		if (empty($concrete[1])) {
+			return $obj;
+		}
+
 		try {	
-			record_time('service start:'. $server);
-			if (1 === count($params)) {
-				$result = $obj->{$concrete[1]}(end($params));
-			} else {
-				$result = $obj->{$concrete[1]}($params);
-			}
+			record_time('service start:'. $server); 
+			$result = $obj->{$concrete[1]}($params);
 			record_time('service end:'. $server);
-			if (isset($result['code']) && 0 !== $result['code'] &&  true === $exit_on_error) {
+			if (0 !== $result['statusCode'] &&  true === $exit_on_error) {
 				$this->response($result);
 			}
-			
-			return $result;
-			
+			return $result;	
 		} catch (\Throwable $t) {
 			app_exception($t);
 		}
@@ -82,7 +79,7 @@ class Controller
 	final public function success($result = [], $layout = 'frame')
 	{	
 		if (is_string($result)) $result = ['message' => $result];
-		$result['code'] = 0;		
+		$result['statusCode'] = 0;		
 		$this->response($result, $layout);
 	}
 

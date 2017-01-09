@@ -298,7 +298,7 @@ function site_offline()
 function request_not_found($code, $message = '请求失败', $redirect = '') 
 {	
 	if (IS_AJAX || IS_JSONP) {
-		$result['code'] = $code;
+		$result['statusCode'] = $code;
 		$result['message'] = $message;
 		if (!empty($redirect)) $result['redirect'] = $redirect;
 	

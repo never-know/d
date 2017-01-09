@@ -36,7 +36,6 @@ class SmsService extends \Min\Service
 		}
 		
 		$this->type = $type;
-		return $this;
 	}
 	
 	public function send($phone)

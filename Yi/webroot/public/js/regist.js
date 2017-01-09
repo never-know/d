@@ -242,7 +242,7 @@ function phone_format(phone){
 		return false;
 	}
 	if(/^(13|15|18|14|17)[\d]{9}$/.test(phone)==false){
-		setError(tips,'手机号码格式不对','errors');
+		setError(tips,'手机号码格式错误','errors');
 		return false
 	}
 	return true;
@@ -256,12 +256,12 @@ function phone_check(phone){
 				
 				if(_$('regphone').value != phone) return;
 				
-				if(data.status==2){
+				if(data.statusCode == 2){
 					itag = Min.dom.next(_$('regphone'));
 					itag.innerHTML="&#xe634;"
 					itag.style.color="#7ABD54";
 					setError(_$('regphone-error'),'','hide'); 
-				}else if(data.status==1){
+				}else if(data.statusCode == 1){
 					setError(_$('regphone-error'),'此号码已被注册','errors');
 					_$('regphone').style.borderColor = error_bordercolor;
 				}
@@ -305,7 +305,7 @@ _$('regphone').onkeyup = function(){
 		return ;	 
 	}
 	 if(/^(13|15|18|14|17)[\d]{9}$/.test(this.value)==false){
-		setError(_$('regphone-error'),'手机号码格式不对','errors');
+		setError(_$('regphone-error'),'手机号码格式错误','errors');
 		current_phone = this.value;
 	}else{
 		//phone_check(this.value);
@@ -331,7 +331,7 @@ Min.event.bind('regphone','paste',  function(e){
 		return ;	 
 	}
 	 if(/^(13|15|18|14|17)[\d]{9}$/.test(pastedText)==false){
-		setError(_$('regphone-error'),'手机号码格式不对','errors');
+		setError(_$('regphone-error'),'手机号码格式错误','errors');
 		current_phone = pastedText;
 	}else{
 		//phone_check(pastedText);
@@ -376,9 +376,9 @@ function code_check(){
 	current_code = code;
 		setError(_$('regcode-error'),'','hide');
 		 
-	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {code:code,type:'reg'}, function(data){
+	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {captcha:code,type:'reg'}, function(data){
 			if(_$('regcode').value != code) return;
-			 if( data.code == 0 ) { 
+			 if( data.statusCode == 0 ) { 
 				code_tag(1);
 			 } else {
 				code_tag(2);
@@ -463,15 +463,15 @@ Min.event.bind('getcode','click',function(e){
 		type:'POST', 
 		data:{
 			phone:phone,
-			code:code,
+			captcha:code,
 			csrf_token:this.getAttribute('token')
 		},
 		success: function(data){
-			if(data.status == 0) {
+			if(data.statusCode == 0) {
 				setTimeout(countDown, 1000);
 			}else{
 				_$('getcode').setAttribute("sindex", 0);
-				switch(data.status){
+				switch(data.statusCode){
 					case -1:
 					case 0:
 						setError(_$('regmcode-error'),data.message||'发送失败，请重试','errors');
@@ -563,20 +563,19 @@ var phone = _$('regphone').value, code = _$('regcode').value, mcode = _$('regmco
 		type:'POST', 
 		data:{
 			phone:phone,
-			code:code,
-			mcode:mcode,
+			captcha:code,
+			smscode:mcode,
 			pwd:pwd,
-			pwd1:pwd1,
-			reg:1,
+			repwd:pwd1,
 			csrf_token:token
 		},
 		success: function(data){
-			if(data.status == 1) {
+			if(data.statusCode == 1) {
 				 
 				window.location.href = 'http://account.' + site_domain + '/regist/success.html';
 			}else{
 				_$('regsubmit').setAttribute("sindex", 0);
-				switch(data.status){
+				switch(data.statusCode){
 					case -1:
 					case 0:
 						 _$('reg-error').style.display="block";
