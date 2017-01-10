@@ -1,14 +1,15 @@
 <?php
 	
-	 require __DIR__ .'/../app/bootstrap.php';	
-/*
+	// require __DIR__ .'/../app/bootstrap.php';	
+
 
 // pdo
 try{
 	
-	$dns = '//root:123456@mysql:host=192.168.1.105;port=3306;dbname=test;charset=utf8:80';	$selected_db = parse_url($dns);
-	print_r($selected_db);
-	$connect = new \PDO($selected_db['host'], 'root', '123456', array(
+	//$dns = '//root:123456@mysql:host=192.168.1.105;port=3306;dbname=test;charset=utf8:80';	$selected_db = parse_url($dns);
+	$dns = '//root:@mysql:host=192.168.90.44;port=3306;dbname=test;charset=utf8:80';	$selected_db = parse_url($dns);
+	//print_r($selected_db);
+	$connect = new \PDO($selected_db['host'], 'root', '', array(
 			\PDO::ATTR_EMULATE_PREPARES => false,
 			//\PDO::ATTR_PERSISTENT => true,
 			\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
@@ -16,20 +17,22 @@ try{
 	));	
 	
 	
-	$sql = 'select * from yi_sms where id = :id';
+	$sql = 'select * from yi_sms where hash = :id';
 	$stmt = $connect->prepare($sql); 
 	
-	 $stmt->bindValue(':id', 4, \PDO::PARAM_INT);
+	 $stmt->bindValue(':id', '4aae293127d148bbe99fa13d81ceb9a0', \PDO::PARAM_STR);
+	
 	$stmt->execute();
-	sleep(10);
-	 $result	= $stmt->fetch(\PDO::FETCH_ASSOC);
+	 sleep(10);
+	//sleep(10);
+	 $result	= $stmt->fetchAll(\PDO::FETCH_ASSOC);
 	print_r($result);
 	
 } catch (\Throwable $T) {
 	var_dump($T);
 	echo $T->getCode();
 }
-*/
+
 
 /*
 $connect = new \mysqli('192.168.1.105', 'root', '123456', 'test', 3306);
@@ -90,27 +93,30 @@ echo "<br>";
 */
 
 
-
 /*
+ 
 mysqli_report(MYSQLI_REPORT_ALL);
 try{
    $k ='helloworld';
 
-$connect = new \mysqli('192.168.1.105', 'root', '123456', 'test', 3306);
+//$connect = new \mysqli('192.168.1.105', 'root', '123456', 'test', 3306);
+// ts001:a123456@121.43.182.222:3306#annyi
+$connect = new \mysqli('121.43.182.222', 'ts001', 'a123456', 'annyi', 3306);
 	
 	$query = "SELECT * from yi_sms WHERE id=?   LIMIT 1";
 	$stmt = $connect->prepare($query);
 
 	$stmt->bind_param('i', $code); 
 	$code = 4;
-		
+	sleep(10);
 	$stmt->execute();
+
 	//var_dump($stmt->attr_get(MYSQLI_STMT_ATTR_CURSOR_TYPE) == MYSQLI_CURSOR_TYPE_NO_CURSOR );
 //	echo $connect->thread_id;
-	$thread_id = $connect->thread_id;
+	//$thread_id = $connect->thread_id;
 
  
-	$connect->kill($thread_id);
+	//$connect->kill($thread_id);
 	$result_single = $stmt->get_result();	
 
 	$result	= $result_single->fetch_assoc();
@@ -134,4 +140,4 @@ $connect = new \mysqli('192.168.1.105', 'root', '123456', 'test', 3306);
 	
 }
 
-*/
+ */

@@ -17,6 +17,7 @@ class MysqliPDO
 	private $query_log = [];
 	private $connections = [];
 	private $active_db	= 'default';
+	private $prefix_key	= 'default';
 
 	public function  __construct($db_key = '') 
 	{	
@@ -25,9 +26,13 @@ class MysqliPDO
 	 
 	public function init($active_db) 
 	{
-		if (!empty($active_db) && !empty($this->conf[$active_db])) {
-			$this->active_db = $active_db;
+		if (!empty($active_db))) {
+			$this->prefix_key = $active_db;
+			if (!empty($this->conf[$active_db]) {
+				$this->active_db = 'default';
+			}
 		}
+		
 		return $this;		
 	}
 	
@@ -86,7 +91,7 @@ class MysqliPDO
 	public function query($sql, $param)
 	{
 
-		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'], '}' => '']);
+		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'][$this->prefix_key], '}' => '']);
 		
 		watchdog($sql);
 		
