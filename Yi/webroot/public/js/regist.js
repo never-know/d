@@ -470,18 +470,28 @@ Min.event.bind('getcode','click',function(e){
 			if(data.statusCode == 0) {
 				setTimeout(countDown, 1000);
 			}else{
+			
 				_$('getcode').setAttribute("sindex", 0);
 				switch(data.statusCode){
-					case -1:
-					case 0:
-						setError(_$('regmcode-error'),data.message||'发送失败，请重试','errors');
+					case 30207:
+					case 30112:
+					case 500:
+						easyDialog.open({
+						  container : {
+							header : '错误提示',
+							content : '服务受限，您可以通过 <a href="#">微信扫一扫</a>注册'
+						  },
+						  drag : false
+						});
 						break;
-					case 2:
+					case 30120: // 手机号码错误
+					case 30205:
+						_$('regphone').style.borderColor = error_bordercolor; 
+						setError(_$('regphone-error'),data.message,'errors');
+						break;
+					case 30102: // 验证码错误
 						code_tag(2);
 						setError(_$('regcode-error'),data.message,'errors');
-						break;
-					case 100:
-						setError(_$('regphone-error'),data.message,'errors');
 					break;
 				}
 			}
@@ -498,7 +508,7 @@ function countDown() {
      delayTime--;
 	 var code = _$('getcode');
     
-    code.innerHTML = delayTime + '秒后重新获取';
+    code.innerHTML = '发送成功(' +delayTime +')';
     if (delayTime == 1) {
         delayTime = 120;
         code.setAttribute("sindex", 0);

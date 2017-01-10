@@ -50,13 +50,16 @@ $conf['mysqli'] = array (
 
 $conf['mysqlpdo'] = array (
 	'default' => array (
-		'prefix' => 'yi_',
+		
 		'rw_separate'	=> false,
 		'master' 		=> '//ts001:a123456@mysql:host=121.43.182.222;port=3306;dbname=annyi;charset=utf8:80',
 		'slave'			=> array (
 			'//ts001:a123456@mysql:host=121.43.182.222;port=3306;dbname=annyi;charset=utf8:80', //remote
 			//'//root:@mysql:host=127.0.0.1;port=3306;dbname=test;charset=utf8:80'   //localhost
 		),
+		'prefix' => array (
+			'default' => 'yi_',
+		)
 	),
 );
 

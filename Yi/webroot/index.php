@@ -1,13 +1,14 @@
 <?php
 	
-	// require __DIR__ .'/../app/bootstrap.php';	
+	 require __DIR__ .'/../app/bootstrap.php';	
 
 
 // pdo
+/*
 try{
 	
-	//$dns = '//root:123456@mysql:host=192.168.1.105;port=3306;dbname=test;charset=utf8:80';	$selected_db = parse_url($dns);
-	$dns = '//root:@mysql:host=192.168.90.44;port=3306;dbname=test;charset=utf8:80';	$selected_db = parse_url($dns);
+	$dns = '//root:123456@mysql:host=192.168.1.105;port=3306;dbname=test;charset=utf8:80';	$selected_db = parse_url($dns);
+	//$dns = '//root:@mysql:host=192.168.90.44;port=3306;dbname=test;charset=utf8:80';	$selected_db = parse_url($dns);
 	//print_r($selected_db);
 	$connect = new \PDO($selected_db['host'], 'root', '', array(
 			\PDO::ATTR_EMULATE_PREPARES => false,
@@ -33,7 +34,7 @@ try{
 	echo $T->getCode();
 }
 
-
+*/
 /*
 $connect = new \mysqli('192.168.1.105', 'root', '123456', 'test', 3306);
 $sql = 'select * from yi_sms where id = 4';
@@ -49,7 +50,7 @@ print_r($result);
 print_r($connect->error_list);
 print_r($connect->get_warnings());
 
-
+ 
 
 */
 /*

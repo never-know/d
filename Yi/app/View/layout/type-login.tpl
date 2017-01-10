@@ -5,11 +5,13 @@
 <link rel="stylesheet" href="/public/css/reset.css">
 <link rel="stylesheet" href="/public/font/iconfont.css">
 <link rel="stylesheet" href="/public/css/yi.css">
+<link rel="stylesheet" href="/public/css/easydialog.css">
 <script type="text/javascript" src="/public/js/Min.js"></script>
 <script type="text/javascript" src="/public/js/event.js"></script>
 <script type="text/javascript" src="/public/js/cookie.js"></script>
 <script type="text/javascript" src="/public/js/jsonp.js"></script>
 <script type="text/javascript" src="/public/js/minajax.js"></script>
+<script type="text/javascript" src="/public/js/dialog.js"></script>
 <script type="text/javascript" src="/public/js/domready.js"></script>
 
 </head>

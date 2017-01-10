@@ -10,6 +10,7 @@ var	Dialog = function(){};
 
 Dialog.prototype = {
 	// 参数设置
+	
 	getOptions : function( arg ){
 		var i,
 			options = {},
@@ -47,9 +48,9 @@ Dialog.prototype = {
 		
 	// 防止IE6模拟fixed时出现抖动
 	setBodyBg : function(){
-		if( body.currentStyle.backgroundAttachment !== 'fixed' ){
-			body.style.backgroundImage = 'url(about:blank)';
-			body.style.backgroundAttachment = 'fixed';
+		if( doc.body.currentStyle.backgroundAttachment !== 'fixed' ){
+			doc.body.style.backgroundImage = 'url(about:blank)';
+			doc.body.style.backgroundAttachment = 'fixed';
 		}
 	},
 	
@@ -125,7 +126,7 @@ Dialog.prototype = {
 		
 		// IE6模拟fixed
 		if(Min.UA.isIE6){
-			body.style.height = '100%';
+			doc.body.style.height = '100%';
 			style.position = 'absolute';
 			style.setExpression('top','fuckIE6=document.documentElement.scrollTop+"px"');
 		}
@@ -356,7 +357,7 @@ var easyDialog = {
 			overlay = document.getElementById( 'overlay' );			
 			if( !overlay ){
 				overlay = $.createOverlay();
-				body.appendChild( overlay );
+				doc.body.appendChild( overlay );
 				if( Min.UA.isIE6 ){
 					$.appendIframe( overlay );
 				}
@@ -376,7 +377,7 @@ var easyDialog = {
 		dialogBox = document.getElementById( 'easyDialogBox' );
 		if( !dialogBox ){
 			dialogBox = $.createDialogBox();
-			body.appendChild( dialogBox );
+			doc.body.appendChild( dialogBox );
 		}
 		
 		if( options.follow ){
@@ -414,7 +415,7 @@ var easyDialog = {
 		}
 		else if( boxChild && dialogWrap !== boxChild ){
 			boxChild.style.display = 'none';
-			body.appendChild( boxChild );
+			doc.body.appendChild( boxChild );
 			dialogBox.appendChild( dialogWrap );
 		}
 		

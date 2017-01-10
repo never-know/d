@@ -14,7 +14,7 @@ class RegistController extends \Min\Controller
 	}
 	
 	public function send_post()
-	{
+	{	$this->error('', 500);
 		$phone 		= $_POST['phone'];
 		$captcha 	= $_POST['captcha'];
 		$this->check($phone, $captcha, 'reg1');	

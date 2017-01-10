@@ -38,6 +38,7 @@ class Di
 					$obj->init($params);
 				}
 			} catch (\Throwable $t) {
+				watchdog($t);
 				$obj = null;
 			}
 		}
