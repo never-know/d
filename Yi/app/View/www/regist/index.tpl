@@ -13,6 +13,11 @@
 				</div>
 			</div>
 			<div class="reg-form">
+			
+				<div class="reg-msg" id="reg-msg">
+						<i class="icon-error iconfont">&#xe632;</i>
+						<span>服务受限，请使用微信扫一扫登陆</span> 
+				</div>
 				<div class="reg-box">
 					<form id="reg-form" method="post" onsubmit="return false;">
 						 <div class="login-name input-focus hide">
