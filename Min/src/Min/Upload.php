@@ -5,26 +5,21 @@ namespace Min;
 class Upload
 {
      
-    private $error = '';
-    // 当前完整文件名
-    protected $filename;
-    // 上传文件名
-    protected $saveName;
-    // 文件上传命名规则
-    protected $rule = 'date';
-    // 文件上传验证规则
-    protected $validate = [];
-    // 单元测试
-    protected $isTest;
-    // 上传文件信息
-    protected $info;
-    // 文件hash信息
-    protected $hash = [];
+    private $error = '';   
+    protected $files;
+    protected $rule = [
+		'ext' => ['gif', 'jpg', 'jpeg', 'bmp', 'png'],
+		'size' => 1048576,
+		'repalce' => true,
+		'base_path' => '',
+		'host' => ''
+	];
+
 
     public function __construct($name)
     { 
         $this->files = $_FILES[$name];
-		$this->files['ext'] = strtolower(pathinfo($this->getInfo('name'), PATHINFO_EXTENSION));
+		$this->files['ext'] = strtolower(pathinfo($this->getInfo('name'), \PATHINFO_EXTENSION));
     }
   
     /**
@@ -38,37 +33,6 @@ class Upload
     }
 
     /**
-     * 获取文件的哈希散列值
-     * @return $string
-     */
-    public function hash($type = 'sha1')
-    {
-        if (!isset($this->hash[$type])) {
-            $this->hash[$type] = hash_file($type, $this->filename);
-        }
-        return $this->hash[$type];
-    }
-
-    /**
-     * 检查目录是否可写
-     * @param  string   $path    目录
-     * @return boolean
-     */
-    protected function checkPath($path)
-    {
-        if (is_dir($path)) {
-            return true;
-        }
-
-        if (mkdir($path, 0755, true)) {
-            return true;
-        } else {
-            $this->error = "目录 {$path} 创建失败！";
-            return false;
-        }
-    }
-
-    /**
      * 获取文件类型信息
      * @return string
      */
@@ -79,6 +43,15 @@ class Upload
     }
 
     /**
+     * 检测是否合法的上传文件
+     * @return bool
+     */
+    public function isValid()
+    {
+        return is_uploaded_file($this->getInfo('tmp_name'));
+    }
+	
+	/**
      * 设置文件的命名规则
      * @param  string   $rule    文件命名规则
      * @return $this
@@ -87,88 +60,6 @@ class Upload
     {
         $this->rule = array_merge($this->rule, $rule);
         return $this;
-    }
-
-    /**
-     * 检测是否合法的上传文件
-     * @return bool
-     */
-    public function isValid()
-    {
-        return is_uploaded_file($this->filename);
-    }
-
-    /**
-     * 检测上传文件
-     * @param  array   $rule    验证规则
-     * @return bool
-     */
-    public function check(array $rule)
-    {
-		if (!empty($rule)) {
-			$this->setRule($rule);
-		}
-        /* 检查文件大小 */
-        if (!$this->checkSize()) {
-            $this->error = '上传文件大小不符！';
-            return false;
-        }
-
-        /* 检查文件Mime类型 */
-        if (!$this->checkMime()) {
-            $this->error = '上传文件MIME类型不允许！';
-            return false;
-        }
-
-        /* 检查文件后缀 */
-        if (!$this->checkExt()) {
-            $this->error = '上传文件后缀不允许';
-            return false;
-        }
-
-        /* 检查图像文件 */
-        if (!$this->checkImg()) {
-            $this->error = '非法图像文件！';
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * 检测上传文件后缀
-     * @param  array|string   $ext    允许后缀
-     * @return bool
-     */
-    public function checkExt()
-    {
-        if (in_array($this->getInfo('ext'), $this->rule['ext'], true)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 检测图像文件
-     * @return bool
-     */
-    public function checkImg()
-    {
-        if (in_array($this->getInfo('ext'), ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'swf'], true) && in_array($this->getImageType($this->getInfo['tmp_name']), [1, 2, 3, 4, 6], true)) {
-            return true;
-        }
-        return false;
-    }
-
-    // 判断图像类型
-    protected function getImageType($image)
-    {
-        if (function_exists('exif_imagetype')) {
-            return exif_imagetype($image);
-        } else {
-            $info = getimagesize($image);
-            return $info[2];
-        }
     }
 
     /**
@@ -184,6 +75,19 @@ class Upload
         }
         return true;
     }
+	
+    /**
+     * 检测上传文件后缀
+     * @param  array|string   $ext    允许后缀
+     * @return bool
+     */
+    public function checkExt()
+    {
+        if (in_array($this->getInfo('ext'), $this->rule['ext'], true)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * 检测上传文件类型
@@ -197,7 +101,83 @@ class Upload
         }
         return false;
     }
+	
+    /**
+     * 检测图像文件
+     * @return bool
+     */
+    public function checkImg()
+    {
+        if (in_array($this->getInfo('ext'), ['gif', 'jpg', 'jpeg', 'bmp', 'png'], true) && in_array($this->getImageType($this->getInfo['tmp_name']), [\IMAGETYPE_GIF, \IMAGETYPE_JPEG, \IMAGETYPE_BMP, \IMAGETYPE_PNG], true)) {
+            return true;
+        }
+        return false;
+    }
 
+    // 判断图像类型
+    protected function getImageType($image)
+    {
+        if (function_exists('exif_imagetype')) {
+            return exif_imagetype($image);
+        } else {
+            $info = getimagesize($image);
+            return $info[2];
+        }
+    }
+	
+	/**
+     * 检查目录是否可写
+     * @param  string   $path    目录
+     * @return boolean
+     */
+    protected function checkPath($path)
+    {
+		$dir = dirname($this->rule['base_path']. $path);
+		
+		if (mkdir($dir, 0755, true)) {
+            return true;
+        } else {
+            $this->error = "目录 {$dir} 创建失败！";
+            return false;
+        }
+    }
+	
+	/**
+     * 检测上传文件
+     * @param  array   $rule    验证规则
+     * @return bool
+     */
+    public function check(array $rule)
+    {
+		if (!empty($rule)) {
+			$this->setRule($rule);
+		}
+        /* 检查文件大小 */
+        if (!$this->checkSize()) {
+            $this->error = '上传文件大小不符！';
+            return false;
+        }
+
+        /* 检查文件Mime类型 
+        if (!$this->checkMime()) {
+            $this->error = '上传文件MIME类型不允许！';
+            return false;
+        }
+		*/
+        /* 检查文件后缀 */
+        if (!$this->checkExt()) {
+            $this->error = '上传文件后缀不允许';
+            return false;
+        }
+
+        /* 检查图像文件 */
+        if (!$this->checkImg()) {
+            $this->error = '非法图像文件！';
+            return false;
+        }
+
+        return true;
+    }
     /**
      * 移动文件
      * @param  string           $path    保存路径
@@ -205,7 +185,7 @@ class Upload
      * @param  boolean          $replace 同名文件是否覆盖
      * @return false|SplFileInfo false-失败 否则返回SplFileInfo实例
      */
-    public function move($path, $savename = true, $replace = true)
+    public function save($rule = [])
     {
         if (!empty($this->files['error'])) {
             $this->error($this->files['error']);
@@ -219,36 +199,32 @@ class Upload
         }
 
         // 验证上传
-        if (!$this->check()) {
+        if (!$this->check($rule)) {
             return false;
         }
        
-        $saveName = $this->buildSaveName($savename);
-        $filename = $path . $saveName;
-
+        $filename = $this->buildSaveName();
+ 
         // 检测目录
-        if (false === $this->checkPath(dirname($filename))) {
+        if (false === $this->checkPath($filename)) {
             return false;
         }
 
         /* 不覆盖同名文件 */
-        if (!$replace && is_file($filename)) {
+        if (!$this->rule['repalce'] && is_file($filename)) {
             $this->error = '存在同名文件' . $filename;
             return false;
         }
 
         /* 移动文件 */
-        if ($this->isTest) {
-            rename($this->filename, $filename);
-        } elseif (!move_uploaded_file($this->filename, $filename)) {
+        if (!move_uploaded_file($this->getInfo('tmp_name'), $filename)) {
             $this->error = '文件上传保存错误！';
             return false;
         }
-        // 返回 File对象实例
-        $file = new self($filename);
-        $file->setSaveName($saveName);
-        $file->setUploadInfo($this->info);
-        return $file;
+		
+		$this->files['url'] = $this->rule['host']. $filename;
+		return true;
+		
     }
 
     /**
@@ -256,19 +232,13 @@ class Upload
      * @param  string|bool   $savename    保存的文件名 默认自动生成
      * @return string
      */
-    protected function buildSaveName($savename)
+    protected function buildSaveName()
     {
-		$dest_file = $this->rule['base_path']. date('/Y/m/d/');
-		
-		if (!is_dir($dest_file)) {
-			mkdir($dest_file, 0777, true);
-			touch($dest_file);
-			chmod($dest_file, 0777);
-		}
-		
+		$dest_file  =  date('/Y/m/d/');
 		$dest_file .=  hash_file('md5', $this->getInfo('tmp_name'));
+		$dest_file .=  '.';
 		$dest_file .=  $this->getInfo('ext');
-        return $savename;
+        return $dest_file;
     }
 
     /**
@@ -308,13 +278,4 @@ class Upload
         return $this->error;
     }
 
-    public function upload()
-	{
-		$result = 0 ;
-		foreach($this->files as $key=>$value){
-			if ($this->move($value)) {
-				$result ++;
-			}
-		}
-	}
 }
