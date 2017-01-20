@@ -29,7 +29,7 @@ class Upload
      */
     public function getInfo($key = '')
     {
-        return isset($this->files[$key]) ? $this->files[$key] : $this->files;
+        return isset($this->files[$key]) ? $this->files[$key] : null;
     }
 
     /**
@@ -108,7 +108,7 @@ class Upload
      */
     public function checkImg()
     {
-        if (in_array($this->getInfo('ext'), ['gif', 'jpg', 'jpeg', 'bmp', 'png'], true) && in_array($this->getImageType($this->getInfo['tmp_name']), [\IMAGETYPE_GIF, \IMAGETYPE_JPEG, \IMAGETYPE_BMP, \IMAGETYPE_PNG], true)) {
+        if (in_array($this->getInfo('ext'), ['gif', 'jpg', 'jpeg', 'bmp', 'png'], true) && in_array($this->getImageType($this->getInfo('tmp_name')), [\IMAGETYPE_GIF, \IMAGETYPE_JPEG, \IMAGETYPE_BMP, \IMAGETYPE_PNG], true)) {
             return true;
         }
         return false;
@@ -132,14 +132,17 @@ class Upload
      */
     protected function checkPath($path)
     {
-		$dir = dirname($this->rule['base_path']. $path);
-		
-		if (mkdir($dir, 0755, true)) {
-            return true;
-        } else {
-            $this->error = "目录 {$dir} 创建失败！";
-            return false;
-        }
+		$dir = dirname($path);
+		if (!is_dir($dir)) {
+			if (mkdir($dir, 0755, true)) {
+				return true;
+			} else {
+				$this->error = "目录 {$dir} 创建失败！";
+				return false;
+			}
+		} else {
+			return true;
+		}
     }
 	
 	/**
@@ -203,26 +206,27 @@ class Upload
             return false;
         }
        
-        $filename = $this->buildSaveName();
+        $file_name = $this->buildSaveName();
+		$file_path = $this->rule['base_path']. $file_name;
  
         // 检测目录
-        if (false === $this->checkPath($filename)) {
+        if (false === $this->checkPath($file_path)) {
             return false;
         }
 
         /* 不覆盖同名文件 */
-        if (!$this->rule['repalce'] && is_file($filename)) {
-            $this->error = '存在同名文件' . $filename;
+        if (!$this->rule['repalce'] && is_file($file_path)) {
+            $this->error = '存在同名文件' . $file_path;
             return false;
         }
 
         /* 移动文件 */
-        if (!move_uploaded_file($this->getInfo('tmp_name'), $filename)) {
+        if (!move_uploaded_file($this->getInfo('tmp_name'), $file_path)) {
             $this->error = '文件上传保存错误！';
             return false;
         }
 		
-		$this->files['url'] = $this->rule['host']. $filename;
+		$this->files['url'] = $this->rule['host']. $file_name;
 		return true;
 		
     }
@@ -234,7 +238,8 @@ class Upload
      */
     protected function buildSaveName()
     {
-		$dest_file  =  date('/Y/m/d/');
+		$dest_file  =  '/attached';
+		$dest_file .=  date('/Y/m/d/');
 		$dest_file .=  hash_file('md5', $this->getInfo('tmp_name'));
 		$dest_file .=  '.';
 		$dest_file .=  $this->getInfo('ext');

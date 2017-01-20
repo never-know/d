@@ -301,7 +301,6 @@ function request_not_found($code, $message = '请求失败', $redirect = '')
 		$result['statusCode'] = $code;
 		$result['message'] = $message;
 		if (!empty($redirect)) $result['redirect'] = $redirect;
-	
 		IS_AJAX  && ajax_return($result); 		
 		IS_JSONP && jsonp_return($result);
 	}

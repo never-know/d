@@ -12,7 +12,7 @@
 	define('ACCESS_DENY_PAGE', HOME_PAGE.'/error/access_deny.html');
 
 	define('COOKIE_DOMAIN', '.'.SITE_DOMAIN);
-	define('CDN_DOMAIN', 'cnd.'.SITE_DOMAIN);
+	define('CDN_DOMAIN', 'www.'.SITE_DOMAIN);					// 静态文件域名
 
 	define('VIEW_EXT','.tpl');
 	define('PHP_EXT','.php');
@@ -21,6 +21,8 @@
 	define('APP_PATH', __DIR__);
 	define('LOG_PATH', APP_PATH.'/../log');	
 	define('CACHE_PATH', APP_PATH.'/../cache');	
+	define('PUBLIC_PATH', APP_PATH.'/../webroot/public');		// 图片上传在服务器上的基址
+	define('PUBLIC_URL', CDN_DOMAIN.'/public');					// 图片上传后的URL基址
 	
 	define('CONF_PATH', APP_PATH.'/Conf');	
 	define('VIEW_PATH', APP_PATH.'/View');
