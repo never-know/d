@@ -1,84 +1,49 @@
 <?php
 
-class IndexController extends \Min\Controller{
+class AnyiController extends \Min\Controller{
 	
 	protected  $weObj; 
-	protected  $account;//公众号 WeixinAccount 中的ID
-	protected  $user;//用户 WeixinUser 中的信息
+	protected  $user;		//用户 WeixinUser 中的信息
+	protected  $account;	//公众号 WeixinAccount 中的ID
 	
-	public function index(){
-		 
-		include APP_PATH.'/Vendor/wechat/wechat.class.php';
-		include APP_PATH.'/Vendor/wechat/TPWechat.class.php';
-	 
-		if(!preg_match('/^[a-z0-9]{6,60}$/',$_GET['appid'])) exit('parameter error');
-		
-		 
-		$conf = M('WeixinAccount')->field('id,user_id,type,app_token,app_encodingAESKey,appid,appsecret')->where(array('appid'=>$_GET['appid']))->find();
-	 
-		if(empty($conf)) exit('无法提供该公众号服务');
- 
-		$this->account = $conf['id'];
- 
-		// 缓存 一下
-		$options = array( 
-			'token'=>$conf['app_token'],  
-			'encodingaeskey'=>$conf['app_encodingAESKey'],
-			'appid'=>$conf['appid'], 
-			'appsecret'=> $conf['appsecret']		
-		); 
+	
+	public function index_post()
+	{
+		include VENDOR_PATH.'/wechat/TPWechat.class.php';
 
-		$this->weObj = new TPWechat($options);
-		$this->weObj->valid(); 
+		$options = get_config('anyitime');
 
-		// 获取用户信息，如果没有，则写入数据库
-		$vv =$this->weObj->getRev();
-	 
-		$openid = $this->weObj->getRev()->getRevFrom();
- 
-		$model = M('WeixinUser');
-		$this->user = $model->where(array('openid'=>$openid,'account_id'=>$this->account))->find();
-	 
-		if( false === $this->user){
-			$this->weObj->text('无法提供该公众号服务')->reply();
-			exit;
-		}
-		if(empty($this->user)){
-			$data = $this->weObj->getUserInfo($openid);
-			$data['account_id'] = $this->account;
-			$data['id'] = $model->add($data);
-			if($data['id']) {
-				$this->user=$data;
-			}else{
-				$this->weObj->text('无法提供该公众号服务')->reply();
-				exit;
-			}
-		}
+		$this->weObj = new \TPWechat($options);
+	
 
 		$type = $this->weObj->getRevType();
 
-	
 		switch($type) {
-			case Wechat::MSGTYPE_TEXT:
+			
+			case \Wechat::MSGTYPE_TEXT:
 					$this->text_reply();
 					break;
-			case Wechat::MSGTYPE_IMAGE:
-					break;
-			case Wechat::MSGTYPE_EVENT:
+			case \Wechat::MSGTYPE_EVENT:
 			
 				$t = $this->weObj->getRevEvent();
 
-				if($t['event'] == Wechat::EVENT_SUBSCRIBE){ 
+				if (\Wechat::EVENT_SUBSCRIBE == $t['event']) { 
+				
 					$this->subscribe_reply();
-				}elseif($t['event'] == Wechat::EVENT_UNSUBSCRIBE){
+					
+				} elseif (\Wechat::EVENT_UNSUBSCRIBE == $t['event']) {
+					
 					$this->unsubscribe_reply();
-				}elseif($t['event'] == Wechat::EVENT_MENU_CLICK){
+					
+				} elseif (\Wechat::EVENT_MENU_CLICK == $t['event']) {
 
 					$this->menuclick_reply($t['key']);
 					 
 				}
+				
 				break;
-			 
+				
+			case Wechat::MSGTYPE_IMAGE:
 			default:
 				$this->default_reply();
 		}
@@ -88,10 +53,10 @@ class IndexController extends \Min\Controller{
 	}
 	
 	
-	public function subscribe_reply(){
+	public function subscribe_reply() {
 		
 		// 未关注
-		if(empty($this->user['subscribe'])){
+		if (empty($this->user['subscribe'])) {
 			$data = $this->weObj->getUserInfo($openid);
 			$data['account_id'] = $this->account;
 			$data['id'] = $model->add($data);

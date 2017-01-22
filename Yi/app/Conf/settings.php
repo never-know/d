@@ -67,13 +67,13 @@ $conf['mysqlpdo'] = array (
 # logger
 
 $conf['logger'] = array (
-	'DEBUG' => 100,
-    'INFO' => 200,
-	'NOTICE' => 250,
-	'WARNING' => 300,
-	'ERROR' => 400,
-	'CRITICAL' => 500,
-	'ALERT' => 550,
+	'DEBUG' 	=> 100,
+    'INFO' 		=> 200,
+	'NOTICE' 	=> 250,
+	'WARNING' 	=> 300,
+	'ERROR' 	=> 400,
+	'CRITICAL' 	=> 500,
+	'ALERT' 	=> 550,
 	'EMERGENCY' => array (
 		'handler' => '\\Min\\Logger\\Handler\\Sms',
 	),	
@@ -84,7 +84,7 @@ $conf['logger'] = array (
 
 $conf['file_cache'] = array (
 	'default' => array (
-		'cache_dir' => CACHE_PATH,
+		'cache_dir'	=> CACHE_PATH,
 	)
 );
 
@@ -92,12 +92,12 @@ $conf['file_cache'] = array (
 
 $conf['redis'] = array (
 	'default' => array (
-		'host' => '127.0.0.1',
-		'port' => '6379',
-		'timeout' => '1',
-		'delay' => '200',
-		'auth' => '',
-		'db' => 1, 
+		'host' 		=> '127.0.0.1',
+		'port' 		=> '6379',
+		'timeout' 	=> '1',
+		'delay' 	=> '200',
+		'auth' 		=> '',
+		'db' 		=> 1, 
 	)
 );
 
@@ -105,17 +105,26 @@ $conf['redis'] = array (
 $conf['sms'] = 'aliyun';
 
 $conf['aliyun'] = array (
-	'appkey' => '23314175',
-	'secretkey' => 'e1aecb8048afb006b3d03937b8743972',
-	'profile' => 'cn-hangzhou',
-	'reg' => array (
-		'signname' => '注册验证码', 	/*签名名称*/
-		'templateCode' => 'SMS_33465600'	/*模板code*/ 
+	'appkey' 		=> '23314175',
+	'secretkey' 	=> 'e1aecb8048afb006b3d03937b8743972',
+	'profile' 		=> 'cn-hangzhou',
+	'reg'			=> array (
+		'signname' 		=> '注册验证码', 	/*签名名称*/
+		'templateCode' 	=> 'SMS_33465600'	/*模板code*/ 
 	),
 	'quicklogin' 	=> array (),
 	'resetpwd'		=> array (),
 	'notice' 		=> array()
 );
+
+
+
+$conf['anyitime'] = array( 
+	'token' 			=> '',  
+	'encodingaeskey'	=> '',
+	'appid'				=> '', 
+	'appsecret'			=> ''		
+); 
 
 $conf['hash_salt'] = 'cfDvVLhVONY5ijnnLJ0OusjqUTr_bcPPuHmlYji9F70';
 $conf['private_key'] = 'cfDvVLhVONY5ijnnLJ0OusjqUTr_bcPPuHmlYji9F70';
