@@ -1,4 +1,4 @@
-var error_bordercolor = '#e4393c';	
+
 var pwd_tips = '建议使用字母、数字或符号两种及以上组合，6-20个字符';
 	// 密码
 function isPwd(str) {
@@ -476,13 +476,8 @@ Min.event.bind('getcode','click',function(e){
 					case 30207:
 					case 30112:
 					case 500:
-						easyDialog.open({
-						  container : {
-							header : '错误提示',
-							content : '服务受限，您可以通过 <a href="#">微信扫一扫</a>注册'
-						  },
-						  drag : false
-						});
+						_$('error_message').innerHTML= data.message || '系统忙，请重试';
+						_$('reg-msg').style.visibility="visible";
 						break;
 					case 30120: // 手机号码错误
 					case 30205:
@@ -498,7 +493,8 @@ Min.event.bind('getcode','click',function(e){
 		},
 		fail:function(){
 			_$('getcode').setAttribute("sindex", 0);
-			setError(_$('regmcode-error'),'您的网络出现问题','errors');
+			_$('error_message').innerHTML= '您的网络出现问题';
+			_$('reg-msg').style.visibility="visible";
 		
 		}
 	});
@@ -580,45 +576,41 @@ var phone = _$('regphone').value, code = _$('regcode').value, mcode = _$('regmco
 			csrf_token:token
 		},
 		success: function(data){
-			if(data.statusCode == 1) {
-				 
-				window.location.href = 'http://account.' + site_domain + '/regist/success.html';
+			if(data.statusCode == 0) {
+				window.location.href = 'http://www.' + site_domain;
 			}else{
 				_$('regsubmit').setAttribute("sindex", 0);
 				switch(data.statusCode){
-					case -1:
-					case 0:
-						 _$('reg-error').style.display="block";
-						 _$('reg-error').innerHTML = '系统开小差，亲，请重试';
-						break;
-					case 2:
-						code_tag(2);
-						setError(_$('regcode-error'),data.message,'errors');
-						break;
-					case 100:
-						_$('regphone').style.borderColor = error_bordercolor;
+					case 30120: // 手机号码错误
+					case 30205: 
+						_$('regphone').style.borderColor = error_bordercolor; 
 						setError(_$('regphone-error'),data.message,'errors');
 						break;
-					case 101:
-						_$('regmcode').style.borderColor = error_bordercolor;
+					case 30102: // 验证码错误
+						code_tag(2);
+						setError(_$('regcode-error'),data.message,'errors');
+					break;
+					case 30110:
+					case 30111:
+					case 30114:
 						setError(_$('regmcode-error'),data.message,'errors');
+						_$('regmcode').style.borderColor = error_bordercolor;
+					case 30203:
+						_$('regpwd1').style.borderColor = error_bordercolor;
+						setError(_$('regpwd1-error'),'两次输入密码不相同','errors');
+						break;	
+					case 500:
+					default:
+						_$('error_message').innerHTML= data.message || '系统忙，请重试';
+						_$('reg-msg').style.visibility= "visible";
 						break;
-					case 102:
-						_$('regpwd').style.borderColor = error_bordercolor;
-						setError(_$('regpwd-error'),data.message,'errors');
-						break;
-					case 103:
-					 _$('regpwd1').style.borderColor = error_bordercolor;
-						setError(_$('regpwd1-error'),data.message,'errors');
-						break;
-					
 				}
 			}
 		},
 		fail:function(){
 			_$('regsubmit').setAttribute("sindex", 0);
-			 _$('reg-error').style.display="block";
-			 _$('reg-error').innerHTML ="网络异常，请重试";
+			_$('error_message').innerHTML= "网络异常，请重试";
+			_$('reg-msg').style.visibility="visible";
 		
 		}
 	});

@@ -1,22 +1,25 @@
 
-	<div class="login-wrapper">
-		<div class="login-header">
-				<a href="" target="_blank" class="login-logo"><img src="/public/images/logo.jpg"></a>
+	
 				<em>欢迎注册</em>
 				<span>已有QI账号？</span>
 				<a href="/login.html" target="_blank" class="regist-link">马上登陆</a>
 		</div>
-		<div class="login-content">
+		<div class="nav-2" style="top:78px;"> </div> 
+		<div class="login-content" style="padding-top:10px;">
 			<div class="reg-image">
 				<div class="reg-image-inner">
-					<img src="/public/images/signPic.jpg" >
+					<div style="width:250px;text-align:center;margin:0 auto;margin-top: 50px;">
+						<p style="color:#e4393c;font-size:14px;">扫一扫，关注公众号完成注册</p>
+						<img src="/public/images/qrcode_for_gh_d4b7de5f7463_258.jpg" >
+					</div>
 				</div>
 			</div>
 			<div class="reg-form">
 			
 				<div class="reg-msg" id="reg-msg">
 						<i class="icon-error iconfont">&#xe632;</i>
-						<span>服务受限，请使用微信扫一扫登陆</span> 
+						<span id ="error_message">服务受限,请稍候重试</span> 
+						<p style="text-align:center;">遇到问题？<a style="color: #e4393c;display:inline;margin-left:6px;">直接扫描右侧二维码完成注册</a></p> 
 				</div>
 				<div class="reg-box">
 					<form id="reg-form" method="post" onsubmit="return false;">
@@ -66,8 +69,8 @@
 						<input type="hidden" value="<?=get_token();?>" name="csrf_token" id="csrf_token" />
 						
 						<div class="service-agreement">请阅读<a href="" >《QI用户注册协议》</a></div>
-						<div id="reg-error" class="reg-error">注册失败,请重试</div> 
-						<button href="javascript:;" class="btn-img btn-entry reg-btn" id="regsubmit" tabindex="6" type="submit"  sindex=0>同意协议并注册</button>
+					 
+						<button href="javascript:;" class="reg-btn" id="regsubmit" tabindex="6" type="submit"  sindex=0>同意协议并注册</button>
 						 
 						
 

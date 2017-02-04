@@ -16,7 +16,7 @@ class Redis{
 	 
 	public function init($key)
 	{
-		if (!empty($key) && empty($this->conf[$key])) {
+		if (!empty($key) && !empty($this->conf[$key])) {
 			$this->active = $key;
 		}
 		return $this;

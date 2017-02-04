@@ -10,12 +10,21 @@ namespace Min\Cache;
 class FileCache
 {
     private $option = [];
+	private $active	= 'default';
 	
 	public function  __construct($db_key = '') 
 	{
 		$this->option = get_config('file_cache');	
 	}
-	 
+	
+	public function init($key)
+	{
+		if (!empty($key) && !empty($this->option[$key])) {
+			$this->active = $key;
+		}
+		return $this;
+	}
+	
     /**
      * Fetches an entry from the cache.
      * 
@@ -75,14 +84,21 @@ class FileCache
 
     protected function getFileName($id)
     {
-        $hash = md5($id);
-        $dirs = [
-            $this->option[$this->active]['cache_dir'],
-            substr($hash, 0, 2),
-            substr($hash, 2, 2),
-            substr($hash, 4, 2),
-			$hash
-        ];
+		if (!empty($this->option[$this->active]['level'])) {
+			$hash = md5($id);
+			$dirs = [
+				$this->option[$this->active]['cache_dir'],
+				substr($hash, 0, 2),
+				substr($hash, 2, 2),
+				substr($hash, 4, 2),
+				$hash
+			];
+		} else {
+			$dirs = [
+				$this->option[$this->active]['cache_dir'],
+				$id
+			];
+		}
         return implode(DIRECTORY_SEPARATOR, $dirs);
     }
 	
@@ -107,7 +123,7 @@ class FileCache
 	
 	public function getAndModify($id, Closure $callback, $default_value = 0) 
 	{
-		$result = $this->get($id))
+		$result = $this->get($id);
 
 		if ($result) {
 			$result['data'] = $callback($result['data']);

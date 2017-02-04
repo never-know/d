@@ -20,8 +20,8 @@ class App
 		if (!empty($_SERVER['PATH_INFO']) && preg_match('/^(?:\/[a-zA-Z0-9]+){2,}$/', $_SERVER['PATH_INFO'])) {	
 				
 			$pathinfo 	= explode('/', $_SERVER['PATH_INFO'], 5);
-			if (empty($pathinfo[4])) $pathinfo[4]	= '';
-			if (empty($pathinfo[3])) $pathinfo[3]	= DEFAULT_ACTION;
+			if (!isset($pathinfo[4])) $pathinfo[4]	= '';
+			if (!isset($pathinfo[3])) $pathinfo[3]	= DEFAULT_ACTION;
 			list( , self::$module, self::$controller, self::$action, self::$args) = $pathinfo; 
 			
 			$file_name = APP_PATH.'/Module/'.ucfirst(self::$module).'/'.ucfirst(self::$controller).'Controller'.PHP_EXT;

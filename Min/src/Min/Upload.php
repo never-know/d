@@ -3,16 +3,16 @@
 namespace Min;
 
 class Upload
-{
-     
+{ 
     private $error = '';   
     protected $files;
     protected $rule = [
-		'ext' => ['gif', 'jpg', 'jpeg', 'bmp', 'png'],
-		'size' => 1048576,
-		'repalce' => true,
-		'base_path' => '',
-		'host' => ''
+		//'ext' => ['gif', 'jpg', 'jpeg', 'bmp', 'png'],
+		'ext' 		=> ['jpg', 'jpeg', 'png'],
+		'size' 		=> 1048576,
+		'base_path' => \PUBLIC_PATH,
+		'host' 		=> '//'. \PUBLIC_URL,
+		'repalce' 	=> true
 	];
 
 
@@ -108,7 +108,7 @@ class Upload
      */
     public function checkImg()
     {
-        if (in_array($this->getInfo('ext'), ['gif', 'jpg', 'jpeg', 'bmp', 'png'], true) && in_array($this->getImageType($this->getInfo('tmp_name')), [\IMAGETYPE_GIF, \IMAGETYPE_JPEG, \IMAGETYPE_BMP, \IMAGETYPE_PNG], true)) {
+        if (in_array($this->getInfo('ext'), ['jpg', 'jpeg', 'png'], true) && in_array($this->getImageType($this->getInfo('tmp_name')), [ \IMAGETYPE_JPEG, \IMAGETYPE_PNG], true)) {
             return true;
         }
         return false;
@@ -137,7 +137,8 @@ class Upload
 			if (mkdir($dir, 0755, true)) {
 				return true;
 			} else {
-				$this->error = "目录 {$dir} 创建失败！";
+				watchdog("目录{$dir}创建失败！", 'upload', 'NOTICE');
+				$this->error = "目录创建失败！";
 				return false;
 			}
 		} else {

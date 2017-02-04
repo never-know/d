@@ -1,16 +1,13 @@
 <?php
-namespace App\Module\Www;
+namespace App\Module\M;
 
 use Min\App;
 
 class IndexController extends \Min\Controller
 {
-	 
-
 	public function index_get()
 	{
-		$result = ['menu_active' => 'homepage', 'title' =>'首页'];
-		$this->response($result);
+		$this->response();
 	}
 	
 	public function test()

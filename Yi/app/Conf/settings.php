@@ -29,6 +29,11 @@ $conf['cache'] = array (
 	'content' => array (
 		'bin' => 'file_cache',
 		'key' => 'default',
+	),
+	'region' => array (
+		'bin' => 'file_cache',
+		'key' => 'region',
+		'level' => 1
 	)
 );
 
@@ -85,6 +90,9 @@ $conf['logger'] = array (
 $conf['file_cache'] = array (
 	'default' => array (
 		'cache_dir' => CACHE_PATH,
+	),
+	'region' => array (
+		'cache_dir' => CACHE_PATH .'/region',
 	)
 );
 

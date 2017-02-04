@@ -6,5 +6,6 @@
 /Yi/log/*
 !/Min
 /Yi/webroot/public/attached
+/Yi/cache
 
 

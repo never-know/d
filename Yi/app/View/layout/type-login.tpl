@@ -18,7 +18,10 @@
 <body>
 <div class="container" id="container" >
 	<div class="nav-2" style="top:78px;"> </div> 
-	<?php view(); ?> 			
+	<div class="login-wrapper">
+		<div class="login-header">
+				<a href="" target="_blank" class="login-logo"><img src="/public/images/logo15.png"></a>
+				<?php view(); ?> 			
 </div>
 <?php include APP_PATH.'/View/layout/footer.tpl'; ?>	
 <script type="text/javascript" src="/public/js/<?=\Min\App::getController();?>.js"></script>

@@ -1,5 +1,5 @@
 <div class="footer">
-	<div class="nav-2" style="top:0px;"> </div> 
+	<div class="nav-2" style="top:10px;"> </div> 
 	<div class="links">
 		<a rel="nofollow" target="_blank" href=" ">
 			关于我们

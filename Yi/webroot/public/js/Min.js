@@ -6,7 +6,7 @@ var	win = window,
 	doc = win.document,
 	body = doc.body,
 	docElem = doc.documentElement;
-	
+var error_bordercolor = '#ffb4a8';		
 var Min={};
 var _$ = function(id){
 	return "string" == typeof id ? document.getElementById(id) : id;
@@ -307,10 +307,12 @@ Min.dom = {
 		return tmp;
 	},
 	
-	pre : function(element){
+	pre : function(element,tag){
 	
 		var tmp = element.previousSibling;
-		while( tmp!= null && tmp.nodeType!=1){
+		//while( tmp!= null && tmp.nodeType!=1){
+		//while( !(tmp == null || ( tmp.nodeType == 1 && (!tag || tmp.tagName.toUpperCase() == tag )))) {
+		while( tmp != null && ( tmp.nodeType != 1 || (tag && tmp.tagName.toUpperCase() != tag ))) {
 			tmp=tmp.previousSibling;
 		}
 		return tmp;
@@ -371,7 +373,22 @@ Min.dom = {
         }
 
         return false;
-    }
+    },
+	 getByClass:function(s,p,t)//使用class获取元素
+	 {
+		var reg=new RegExp('\\b'+s+'\\b');
+		var aResult=[];
+		var aElement=(p||document).getElementsByTagName(t || '*');
+
+		for(var i=0;i<aElement.length;i++)
+		{
+			if(reg.test(aElement[i].className))
+			{
+				aResult.push(aElement[i])
+			}
+		}
+		return aResult;
+	 }
 	
 }
 
@@ -518,7 +535,7 @@ Min.ready = (function(){
 	return ready;
 
 })();
- 
+
 if (typeof Array.prototype.forEach != "function") {
   Array.prototype.forEach = function (fn, context) {
     Min.obj.each( this, function(){ fn.apply(context, arguments); } );
@@ -608,10 +625,11 @@ if (!Object.keys) {
 
 
 
-
+/*
 if (!document.querySelectorAll) {
-	
+	origin_querySelectorAll = true;
     document.querySelectorAll = function (selectors) {
+	console.log(selectors);
         var style = document.createElement('style'), elements = [], element;
         document.documentElement.firstChild.appendChild(style);
         document._qsa = [];
@@ -673,7 +691,7 @@ var query = (function (){
     return !!document.createElement('div').querySelectorAll ? qsaWorkerWrap : qsaWorkerShim;
 })();
 	
-	
+*/	
 if (Min.UA.isIE6) try {
     document.execCommand("BackgroundImageCache", false, true)
 } catch(e) {};

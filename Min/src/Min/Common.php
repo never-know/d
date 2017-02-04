@@ -163,6 +163,7 @@ function validate($type,$value)
 		'email' =>'/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
 		'phone'		=> '/^(13|15|18|14|17)[\d]{9}$/',
 		'alphabet'	=> '/^[a-z]+$/i',
+		'date_Y-m-d' => '/^20(1[789]|2[\d])\-(0[1-9]|1[012])\-(0[1-9]|[12][\d]|3[01])/'
 	];
 	
 	return preg_match($pattern[$type],$value);
@@ -214,7 +215,7 @@ function get_token($value = '', $seed = false)
 function valid_token($token, $value) 
 {
 	$form_id = $value. '_FORM';
-	if (empty( $_SESSION[$form_id])) return false;
+	if (empty($_SESSION[$form_id])) return false;
 	return ($token === get_token($value, true));
 }
 // 处理url

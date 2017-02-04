@@ -1,12 +1,11 @@
 
-	<div class="login-wrapper">
-		<div class="login-header">
-				<a href="" target="_blank" class="login-logo"><img src="/public/images/logo.jpg"></a>
+	 
 				<em>欢迎登陆</em>
 				<span>没有QI账号？</span>
 				<a href="/regist.html" target="_blank" class="regist-link">立即注册</a>
 		</div>
-		<div class="login-content">
+		<div style="background:width: 100%;background: #e93854;">
+		<div class="login-content" style="background: #e93854;">
 			<div class="login-image">
 				<div class="login-image-inner">
 					<img src="/public/images/loginPic.jpg" />
@@ -44,7 +43,7 @@
 						</div>
 						<input type="hidden" value="<?=get_token();?>" name="csrf_token" id="csrf_token" />
 						<div class="msg-warn hide" id="msg-warn"> <i class="icon-warn iconfont">&#xe644;</i>公共场所不建议自动登录，以防账号丢失</div>
-						<button type = "submit" class="login-btn" id="loginsubmit"  sindex="0">登&nbsp;&nbsp;&nbsp;&nbsp;录</a>
+						<button href="javascript:;" type = "submit" class="login-btn" id="loginsubmit"  sindex=0>登&nbsp;&nbsp;&nbsp;&nbsp;录</a>
 						</button>
 						 
 					</form>
@@ -52,4 +51,10 @@
 				</div>
 			 </div>
 		</div>	 
+		</div>	 
 	</div>
+	<style>
+	.nav-2{
+	display:none;
+	}
+	</style>
