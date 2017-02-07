@@ -53,6 +53,10 @@ class Captcha{
 	 */
 	public function getCode($key) 
 	{	
+		if(!\validate('words', $key)) {
+			return '';		
+		}
+		
 		header('Pragma: no-cache'); 
 		Header('Content-type: image/PNG');  
 		$this->width = $this->length * $this->fontsize + 6;

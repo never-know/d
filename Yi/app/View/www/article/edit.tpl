@@ -119,13 +119,13 @@
 			<dt>开始日期：</dt> 
 			<dd>	
 			<input type="text" name="date_start" id="date_start" class="tcal" autocomplete="off" readonly="readonly" value="<?php echo $result['start'];?>"/>
-				<label>不填写则审核通过后立刻生效</label></dd>
+				<label>选择当日则审核通过后立刻生效</label></dd>
 		</dl>
 		<dl>
 			<dt>结束日期：</dt> 
 			<dd>
 			<input type="text" name="date_end" id = "date_end" class="tcal" autocomplete="off" readonly="readonly" value="<?php echo $result['end'];?>"/>
-				<label>至少大于当前时间2天，不填写则永久有效</label>
+				<label>至少大于当前日期2天，不填写则长期有效</label>
 			</dd>
 		</dl>
 		
@@ -328,10 +328,7 @@
 	
 <script type="text/javascript">
 var province = [];
-var area = {};
 var region = [];
-
-
 
 function diy_select(){
 	this.init.apply(this,arguments)
@@ -347,10 +344,10 @@ diy_select.prototype={
 		JSONP.get( 'http://www.' + site_domain + '/region/id/0.html', {}, function(data){
 			console.log(data.statusCode);
 			if(data.statusCode == 0 ){
-				for(var i=0; i<data.body.length; i++) {
+				for(var i=0; i<data.body[0].length; i++) {
 				　var li = document.createElement("li");
-	　　　		　li.setAttribute("sid", data.body[i].id);
-			　　　li.innerHTML = data.body[i].name;
+	　　　		　li.setAttribute("sid", data.body[0][i].id);
+			　　　li.innerHTML = data.body[0][i].name;
 			　　　THAT.l[0].appendChild(li);
 				}
 			}
@@ -391,36 +388,35 @@ diy_select.prototype={
 				}
 			});
 			
-			if(key > 0 && index == 0){
-			
+			if(key > 0){
 				if(!region[key]){
 					JSONP.get( 'http://www.' + site_domain + '/region/id/'+key+'.html', {}, function(data){
 						if(data.statusCode == 0 ){
-							area = region[key]= data.body[key];	
+							region[key]= data.body[key];	
 							
-							if(key > 0 && area[key] && index < THAT.lengths-1 ){
+							if(key > 0 &&  index < THAT.lengths-1 ){
 				
-								for(var i=0; i < area[key].length; i++){
+								for(var i=0; i < region[key].length; i++){
 								　var li = document.createElement("li");
-					　　　		　li.setAttribute("sid", area[key][i].id);
-							　　　li.innerHTML = area[key][i].name;
+					　　　		　li.setAttribute("sid", region[key][i].id);
+							　　　li.innerHTML = region[key][i].name;
 								  THAT.l[index+1].appendChild(li);
 								}	
 							}
 						}
 					}); 
 					return;
-				} else {
-					area = region[key];
-				}
+				} 
+			}else {
+				return;
 			}
 			
-			if(key > 0 && area[key] && index < THAT.lengths-1 ){
+			if(key > 0 && index < THAT.lengths-1 ){
 				
-				for(var i=0; i < area[key].length; i++){
+				for(var i=0; i < region[key].length; i++){
 				　var li = document.createElement("li");
-	　　　		　li.setAttribute("sid", area[key][i].id);
-			　　　li.innerHTML = area[key][i].name;
+	　　　		　li.setAttribute("sid", region[key][i].id);
+			　　　li.innerHTML = region[key][i].name;
 				  THAT.l[index+1].appendChild(li);
 				}	
 			}

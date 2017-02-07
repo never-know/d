@@ -9,14 +9,9 @@ class RegionService extends \Min\Service
 	public function node($id)
 	{
 		$id = intval($id);
-		if($id == 0) {
-			$region = $this->rootNode();
-			return $this->success($region);
-		} else {
-			$region = $this->childrenNode($id);
-			return $this->success([$id =>$region]);
-		}
-		
+		$region = $this->allChildrenNode($id);
+		return $this->success([$id =>$region]);
+
 	}	
 	
 	private function childrenNode($id)
@@ -33,12 +28,11 @@ class RegionService extends \Min\Service
 		return $region;
 	
 	}
-	public function rootNode()
+	private function allChildrenNode($id)
 	{
 		$id = intval($id);
-		$sql = 'SELECT id, name  FROM {region} WHERE parent_id  = 0 order by id asc';
+		$sql = 'SELECT id, name  FROM {region} WHERE parent_id  = '. $id. ' order by id asc';
 		$result	= $this->query($sql);
-		 
 		return $result;
 	}	
 	 

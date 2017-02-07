@@ -9,7 +9,7 @@ class RegionController extends \Min\Controller
 	{
 		$id = App::getArgs();
 		if (!is_numeric($id)) {
-			$this->error(1,'参数错误');
+			$this->error(1, '参数错误');
 		}
 		$key = 'region_'. $id;
 		$cache = $this->cache('region');

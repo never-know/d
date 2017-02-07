@@ -25,12 +25,13 @@ class ArticleController extends \Min\Controller
 		$param['desc'] 	= $_POST['desc'];
 		$param['icon'] 	= $_POST['icon'];
 		
-		if(!empty($_POST['date_start']) && ! \validate('date_Y-m-d', $_POST['date_start'])) {
+		if(!empty($_POST['date_start']) && !\validate('date_Y-m-d', $_POST['date_start'])) {
 			$this->error(1, '开始日期格式错误');
 		}
 		if(!empty($_POST['date_end']) && ! \validate('date_Y-m-d', $_POST['date_end'])) {
 			$this->error(1, '结束日期格式错误');
 		}
+		
 		$param['start'] = $_POST['date_start'];
 		$param['end'] 	= $_POST['date_end'];
 		

@@ -157,6 +157,7 @@ function validate($type,$value)
 	if (!validate_utf8($value)) return false;
 	
 	$pattern = [
+		'words' => '/^[a-zA-Z0-9_]+$/',
 		'quotes'=>'/["\'\s]+/u',
 		'nickname'	=> '/^[a-zA-Z0-9\-_\x{4e00}-\x{9fa5}]{3,31}$/u',
 		'username'=>'/^[a-zA-Z0-9\-_]{3,31}$/',
@@ -164,6 +165,7 @@ function validate($type,$value)
 		'phone'		=> '/^(13|15|18|14|17)[\d]{9}$/',
 		'alphabet'	=> '/^[a-z]+$/i',
 		'date_Y-m-d' => '/^20(1[789]|2[\d])\-(0[1-9]|1[012])\-(0[1-9]|[12][\d]|3[01])/'
+		
 	];
 	
 	return preg_match($pattern[$type],$value);
