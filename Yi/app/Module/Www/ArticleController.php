@@ -25,6 +25,11 @@ class ArticleController extends \Min\Controller
 		$param['desc'] 	= $_POST['desc'];
 		$param['icon'] 	= $_POST['icon'];
 		
+		if (mb_strlen($param['title']) > 30) 	$this->error(1, '标题最多包含30个字符');
+		if (mb_strlen($param['desc']) > 60) 	$this->error(1, '简介最多包含60个字符');
+		if (!\validate('img_url', $param['title'])) $this->error(1, '图像url不合法');
+		if (strlen($param['icon']) > 128) 		$this->error(1, '图像url最多包含128个字符');
+		
 		if(!empty($_POST['date_start']) && !\validate('date_Y-m-d', $_POST['date_start'])) {
 			$this->error(1, '开始日期格式错误');
 		}
@@ -34,8 +39,8 @@ class ArticleController extends \Min\Controller
 		
 		$param['start'] = $_POST['date_start'];
 		$param['end'] 	= $_POST['date_end'];
-		
-		$this->response($result);
+
+		$this->response($this->request('\\App\\Service\\Article::add', $param));
 	}
 	
 	 
