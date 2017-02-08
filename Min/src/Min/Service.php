@@ -58,7 +58,7 @@ class Service
 	{		
 		$db_setting = get_config('backend');
 		$value = $db_setting[$this->db_key]?:$db_setting['default'];
-		return \Min\App::getService($value['bin'])->init($value['key']);
+		return \Min\App::getService($value['bin'], $value['key']);
 	}
 
 	final public function cache($key = null)
@@ -69,7 +69,7 @@ class Service
 		
 		$cache_setting = get_config('cache');
 		$value = $cache_setting[$this->cache_key]??$cache_setting['default'];
-		return \Min\App::getService($value['bin'])->init($value['key']);
+		return \Min\App::getService($value['bin'], $value['key']);
 	}
 	
 	final public function watchdog($data, $extra = null)

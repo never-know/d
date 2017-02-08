@@ -81,7 +81,9 @@ class AccountService extends \Min\Service
 			implode(',', [intval($regist_data['phone']), intval($regist_data['regtime']), intval($regist_data['regip']), "'". $regist_data['pwd']. "')"]);
 			
 			$reg_result =  $this->query($sql);
+			
 			watchdog($reg_result);
+			
 			if ($reg_result > 1) {
 				//清理 注册缓存
 				$this->cache()->delete($this->getCacheKey('phone', intval($regist_data['phone'])));

@@ -41,7 +41,7 @@ class App
 		return self::$container;			
 	}
 	
-	public static function getService($name = '', $arguments = [])
+	public static function getService($name = '', $arguments = null)
 	{
 		return self::$container->getService($name, $arguments);			
 	}

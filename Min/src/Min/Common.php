@@ -152,9 +152,12 @@ function save_gz($data, $filename)
 	fclose($fp);	
 }
 
-function validate($type,$value)
+function validate($type, $value, $max = 0, $min = 1)
 {
 	if (!validate_utf8($value)) return false;
+	
+	$max = intval($max);
+	$min = intval($min);
 	
 	$pattern = [
 		'words' 		=> '/^[a-zA-Z0-9_]+$/',  			// 标准ascii字符串
@@ -164,12 +167,21 @@ function validate($type,$value)
 		'email' 		=>'/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',	// 邮箱
 		'phone'			=> '/^(13|15|18|14|17)[\d]{9}$/',						// 手机
 		'alphabet'		=> '/^[a-z]+$/i',										// 字母不区分大小写
-		'date_Y-m-d' 	=> '/^20(1[789]|2[\d])\-(0[1-9]|1[012])\-(0[1-9]|[12][\d]|3[01])/', //合法日期
-		'img_url'	 	=> '/^http[s]?:\/\/[a-zA-Z0-9_\.\/]+$/'   // 合法图片地址
-		 
+		'date_Y-m-d' 	=> '/^20(1[789]|2[\d])\-(0[1-9]|1[012])\-(0[1-9]|[12][\d]|3[01])$/', //合法日期
+		'img_url'	 	=> '@^http[s]?://[a-zA-Z0-9_.]+(/[a-zA-Z0-9_]+)+(\.(jpg|png|jpeg))?$@',  // 合法图片地址	
+		'length'		=> '/^.{'. $min. ','. $max. '}$/us'
 	];
-	
-	return preg_match($pattern[$type],$value);
+	/*
+	if ($type != 'length' && $max > 0) {
+		$length = '/^.{'. $min. ','. $max .'}$/us';
+		$length_check =  (preg_match($length, $value) == 1);
+	} else {
+		$length_check = true;
+	}
+	*/
+	 
+	return ((preg_match($pattern[$type],$value) == 1) && (!($type != 'length' && $max > 0) || preg_match($pattern['length'], $value) == 1));
+	 
 }
 
 function validate_utf8($text) 

@@ -26,7 +26,7 @@ class MysqliPDO
 	 
 	public function init($active_db) 
 	{
-		if (!empty($active_db)) {
+		if (!empty($active_db) && $this->active_db != $active_db) {
 		
 			$this->prefix_key = $this->active_db = 'default';
 			
