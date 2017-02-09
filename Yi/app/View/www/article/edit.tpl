@@ -72,44 +72,48 @@
 		<dl class="tag">
 			<dt>标签：</dt> 
 			<dd>
-				<span><input type="radio" name="tag" id="ele"><i></i><label for="ele">品牌文化传播</label></span>
-				<span><input type="radio" name="tag" id="ele1"><i></i><label for="ele1">吃喝玩乐</label></span>
-				<span><input type="radio" name="tag" id="ele2"><i></i><label for="ele2">生活服务</label></span>
-				<span><input type="radio" name="tag" id="ele3"><i></i><label for="ele3">其他</label></span>
+				<span><input type="radio" name="tag" id="ele"   value="1"><i></i><label for="ele">品牌文化传播</label></span>
+				<span><input type="radio" name="tag" id="ele1"  value="2"><i></i><label for="ele1">吃喝玩乐</label></span>
+				<span><input type="radio" name="tag" id="ele2"  value="3"><i></i><label for="ele2">生活服务</label></span>
+				<span><input type="radio" name="tag" id="ele3"  value="4"><i></i><label for="ele3">其他</label></span>
 			</dd>
 		</dl>
 		<dl style="overflow:visible; height:40px;">
 			<dt>推广范围：</dt> 
 			<dd style="overflow:visible;" id="region">
+				<input type="hidden" id="region_selected" class="diy_select_input" value="0"/>
 				<div class="diy_select" >
-					<input type="hidden" name="province" class="diy_select_input"/>
+					<!--<input type="hidden" name="province" class="diy_select_input"/>-->
 					<i class="diy_select_txt">全国</i>
 					<span class="diy_select_btn"></span>
 					<ul class="diy_select_list" style="width:392px;">
-						<li sid="0">全国</li>
+						<li sid="0" rid="0">全国</li>
 					</ul>
 				</div>
 
 				<div class="diy_select" >
-					<input type="hidden" name="city" class="diy_select_input"/>
+					<!--<input type="hidden" name="city" class="diy_select_input"/>-->
 					<i class="diy_select_txt">--不限--</i>
 					<span class="diy_select_btn"></span>
-					<ul class="diy_select_list" style="width:261px;">	 
+					<ul class="diy_select_list" style="width:261px;">	
+						<li sid="0">--不限--</li>
 					</ul>
 				</div>
 			
 				<div class="diy_select">
-					<input type="hidden" name="" class="diy_select_input"/>
+					<!--<input type="hidden" name="" class="diy_select_input"/>-->
 					<i class="diy_select_txt">--不限--</i>
 					<span class="diy_select_btn"></span>
 					<ul class="diy_select_list" style="width:261px;">	 
+					<li sid="0">--不限--</li>
 					</ul>
 				</div>
 				<div class="diy_select">
-					<input type="hidden" name="" class="diy_select_input"/>
+					<!--<input type="hidden" name="" class="diy_select_input"/>-->
 					<i class="diy_select_txt">--不限--</i>
 					<span class="diy_select_btn"></span>
 					<ul class="diy_select_list" >
+					<li sid="0">--不限--</li>
 					</ul>
 				</div>
 			</dd>
@@ -235,14 +239,15 @@
 				}
 				
 				var title = _$('title').value;
-				
-				if(!title || title.length<6 || title.length>30)  {
+				console.log(title);
+				console.log(title.length);
+				if(!title || title.length<6 || title.length>32)  {
 					article_edit_error('title');
 					
 				}
 
 				var desc = _$('desc').value;
-				if(!desc || desc.length<10 || desc.length>60)  {
+				if(!desc || desc.length <10 || desc.length>64)  {
 					article_edit_error('desc');
 				}
 
@@ -290,6 +295,7 @@
 							date_start:date_start,
 							date_end:date_end,
 							content:content,
+							region:_$('region_selected').value,
 							csrf_token:_$('csrf_token').value
 						},
 						success: function(data){
@@ -370,19 +376,31 @@ diy_select.prototype={
 			var index=this.parentNode.index;//获得列表
 			var key = this.getAttribute("sid");
 			var p = this.parentNode.parentNode;
-			var origin = p.getElementsByTagName('input')[0].value;
+			//var origin = p.getElementsByTagName('input')[0].value;
+			var origin = _$('region_selected').value;
 			if (origin == key) return;
-			p.getElementsByTagName('input')[0].value = key;
+			
+			if (key == 0) {
+				 rkey = this.getAttribute("rid");
+				if(rkey === null || rkey === undefined) return;
+				_$('region_selected').value = rkey;
+			} else {
+				_$('region_selected').value = key;
+			}
+			
+			
+			
 			p.getElementsByTagName('i')[0].innerHTML =this.innerHTML.replace(/^\s+/,'').replace(/\s+&/,'');
 			this.parentNode.style.display='none';
 			
-			Min.obj.each(THAT.l,function(a,key){
-				if(key > index){
+			Min.obj.each(THAT.l,function(a,k){
+				if(k > index){
 					a.innerHTML = '';
 					var li = document.createElement("li");
 	　　　			　li.setAttribute("sid", 0);
-					  var i = Min.dom.pre(a,'I'), ipt = Min.dom.pre(i);
-					  ipt.value = 0;
+					  var i = Min.dom.pre(a,'I');
+					  //ipt = Min.dom.pre(i);
+					  //ipt.value = 0;
 					  li.innerHTML = i.innerHTML = '--不限--';
 					  a.appendChild(li);  
 				}
@@ -393,7 +411,7 @@ diy_select.prototype={
 					JSONP.get( 'http://www.' + site_domain + '/region/id/'+key+'.html', {}, function(data){
 						if(data.statusCode == 0 ){
 							region[key]= data.body[key];	
-							
+							THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key)
 							if(key > 0 &&  index < THAT.lengths-1 ){
 				
 								for(var i=0; i < region[key].length; i++){
@@ -407,12 +425,12 @@ diy_select.prototype={
 					}); 
 					return;
 				} 
-			}else {
+			} else {
 				return;
 			}
 			
 			if(key > 0 && index < THAT.lengths-1 ){
-				
+				THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key);
 				for(var i=0; i < region[key].length; i++){
 				　var li = document.createElement("li");
 	　　　		　li.setAttribute("sid", region[key][i].id);

@@ -152,6 +152,23 @@ function save_gz($data, $filename)
 	fclose($fp);	
 }
 
+function short_int($value)
+{	
+	$value = intval($value);
+	if ($value > 0) {
+		return base_convert(intval($value), 10, 32);
+	} else {
+		throw new \Exception(1, '整型值错误');
+	}
+}
+
+function short_int_convent($value)
+{
+	if (!validate('id_base36', $value)) return false;
+	
+	return intval(base_convert($value, 32, 10));
+}
+
 function validate($type, $value, $max = 0, $min = 1)
 {
 	if (!validate_utf8($value)) return false;
@@ -168,8 +185,9 @@ function validate($type, $value, $max = 0, $min = 1)
 		'phone'			=> '/^(13|15|18|14|17)[\d]{9}$/',						// 手机
 		'alphabet'		=> '/^[a-z]+$/i',										// 字母不区分大小写
 		'date_Y-m-d' 	=> '/^20(1[789]|2[\d])\-(0[1-9]|1[012])\-(0[1-9]|[12][\d]|3[01])$/', //合法日期
-		'img_url'	 	=> '@^http[s]?://[a-zA-Z0-9_.]+(/[a-zA-Z0-9_]+)+(\.(jpg|png|jpeg))?$@',  // 合法图片地址	
-		'length'		=> '/^.{'. $min. ','. $max. '}$/us'
+		'img_url'	 	=> '@^(http[s]?:)?//[a-zA-Z0-9_.]+(/[a-zA-Z0-9_]+)+(\.(jpg|png|jpeg))?$@',  // 合法图片地址	
+		'length'		=> '/^.{'. $min. ','. $max. '}$/us',
+		'id_base36'			=> '/^[a-z0-9]{1,12}$/'
 	];
 	/*
 	if ($type != 'length' && $max > 0) {

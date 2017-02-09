@@ -126,6 +126,7 @@ class MysqliPDO
 			try {
 				$stmt =  $this->connect($type)->prepare($sql); 
 				foreach ($param as $key => $value) {
+					
 					$vaule_type = \PDO::PARAM_STR;
                     switch ($value) {
                         case is_int($value):
@@ -138,7 +139,7 @@ class MysqliPDO
                             $vaule_type = \PDO::PARAM_NULL;
                             break;
                     }
-					
+	 
                     $stmt->bindValue($key, $value, $vaule_type);
 				}
 
@@ -231,6 +232,7 @@ class MysqliPDO
 				$on_error = false;
 				try {
 					$this->connect($type)->beginTransaction();
+					watchdog($this->inTransaction());
 					return true;
 				} catch (\Throwable $e) {
 					$on_error = true;
@@ -278,6 +280,12 @@ class MysqliPDO
     {
         return $this->connect($type)->lastInsertId();
     }
+	
+	public function inTransaction() {
+		$type = 'master';
+		return $this->connect($type)->inTransaction();
+		 
+	}
 	
 	public function close($type)
 	{
