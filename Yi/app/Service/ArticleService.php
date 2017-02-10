@@ -86,7 +86,6 @@ class ArticleService extends \Min\Service
 			} else {
 				$param['filter'][] = 'region = ' .  $region;
 			}
-			
 		}
 		
 		if (!empty($p['author'])) {
@@ -94,9 +93,7 @@ class ArticleService extends \Min\Service
 		}
 		
 		$param['order'] = ' ';
-		
-		if (!empty($p['order'])) {
-			
+		if (!empty($p['order'])) {	
 			switch (intval($p['order'])) {
 				case 1 :
 					$param['order'] = ' ORDER BY id DESC ';
