@@ -437,3 +437,11 @@ function  record_time($tag)
 	watchdog($tag. ' total:'. ($now - $_SERVER['REQUEST_TIME_FLOAT']) * 1000 . '#this:'. ($now - $last_time) * 1000, 'timelog' );
 	$last_time = $now;
 }
+function result_page($total, $page_size, $current_page){
+	return array(
+		'page_total' 	=> ceil($total/$page_size),
+		'current_page' 	=> $current_page,
+		'data_total' 	=> $total
+	
+	);
+}

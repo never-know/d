@@ -72,10 +72,11 @@
 		<dl class="tag">
 			<dt>标签：</dt> 
 			<dd>
-				<span><input type="radio" name="tag" id="ele"   value="1"><i></i><label for="ele">品牌文化传播</label></span>
-				<span><input type="radio" name="tag" id="ele1"  value="2"><i></i><label for="ele1">吃喝玩乐</label></span>
-				<span><input type="radio" name="tag" id="ele2"  value="3"><i></i><label for="ele2">生活服务</label></span>
-				<span><input type="radio" name="tag" id="ele3"  value="4"><i></i><label for="ele3">其他</label></span>
+				<?php foreach(article_tag() as $key => $value) : ?>
+				<span>  <input type="radio" name="tag" id="ele<?=$key;?>" value="<?=$key;?>" <?php if($key == $result['tag']) echo 'checked="true"';?>>
+						<label for="ele<?=$key;?>" ><?=$value;?></label>
+				</span>
+				<?php endforeach ?>
 			</dd>
 		</dl>
 		<dl style="overflow:visible; height:40px;">
@@ -133,8 +134,6 @@
 			</dd>
 		</dl>
 		
-		
-
 		<dl>
 			<dt>内容：</dt> 
 			<dd id="richtext"><textarea id="content" name="content" style="width:422px;height:500px;visibility:hidden;" >

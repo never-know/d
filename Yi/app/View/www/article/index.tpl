@@ -103,10 +103,12 @@ margin-left: -4px;
 		<dl  class="filter_tag">
 			<dt>标签：</dt>
 			<dd>
-			<span><input type="checkbox" name="tag[]" id="ele"><i></i><label for="ele">电子产品</label></span>
-			<span><input type="checkbox" name="tag[]" id="ele1"><i></i><label for="ele1">吃喝玩乐</label></span>
-			<span><input type="checkbox" name="tag[]" id="ele2"><i></i><label for="ele2">休闲</label></span>
-			<span><input type="checkbox" name="tag[]" id="ele3"><i></i><label for="ele3">转塘家园</label></span>
+			<?php foreach(\App\Conf\keypairs\article_tag() as $key => $value) : ?>
+			<span>
+				<input type="checkbox" name="tag[]" id="ele<?=$key;?>" <?php if(in_array($key, $_GET['tag'])) echo ' checked="true" ';?>>
+				<label for="ele<?=$key;?>"><?=$value;?></label>
+			</span>
+			<?php endforeach ?>
 			</dd>
 		</dl>
 		<dl class="filter_city">
