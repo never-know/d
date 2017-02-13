@@ -112,7 +112,7 @@ class Controller
 		
 		$cache_setting = get_config('cache');
 		$value = $cache_setting[$this->cache_key] ?? $cache_setting['default'];
-		return App::getService($value['bin'])->init($value['key']);
+		return App::getService($value['bin'], $value['key']);
 	}
 
 }

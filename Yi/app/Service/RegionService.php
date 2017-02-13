@@ -36,5 +36,36 @@ class RegionService extends \Min\Service
 		return $result;
 	}	
 	 
-	 
+	private function nodeChain($id)
+	{
+		$id = intval($id);
+		
+		if ($id > 100000000) {
+			// 四级目录
+			$sql = 'SELECT e.id ,a.id AS pid, b.id AS ppid,  c.id AS pppid FROM yi_region e 
+				LEFT JOIN yi_region a ON a.id = e.parent_id
+				LEFT JOIN yi_region b ON b.id = a.parent_id  
+				LEFT JOIN yi_region c ON c.id = b.parent_id   
+				WHERE  e.id = '. $id ;	
+		} else {
+			// 三级目录
+			$sql = 'SELECT max(e.id) AS max, min(e.id) AS min, '. $id . ' AS id, a.id AS pid,  b.id AS ppid, c.id AS pppid  FROM yi_region e 
+				LEFT JOIN yi_region a ON a.id = e.parent_id
+				LEFT JOIN yi_region b ON b.id = a.parent_id  
+				LEFT JOIN yi_region c ON c.id = b.parent_id   
+				WHERE  ((max >100000000 or min > 100000000) and  e.level = 4 ) AND e.parent_id = '. $id ;
+		}
+		二级 
+		//
+		$sql = 'select a.id,a.level,a.name, max(b.id) , min(b.id), max(c.id) , min(c.id) from yi_region a 
+				  left join yi_region b on b.parent_id = a.id 
+				  left join yi_region c on c.parent_id = b.id
+				  where a.level = 2
+				  group by a.id  '
+		
+		$sql .= ' LIMIT 1'
+		$result	= $this->query($sql);
+		return $result;
+	}	
+	
 }

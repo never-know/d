@@ -35,14 +35,14 @@ class FileCache
     {
         $file_name = $this->getFileName($id);
 		if (is_file($file_name)) {
-			if (empty($expiration) || ($expiration > 0 && filemtime($file_name) > (time() - $expiration))) {
+			//if (empty($expiration) || ($expiration > 0 && filemtime($file_name) > (time() - $expiration))) {
 				if ($cache = file_get_contents($file_name)) {
 					if ($cache = json_decode($cache, true)) {
-						if (isset($cache['data'])) {
+						if (isset($cache['data'] && (0 == $cache['expiration'] || $cache['expiration'] > time())) {
 							return $cache['data'];
 						}
 					}
-				}
+				//}
 			}
 			unlink($file_name);	 
 		} 
@@ -60,7 +60,7 @@ class FileCache
      *
      * @return bool
      */
-    public function set($id, $data)
+    public function set($id, $data, $expiration = 0)
     {
         $file_name = $this->getFileName($id);
 		$dir = dirname($file_name);
@@ -71,7 +71,7 @@ class FileCache
         }
 		
 		$tmp = tempnam($dir, 'swap');
-		if (file_put_contents($tmp, safe_json_encode(['data'=>$data]))) {
+		if (file_put_contents($tmp, safe_json_encode(['data'=>$data, 'expiration' => $expiration]))) {
 			if (rename($tmp,$file_name)) {
 				unlink($tmp);
 				return true;

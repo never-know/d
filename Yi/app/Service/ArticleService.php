@@ -52,40 +52,60 @@ class ArticleService extends \Min\Service
 	
 	public function list($p)
 	{
-		array_walk($p,'trim');
+		//array_walk($p,'trim');
 		
 		$param = [];
 		$param_processed = [];
 
-		if (!empty($p['tag'])) {
-			$source = article_tags();
-			if (is_numeric($p['tag'])) {
-				if(!isset($source[$p['tag']]))  return $this->error('参数错误', 1);
-				$param['filter'][] = 'tag = ' . $p['tag'];
-				$param_processed['tag'] = $p['tag'];
-			} else {
-				$tag = explode(',', $p['tag']);
-				foreach ($tag as $key => $value) {
-					if(!isset($source[$value]))  return $this->error('参数错误', 1);
-				}
-				$param['filter'][] = 'tag  in  (' . $p['tag']. ')';	
-				$param_processed['tag'] = $tag;
-			} 
-		}
-		
-		if (!empty($p['region'])) {
+		if (preg_match('/^([\d]+,)*[\d]+$/', $p['tag'])) {
 			
-			$param_processed['region'] = $region = intval($p['region'];
+			$source = \App\Conf\Keypairs\article_tags();
+			$tag 	= explode(',', $p['tag']);
 			
-			if ($region < 1) {
-				unset($param_processed['region']);
-			} elseif ($region < 999999) {
-				$region *= 1000;
-			} elseif ($region%1000 == 0) {
-				
-			} else {
-				$param['filter'][] = 'region = ' .  $region;
+			foreach ($tag as $key => $value) {
+				if (!isset($source[$value]))  return $this->error('参数错误', 1);
 			}
+			if (is_numeric($p['tag'])) {
+				$param['filter'][] = 'tag = ' . $p['tag'];
+			} else {
+				$param['filter'][] = 'tag  in  (' . $p['tag']. ')';	
+			}
+			$param_processed['tag'] = $tag;
+			
+		} else {
+			return $this->error('参数错误', 1);
+		} 
+		
+		$param_processed['region'] = 0;
+		
+		if (!empty($p['region']) && $region = intval($p['region']) && $region > 1) {
+			
+			// 省级 
+			if ( 0 == $region%10000000) {
+				$param['filter'][] = '(region = 0 OR ( region >=' . $region .' AND region < ' . ($region + 10000000);
+				//市
+			} else {
+				
+				
+				// 区 
+			}
+			
+			
+			$key = 'regionChain_'. $region;
+			$cache = $this->cache('region');
+			$result = $cache->get($key);
+			if (empty($result)) {
+				$result = $this->request('\\App\\Service\\Region::nodeChain', $region);
+				$cache->set($key, $result);
+			}
+			if (isset($result['max']) && isset($result['min'])))  $region_sql[] = '(region >= ' . $result['min'] .' and region =< ' . $result['min'] . ')';
+			if (isset($result['id'])) 		$region_sql[] = 'region = '. $result['id'];
+			if (isset($result['pid'])) 		$region_sql[] = 'region = '. $result['pid'];
+			if (isset($result['ppid'])) 	$region_sql[] = 'region = '. $result['ppid'];
+			if (isset($result['pppid'])) 	$region_sql[] = 'region = '. $result['pppid'];
+			
+			$param['filter'][] = '(' . implode(' OR ', $region_sql) . ')' ;
+			 
 		}
 		
 		if (!empty($p['author'])) {
