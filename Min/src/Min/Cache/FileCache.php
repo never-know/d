@@ -38,7 +38,7 @@ class FileCache
 			//if (empty($expiration) || ($expiration > 0 && filemtime($file_name) > (time() - $expiration))) {
 				if ($cache = file_get_contents($file_name)) {
 					if ($cache = json_decode($cache, true)) {
-						if (isset($cache['data'] && (0 == $cache['expiration'] || $cache['expiration'] > time())) {
+						if (isset($cache['data']) && (0 == $cache['expiration'] || $cache['expiration'] > time())) {
 							return $cache['data'];
 						}
 					}

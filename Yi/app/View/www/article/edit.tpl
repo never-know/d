@@ -72,7 +72,7 @@
 		<dl class="tag">
 			<dt>标签：</dt> 
 			<dd>
-				<?php foreach(article_tag() as $key => $value) : ?>
+				<?php foreach(article_tags() as $key => $value) : ?>
 				<span>  <input type="radio" name="tag" id="ele<?=$key;?>" value="<?=$key;?>" <?php if($key == $result['tag']) echo 'checked="true"';?>>
 						<label for="ele<?=$key;?>" ><?=$value;?></label>
 				</span>

@@ -445,3 +445,11 @@ function result_page($total, $page_size, $current_page){
 	
 	);
 }
+function query_bulider($params, $separator){
+	
+	$joined = [];
+	foreach($params as $key => $value) {
+	   $joined[] = "$key=$value";
+	}
+	return implode($separator, $joined);
+}

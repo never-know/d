@@ -1,6 +1,47 @@
 <?php
 	
-	 require __DIR__ .'/../app/bootstrap.php';	
+	  require __DIR__ .'/../app/bootstrap.php';	
+/*
+function query_bulider($params, $separator){
+	
+	$joined = [];
+	foreach($params as $key => $value) {
+	   $joined[] = "$key=$value";
+	}
+	return implode($separator, $joined);
+}
+
+	$set = [
+			'tag' 		=> 231,
+			'start' 	=> 342, 
+			'end' 		=> 2342, 
+			'region' 	=> 234234,
+			'title' 	=> ':title', 
+			'desc' 		=> ':desc',
+			'icon' 		=> ':icon'
+		];
+$time1 = microtime(true);
+for($i=0;$i<10000;$i++){ 
+  rawurldecode(http_build_query($set, '', ', ', \PHP_QUERY_RFC3986));
+}
+
+$time2 = microtime(true);
+for($i=0;$i<10000;$i++){ 
+  query_bulider($set, ', ');
+}
+$time3 = microtime(true);
+
+echo $time2-$time1, '<br>';
+echo $time3-$time2;
+
+
+
+exit;
+
+*/
+
+
+
 
 
 // pdo

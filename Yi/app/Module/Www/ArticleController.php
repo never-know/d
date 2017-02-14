@@ -5,40 +5,19 @@ use Min\App;
 
 class ArticleController extends \Min\Controller
 {
-	 
+	public function onConstruct(){
+		require CONF_PATH .'/keypairs.php';
+	} 
 
 	public function list_get()
 	{
 		$result = ['menu_active' => 'article', 'title' =>'文字列表'];
-		$param = [];
-		$param['page'] 		= intval($_GET['page']??1);
-		$param['page_size'] = intval($_GET['page_size']??10);
-		
-		if (!empty($_GET['tag'])) {
-			 array_walk($_GET['tag'], 'intval');
-			 $param['filter']['tag'] =  $_GET['tag'];
+		if (!empty($_GET['collect'])) {
+			$body = $this->request('\\App\\Service\\Article::collect', $_GET);			
+		} else {
+			$body = $this->request('\\App\\Service\\Article::list', $_GET);
 		}
 		
-		if (!empty($_GET['region'])) {
-			$param['filter']['region'] =  intval($_GET['region']);
-		}
-		
-		if (!empty($_GET['order'])) {
-			
-			switch (intval($_GET['order'])) {
-				case 1 :
-					$param['order'] = ' order by id desc ';
-					break;
-				case 2 :
-					$param['order'] = ' order by ctime desc ';
-					break;
-				case 3 :
-					$param['order'] = ' order by end desc ';
-					break;
-			}
-		}
-		
-		$body = $this->request('\\App\\Service\\Article::list', $param);
 		$result['list'] = $body['body'];
 		$this->response($result);
 	}

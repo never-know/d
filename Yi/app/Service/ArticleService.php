@@ -34,11 +34,30 @@ class ArticleService extends \Min\Service
 	{
 		$param['id'] = intval($param['id']);
 		
-		$sql = 'UPDATE {article}  SET tag = '. intval($param['tag']) . ', start = '. intval($param['start']) . ', end = '. intval($param['end']) . ', region = '. intval($param['region']) . ', title = :title, desc = :desc, icon = :icon  WHERE id = '. $param['id'];
-
-		$result = $this->query($sql, [':title' => $param['title'], ':desc' => $param['desc'],':icon' => $param['icon']]);
+		if ($param['region'] < 100000000)  $param['region'] = $param['region'] * 1000;
 		
-		$sql2 = 'UPDATE {article_content} set content = :content WHERE id = '. $param['id'];
+		$set = [
+			'tag' 		=> intval($param['tag']),
+			'start' 	=> intval($param['start']), 
+			'end' 		=> intval($param['end']), 
+			'region' 	=> intval($param['region']),
+			'title' 	=> ':title', 
+			'desc' 		=> ':desc',
+			'icon' 		=> ':icon'
+		];
+		
+		$bind = [
+			':title' 	=> $param['title'], 
+			':desc'		=> $param['desc'],
+			':icon' 	=> $param['icon']
+		];
+		
+		$sql = 'UPDATE {article} SET ' . \query_bulider($set, ', ') .' WHERE id = '. $param['id'];
+
+		$result = $this->query($sql, $bind);
+		
+		$sql2 = 'UPDATE {article_content} SET content = :content  WHERE id = '. $param['id'];
+		
 		$result2 = $this->query($sql2, [':content' => $param['content']]);
 			 
 		if ($result && $result2) {
@@ -53,13 +72,12 @@ class ArticleService extends \Min\Service
 	public function list($p)
 	{
 		//array_walk($p,'trim');
-		
 		$param = [];
 		$param_processed = [];
 
 		if (preg_match('/^([\d]+,)*[\d]+$/', $p['tag'])) {
 			
-			$source = \App\Conf\Keypairs\article_tags();
+			$source = article_tags();
 			$tag 	= explode(',', $p['tag']);
 			
 			foreach ($tag as $key => $value) {
@@ -76,36 +94,42 @@ class ArticleService extends \Min\Service
 			return $this->error('参数错误', 1);
 		} 
 		
-		$param_processed['region'] = 0;
+		$param_processed['region'][1] = 0;
 		
 		if (!empty($p['region']) && $region = intval($p['region']) && $region > 1) {
 			
-			// 省级 
-			if ( 0 == $region%10000000) {
-				$param['filter'][] = '(region = 0 OR ( region >=' . $region .' AND region < ' . ($region + 10000000);
-				//市
-			} else {
-				
-				
-				// 区 
-			}
-			
-			
 			$key = 'regionChain_'. $region;
 			$cache = $this->cache('region');
-			$result = $cache->get($key);
-			if (empty($result)) {
-				$result = $this->request('\\App\\Service\\Region::nodeChain', $region);
-				$cache->set($key, $result);
+			$region_chain = $cache->get($key);
+			if (empty($region_chain)) {
+				$region_service = new  \App\Service\Region;
+				$region_chain = $region_service->nodeChain($region);
+				if (!empty($region_chain)) $cache->set($key, $region_chain);
 			}
-			if (isset($result['max']) && isset($result['min'])))  $region_sql[] = '(region >= ' . $result['min'] .' and region =< ' . $result['min'] . ')';
-			if (isset($result['id'])) 		$region_sql[] = 'region = '. $result['id'];
-			if (isset($result['pid'])) 		$region_sql[] = 'region = '. $result['pid'];
-			if (isset($result['ppid'])) 	$region_sql[] = 'region = '. $result['ppid'];
-			if (isset($result['pppid'])) 	$region_sql[] = 'region = '. $result['pppid'];
-			
-			$param['filter'][] = '(' . implode(' OR ', $region_sql) . ')' ;
-			 
+			if (!empty($region_chain)) { 
+				// 省级 
+				if ( 0 == $region%10000000) {
+					$param['filter'][] = '(region = 0 OR (region >=' . $region .' AND region < ' . ($region + 10000000) . ')';
+					//市
+				} elseif ( 0 == $region%100000) {	
+					$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR (region  >= ' . $region .' AND region < ' . $region + 100000 .'))';
+					// 倒2 
+				} elseif ( 0 == $region%1000) {	
+					$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR  region = '. intval($region/100000). ' OR  (region  > ' . $region .' AND region < ' . $region + 1000 .'))';
+					// 倒一 
+				} else {
+					$param['filter'][] = '(region = 0 OR  region  =' . $region .')';
+				}
+				
+				$level = 0;
+				foreach($region_chain as $key => $value) {
+					if (empty($value)) { 
+						continue;
+					} else {
+						$param_processed['region'][++$level] = $value;
+					}
+				}	
+			}			
 		}
 		
 		if (!empty($p['author'])) {
@@ -113,16 +137,20 @@ class ArticleService extends \Min\Service
 		}
 		
 		$param['order'] = ' ';
+		$param_processed['order'] = 1;
 		if (!empty($p['order'])) {	
 			switch (intval($p['order'])) {
 				case 1 :
 					$param['order'] = ' ORDER BY id DESC ';
+					$param_processed['order'] = 1;
 					break;
 				case 2 :
 					$param['order'] = ' ORDER BY ctime DESC ';
+					$param_processed['order'] = 2;
 					break;
 				case 3 :
 					$param['order'] = ' ORDER BY end DESC ';
+					$param_processed['order'] = 3;
 					break;					 
 			}
 		}
@@ -143,8 +171,8 @@ class ArticleService extends \Min\Service
 			$result['list'] = [];
 		}
 		
-		$result['params'] = $param_processed;
-		$result['page'] = \result_page($number[0]['number'], $page_size, $page);
+		$result['params'] 	= $param_processed;
+		$result['page'] 	= \result_page($number[0]['number'], $page_size, $page);
 		
 		$this->success($result);
 		

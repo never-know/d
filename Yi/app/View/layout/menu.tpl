@@ -5,7 +5,7 @@
 		</dl>
 		<dl class="menu ">   
 			<dt class="menu_title"><i class="icon_menu"></i>文字</dt> 
-			<dd class="menu_item" id="menu_article"><a data-id="10012" href="/article.html">文字列表</a></dd>
+			<dd class="menu_item" id="menu_article"><a data-id="10012" href="/article/list.html">文字列表</a></dd>
 			<dd class="menu_item" id="menu_article_edit"><a data-id="10014" href="/article/edit.html">添加文字</a></dd>
 			<dd class="menu_item" id="menu_article_collect"><a data-id="10014" href="/article/collect.html">文字收藏</a></dd>
 		</dl>
