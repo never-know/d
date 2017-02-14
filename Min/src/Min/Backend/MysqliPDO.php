@@ -102,7 +102,7 @@ class MysqliPDO
 		$sql_splite = preg_split('/\s+/', $sql, 2);
 
 		//$action = strtolower($sql_splite[0]);
-		//$action = $sql_splite[0];
+		$action = $sql_splite[0];
 
 		if (!in_array($action, ['SELECT', 'INSERT', 'UPDATE', 'DELETE'], true)) {
 			throw new \PDOException('Can not recognize action in sql: '. $sql, -4);
