@@ -445,7 +445,7 @@ function result_page($total, $page_size, $current_page){
 	
 	);
 }
-function query_bulider($params, $separator){
+function plain_build_query($params, $separator){
 	
 	$joined = [];
 	foreach($params as $key => $value) {

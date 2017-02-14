@@ -5,7 +5,6 @@ use Min\App;
 
 class ArticleService extends \Min\Service
 {
-
 	public function add($param)
 	{
 		if (!empty($param['id'])) {
@@ -52,7 +51,7 @@ class ArticleService extends \Min\Service
 			':icon' 	=> $param['icon']
 		];
 		
-		$sql = 'UPDATE {article} SET ' . \query_bulider($set, ', ') .' WHERE id = '. $param['id'];
+		$sql = 'UPDATE {article} SET ' . \plain_build_query($set, ', ') .' WHERE id = '. $param['id'];
 
 		$result = $this->query($sql, $bind);
 		
@@ -129,7 +128,9 @@ class ArticleService extends \Min\Service
 						$param_processed['region'][++$level] = $value;
 					}
 				}	
-			}			
+			}  else {
+				return $this->error('参数错误', 1);
+			} 			
 		}
 		
 		if (!empty($p['author'])) {
