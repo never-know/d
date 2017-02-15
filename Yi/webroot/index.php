@@ -1,7 +1,53 @@
 <?php
 	
-	require __DIR__ .'/../app/bootstrap.php';	
-/*
+	//require __DIR__ .'/../app/bootstrap.php';	
+	
+	
+	//echo 922337203685477581111-PHP_INT_MAX*100;
+	
+	/* 
+	echo PHP_INT_MAX, "<br>";
+	echo intval(27670116110564327422), "<br>";
+	echo intval(9223372046854775807), "<br>";
+				9223372026854776832
+	echo intval(PHP_INT_MAX+1), "<br>";
+	echo intval(PHP_INT_MAX+2), "<br>";
+	echo intval(PHP_INT_MAX+3), "<br>";
+	echo intval(PHP_INT_MAX+4), "<br>";
+	echo intval(PHP_INT_MAX+5), "<br>";
+	echo intval(PHP_INT_MAX+5), "<br>";
+	echo intval(PHP_INT_MAX+10), "<br>";
+	echo intval(PHP_INT_MAX+100000000000000000), "<br>";
+	echo intval(PHP_INT_MAX*10), "<br>";
+	echo intval(PHP_INT_MAX+PHP_INT_MAX/100000000000), "<br>";
+	var_dump(intval('9223372036854775807')); echo "<br>";
+	var_dump(intval('9223372036854775808')); echo "<br>";
+	var_dump(intval('9223372036854775809')); echo "<br>";
+	var_dump(intval('9223372036854775810')); echo "<br>";
+	var_dump(intval('9223372036854775811')); echo "<br>";
+	var_dump(intval('92233720368547758111')); echo "<br>";
+	var_dump(intval('922337203685477581111')); echo "<br>";
+	var_dump(922337203685477581111); echo "<br>";
+	var_dump(intval(922337203685477581111)); echo "<br>";
+	echo '123123<br>';
+	
+	var_dump( PHP_INT_MAX+1); echo "<br>";
+	echo base_convert(PHP_INT_MAX+1, 10, 32), "<br>";
+	echo base_convert(PHP_INT_MAX+2, 10, 32), "<br>";
+	echo base_convert(PHP_INT_MAX+3, 10, 32), "<br>";
+	echo base_convert('07vvvvvvvvvvvv', 32, 10), "<br>";
+	echo base_convert('864jeiu6l12', 32, 10), "<br>";
+	echo PHP_INT_MAX, "<br>";
+	echo  base_convert(PHP_INT_MAX, 10, 32), "<br>";
+	var_dump(9223372036854775809);
+	var_dump(is_numeric(9223372036854775809));
+	var_dump(92233720368547758000 > floatval(PHP_INT_MAX) );
+	var_dump(is_int(9223372036854775807));
+	var_dump(strnatcmp('7vvv','007vvv'));
+ 
+ 
+	
+ 
 function query_bulider($params, $separator){
 	
 	$joined = [];
@@ -9,6 +55,16 @@ function query_bulider($params, $separator){
 	   $joined[] = "$key=$value";
 	}
 	return implode($separator, $joined);
+}
+
+function query_bulider2($params, $separator){
+	
+	$joined = '';
+	foreach($params as $key => $value) {
+	   $joined .= "$key=$value$separator";
+	}
+	return rtrim($joined,$separator);
+
 }
 
 	$set = [
@@ -22,26 +78,40 @@ function query_bulider($params, $separator){
 		];
 $time1 = microtime(true);
 for($i=0;$i<10000;$i++){ 
-  rawurldecode(http_build_query($set, '', ', ', \PHP_QUERY_RFC3986));
+  $a = rawurldecode(http_build_query($set, '', ', ', \PHP_QUERY_RFC3986));
 }
-
+echo $a,'<br>';
 $time2 = microtime(true);
 for($i=0;$i<10000;$i++){ 
-  query_bulider($set, ', ');
+  $a = query_bulider($set, ', ');
 }
+echo $a,'<br>';
 $time3 = microtime(true);
+for($i=0;$i<10000;$i++){ 
+  $a = query_bulider2($set, ', ');
+}
+echo $a,'<br>';
+$time4 = microtime(true);
+
+
+for($i=0;$i<10000;$i++){ 
+ $a = strnatcmp('7vvvvvvvvvvvv', '7vvvvvvvvvvva');
+}
+echo $a,'<br>';
+$time5 = microtime(true);
 
 echo $time2-$time1, '<br>';
-echo $time3-$time2;
+echo $time3-$time2,'<br>';
+echo $time5-$time4,'<br>';
+
 
 
 
 exit;
 
+
 */
-
-
-
+ 
 
 
 // pdo

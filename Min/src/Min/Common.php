@@ -155,18 +155,21 @@ function save_gz($data, $filename)
 function short_int($value)
 {	
 	$value = intval($value);
-	if ($value > 0) {
-		return base_convert(intval($value), 10, 32);
+	if ($value > 0 && $value < \PHP_INT_MAX) {	
+		return base_convert($value, 10, 32);
 	} else {
 		throw new \Exception(1, '整型值错误');
 	}
+	 
 }
 
 function short_int_convent($value)
 {
-	if (!validate('id_base36', $value)) return false;
-	
-	return intval(base_convert($value, 32, 10));
+	if (validate('id_base32', $value) && strnatcmp('7vvvvvvvvvvvv', $value) > 0){
+		return intval(base_convert($value, 32, 10));
+	} else {
+		return false;
+	}
 }
 
 function validate($type, $value, $max = 0, $min = 1)
@@ -187,7 +190,7 @@ function validate($type, $value, $max = 0, $min = 1)
 		'date_Y-m-d' 	=> '/^20(1[789]|2[\d])\-(0[1-9]|1[012])\-(0[1-9]|[12][\d]|3[01])$/', //合法日期
 		'img_url'	 	=> '@^(http[s]?:)?//[a-zA-Z0-9_.]+(/[a-zA-Z0-9_]+)+(\.(jpg|png|jpeg))?$@',  // 合法图片地址	
 		'length'		=> '/^.{'. $min. ','. $max. '}$/us',
-		'id_base36'			=> '/^[a-z0-9]{1,12}$/'
+		'id_base32'			=> '/^[a-z1-9][a-z0-9]{0,11}$/'
 	];
 	/*
 	if ($type != 'length' && $max > 0) {

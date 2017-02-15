@@ -29,10 +29,20 @@ class Service
 		return $result;
 	}
 	
-	final public function query($sql, $param = [])
+	final public function query($sql, $param = [], $throwable = true)
 	{	
 		record_time('query start');
-		$result = $this->DBManager()->query($sql, $param);
+		try {	
+			$result = $this->DBManager()->query($sql, $param);
+		} catch (\Throwable $t) {
+			
+			if ($param === false || $throwable === false) {
+				$result = false;
+			} else {
+				throw $t;
+			}
+		}
+		
 		watchdog($result);
 		record_time('query end');
 		return $result;
