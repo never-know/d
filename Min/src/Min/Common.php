@@ -152,21 +152,23 @@ function save_gz($data, $filename)
 	fclose($fp);	
 }
 
-function short_int($value)
+function int2str($value)
 {	
 	$value = intval($value);
 	if ($value > 0 && $value < \PHP_INT_MAX) {	
-		return base_convert($value, 10, 32);
+		return base_convert($value, 10, 36);
 	} else {
 		throw new \Exception(1, '整型值错误');
 	}
 	 
 }
 
-function short_int_convent($value)
+function str2int($value)
 {
-	if (validate('id_base32', $value) && strnatcmp('7vvvvvvvvvvvv', $value) > 0){
-		return intval(base_convert($value, 32, 10));
+	//if (validate('id_base36', $value) && strnatcmp('1y2p0ij32e8e7', $value) > 0){
+	// id_base36 最大12位，不会越界
+	if (validate('id_base36', $value)){
+		return intval(base_convert($value, 36, 10));
 	} else {
 		return false;
 	}
@@ -190,7 +192,7 @@ function validate($type, $value, $max = 0, $min = 1)
 		'date_Y-m-d' 	=> '/^20(1[789]|2[\d])\-(0[1-9]|1[012])\-(0[1-9]|[12][\d]|3[01])$/', //合法日期
 		'img_url'	 	=> '@^(http[s]?:)?//[a-zA-Z0-9_.]+(/[a-zA-Z0-9_]+)+(\.(jpg|png|jpeg))?$@',  // 合法图片地址	
 		'length'		=> '/^.{'. $min. ','. $max. '}$/us',
-		'id_base32'			=> '/^[a-z1-9][a-z0-9]{0,11}$/'
+		'id_base36'			=> '/^[a-z0-9]{1,12}$/'  // 最大12位,暂不使用13位的数据
 	];
 	/*
 	if ($type != 'length' && $max > 0) {
@@ -437,7 +439,7 @@ function  record_time($tag)
 	static $last_time;
 	if (is_null($last_time)) $last_time = $_SERVER['REQUEST_TIME_FLOAT'];
 	$now = microtime(true);
-	watchdog($tag. ' total:'. ($now - $_SERVER['REQUEST_TIME_FLOAT']) * 1000 . '#this:'. ($now - $last_time) * 1000, 'timelog' );
+	watchdog($tag. ' total:'. ($now - $_SERVER['REQUEST_TIME_FLOAT']) * 1000 . ';#this:'. ($now - $last_time) * 1000, 'timelog');
 	$last_time = $now;
 }
 function result_page($total, $page_size, $current_page){
@@ -445,7 +447,6 @@ function result_page($total, $page_size, $current_page){
 		'page_total' 	=> ceil($total/$page_size),
 		'current_page' 	=> $current_page,
 		'data_total' 	=> $total
-	
 	);
 }
 function plain_build_query($params, $separator){
@@ -455,4 +456,62 @@ function plain_build_query($params, $separator){
 	   $joined[] = "$key=$value";
 	}
 	return implode($separator, $joined);
+}
+
+/* 
+ * id格式 ：{article_id}{6}{time}{6}{type}{1}{salt}{2}{md5}{6}{uid}{n}
+ * 最小6位36进制对应的十进制 100000 => 60466176; 最大zzzzzz => 2176782335
+ * article_id 61000000 到 2176782335  转化为 6位字符串
+ * user_id  同上，n位字符串,  {id*n}{n}
+ *share_time   时间戳减 （1487411575-61000000）= 1325000000
+ * param id : int;
+ */
+
+function shareid_encode($id, $type = null)
+{
+	if (isset($type) && $type != 1 && $type != 2 ) {
+		watchdog('shareid_encode type 目前只支持 1和2', 'code', 'NOTICE');
+		return '';
+	}
+	
+	$params 	= [];
+	$sub_time 	= 1325000000;
+
+	$params['hash_salt'] 	= get_conf('hash_salt');
+
+	if (isset($type)) {
+		$params['id']		= $id;
+		$params['salt'] 	= mt_rand(36, 1295); //mt_rand(str2int('10'), str2int('zz'));		
+		$params['time']  	= time();
+		$params['type']		= $type;
+		$params['uid'] 		= session_get('UID');
+	} else {
+		$params['id'] 		= str2int(substr($id, 0, 6));
+		$params['salt']		= str2int(substr($id, 13, 2));
+		$params['time'] 	= str2int(substr($id, 6, 6)) + $sub_time + $params['salt'];
+		$params['type'] 	= $id[12];
+		$params['uid'] 		= str2int(substr($id, 21))/$params['salt'];
+	}
+	
+	//ksort($params);
+	$md5 		= md5(implode(',', $params));
+	$sub_md5 	= substr($md5, 11, 3). substr($md5, 21, 3);
+
+	if (isset($type)) {
+		$result 	= [];
+		$result[] 	= int2str($params['id']);
+		$result[] 	= int2str($params['time']- $sub_time - $params['salt']);
+		$result[] 	= $params['type'];
+		$result[] 	= int2str($params['salt']);
+		$result[] 	= $sub_md5;
+		$result[] 	= int2str($params['uid']* $params['salt']);
+		return  implode('', $result);
+	} else {
+		if ($sub_md5 == substr($id, 15, 6)) {
+			unset($params['hash_salt'], $params['salt']);
+			return $params;
+		} else {
+			return false;
+		}
+	}
 }

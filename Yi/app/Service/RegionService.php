@@ -53,7 +53,7 @@ class RegionService extends \Min\Service
 				WHERE a.id =  ' . $id;
 		} 
 		
-		$sql .= ' LIMIT 1'
+		$sql .= ' LIMIT 1';
 		$result	= $this->query($sql);
 		return $result;
 	}

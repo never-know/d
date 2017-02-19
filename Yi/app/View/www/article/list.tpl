@@ -82,15 +82,16 @@ margin-left: -4px;
 }
 
 
-.diy_select{height:28px;width:150px;position:relative;font-size:12px;margin-left: -1px;;background:#fff;color:#000;float:left;}
-.diy_select_btn,.diy_select_txt{float:left;height:100%;line-height:28px}
+ 
+.diy_select{height:28px;line-height:28px;width:130px;position:relative;font-size:12px;margin-left: -1px;;background:#fff;color:#000;float:left;}
+.diy_select_btn,.diy_select_txt{float:left;height:100%;}
 .diy_select,.diy_select_list{border:1px solid #e3e3e3;}
-.diy_select_txt{width:120px;}
+.diy_select_txt{width:100px;}
 .diy_select_txt,.diy_select_list li{text-indent:10px;overflow:hidden}
 .diy_select_txt,.diy_select_list {white-space: nowrap;zoom: 1;color: #005aa0;}
 .diy_select_btn{width:28px;background:url(rec.gif) no-repeat center}
-.diy_select_list{position:absolute;top:28px;left:-1px;z-index:88888;border-top:none;width:100%;display:none;_top:29px;background:white;}
-.diy_select_list li{list-style:none;height:25px;line-height:25px;cursor:default;_background:#fff}
+.diy_select_list{position:absolute;top:34px;left:-1px;z-index:88888;border-top:none;width:100%;display:none;_top:35px;background:white;}
+.diy_select_list li{list-style:none;height:28px;line-height:28px;cursor:default;_background:#fff;float:left;width:130px;}
 .diy_select_list li.focus{background:#3399FF;color:#fff}
  
  </style>
@@ -103,53 +104,50 @@ margin-left: -4px;
 		<dl  class="filter_tag">
 			<dt>标签：</dt>
 			<dd>
-			<?php foreach(\App\Conf\keypairs\article_tag() as $key => $value) : ?>
+			<?php foreach(\article_tags() as $key => $value) : ?>
 			<span>
-				<input type="checkbox" name="tag[]" id="ele<?=$key;?>" <?php if(in_array($key, $_GET['tag'])) echo ' checked="true" ';?>>
+				<input type="radio" name="tag" id="ele<?=$key;?>" <?php if(in_array($key, $result['params']['tag'])) echo ' checked="true" ';?>>
 				<label for="ele<?=$key;?>"><?=$value;?></label>
 			</span>
 			<?php endforeach ?>
 			</dd>
 		</dl>
-		<dl class="filter_city">
+		<dl class="filter_city" style="overflow:visible;">
 			<dt>区域：</dt>
-			<dd>
-				<div class="diy_select">
-					<input type="hidden" name="" class="diy_select_input"/>
-					<div class="diy_select_txt">--请选择--</div>
-					<div class="diy_select_btn"></div>
-					<ul class="diy_select_list">
-						<li>Javascript</li>
-						<li>Html</li>
-						<li>Css</li>
-						<li>Php</li>
-						<li>Jquery</li>
+			<dd style="overflow:visible;" id="region">
+				<input type="hidden" id="region_selected" class="diy_select_input" value="0"/>
+				<div class="diy_select" >
+					<!--<input type="hidden" name="province" class="diy_select_input"/>-->
+					<i class="diy_select_txt">全国</i>
+					<span class="diy_select_btn"></span>
+					<ul class="diy_select_list" style="width:392px;">
+						<li sid="0" rid="0">全国</li>
 					</ul>
 				</div>
 
-				<div class="diy_select">
-					<input type="hidden" name="" class="diy_select_input"/>
-					<div class="diy_select_txt">--请选择--</div>
-					<div class="diy_select_btn"></div>
-					<ul class="diy_select_list">
-						<li>Javascript</li>
-						<li>Html</li>
-						<li>Css</li>
-						<li>Php</li>
-						<li>Jquery</li>
+				<div class="diy_select" >
+					<!--<input type="hidden" name="city" class="diy_select_input"/>-->
+					<i class="diy_select_txt">--不限--</i>
+					<span class="diy_select_btn"></span>
+					<ul class="diy_select_list" style="width:261px;">	
+						<li sid="0">--不限--</li>
 					</ul>
 				</div>
 			
 				<div class="diy_select">
-					<input type="hidden" name="" class="diy_select_input"/>
-					<div class="diy_select_txt">--请选择--</div>
-					<div class="diy_select_btn"></div>
-					<ul class="diy_select_list">
-						<li>Javascript</li>
-						<li>Html</li>
-						<li>Css</li>
-						<li>Php</li>
-						<li>Jquery</li>
+					<!--<input type="hidden" name="" class="diy_select_input"/>-->
+					<i class="diy_select_txt">--不限--</i>
+					<span class="diy_select_btn"></span>
+					<ul class="diy_select_list" style="width:261px;">	 
+					<li sid="0">--不限--</li>
+					</ul>
+				</div>
+				<div class="diy_select">
+					<!--<input type="hidden" name="" class="diy_select_input"/>-->
+					<i class="diy_select_txt">--不限--</i>
+					<span class="diy_select_btn"></span>
+					<ul class="diy_select_list" >
+					<li sid="0">--不限--</li>
 					</ul>
 				</div>
 			</dd>
@@ -261,132 +259,142 @@ margin-left: -4px;
  </script>
  
  
- 
+	
 <script type="text/javascript">
-function diy_select(){this.init.apply(this,arguments)};
+var province = [];
+var region = [];
+
+function diy_select(){
+	this.init.apply(this,arguments)
+};
 diy_select.prototype={
-	 init:function(opt)
-	 {
-		this.setOpts(opt);
-		this.o=this.getByClass(this.opt.TTContainer,document,'div');//容器
-		this.b=this.getByClass(this.opt.TTDiy_select_btn);//按钮
-		this.t=this.getByClass(this.opt.TTDiy_select_txt);//显示
-		this.l=this.getByClass(this.opt.TTDiv_select_list);//列表容器
-		this.ipt=this.getByClass(this.opt.TTDiy_select_input);//列表容器
-		this.lengths=this.o.length;
-		this.showSelect();
-	 },
-	 addClass:function(o,s)//添加class
-	 {
-		o.className = o.className ? o.className+' '+s:s;
-	 },
-	 removeClass:function(o,st)//删除class
-	 {
-		var reg=new RegExp('\\b'+st+'\\b');
-		o.className=o.className ? o.className.replace(reg,''):'';
-	 },
-	 addEvent:function(o,t,fn)//注册事件
-	 {
-		return o.addEventListener ? o.addEventListener(t,fn,false):o.attachEvent('on'+t,fn);
-	 },
-	 showSelect:function()//显示下拉框列表
-	 {
-		var This=this;
-		var iNow=0;
-		this.addEvent(document,'click',function(){
-			 for(var i=0;i<This.lengths;i++)
-			 {
-				This.l[i].style.display='none';
-			 }
-		})
-		for(var i=0;i<this.lengths;i++)
-		{
-			this.l[i].index=this.b[i].index=this.t[i].index=i;
-			this.t[i].onclick=this.b[i].onclick=function(ev)  
-			{
-				var e=window.event || ev;
-				var index=this.index;
-				This.item=This.l[index].getElementsByTagName('li');
 
-				This.l[index].style.display= This.l[index].style.display=='block' ? 'none' :'block';
-				for(var j=0;j<This.lengths;j++)
-				{
-					if(j!=index)
-					{
-						This.l[j].style.display='none';
-					}
-				}
-				This.addClick(This.item);
-				e.stopPropagation ? e.stopPropagation() : (e.cancelBubble=true); //阻止冒泡
-			}
-		}
-	 },
-	 addClick:function(o)//点击回调函数
-	 {
-
-		if(o.length>0)
-		{
-			var This=this;
-			for(var i=0;i<o.length;i++)
-			{
-				o[i].onmouseover=function()
-				{
-					This.addClass(this,This.opt.TTFcous);
-				}
-				o[i].onmouseout=function()
-				{
-					This.removeClass(this,This.opt.TTFcous);
-				}
-				o[i].onclick=function()
-				{
-					var index=this.parentNode.index;//获得列表
-					This.t[index].innerHTML=This.ipt[index].value=this.innerHTML.replace(/^\s+/,'').replace(/\s+&/,'');
-					This.l[index].style.display='none';
+	 init:function(opt) {
+	 
+		this.l=document.getElementById(opt.TTid).getElementsByTagName('ul');//容器
+		this.lengths=this.l.length;
+		var THAT = this;
+		// 省初始化
+		JSONP.get( 'http://www.' + site_domain + '/region/id/0.html', {}, function(data){
+			console.log(data.statusCode);
+			if(data.statusCode == 0 ){
+				for(var i=0; i<data.body[0].length; i++) {
+				　var li = document.createElement("li");
+	　　　		　li.setAttribute("sid", data.body[0][i].id);
+			　　　li.innerHTML = data.body[0][i].name;
+			　　　THAT.l[0].appendChild(li);
 				}
 			}
-		}
-	 },
-	 getByClass:function(s,p,t)//使用class获取元素
-	 {
-		var reg=new RegExp('\\b'+s+'\\b');
-		var aResult=[];
-		var aElement=(p||document).getElementsByTagName(t || '*');
+		 }); 
 
-		for(var i=0;i<aElement.length;i++)
-		{
-			if(reg.test(aElement[i].className))
-			{
-				aResult.push(aElement[i])
+		for (var i=0; i<this.lengths; i++) {
+			this.l[i].index=i;
+			this.l[i].style.display ='none';
+		}
+		Min.event.bind(opt.TTid,'mouseover',{handler:function(e){
+			Min.css.addClass(THAT.TTFcous, e.delegateTarget);
+		},selector:'li'});
+		
+		Min.event.bind(opt.TTid,'mouseout',{handler:function(e){
+			Min.css.removeClass(THAT.TTFcous, e.delegateTarget);
+		},selector:'li'});
+		
+		Min.event.bind(opt.TTid,'click',{handler:function(e){
+		
+			var index=this.parentNode.index;//获得列表
+			var key = this.getAttribute("sid");
+			var p = this.parentNode.parentNode;
+			//var origin = p.getElementsByTagName('input')[0].value;
+			var origin = _$('region_selected').value;
+			if (origin == key) return;
+			
+			if (key == 0) {
+				 rkey = this.getAttribute("rid");
+				if(rkey === null || rkey === undefined) return;
+				_$('region_selected').value = rkey;
+			} else {
+				_$('region_selected').value = key;
 			}
-		}
-		return aResult;
-	 },
+			
+			
+			
+			p.getElementsByTagName('i')[0].innerHTML =this.innerHTML.replace(/^\s+/,'').replace(/\s+&/,'');
+			this.parentNode.style.display='none';
+			
+			Min.obj.each(THAT.l,function(a,k){
+				if(k > index){
+					a.innerHTML = '';
+					var li = document.createElement("li");
+	　　　			　li.setAttribute("sid", 0);
+					  var i = Min.dom.pre(a,'I');
+					  //ipt = Min.dom.pre(i);
+					  //ipt.value = 0;
+					  li.innerHTML = i.innerHTML = '--不限--';
+					  a.appendChild(li);  
+				}
+			});
+			
+			if(key > 0){
+				if(!region[key]){
+					JSONP.get( 'http://www.' + site_domain + '/region/id/'+key+'.html', {}, function(data){
+						if(data.statusCode == 0 ){
+							region[key]= data.body[key];	
+							THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key)
+							if(key > 0 &&  index < THAT.lengths-1 ){
+				
+								for(var i=0; i < region[key].length; i++){
+								　var li = document.createElement("li");
+					　　　		　li.setAttribute("sid", region[key][i].id);
+							　　　li.innerHTML = region[key][i].name;
+								  THAT.l[index+1].appendChild(li);
+								}	
+							}
+						}
+					}); 
+					return;
+				} 
+			} else {
+				return;
+			}
+			
+			if(key > 0 && index < THAT.lengths-1 ){
+				THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key);
+				for(var i=0; i < region[key].length; i++){
+				　var li = document.createElement("li");
+	　　　		　li.setAttribute("sid", region[key][i].id);
+			　　　li.innerHTML = region[key][i].name;
+				  THAT.l[index+1].appendChild(li);
+				}	
+			}
+			 
+		},selector:'li'});
+		
+		Min.event.bind(document,'click',function() {
+			Min.obj.each(THAT.l,function(a){
+				a.style.display='none';
+			});
+		});
+		Min.event.bind(opt.TTid,'click',{handler:function(e){
+			 
+			var next = Min.dom.next(this);
+			if(next.tagName.toUpperCase() != 'UL'){
+				next = Min.dom.next(next);
+			}
+			next.style.display =  next.style.display == 'none'? 'block':'none';
+			var index = next.index;
+			
+			Min.obj.each(THAT.l,function(a,key){
+				if(key != index) a.style.display = 'none';
+			});
 
-	 setOpts:function(opt) //以下参数可以不设置  //设置参数
-	 { 
-		this.opt={
-			 TTContainer:'diy_select',//控件的class
-			 TTDiy_select_input:'diy_select_input',//用于提交表单的class
-			 TTDiy_select_txt:'diy_select_txt',//diy_select用于显示当前选中内容的容器class
-			 TTDiy_select_btn:'diy_select_btn',//diy_select的打开按钮
-			 TTDiv_select_list:'diy_select_list',//要显示的下拉框内容列表class
-			 TTFcous:'focus'//得到焦点时的class
-		}
-		for(var a in opt)  //赋值 ,请保持正确,没有准确判断的
-		{
-			this.opt[a]=opt[a] ? opt[a]:this.opt[a];
-		}
+			Min.event.stopPropagation(e); 	
+			
+		},selector:'i,span'});
 	 }
+
 }
-
-
-var TTDiy_select=new diy_select({  //参数可选
-	TTContainer:'diy_select',//控件的class
-	TTDiy_select_input:'diy_select_input',//用于提交表单的class
-	TTDiy_select_txt:'diy_select_txt',//diy_select用于显示当前选中内容的容器class
-	TTDiy_select_btn:'diy_select_btn',//diy_select的打开按钮
-	TTDiv_select_list:'diy_select_list',//要显示的下拉框内容列表class
-	TTFcous:'focus'//得到焦点时的class
-});//如同时使用多个时请保持各class一致.
+new diy_select({ 
+	TTid :'region',
+	TTFcous:'focus'
+});
 </script>
-  
