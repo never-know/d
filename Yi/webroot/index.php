@@ -1,8 +1,17 @@
 <?php
 	
-	//require __DIR__ .'/../app/bootstrap.php';	
+	require __DIR__ .'/../app/bootstrap.php';	
+	/*
+	echo base_convert(PHP_INT_MAX, 10, 36), "<br>";
+	echo base_convert(487410776, 10, 36), "<br>";
+	echo base_convert(2487410776, 10, 36), "<br>";
+	echo base_convert(8487410776, 10, 36), "<br>";
+	echo base_convert(1000000000, 10, 36), "  10<br>";
+	echo base_convert('zzzzzz', 36, 10), "    10<br>";
+	echo base_convert('100000', 36, 10), "    10<br>";
 	
 	
+ 
 	
 	for($i=0; $i<3; $i++) {
 		
@@ -33,6 +42,31 @@
 	
 	
 	//echo 922337203685477581111-PHP_INT_MAX*100;
+ 
+	echo base_convert(8487410776, 10, 36), "<br>";
+	echo base_convert(8487410776, 10, 36), "<br>";
+	echo base_convert(8487410776, 10, 36), "<br>";
+	echo base_convert('1000000000000', 36, 10), "<br>";
+	echo base_convert('1000000', 36, 10), " --7位<br>";
+	echo base_convert('100000', 36, 10), " --7位<br>";
+	echo base_convert('3wd6o2g', 36, 10), "<br>";
+	
+	echo base_convert('olkdi0', 36, 10), "<br>";
+	echo base_convert('0olkdi0', 36, 10), "<br>";
+	echo base_convert('0olkdi0', 36, 10), "<br>";
+	echo base_convert('0olkdi0', 36, 10), "<br>";
+	echo '六位36进制对应十进制范围：';
+	echo base_convert('100000', 36, 10),'------', base_convert('zzzzzz', 36, 10), "<br>";
+	echo '七位36进制对应十进制范围：';
+	echo base_convert('1000000', 36, 10),'------', base_convert('zzzzzzz', 36, 10), "<br>";
+	
+		echo '8位36进制对应十进制范围：';
+	echo base_convert('10000000', 36, 10),'------', base_convert('zzzzzzzz', 36, 10), "<br>";
+ 
+	
+	*/
+	
+ 
 	
 	/* 
 	echo PHP_INT_MAX, "<br>";

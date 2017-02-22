@@ -73,25 +73,31 @@ class ArticleService extends \Min\Service
 		//array_walk($p,'trim');
 		$param = [];
 		$param_processed = [];
-
-		if (preg_match('/^([\d]+,)*[\d]+$/', $p['tag'])) {
-			
-			$source = article_tags();
-			$tag 	= explode(',', $p['tag']);
-			
-			foreach ($tag as $key => $value) {
-				if (!isset($source[$value]))  return $this->error('参数错误', 1);
-			}
-			if (is_numeric($p['tag'])) {
-				$param['filter'][] = 'tag = ' . $p['tag'];
+		
+		$param_processed['tag'][] = 0;
+		
+		if (!empty($p['tag'])) {
+			if (preg_match('/^([\d]+,)*[\d]+$/', $p['tag'])) {
+				
+				$source = article_tags();
+				$tag 	= explode(',', $p['tag']);
+				
+				foreach ($tag as $key => $value) {
+					if (empty($value) || empty($source[$value]))  return $this->error('参数错误', 1);
+				}
+				
+				if (is_numeric($p['tag'])) {
+					$param['filter'][] = 'tag = ' . $p['tag'];
+				} else {
+					$param['filter'][] = 'tag  in  (' . $p['tag']. ')';	
+				}
+				
+				$param_processed['tag'] = $tag;
+				
 			} else {
-				$param['filter'][] = 'tag  in  (' . $p['tag']. ')';	
-			}
-			$param_processed['tag'] = $tag;
-			
-		} else {
-			return $this->error('参数错误', 1);
-		} 
+				return $this->error('参数错误', 1);
+			} 
+		}
 		
 		$param_processed['region'][1] = 0;
 		
@@ -158,16 +164,16 @@ class ArticleService extends \Min\Service
 		
 		$page		= max(intval($p['page'] ?? 1), 1) - 1;
 		$page_size  = max(intval($p['page_size'] ?? 10), 0) ?: 10;
-		$param['limit'] = ' LIMIT ' . $page * $page_size . ' ' .$page_size;
+		$param['limit'] = ' LIMIT ' . $page * $page_size . ',' .$page_size;
 		
 		$db = $this->DBManager();
-		
-		$sql_number = 'SELECT count(1) as number FROM {article} WHERE ' . implode(' AND ', $param['filter']); 
-		$number = $db->query($sql_number);
+		$filter = empty($param['filter']) ? '' : ' WHERE ' . implode(' AND ', $param['filter']);
+		$sql_number = 'SELECT count(1) as number FROM {article} ' . $filter; 
+		$number = $db->query($sql_number, []);
 		
 		if (intval($number[0]['number']) > 0) { 
-			$sql = 'SELECT * as number FROM {article} WHERE ' . implode(' AND ', $param['filter']) . $param['order'] . $param['limit'];
-			$result['list'] = $db->query($sql);
+			$sql = 'SELECT * FROM {article} ' . $filter . $param['order'] . $param['limit'];
+			$result['list'] = $db->query($sql, []);
 		} else {
 			$result['list'] = [];
 		}
@@ -175,7 +181,7 @@ class ArticleService extends \Min\Service
 		$result['params'] 	= $param_processed;
 		$result['page'] 	= \result_page($number[0]['number'], $page_size, $page);
 		
-		$this->success($result);
+		return $this->success($result);
 		
 	}
 	

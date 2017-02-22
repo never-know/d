@@ -146,14 +146,14 @@ class MysqliPDO
 				$stmt->execute();
 	 
 				switch ($action) {
-					case 'update' :
-					case 'delete' :
+					case 'UPDATE' :
+					case 'DELETE' :
 						$result	= $stmt->rowCount();
 						break;
-					case 'insert' :
+					case 'INSERT' :
 						$result	= $this->lastInsertId($type);
 						break;
-					case 'select' :
+					case 'SELECT' :
 						if (preg_match('/limit\s+1\s*$/i',$sql)) {
 							$result	= $stmt->fetch(\PDO::FETCH_ASSOC);
 						} else {
@@ -185,12 +185,12 @@ class MysqliPDO
 			$on_error = false;
 			try {
 				switch ($action) {
-					case 'update' :
-					case 'delete' :
-					case 'insert' :
+					case 'UPDATE' :
+					case 'DELETE' :
+					case 'INSERT' :
 						$result	= $this->connect($type)->exec($sql);
 						break;	
-					case 'select' :	
+					case 'SELECT' :	
 						$stmt	= $this->connect($type)->query($sql);
 						if (preg_match('/limit\s+1\s*$/i',$sql)) {
 							$result	= $stmt->fetch(\PDO::FETCH_ASSOC);

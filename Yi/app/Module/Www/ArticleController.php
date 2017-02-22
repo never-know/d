@@ -10,16 +10,11 @@ class ArticleController extends \Min\Controller
 	} 
 
 	public function list_get()
-	{
-		$result = ['menu_active' => 'article', 'title' =>'文字列表'];
-		if (!empty($_GET['collect'])) {
-			$body = $this->request('\\App\\Service\\Article::collect', $_GET);			
-		} else {
-			$body = $this->request('\\App\\Service\\Article::list', $_GET);
-		}
-		
-		$result['list'] = $body['body'];
-		$this->response($result);
+	{	 
+		$title = ['menu_active' => 'article', 'title' =>'文字列表'];
+		$result = $this->request('\\App\\Service\\Article::list', $_GET);
+		print_r($result);
+		$this->success(array_merge($result['body'], $title));
 	}
 	
 	public function detail_get()

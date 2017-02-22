@@ -63,7 +63,7 @@ class Controller
 			$result = $obj->{$concrete[1]}($params);
 			record_time('service end:'. $server);
 			if (0 !== $result['statusCode'] &&  true === $exit_on_error) {
-				$this->response($result);
+				$this->error($result['message'], $result['statusCode']);
 			}
 			return $result;	
 		} catch (\Throwable $t) {
