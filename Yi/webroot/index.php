@@ -3,6 +3,35 @@
 	//require __DIR__ .'/../app/bootstrap.php';	
 	
 	
+	
+	for($i=0; $i<3; $i++) {
+		
+		echo "i == {$i} <br>";
+		try {
+			
+			throw new \Exception;
+			
+		} catch (\Exception $e) {
+			
+			echo " catch i == {$i} <br>";
+			
+			throw $e;
+			
+			
+			
+		} finally{
+			
+			echo "finally run {$i}<br>";
+			
+			
+		}
+	
+	
+	}
+	
+	
+	
+	
 	//echo 922337203685477581111-PHP_INT_MAX*100;
 	
 	/* 
