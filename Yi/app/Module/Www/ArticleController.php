@@ -13,7 +13,6 @@ class ArticleController extends \Min\Controller
 	{	 
 		$title = ['menu_active' => 'article', 'title' =>'文字列表'];
 		$result = $this->request('\\App\\Service\\Article::list', $_GET);
-		print_r($result);
 		$this->success(array_merge($result['body'], $title));
 	}
 	
