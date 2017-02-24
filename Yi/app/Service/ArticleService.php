@@ -101,13 +101,13 @@ class ArticleService extends \Min\Service
 		
 		$param_processed['region'][1] = 0;
 		
-		if (!empty($p['region']) && $region = intval($p['region']) && $region > 1) {
+		if (!empty($p['region']) && ($region = intval($p['region'])) && ($region > 1)) {
 			
 			$key = 'regionChain_'. $region;
 			$cache = $this->cache('region');
 			$region_chain = $cache->get($key);
 			if (empty($region_chain)) {
-				$region_service = new  \App\Service\Region;
+				$region_service = new  \App\Service\RegionService;
 				$region_chain = $region_service->nodeChain($region);
 				if (!empty($region_chain)) $cache->set($key, $region_chain);
 			}
@@ -117,10 +117,10 @@ class ArticleService extends \Min\Service
 					$param['filter'][] = '(region = 0 OR (region >=' . $region .' AND region < ' . ($region + 10000000) . ')';
 					//市
 				} elseif ( 0 == $region%100000) {	
-					$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR (region  >= ' . $region .' AND region < ' . $region + 100000 .'))';
+					$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR (region  >= ' . $region .' AND region < ' . ($region + 100000) .'))';
 					// 倒2 
 				} elseif ( 0 == $region%1000) {	
-					$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR  region = '. intval($region/100000). ' OR  (region  > ' . $region .' AND region < ' . $region + 1000 .'))';
+					$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR  region = '. intval($region/100000). ' OR  (region  > ' . $region .' AND region < ' . ($region + 1000) .'))';
 					// 倒一 
 				} else {
 					$param['filter'][] = '(region = 0 OR  region  =' . $region .')';
@@ -167,6 +167,7 @@ class ArticleService extends \Min\Service
 		$param['limit'] = ' LIMIT ' . $page * $page_size . ',' .$page_size;
 		
 		$db = $this->DBManager();
+
 		$filter = empty($param['filter']) ? '' : ' WHERE ' . implode(' AND ', $param['filter']);
 		$sql_number = 'SELECT count(1) as number FROM {article} ' . $filter; 
 		$number = $db->query($sql_number, []);
