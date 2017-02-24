@@ -113,8 +113,8 @@ $conf['redis'] = array (
 $conf['sms'] = 'aliyun';
 
 $conf['aliyun'] = array (
-	'appkey' 		=> '23314175',
-	'secretkey' 	=> 'e1aecb8048afb006b3d03937b8743972',
+	'appkey' 		=> '',
+	'secretkey' 	=> '',
 	'profile' 		=> 'cn-hangzhou',
 	'reg'			=> array (
 		'signname' 		=> '注册验证码', 	/*签名名称*/
