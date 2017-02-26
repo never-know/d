@@ -71,6 +71,9 @@ background-color:#fff;
 overflow:hidden;
 position:relative;
 }
+.content-inner {
+overflow:visible;
+}
 .content-inner,.leftbar{
 padding-bottom:20px;
 }

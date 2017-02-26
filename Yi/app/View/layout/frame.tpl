@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
 <head>
 <meta charset="utf-8">
-<title><?=$result['title'];?></title>
+<title><?=$result['meta']['title'];?></title>
 <link rel="stylesheet" href="/public/css/reset.css">
 <link rel="stylesheet" href="/public/font/iconfont.css">
 <link rel="stylesheet" href="/public/css/yi.css">
@@ -24,7 +24,8 @@
 				<div class="main-content">
 					<?php view($result); ?> 
 				</div>
-			</div>		
+			</div>	
+			<div style="clear:both;"></div>
 		</div>
 	</div>	
 </div>

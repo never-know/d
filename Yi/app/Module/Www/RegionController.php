@@ -9,7 +9,7 @@ class RegionController extends \Min\Controller
 	{
 		$id = App::getArgs();
 		if (!is_numeric($id)) {
-			$this->error(1, '参数错误');
+			$this->error('参数错误', 1);
 		}
 		if ($id > 100000000) {
 			$result = [];

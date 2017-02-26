@@ -22,7 +22,7 @@
 .diy_select_txt{width:100px;}
 .diy_select_txt,.diy_select_list li{text-indent:10px;overflow:hidden;cursor:pointer;}
 .diy_select_txt,.diy_select_list {white-space: nowrap;zoom: 1;color: #005aa0;}
-.diy_select_btn{width:28px;background:url(rec.gif) no-repeat center}
+.diy_select_btn{width:28px;background:url('/public/images/rec.gif') no-repeat center}
 .diy_select_list{position:absolute;top:34px;left:-1px;z-index:88888;border-top:none;width:100%;display:none;_top:35px;background:white;}
 .diy_select_list li{list-style:none;height:28px;line-height:28px;;_background:#fff;float:left;width:130px;background:white}
 .diy_select_list li.focus{background:#3399FF;color:#fff}

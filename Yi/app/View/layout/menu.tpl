@@ -30,6 +30,6 @@
 	</div>
 </div>
 <script>
-Min.css.addClass('active', _$('menu_' + <?=safe_json_encode($result['menu_active']);?>));
+Min.css.addClass('active', _$('menu_' + <?=safe_json_encode($result['meta']['menu_active']);?>));
 </script>
 <div style="position:absolute;width:1px;height:100%;background-color:#e7e7eb;left:190px;"></div>

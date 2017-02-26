@@ -11,9 +11,63 @@ class ArticleController extends \Min\Controller
 
 	public function list_get()
 	{	 
-		$title = ['menu_active' => 'article', 'title' =>'文字列表'];
+		$meta = ['menu_active' => 'article', 'title' =>'文字列表'];
+		$region_id = intval($_GET['region']);
+		
+		$region_key =  ($region_id > 100000000) ? intval($region_id/1000) : $region_id;
+		$key = 'regionChain_'. $region_key;
+		$cache = $this->cache('region');
+		
+		if ($region_id > 0) {
+			$region_list = $cache->get($key);
+		}
+		
+		if (empty($region_list)) {
+		
+			$region_list = $cache->get('regionChain_0');
+			
+			if (empty($region_list)) {
+				$region_list0 = $this->request('\\App\\Service\\Region::nodeChain', 0);
+				foreach ($region_list0['body'] as $v) {
+					$region_list[0][$v['id']] = $v;
+				}
+				$cache->set('regionChain_0', $region_list);
+			}
+			if ($region_id > 0) {
+				
+				$node_chain = $this->request('\\App\\Service\\Region::nodeChain', $region_key);
+				if  (!empty($node_chain['body'])) {
+					foreach ($node_chain['body'] as  $value) {
+						$region_list[$value['parent_id']][$value['id']] = $value;
+					}
+					$cache->set($key, $region_list);
+				}
+			}
+		}
+		
+		$region_chain = array_keys($region_list);
+
+		if ($region_id > 0) {
+			$end = end($region_chain);
+			if (0 == $end) {
+				$_GET['region']  = 0;
+			} elseif ($region_id > 100000000) {
+				if (empty($region_list[$end][$region_id])) {
+					$_GET['region'] = 0;
+					$region_chain 	= [0];
+					$region_list 	= [0 => $region_list[0]];
+				} else {
+					$region_chain[] = $region_id;
+				}
+			}
+		}
+		
 		$result = $this->request('\\App\\Service\\Article::list', $_GET);
-		$this->success(array_merge($result['body'], $title));
+		$result['body']['region_list'] 		= $region_list;
+		$result['body']['params']['region'] = $region_chain;
+		$result['body']['meta'] 			= $meta;
+		
+		$this->success($result['body']);
 	}
 	
 	public function detail_get()
@@ -21,7 +75,7 @@ class ArticleController extends \Min\Controller
 		$id = short_int_convent(App::getArgs());
 		
 		if(!$id) {
-			$this->error(1, '参数错误');
+			$this->error('参数错误', 1);
 		}
 		
 		$result = $this->request('\\App\\Service\\Article::detail', $id);

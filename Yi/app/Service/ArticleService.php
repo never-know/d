@@ -99,44 +99,50 @@ class ArticleService extends \Min\Service
 			} 
 		}
 		
-		$param_processed['region'][1] = 0;
+		//$param_processed['region'][0] = 0;
 		
 		if (!empty($p['region']) && ($region = intval($p['region'])) && ($region > 1)) {
-			
+			/*
 			$key = 'regionChain_'. $region;
 			$cache = $this->cache('region');
 			$region_chain = $cache->get($key);
+			
 			if (empty($region_chain)) {
 				$region_service = new  \App\Service\RegionService;
-				$region_chain = $region_service->nodeChain($region);
-				if (!empty($region_chain)) $cache->set($key, $region_chain);
-			}
-			if (!empty($region_chain)) { 
-				// 省级 
-				if ( 0 == $region%10000000) {
-					$param['filter'][] = '(region = 0 OR (region >=' . $region .' AND region < ' . ($region + 10000000) . ')';
-					//市
-				} elseif ( 0 == $region%100000) {	
-					$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR (region  >= ' . $region .' AND region < ' . ($region + 100000) .'))';
-					// 倒2 
-				} elseif ( 0 == $region%1000) {	
-					$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR  region = '. intval($region/100000). ' OR  (region  > ' . $region .' AND region < ' . ($region + 1000) .'))';
-					// 倒一 
-				} else {
-					$param['filter'][] = '(region = 0 OR  region  =' . $region .')';
-				}
+				$region_id_chain = $region_service->nodeChain($region);
+				//if (!empty($region_chain)) $cache->set($key, $region_chain);
 				
-				$level = 0;
-				foreach($region_chain as $key => $value) {
+				foreach($region_id_chain as $key => $value) {
 					if (empty($value)) { 
 						continue;
 					} else {
-						$param_processed['region'][++$level] = $value;
+						$region_chain[$value] = $region_service->nodeChildren($value);
 					}
 				}	
-			}  else {
-				return $this->error('参数错误', 1);
-			} 			
+			}
+			*/	
+			if ($region < 100000000) $region *= 1000;
+			//$param_processed['region'][1] = intval($region/10000000)*10000;
+			// 省级 
+			if ( 0 == $region%10000000) {
+				$param['filter'][] = '(region = 0 OR (region >=' . $region .' AND region < ' . ($region + 10000000) . '))';
+				//市
+			} elseif ( 0 == $region%100000) {	
+			
+				$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR (region  >= ' . $region .' AND region < ' . ($region + 100000) .'))';
+			//	$param_processed['region'][2] = intval($region/100000)*100;
+				// 倒2 
+			} elseif ( 0 == $region%1000) {	
+				$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR  region = '. intval($region/100000). ' OR  (region  > ' . $region .' AND region < ' . ($region + 1000) .'))';
+			//	$param_processed['region'][2] = intval($region/100000)*100;
+			//	$param_processed['region'][3] = intval($region/1000);
+				// 倒一 
+			} else {
+				$param['filter'][] = '(region = 0 OR  region  =' . $region .')';
+			//	$param_processed['region'][2] = intval($region/100000)*100;
+			//	$param_processed['region'][3] = intval($region/1000);
+			//	$param_processed['region'][4] = $region;
+			}	
 		}
 		
 		if (!empty($p['author'])) {

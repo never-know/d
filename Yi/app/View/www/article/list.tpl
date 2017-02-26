@@ -91,9 +91,9 @@ margin-left: -4px;
 .diy_select_txt{width:100px;}
 .diy_select_txt,.diy_select_list li{text-indent:10px;overflow:hidden;cursor:pointer;}
 .diy_select_txt,.diy_select_list {white-space: nowrap;zoom: 1;color: #005aa0;}
-.diy_select_btn{width:28px;background:url(rec.gif) no-repeat center}
-.diy_select_list{position:absolute;top:34px;left:-1px;z-index:88888;border-top:none;width:100%;display:none;_top:35px;background:white;}
-.diy_select_list li{list-style:none;height:28px;line-height:28px;_background:#fff;float:left;width:130px;}
+.diy_select_btn{width:28px;background:url(/public/images/rec.gif) no-repeat center}
+.diy_select_list{position:absolute;top:33px;left:-1px;z-index:88888;border-top:none;width:100%;display:none;_top:35px;background:white;}
+.diy_select_list li{list-style:none;height:28px;line-height:28px;_background:#fff;float:left;width:80px;}
 .diy_select_list li.focus{background:#3399FF;color:#fff}
 .diy_select_list_loading {
 background-image:url('/public/images/loading.gif');
@@ -126,40 +126,21 @@ height:80px;
 			<dt>区域：</dt>
 			<dd style="overflow:visible;" id="region">
 				<input type="hidden" id="region_selected" class="diy_select_input" name="region" value="<?=end($result['params']['region']);?>"/>
+				<?php $width = ['323px','161px','242px','242px;left:-112px;']; foreach ($width as $i => $w) { ?>
 				<div class="diy_select" >
-					<!--<input type="hidden" name="province" class="diy_select_input"/>-->
-					<i class="diy_select_txt">全国</i>
+					<i class="diy_select_txt"><?=(isset($result['params']['region'][$i+1])?($result['region_list'][$result['params']['region'][$i]][$result['params']['region'][$i+1]]['name']):((0==$i)?'全国':'--不限--'));?></i>
 					<span class="diy_select_btn"></span>
-					<ul class="diy_select_list" style="width:392px;">
-						<li sid="0" rid="0">全国</li>
+					<ul class="diy_select_list" style="width:<?=$w;?>">
+						<?php if (isset($result['params']['region'][$i])) {
+							echo '<li sid="0" rid="', $result['params']['region'][$i] ,'">',((0==$i)?'全国':'--不限--'),'</li>';
+							foreach($result['region_list'][$result['params']['region'][$i]] as $key => $value) {
+								echo '<li sid="', $value['id'], '">', $value['name'],'</li>';
+						} } else {
+							echo '<li sid="0">--不限--</li>';
+						} ?>
 					</ul>
 				</div>
-
-				<div class="diy_select" >
-					<!--<input type="hidden" name="city" class="diy_select_input"/>-->
-					<i class="diy_select_txt">--不限--</i>
-					<span class="diy_select_btn"></span>
-					<ul class="diy_select_list" style="width:261px;">	
-						<li sid="0">--不限--</li>
-					</ul>
-				</div>
-			
-				<div class="diy_select">
-					<!--<input type="hidden" name="" class="diy_select_input"/>-->
-					<i class="diy_select_txt">--不限--</i>
-					<span class="diy_select_btn"></span>
-					<ul class="diy_select_list" style="width:261px;">	 
-					<li sid="0">--不限--</li>
-					</ul>
-				</div>
-				<div class="diy_select">
-					<!--<input type="hidden" name="" class="diy_select_input"/>-->
-					<i class="diy_select_txt">--不限--</i>
-					<span class="diy_select_btn"></span>
-					<ul class="diy_select_list" >
-					<li sid="0">--不限--</li>
-					</ul>
-				</div>
+				<?php } ?>
 			</dd>
 		</dl>
 		<dl class="filter_order">
@@ -292,6 +273,7 @@ diy_select.prototype={
 		this.lengths=this.l.length;
 		var THAT = this;
 		// 省初始化
+		/*
 		Min.css.addClass('diy_select_list_loading', THAT.l[0]);
 		JSONP.get( 'http://www.' + site_domain + '/region/id/0.html', {}, function(data){
 			Min.css.removeClass('diy_select_list_loading', THAT.l[0]);
@@ -304,17 +286,17 @@ diy_select.prototype={
 				}
 			}
 		 }); 
-
+		*/
 		for (var i=0; i<this.lengths; i++) {
 			this.l[i].index=i;
 			this.l[i].style.display ='none';
 		}
 		Min.event.bind(opt.TTid,'mouseover',{handler:function(e){
-			Min.css.addClass(THAT.TTFcous, e.delegateTarget);
+			Min.css.addClass(opt.TTFcous, e.delegateTarget);
 		},selector:'li'});
 		
 		Min.event.bind(opt.TTid,'mouseout',{handler:function(e){
-			Min.css.removeClass(THAT.TTFcous, e.delegateTarget);
+			Min.css.removeClass(opt.TTFcous, e.delegateTarget);
 		},selector:'li'});
 		
 		Min.event.bind(opt.TTid,'click',{handler:function(e){
@@ -352,7 +334,7 @@ diy_select.prototype={
 			
 			THAT.l[index].style.display ='none';
 			
-			if(key > 0 && index < THAT.lengths-1 ){
+			if(key > 0 && index < THAT.lengths-1 && key < 100000000){
 				if(!region[key]){
 					Min.css.addClass('diy_select_list_loading', THAT.l[index+1]);
 					JSONP.get( 'http://www.' + site_domain + '/region/id/'+key+'.html', {}, function(data){
@@ -426,6 +408,10 @@ diy_select.prototype={
 			Min.event.stopPropagation(e); 	
 			
 		},selector:'i,span'});
+		
+		
+		
+		
 	 }
 
 }
