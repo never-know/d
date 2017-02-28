@@ -74,7 +74,9 @@ Min.event = {
 		return function( event ){
 
 			event = Min.event.fixEvent( event || window.event );
-			
+			// event.currentTarget = 邦定的父元素
+			// delegateTarget 触发事件的子元素
+			// target  事件最初的元素
 			if( !event.currentTarget ){
                 event.currentTarget =  elem;
             }	

@@ -27,12 +27,12 @@ function t($string, array $args = [], array $options = [])
 	}
 }
 
-function view($result = [], $path = '')
+function view($result = [])
 {
-	if (empty($path)) {
-		$path =  '/'.App::getModule().'/'.  App::getController().'/'.  App::getAction();
+	if (empty($result['template_path'])) {
+		$result['template_path'] =  '/'.App::getModule().'/'.  App::getController().'/'.  App::getAction();
 	}
-	require VIEW_PATH.$path.VIEW_EXT;
+	require VIEW_PATH. $result['template_path']. VIEW_EXT;
 	 
 }
 
@@ -260,7 +260,7 @@ function valid_token($token, $value)
 function check_url($uri) 
 {
     $uri = html_entity_decode($uri, ENT_QUOTES, 'UTF-8');
-    return check_plain(strip_dangerous_protocols($uri));
+    return check_plain(str_replace(['(', ')', '%28', '%29'], '', strip_dangerous_protocols($uri))); 
 }
 // 安全的在html中输出字符串	
 function check_plain($text) 
@@ -362,7 +362,8 @@ function request_not_found($code, $message = '请求失败', $redirect = '')
 			 <hr>';
 		 
 	}	
-	view($result, '/layout/404');
+	$result['template_path'] = '/layout/404';
+	view($result);
 	exit;
 }	
 

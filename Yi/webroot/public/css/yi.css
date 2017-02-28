@@ -77,6 +77,19 @@ overflow:visible;
 .content-inner,.leftbar{
 padding-bottom:20px;
 }
+/******page******/
+
+.page{
+width:300px;
+margin:0 auto;
+padding:20px;
+}
+
+.page span{
+border: 1px solid #e3e3e3;
+padding: 6px 14px;
+margin-left: -4px;
+}
 
 /*** header ***/
 .header-inner{
@@ -653,6 +666,77 @@ width:16%;
 width:30px;
 }
 
+.filter{
+margin-top: 24px;
+height: 106px;
+border-top:1px solid #e3e3e3;
+}
+.filter dl{
+border-bottom:1px solid #e3e3e3;
+padding:2px 0 2px 12px;
+}
+.filter dt{
+width: 10%;
+font-size: 16px;
+padding:2px 22px;
+float:left;
+}
+.filter dt, .filter dl, .filter dd{
+height: 30px;
+line-height: 30px;
+}
+.filter dd span{
+float:left;
+white-space: nowrap;
+zoom: 1;
+color: #005aa0;
+}
+.filter .filter_tag span{
+font-size:12px;
+height: 20px;
+line-height: 20px;
+margin-top:6px;
+cursor:pointer;
+}
+.filter .filter_tag span input {
+position:relative;
+margin:0 4px 0 0;
+float: left;
+margin-top: 4px;
+*margin:0;
+*top:1px;
+}
+.filter .filter_tag span i {
+display: block;
+display:none;
+float: left;
+width: 10px;
+height: 10px;
+border: 1px solid silver;
+margin-right: 6px;
+margin-top: 4px;
+}
+.filter .filter_tag span, .filter .filter_tag input, .filter .filter_tag label{
+cursor:pointer;
+}
+.filter_tag span, .filter_order1 span{
+margin:0 10px;
+}
+.filter .filter_order{
+float: right;
+overflow:hidden;
+border-bottom:none;
+padding:2px 12px;
+}
+.filter_order span{
+border-left:1px solid #e3e3e3;
+padding: 2px 14px;
+}
+
+.filter_order .selected{
+background: #e43c3f;
+color: white;
+}
 
 /***article edit ***/
 
@@ -701,36 +785,40 @@ padding: 6px 22px;
 #article_edit .single_upload .ke-upload-file{
 cursor:pointer;
 }
-
- /*
- #article_edit .single_upload .ke-button-common{
- background: #CFCFCF; height:36px;
- }
-
- #article_edit .single_upload span.ke-button-common{
-    overflow: hidden;
-    display: block;
+#article_edit .tag span {
+	float:left;
+	display:block;
+	margin-right:20px;
+	}
+#article_edit .tag span input, #article_edit .tag span label{
     float: left;
-	background:red;
- }
- #article_edit .single_upload input.ke-button-common{
- 
-background: #CFCFCF;
-background: red;
- height:36px;
- line-height:36px;
- 
- }
- 
-#article_edit  .single_upload .ke-upload-area {
-height:36px;
+    display: block;
+    line-height: 32px;
+    height: 32px;
+    margin-left: 4px;
+    *margin-left: 2px;
 }
-#article_edit  .single_upload  {
-margin-right:   12px;
-float: left;
-display:block;
-background: #CFCFCF;
-
+ 
+ /**** region select ***/
+ 
+ 	
+.diy_select{height:28px;line-height:28px;width:130px;position:relative;font-size:12px;margin-left: -1px;;background:#fff;color:#000;float:left;}
+.diy_select_btn,.diy_select_txt{float:left;height:100%;}
+.diy_select,.diy_select_list{border:1px solid #CFCFCF;}
+.diy_select_txt{width:100px;}
+.diy_select_txt,.diy_select_list li{text-indent:10px;overflow:hidden;cursor:pointer;}
+.diy_select_txt,.diy_select_list {white-space: nowrap;zoom: 1;color: #005aa0;}
+.diy_select_btn{width:28px;background:url('/public/images/rec.gif') no-repeat center}
+.diy_select_list{position:absolute;top:34px;left:-1px;z-index:88888;border-top:none;width:100%;display:none;_top:35px;background:white;}
+.diy_select_list li{list-style:none;height:28px;line-height:28px;;_background:#fff;float:left;width:80px;background:white}
+.diy_select_list li.focus{background:#3399FF;color:#fff}
+.diy_select_list_loading {
+background-image:url('/public/images/loading.gif');
+background-color:#fff;
+background-repeat:no-repeat;
+background-position:center;
+height:80px;
 }
-*/
+ 
+ 
  

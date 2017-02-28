@@ -9,7 +9,7 @@ class IndexController extends \Min\Controller
 
 	public function index_get()
 	{
-		$result = ['menu_active' => 'homepage', 'title' =>'首页'];
+		$result['meta'] = ['menu_active' => 'homepage', 'title' =>'首页'];
 		$this->response($result);
 	}
 	

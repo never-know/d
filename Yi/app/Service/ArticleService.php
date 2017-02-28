@@ -11,8 +11,11 @@ class ArticleService extends \Min\Service
 			return $this->eidt($param);
 		}
 		
+		$param['region'] = intval($param['region']);
+		if ($param['region'] < 100000000) $param['region'] *= 1000;
+		
 		$sql = 'INSERT INTO {article} (`tag`, `start`, `end`, `region`, `title`, `desc`, `icon`) VALUES ('.
-			implode(',', [intval($param['tag']), intval($param['start']), intval($param['end']), intval($param['region']), ':title', ':desc', ':icon)']);
+			implode(',', [intval($param['tag']), intval($param['start']), intval($param['end']), $param['region'], ':title', ':desc', ':icon)']);
 
 		try {
 			$this->DBManager()->transaction_start();
@@ -70,7 +73,6 @@ class ArticleService extends \Min\Service
 	
 	public function list($p)
 	{
-		//array_walk($p,'trim');
 		$param = [];
 		$param_processed = [];
 		
@@ -98,31 +100,10 @@ class ArticleService extends \Min\Service
 				return $this->error('参数错误', 1);
 			} 
 		}
-		
-		//$param_processed['region'][0] = 0;
-		
+
 		if (!empty($p['region']) && ($region = intval($p['region'])) && ($region > 1)) {
-			/*
-			$key = 'regionChain_'. $region;
-			$cache = $this->cache('region');
-			$region_chain = $cache->get($key);
 			
-			if (empty($region_chain)) {
-				$region_service = new  \App\Service\RegionService;
-				$region_id_chain = $region_service->nodeChain($region);
-				//if (!empty($region_chain)) $cache->set($key, $region_chain);
-				
-				foreach($region_id_chain as $key => $value) {
-					if (empty($value)) { 
-						continue;
-					} else {
-						$region_chain[$value] = $region_service->nodeChildren($value);
-					}
-				}	
-			}
-			*/	
 			if ($region < 100000000) $region *= 1000;
-			//$param_processed['region'][1] = intval($region/10000000)*10000;
 			// 省级 
 			if ( 0 == $region%10000000) {
 				$param['filter'][] = '(region = 0 OR (region >=' . $region .' AND region < ' . ($region + 10000000) . '))';
@@ -130,18 +111,12 @@ class ArticleService extends \Min\Service
 			} elseif ( 0 == $region%100000) {	
 			
 				$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR (region  >= ' . $region .' AND region < ' . ($region + 100000) .'))';
-			//	$param_processed['region'][2] = intval($region/100000)*100;
 				// 倒2 
 			} elseif ( 0 == $region%1000) {	
 				$param['filter'][] = '(region = 0 OR region = '. intval($region/10000000). ' OR  region = '. intval($region/100000). ' OR  (region  > ' . $region .' AND region < ' . ($region + 1000) .'))';
-			//	$param_processed['region'][2] = intval($region/100000)*100;
-			//	$param_processed['region'][3] = intval($region/1000);
 				// 倒一 
 			} else {
 				$param['filter'][] = '(region = 0 OR  region  =' . $region .')';
-			//	$param_processed['region'][2] = intval($region/100000)*100;
-			//	$param_processed['region'][3] = intval($region/1000);
-			//	$param_processed['region'][4] = $region;
 			}	
 		}
 		

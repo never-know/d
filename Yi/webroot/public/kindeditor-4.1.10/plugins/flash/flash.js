@@ -14,6 +14,9 @@ KindEditor.plugin('flash', function(K) {
 		formatUploadUrl = K.undef(self.formatUploadUrl, true),
 		extraParams = K.undef(self.extraFileUploadParams, {}),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
+		flashWidth = K.undef(self.flashWidth, '480'),
+		flashHeight = K.undef(self.flashHeight, '400'),
+		 
 		uploadJson = K.undef(self.uploadJson, self.basePath + 'php/upload_json.php');
 	self.plugin.flash = {
 		edit : function() {
@@ -31,12 +34,12 @@ KindEditor.plugin('flash', function(K) {
 				//width
 				'<div class="ke-dialog-row">',
 				'<label for="keWidth" style="width:60px;">' + lang.width + '</label>',
-				'<input type="text" id="keWidth" class="ke-input-text ke-input-number" name="width" value="550" maxlength="4" /> ',
+				'<input type="text" id="keWidth" class="ke-input-text ke-input-number" name="width" value="'+flashWidth+'" maxlength="4" /> ',
 				'</div>',
 				//height
 				'<div class="ke-dialog-row">',
 				'<label for="keHeight" style="width:60px;">' + lang.height + '</label>',
-				'<input type="text" id="keHeight" class="ke-input-text ke-input-number" name="height" value="400" maxlength="4" /> ',
+				'<input type="text" id="keHeight" class="ke-input-text ke-input-number" name="height" value="'+flashHeight+'" maxlength="4" /> ',
 				'</div>',
 				'</div>'
 			].join('');

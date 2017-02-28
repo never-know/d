@@ -9,7 +9,12 @@ class UploadController extends \Min\Controller
 	{
 		$upload = new \Min\Upload('imgFile');
 		if ($upload->save()) {
-			$this->response(['error' => 0, 'url' => $upload->getInfo('url')]);
+			$result = ['error' => 0, 'url' => $upload->getInfo('url')];
+			if ($_POST['size'] == 1) {
+				$result['width'] = '400px';
+				$result['height'] ='auto';
+			}
+			$this->response($result);
 		} else {
 			$this->response(['error' => 1, 'message' => $upload->getError()]);
 		}

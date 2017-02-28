@@ -1,40 +1,4 @@
-<style>
 
-	#article_edit .tag span {
-	float:left;
-	display:block;
-	margin-right:20px;
-	
-	}
-#article_edit .tag span input, #article_edit .tag span label{
-    float: left;
-    display: block;
-    line-height: 32px;
-    height: 32px;
-    margin-left: 4px;
-    *margin-left: 2px;
-}
-
-	
-.diy_select{height:32px;line-height:32px;width:130px;position:relative;font-size:12px;margin-left: -1px;;background:#fff;color:#000;float:left;}
-.diy_select_btn,.diy_select_txt{float:left;height:100%;}
-.diy_select,.diy_select_list{border:1px solid #CFCFCF;}
-.diy_select_txt{width:100px;}
-.diy_select_txt,.diy_select_list li{text-indent:10px;overflow:hidden;cursor:pointer;}
-.diy_select_txt,.diy_select_list {white-space: nowrap;zoom: 1;color: #005aa0;}
-.diy_select_btn{width:28px;background:url('/public/images/rec.gif') no-repeat center}
-.diy_select_list{position:absolute;top:34px;left:-1px;z-index:88888;border-top:none;width:100%;display:none;_top:35px;background:white;}
-.diy_select_list li{list-style:none;height:28px;line-height:28px;;_background:#fff;float:left;width:130px;background:white}
-.diy_select_list li.focus{background:#3399FF;color:#fff}
-.diy_select_list_loading {
-background-image:url('/public/images/loading.gif');
-background-color:#fff;
-background-repeat:no-repeat;
-background-position:center;
-height:80px;
-}
-	</style>
-	
 	<div class="breadcrumb">
 		<span style="margin-left:28px;">文案＞</span><label class="subtitle">添加文案</label>
 	</div> 
@@ -42,16 +6,12 @@ height:80px;
 		<dl>
 			<dt>标题：</dt> 
 			<dd><input type="text" name="title" maxlength = "30" id="title" class="ar_text_input"　
-				value="<?php 
-					echo (empty($result['t'])? '' : \check_plain($result['t']));
-				?>">
+				value="<?=\check_plain($result['detail']['title']);?>">
 			<label>标题6-30个字符</label></dd>
 		</dl>
 		<dl>
 			<dt>描述：</dt> 
-			<dd><textarea  rows="2" name="desc" maxlength = "60" id="desc" class="ar_text_input"><?php
-				echo (empty($result['desc']) ? '' : \check_plain($result['desc']));
-			?></textarea>
+			<dd><textarea  rows="2" name="desc" maxlength = "60" id="desc" class="ar_text_input"><?= \check_plain($result['detail']['desc']);?></textarea>
 			<label>描述10-60个字符</label></dd>
 		</dl>
 		<dl>
@@ -59,7 +19,7 @@ height:80px;
 			<dd> 
 				<input class="ke-input-text" type="hidden" id="icon" readonly="readonly"  name="icon"
 				<?php 
-					$icon = \check_url($result['icon']);
+					$icon =  \check_url($result['detail']['icon']);
 					echo $icon ;
 				?>
 				/> 
@@ -79,64 +39,45 @@ height:80px;
 		<dl class="tag">
 			<dt>标签：</dt> 
 			<dd>
-				<?php foreach(article_tags() as $key => $value) : ?>
-				<span>  <input type="radio" name="tag" id="ele<?=$key;?>" value="<?=$key;?>" <?php if($key == $result['tag']) echo 'checked="true"';?>>
+				<?php foreach(\article_tags() as $key => $value) { if($key == 0) continue;  ?>
+				<span>  <input type="radio" name="tag" id="ele<?=$key;?>" value="<?=$key;?>" <?php if($key == $result['detail']['tag']) echo 'checked';?>>
 						<label for="ele<?=$key;?>" ><?=$value;?></label>
 				</span>
-				<?php endforeach ?>
+				<?php } ?>
 			</dd>
 		</dl>
 		<dl style="overflow:visible; height:40px;">
 			<dt>推广范围：</dt> 
 			<dd style="overflow:visible;" id="region">
-				<input type="hidden" id="region_selected" class="diy_select_input" value="0"/>
+				<input type="hidden" id="region_selected" class="diy_select_input" name="region" value="<?=end($result['params']['region']);?>"/>
+				<?php $width = ['323px','242px','242px','242px;left:-112px;']; foreach ($width as $i => $w) { ?>
 				<div class="diy_select" >
-					<!--<input type="hidden" name="province" class="diy_select_input"/>-->
-					<i class="diy_select_txt">全国</i>
+					<i class="diy_select_txt"><?=(isset($result['params']['region'][$i+1])?($result['region_list'][$result['params']['region'][$i]][$result['params']['region'][$i+1]]['name']):((0==$i)?'全国':'--不限--'));?></i>
 					<span class="diy_select_btn"></span>
-					<ul class="diy_select_list" style="width:392px;">
-						<li sid="0" rid="0">全国</li>
+					<ul class="diy_select_list" style="width:<?=$w;?>">
+						<?php if (isset($result['params']['region'][$i])) {
+							echo '<li sid="0" rid="', $result['params']['region'][$i] ,'">',((0==$i)?'全国':'--不限--'),'</li>';
+							foreach($result['region_list'][$result['params']['region'][$i]] as $key => $value) {
+								echo '<li sid="', $value['id'], '">', $value['name'],'</li>';
+						} } else {
+							echo '<li sid="0">--不限--</li>';
+						} ?>
 					</ul>
 				</div>
-
-				<div class="diy_select" >
-					<!--<input type="hidden" name="city" class="diy_select_input"/>-->
-					<i class="diy_select_txt">--不限--</i>
-					<span class="diy_select_btn"></span>
-					<ul class="diy_select_list" style="width:261px;">	
-						<li sid="0">--不限--</li>
-					</ul>
-				</div>
-			
-				<div class="diy_select">
-					<!--<input type="hidden" name="" class="diy_select_input"/>-->
-					<i class="diy_select_txt">--不限--</i>
-					<span class="diy_select_btn"></span>
-					<ul class="diy_select_list" style="width:261px;">	 
-					<li sid="0">--不限--</li>
-					</ul>
-				</div>
-				<div class="diy_select">
-					<!--<input type="hidden" name="" class="diy_select_input"/>-->
-					<i class="diy_select_txt">--不限--</i>
-					<span class="diy_select_btn"></span>
-					<ul class="diy_select_list" >
-					<li sid="0">--不限--</li>
-					</ul>
-				</div>
+				<?php } ?>
 			</dd>
 		</dl>
 		
 		<dl>
 			<dt>开始日期：</dt> 
 			<dd>	
-			<input type="text" name="date_start" id="date_start" class="tcal" autocomplete="off" readonly="readonly" value="<?php echo $result['start'];?>"/>
+			<input type="text" name="date_start" id="date_start" class="tcal" autocomplete="off" readonly="readonly" value="<?php echo $result['detail']['start'];?>"/>
 				<label>选择当日则审核通过后立刻生效</label></dd>
 		</dl>
 		<dl>
 			<dt>结束日期：</dt> 
 			<dd>
-			<input type="text" name="date_end" id = "date_end" class="tcal" autocomplete="off" readonly="readonly" value="<?php echo $result['end'];?>"/>
+			<input type="text" name="date_end" id = "date_end" class="tcal" autocomplete="off" readonly="readonly" value="<?php echo $result['detail']['end'];?>"/>
 				<label>至少大于当前日期2天，不填写则长期有效</label>
 			</dd>
 		</dl>
@@ -145,7 +86,7 @@ height:80px;
 			<dt>内容：</dt> 
 			<dd id="richtext"><textarea id="content" name="content" style="width:422px;height:500px;visibility:hidden;" >
 			<?php
-				echo \check_plain($result['content']);
+				//echo \check_plain($result['content']);
 			?>
 			</textarea>
 			<label>内容10-60000个字符</label>
@@ -153,6 +94,7 @@ height:80px;
 		</dl>
 		<dl>
 			<input type="hidden" value="<?=get_token();?>" name="csrf_token" id="csrf_token" />
+			<input type="hidden" value="<?=$result['detail']['id'];?>" name="id" />
 			<button href="javascript:;" style="width:120px;" type ="submit" class="login-btn" id="article_submit"  sindex="0"  >提交</a></button>
 		</dl>
 
@@ -165,6 +107,7 @@ height:80px;
 	<script charset="utf-8" src="/public/kindeditor-4.1.10/lang/zh_CN.js"></script>
 	<link rel="stylesheet" type="text/css" href="/public/css/tcal.css" />
 	<script type="text/javascript" src="/public/js/tcal.js"></script> 
+	<script type="text/javascript" src="/public/js/region.js"></script> 
 	
 	<script>
 		KindEditor.ready(function(K) {
@@ -193,8 +136,7 @@ height:80px;
 			uploadbutton.fileBox.change(function(e) {
 				uploadbutton.submit();
 			});
-			
-				
+	
 			window.editor = K.create('#content', {
 				width: 420,
 				height:500,
@@ -202,14 +144,19 @@ height:80px;
 				resizeType:1,
 				themeType : 'simple',
 				loadStyleMode:false,
-				allowFileManager : true,
+				allowFileManager : false,
+				allowFlashUpload: false,
 				formatUploadUrl: false,
 				uploadJson: '/upload.html',
+				imageTabIndex:1,
 				imageSizeLimit : '1MB',
+				fillDescAfterUploadImage:false,
 				imageFileTypes : '*.jpg;*.gif;*.png',
 				imageUploadLimit : 20,
 				filePostName : 'imgFile',
-				extraFileUploadParams : {"csrf_token":token,"isAjax":1},
+				flashWidth: 480,
+				flashHeight: 400,
+				extraFileUploadParams : {"csrf_token":token,"isAjax":1, 'size':1},
 				items : [
 					'fullscreen','source', 'preview','|', 'undo', 'redo', '|', 'selectall' ,
 					'cut', 'copy', 'paste', 'plainpaste', 'wordpaste', '|','lineheight','indent', 'outdent', 'subscript',
@@ -217,7 +164,7 @@ height:80px;
 					'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
 					'italic', 'underline', 'strikethrough', 'justifyleft', 'justifycenter', 'justifyright',
 					'justifyfull', 'insertorderedlist', 'insertunorderedlist',   '/',
-					'image','multiimage','media','table', 'hr', 'emoticons', 'baidumap', 
+					'image','multiimage','flash','table', 'hr', 'emoticons', 'baidumap', 
 					'anchor', 'link', 'unlink', 'template', 'removeformat'
 				],
 				afterFocus: function(){
@@ -226,14 +173,11 @@ height:80px;
 					Min.dom.pre(tar).removeAttribute('style');
 				}
 			}); 
-			window.editor.html("<?php echo $result['content'];?>");
+			window.editor.html("<?=($result['detail']['content']??'');?>");
 		});
 		
 		 
 		Min.event.bind('article_submit','click',function(e){
-			
-		
-				
 				var has_error = false;
 				var article_edit_error = function(id, message){
 					var tar = _$(id), next = Min.dom.next(tar);
@@ -305,18 +249,15 @@ height:80px;
 							csrf_token:_$('csrf_token').value
 						},
 						success: function(data){
-							
 							if(data.statusCode == 0) {
-								window.location.href = '/article.html'
+								//window.location.href = '/article/list.html'
 							}else{
 								_$('article_submit').setAttribute("sindex", 0);
-							
 							}
 						},
 						fail: function(){
 							_$('article_submit').setAttribute("sindex", 0);
 						}
-
 					});
 				}
 		});
@@ -324,9 +265,7 @@ height:80px;
 		var article_edit_init = function(e){
 				var tar = e.currentTarget;
 				Min.dom.next(tar).removeAttribute('style');				
-				tar.removeAttribute('style');
-			 
-				
+				tar.removeAttribute('style');	
 		};
 		
 		Min.event.bind('title','focus',article_edit_init);
@@ -336,165 +275,3 @@ height:80px;
 		
 	</script>
 	
-	
-	
-<script type="text/javascript">
-var province = [];
-var region = [];
-
-function diy_select(){
-	this.init.apply(this,arguments)
-};
-diy_select.prototype={
-
-	 init:function(opt) {
-	 
-		this.l=document.getElementById(opt.TTid).getElementsByTagName('ul');//容器
-		this.lengths=this.l.length;
-		var THAT = this;
-		// 省初始化
-		Min.css.addClass('diy_select_list_loading', THAT.l[0]);
-		JSONP.get( 'http://www.' + site_domain + '/region/id/0.html', {}, function(data){
-			Min.css.removeClass('diy_select_list_loading', THAT.l[0]);
-			if(data.statusCode == 0 ){
-				for(var i=0; i<data.body[0].length; i++) {
-				　var li = document.createElement("li");
-	　　　		　li.setAttribute("sid", data.body[0][i].id);
-			　　　li.innerHTML = data.body[0][i].name;
-			　　　THAT.l[0].appendChild(li);
-				}
-			}
-		 }); 
-
-		for (var i=0; i<this.lengths; i++) {
-			this.l[i].index=i;
-			this.l[i].style.display ='none';
-		}
-		Min.event.bind(opt.TTid,'mouseover',{handler:function(e){
-			Min.css.addClass(THAT.TTFcous, e.delegateTarget);
-		},selector:'li'});
-		
-		Min.event.bind(opt.TTid,'mouseout',{handler:function(e){
-			Min.css.removeClass(THAT.TTFcous, e.delegateTarget);
-		},selector:'li'});
-		
-		Min.event.bind(opt.TTid,'click',{handler:function(e){
-		
-			var index=this.parentNode.index;//获得列表
-			var key = this.getAttribute("sid");
-			var p = this.parentNode.parentNode;
-			//var origin = p.getElementsByTagName('input')[0].value;
-			var origin = _$('region_selected').value;
-			if (origin == key) return;
-			
-			if (key == 0) {
-				 rkey = this.getAttribute("rid");
-				if(rkey === null || rkey === undefined) return;
-				_$('region_selected').value = rkey;
-			} else {
-				_$('region_selected').value = key;
-			}
-			
-			
-			
-			p.getElementsByTagName('i')[0].innerHTML =this.innerHTML.replace(/^\s+/,'').replace(/\s+&/,'');
-			this.parentNode.style.display='none';
-			
-			Min.obj.each(THAT.l,function(a,k){
-				if(k > index){
-					a.innerHTML = '';
-					var li = document.createElement("li");
-	　　　			　li.setAttribute("sid", 0);
-					  var i = Min.dom.pre(a,'I');
-					  //ipt = Min.dom.pre(i);
-					  //ipt.value = 0;
-					  li.innerHTML = i.innerHTML = '--不限--';
-					  a.appendChild(li);  
-				}
-			});
-			
-			THAT.l[index].style.display ='none';
-			
-			if(key > 0 && index < THAT.lengths-1 ){
-				if(!region[key]){
-					Min.css.addClass('diy_select_list_loading', THAT.l[index+1]);
-					JSONP.get( 'http://www.' + site_domain + '/region/id/'+key+'.html', {}, function(data){
-						if(data.statusCode == 0 ){
-							region[key]= data.body[key];
-							Min.css.removeClass('diy_select_list_loading', THAT.l[index+1]);
-							THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key)
-							if(key > 0 &&  index < THAT.lengths-1 ){
-				
-								for(var i=0; i < region[key].length; i++){
-								　var li = document.createElement("li");
-					　　　		　li.setAttribute("sid", region[key][i].id);
-							　　　li.innerHTML = region[key][i].name;
-								  THAT.l[index+1].appendChild(li);
-								}	
-							}
-						}
-					}); 
-					
-				} else {
-					THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key);
-				for(var i=0; i < region[key].length; i++){
-				　var li = document.createElement("li");
-	　　　		　li.setAttribute("sid", region[key][i].id);
-			　　　li.innerHTML = region[key][i].name;
-				  THAT.l[index+1].appendChild(li);
-				
-				}
-				}
-				console.log('aaa');
-				console.log(THAT.l[index+1]);
-				THAT.l[index+1].style.display ='block';
-				
-			} else {
-				if(_$('search_form')) _$('search_form').submit(); 
-			}
-			
-			
-			Min.event.stopPropagation(e); 
-			return;
-			if(key > 0 && index < THAT.lengths-1 ){
-				THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key);
-				for(var i=0; i < region[key].length; i++){
-				　var li = document.createElement("li");
-	　　　		　li.setAttribute("sid", region[key][i].id);
-			　　　li.innerHTML = region[key][i].name;
-				  THAT.l[index+1].appendChild(li);
-				}	
-			}
-			 
-		},selector:'li'});
-		
-		Min.event.bind(document,'click',function() {
-			Min.obj.each(THAT.l,function(a){
-				a.style.display='none';
-			});
-		});
-		Min.event.bind(opt.TTid,'click',{handler:function(e){
-			 
-			var next = Min.dom.next(this);
-			if(next.tagName.toUpperCase() != 'UL'){
-				next = Min.dom.next(next);
-			}
-			next.style.display =  next.style.display == 'none'? 'block':'none';
-			var index = next.index;
-			
-			Min.obj.each(THAT.l,function(a,key){
-				if(key != index) a.style.display = 'none';
-			});
-
-			Min.event.stopPropagation(e); 	
-			
-		},selector:'i,span'});
-	 }
-
-}
-new diy_select({ 
-	TTid :'region',
-	TTFcous:'focus'
-});
-</script>
-  
