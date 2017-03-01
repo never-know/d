@@ -49,7 +49,12 @@ class Xss {
 	
 	protected static $allowedAttributes = array(
 		'embed' => [
-			'src', 'width', 'height', 'loop', 'autostart', 'quality','align'
+			'src', 'width', 'height', 'loop', 'autostart', 'quality','align'  // no   type and  allowScriptAccess
+		]
+	);
+	protected static $fixedAttributes = array(
+		'embed' => [
+			'type="application/x-shockwave-flash" allowScriptAccess="never"'  // fix type and  allowScriptAccess
 		]
 	);
 	
@@ -207,20 +212,11 @@ class Xss {
 		$xhtml_slash = $count ? ' /' : '';
 
 		// Clean up attributes.
-		// special for embed 
-		watchdog($elem);
-		if ($elem == 'embed') {
-			//$attrlist = preg_replace('/\s*(type|allowscriptaccess)\s*=\s*/i', ' ', $attrlist);
-			$attrlist .= ' type="application/x-shockwave-flash" allowscriptaccess="never"';
-		}
 		
 		$attr2 = implode(' ', $class::attributes($attrlist, $elem));
 		$attr2 = preg_replace('/[<>]/', '', $attr2);
 		$attr2 = strlen($attr2) ? ' ' . $attr2 : '';
-		
-		// 处理 embed 标签
-		
-
+		 
 		return "<$elem$attr2$xhtml_slash>";
 	}
 
@@ -234,13 +230,13 @@ class Xss {
    *   Cleaned up version of the HTML attributes.
    */
 	protected static function attributes($attributes, $elem) {
-		watchdog($attributes);
+		$elem = strtolower($elem) 
 		$attributes_array = array();
 		$mode = 0;
 		$attribute_name = '';
 		$skip = FALSE;
 		$skip_protocol_filtering = FALSE;
-
+		
 		while (strlen($attributes) != 0) {
 		  // Was the last operation successful?
 		  $working = 0;
@@ -349,6 +345,11 @@ class Xss {
 		if ($mode == 1 && !$skip) {
 		  $attributes_array[] = $attribute_name;
 		}
+		
+		if (!empty(self::$fixedAttributes[$elem])) {
+			$attributes_array[] = static::$fixedAttributes[$elem];
+		}
+		
 		return $attributes_array;
 	}
 
@@ -359,7 +360,7 @@ class Xss {
 			watchdog($value);
 			$tmp = array_map('trim', explode(':', $value, 2));
 			watchdog($tmp);
-			if (in_array(strtolower($tmp[0]), static::$styleTag) && preg_match('/^[a-zA-Z0-9_\-# ]+$/', $tmp[1])) {
+			if (in_array(strtolower($tmp[0]), static::$styleTag) && !empty($tmp[1])  && preg_match('/^[a-zA-Z0-9_\-# ]+$/', $tmp[1])) {
 				$r_r[] = "{$tmp[0]}:{$tmp[1]}";
 			}
 		}
