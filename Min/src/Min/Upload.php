@@ -8,7 +8,7 @@ class Upload
     protected $files;
     protected $rule = [
 		//'ext' => ['gif', 'jpg', 'jpeg', 'bmp', 'png'],
-		'ext' 		=> ['jpg', 'jpeg', 'png'],
+		'ext' 		=> ['jpg', 'jpeg', 'png', 'gif'],
 		'size' 		=> 1048576,
 		'base_path' => \PUBLIC_PATH,
 		'host' 		=> '//'. \PUBLIC_URL,
@@ -108,7 +108,7 @@ class Upload
      */
     public function checkImg()
     {
-        if (in_array($this->getInfo('ext'), ['jpg', 'jpeg', 'png'], true) && in_array($this->getImageType($this->getInfo('tmp_name')), [ \IMAGETYPE_JPEG, \IMAGETYPE_PNG], true)) {
+        if (in_array($this->getInfo('ext'), ['gif', 'jpg', 'jpeg', 'png'], true) && in_array($this->getImageType($this->getInfo('tmp_name')), [ \IMAGETYPE_GIF, \IMAGETYPE_JPEG, \IMAGETYPE_PNG], true)) {
             return true;
         }
         return false;

@@ -60,29 +60,28 @@ diy_select.prototype={
 					Min.css.addClass('diy_select_list_loading', THAT.l[index+1]);
 					JSONP.get( 'http://www.' + site_domain + '/region/id/'+key+'.html', {}, function(data){
 						if(data.statusCode == 0 ){
-							region[key]= data.body[key];
+							region[key]= data[key];
 							Min.css.removeClass('diy_select_list_loading', THAT.l[index+1]);
 							THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key)
 							if(key > 0 &&  index < THAT.lengths-1 ){
-				
-								for(var i=0; i < region[key].length; i++){
+								Min.obj.each(region[key], function(name, id){
 								　var li = document.createElement("li");
-					　　　		　li.setAttribute("sid", region[key][i].id);
-							　　　li.innerHTML = region[key][i].name;
+					　　　		　li.setAttribute("sid", id);
+							　　　li.innerHTML = name;
 								  THAT.l[index+1].appendChild(li);
-								}	
+								});	
 							}
 						}
 					}); 
 					
 				} else {
 					THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key);
-					for(var i=0; i < region[key].length; i++){
-						　var li = document.createElement("li");
-			　　　		　li.setAttribute("sid", region[key][i].id);
-					　　　li.innerHTML = region[key][i].name;
-						  THAT.l[index+1].appendChild(li);
-					}
+					Min.obj.each(region[key], function(name, id){
+					　	var li = document.createElement("li");
+		　　　		　	li.setAttribute("sid", id);
+				　　　	li.innerHTML = name;
+						THAT.l[index+1].appendChild(li);
+					});	
 				}
 				THAT.l[index+1].style.display ='block';
 				

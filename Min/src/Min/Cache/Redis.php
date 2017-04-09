@@ -11,7 +11,7 @@ class Redis{
 
 	public function  __construct($key = '')
 	{
-		$this->conf = get_config('redis');;
+		$this->conf = config_get('redis');;
 	}
 	 
 	public function init($key)

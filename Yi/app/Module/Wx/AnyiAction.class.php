@@ -11,7 +11,7 @@ class AnyiController extends \Min\Controller{
 	{
 		include VENDOR_PATH.'/wechat/TPWechat.class.php';
 
-		$options = get_config('anyitime');
+		$options = config_get('anyitime');
 
 		$this->weObj = new \TPWechat($options);
 	

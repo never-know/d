@@ -43,7 +43,7 @@ class Service
 			}
 		}
 		
-		watchdog($result);
+		//watchdog($result);
 		record_time('query end');
 		return $result;
 	}
@@ -66,7 +66,7 @@ class Service
 
 	final public function DBManager()
 	{		
-		$db_setting = get_config('backend');
+		$db_setting = config_get('backend');
 		$value = $db_setting[$this->db_key]?:$db_setting['default'];
 		return \Min\App::getService($value['bin'], $value['key']);
 	}
@@ -77,7 +77,7 @@ class Service
 			$this->cache_key = $key;
 		}
 		
-		$cache_setting = get_config('cache');
+		$cache_setting = config_get('cache');
 		$value = $cache_setting[$this->cache_key]??$cache_setting['default'];
 		return \Min\App::getService($value['bin'], $value['key']);
 	}

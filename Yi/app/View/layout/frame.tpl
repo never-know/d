@@ -2,7 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
 <title><?=$result['meta']['title'];?></title>
+<?php if(!empty($result['meta']['description'])) : ?>
+<meta name="description" content="<?=$result['meta']['description'];?>">
+<?php endif;?>
 <link rel="stylesheet" href="/public/css/reset.css">
 <link rel="stylesheet" href="/public/font/iconfont.css">
 <link rel="stylesheet" href="/public/css/yi.css">

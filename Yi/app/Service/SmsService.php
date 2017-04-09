@@ -20,7 +20,7 @@ class SmsService extends \Min\Service
 					
 	public function __construct()
 	{
-		$this->conf = get_config(get_config('sms'));
+		$this->conf = config_get(config_get('sms'));
 		if (empty($this->conf)) {	
 			throw new \Min\MinException('SMS参数未配置', 20105);
 		}
@@ -109,7 +109,7 @@ class SmsService extends \Min\Service
 		
 			$style = (($this->type == 'notice') ? '_notice' : '_yzm');
 			
-			$method = get_config('sms') .$style; 
+			$method = config_get('sms') .$style; 
 			
 			return $this->{$method}($phone, $code);
 		}		

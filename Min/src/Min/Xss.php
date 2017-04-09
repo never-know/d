@@ -212,8 +212,9 @@ class Xss {
 		$xhtml_slash = $count ? ' /' : '';
 
 		// Clean up attributes.
-		
-		$attr2 = implode(' ', $class::attributes($attrlist, $elem));
+		$a = $class::attributes($attrlist, $elem);
+		watchdog($a);
+		$attr2 = implode(' ', $a);
 		$attr2 = preg_replace('/[<>]/', '', $attr2);
 		$attr2 = strlen($attr2) ? ' ' . $attr2 : '';
 		 
@@ -230,7 +231,7 @@ class Xss {
    *   Cleaned up version of the HTML attributes.
    */
 	protected static function attributes($attributes, $elem) {
-		$elem = strtolower($elem) 
+		$elem = strtolower($elem);
 		$attributes_array = array();
 		$mode = 0;
 		$attribute_name = '';
@@ -347,7 +348,7 @@ class Xss {
 		}
 		
 		if (!empty(self::$fixedAttributes[$elem])) {
-			$attributes_array[] = static::$fixedAttributes[$elem];
+			$attributes_array[] = implode(' ', static::$fixedAttributes[$elem]);
 		}
 		
 		return $attributes_array;

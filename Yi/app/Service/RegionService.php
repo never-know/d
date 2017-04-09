@@ -5,58 +5,48 @@ use Min\App;
 
 class RegionService extends \Min\Service
 {
-	public function node($id)
+	/*
+	 * 	获取 id 所有子元素, 按 id 升序 
+	 *
+	 *	parameter: id
+	 *　result : [id => [[ID, SHORT_NAME, PARENT_ID], ...]]
+	 *
+	 */
+	 
+	public function childrenNode($id)
 	{
 		$id = intval($id);
-		$region = $this->childrenNode($id);
+		$sql = 'SELECT id, short_name as name FROM {region} WHERE parent_id  = '. $id. ' ORDER BY id ASC';
+		$region	= $this->query($sql);
 		return $this->success([$id =>$region]);
 	}	
 	
-	private function allChildrenNode($id)
+	/*
+	 * 	region 表全部数据, 按 parent_id, id 升序 
+	 *
+	 *　result : [id => short_name, ...]
+	 *
+	 */
+	public function allNode()
 	{
-		$sql = 'SELECT id, name, parent_id FROM {region} WHERE parent_id > '. ($id - 1) .' AND parent_id <' .($id + 10000) .' ORDER BY parent_id asc , sort asc';
+		$sql = 'SELECT id, short_name, parent_id FROM {region} ORDER BY parent_id ASC , id ASC';
 		$result	= $this->query($sql);
 		
 		$region = [];
-		foreach ($result as $key => &$value) {
-			$parent_id = $value['parent_id'] ;
-			unset($value['parent_id']);
-			$region[$parent_id][] = $value;	
+		foreach ($result as $key => $value) {
+			$region[$value['id']] = $value;	
 		}
-		return $region;
-	
-	}
-	private function childrenNode($id)
-	{
-		$sql = 'SELECT id, short_name as name FROM {region} WHERE parent_id  = '. $id. ' order by id asc';
-		$result	= $this->query($sql);
-		return $result;
-	}	
-	  
-	public function nodeRange($id)
-	{
-		//  支持 4，3，2 级ID , 可能Bug： id > 100000000
-		$id = intval($id);
-		// 四级目录
-		if ($id > 100000000) {
-			$sql = 'SELECT e.id ,a.id AS pid, b.id AS ppid,  c.id AS pppid FROM yi_region e 
-				LEFT JOIN yi_region a ON a.id = e.parent_id
-				LEFT JOIN yi_region b ON b.id = a.parent_id  
-				LEFT JOIN yi_region c ON c.id = b.parent_id   
-				WHERE  e.id = ' . $id;	
-		} elseif ($id%10000 > 0) {
-			// 二三级目录
-			$sql = 'SELECT a.id, a.name, max(b.id) AS max1, min(b.id) AS min1, max(c.id) AS max1,  min(c.id) AS min1 FROM {region} a 
-				LEFT JOIN {region} b ON b.parent_id = a.id
-				LEFT JOIN {region} c ON c.parent_id = b.id
-				WHERE a.id =  ' . $id;
-		} 
-		
-		$sql .= ' LIMIT 1';
-		$result	= $this->query($sql);
-		return $result;
+		return $this->success($region);
 	}
 	
+	/*
+	 * 	获取 id 所有自己, 父级, 父父级等元素的子元素, 按parent_id, id 升序 
+	 *
+	 *	parameter: id
+	 *　result : [[ID, SHORT_NAME, PARENT_ID], ...]
+	 *
+	 */
+	 
 	public function nodeChain($id)
 	{
 		$id = intval($id);	
@@ -82,16 +72,13 @@ class RegionService extends \Min\Service
 					$filter = " parent_id in ({$in}) ";
 				}
 			}
-		}else {
+		} else {
 			$filter = ' parent_id = 0 ';
 		}
 		
-		$sql2 = 'SELECT id, short_name as name, parent_id FROM {region} WHERE '. $filter .' ORDER BY parent_id ASC';
+		$sql2 = 'SELECT id, short_name, parent_id FROM {region} WHERE '. $filter .' ORDER BY parent_id ASC, id ASC';
 		$result	= $this->query($sql2);
 		return $this->success($result);
 	}
-	
-	 
- 
 	
 }

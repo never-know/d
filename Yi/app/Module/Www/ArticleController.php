@@ -1,18 +1,22 @@
 <?php
 namespace App\Module\Www;
 
+use App\Traits\RegionTrait;
 use Min\App;
 
 class ArticleController extends \Min\Controller
-{
-	public function onConstruct(){
+{	
+	use RegionTrait;
+	
+	public function onConstruct()
+	{
 		require CONF_PATH .'/keypairs.php';
 	} 
 
 	public function list_get()
 	{	 
 		$meta = ['menu_active' => 'article_list', 'title' =>'文字列表'];
-		$region_id = intval($_GET['region']);
+		$region_id = intval($_GET['region']??0);
 		
 		$region_list = $this->region_list($region_id);
 		
@@ -30,6 +34,8 @@ class ArticleController extends \Min\Controller
 				} else {
 					$region_chain[] = $region_id;
 				}
+			} elseif ($end != $region_id) { // 最后一级ID < 100000000
+				$region_chain[] = $region_id;
 			}
 		}
 		
@@ -43,13 +49,16 @@ class ArticleController extends \Min\Controller
 	
 	public function detail_get()
 	{
-		$id = short_int_convent(App::getArgs());
+		$id = \str2int(App::getArgs());
 		
 		if(!$id) {
 			$this->error('参数错误', 1);
 		}
 		
 		$result = $this->request('\\App\\Service\\Article::detail', $id);
+		$result['body']['meta'] = ['menu_active' => 'article_list', 'title' => $result['body']['title'], 'description' => $result['body']['desc']];
+		 
+		$this->response($result['body']);
 	}
 	
 	public function add_get()
@@ -70,6 +79,25 @@ class ArticleController extends \Min\Controller
 			'content' 	=> ''
 		];
 
+		$this->response($result);
+	}
+	
+	public function edit_get()
+	{
+		$id = \str2int(App::getArgs());
+		
+		if(!$id) {
+			$this->error('参数错误', 1);
+		}
+		
+		$article = $this->request('\\App\\Service\\Article::detail', $id);
+		$result['detail'] 				= $article['body'];
+		$result['region_list'] 			= $this->region_list($article['body']['region']);
+		$result['params']['region'] 	= array_keys($result['region_list']);
+		
+		// last level region need processed special
+		if (0 != $article['body']['region']%1000) $result['params']['region'][] = $article['body']['region'];
+		$result['meta'] 				= ['menu_active' => 'article_list', 'title' =>'编辑文字'];
 		$this->response($result);
 	}
 	
@@ -95,10 +123,17 @@ class ArticleController extends \Min\Controller
 		$param['start'] 	= strtr($_POST['date_start'], ['-' =>'']);
 		$param['end'] 		= strtr($_POST['date_end'], ['-' =>'']);
 		$param['region'] 	= intval($_POST['region']);
+		
+		// 判断 region Id 是否合法
+		$region_list		= $this->region_list($param['region']);
+		if (!(isset($region_list[$param['region']]) || ($end = end($region_list) && !empty($end[$param['region']])))) {
+			$this->error('无效的地区ID', 1);
+		}
+		
 		$param['tag'] 		= intval($_POST['tag']);
 		$param['content'] 	= \Min\Xss::filter($_POST['content']);
 		
-		if (!empty($_POST['id'])) $param['id'] = intval($_POST['id']);
+		if (!empty($_POST['id'])) $param['id'] = str2int($_POST['id']);
 
 		$this->response($this->request('\\App\\Service\\Article::add', $param));
 	}
@@ -106,39 +141,4 @@ class ArticleController extends \Min\Controller
 	public function test_get(){
 		$this->response();
 	}	
-
-	private function region_list($region_id){
-	
-		$region_key =  ($region_id > 100000000) ? intval($region_id/1000) : $region_id;
-		$key = 'regionChain_'. $region_key;
-		$cache = $this->cache('region');
-		
-		if ($region_id > 0) {
-			$region_list = $cache->get($key);
-		}
-		
-		if (empty($region_list)) {
-		
-			$region_list = $cache->get('regionChain_0');
-			
-			if (empty($region_list)) {
-				$region_list0 = $this->request('\\App\\Service\\Region::nodeChain', 0);
-				foreach ($region_list0['body'] as $v) {
-					$region_list[0][$v['id']] = $v;
-				}
-				$cache->set('regionChain_0', $region_list);
-			}
-			if ($region_id > 0) {
-				
-				$node_chain = $this->request('\\App\\Service\\Region::nodeChain', $region_key);
-				if  (!empty($node_chain['body'])) {
-					foreach ($node_chain['body'] as  $value) {
-						$region_list[$value['parent_id']][$value['id']] = $value;
-					}
-					$cache->set($key, $region_list);
-				}
-			}
-		}
-		return $region_list;
-	}
 }

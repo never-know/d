@@ -22,7 +22,7 @@ class MysqliPDO
 
 	public function  __construct($db_key = '') 
 	{	
-		$this->conf = get_config('mysqlpdo');
+		$this->conf = config_get('mysqlpdo');
 	}
 	 
 	public function init($active_db) 

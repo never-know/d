@@ -14,7 +14,7 @@ class FileCache
 	
 	public function  __construct($db_key = '') 
 	{
-		$this->option = get_config('file_cache');	
+		$this->option = config_get('file_cache');	
 	}
 	
 	public function init($key)
@@ -73,7 +73,7 @@ class FileCache
 		$tmp = tempnam($dir, 'swap');
 		if (file_put_contents($tmp, safe_json_encode(['data'=>$data, 'expiration' => $expiration]))) {
 			if (rename($tmp,$file_name)) {
-				unlink($tmp);
+				if (is_file($tmp)) unlink($tmp);
 				return true;
 			}
 			if (is_file($file_name)) unlink($file_name);

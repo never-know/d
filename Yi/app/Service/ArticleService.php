@@ -8,19 +8,35 @@ class ArticleService extends \Min\Service
 	public function add($param)
 	{
 		if (!empty($param['id'])) {
-			return $this->eidt($param);
+			return $this->edit($param);
 		}
 		
 		$param['region'] = intval($param['region']);
 		if ($param['region'] < 100000000) $param['region'] *= 1000;
 		
-		$sql = 'INSERT INTO {article} (`tag`, `start`, `end`, `region`, `title`, `desc`, `icon`) VALUES ('.
-			implode(',', [intval($param['tag']), intval($param['start']), intval($param['end']), $param['region'], ':title', ':desc', ':icon)']);
+		$set = [
+			'tag' 		=> intval($param['tag']),
+			'start' 	=> intval($param['start']), 
+			'end' 		=> intval($param['end']), 
+			'region' 	=> intval($param['region']),
+			'title' 	=> ':title', 
+			'desc' 		=> ':desc',
+			'icon' 		=> ':icon'
+		];
+		
+		$bind = [
+			':title' 	=> $param['title'], 
+			':desc'		=> $param['desc'],
+			':icon' 	=> $param['icon']
+		];
+		
+		$sql = 'INSERT INTO {article} (`' . implode('`, `', array_keys($set)). '`) VALUES ('.
+			implode(',', $set);
 
 		try {
 			$this->DBManager()->transaction_start();
 			$this->DBManager()->inTransaction();
-			$id = $this->query($sql, [':title' => $param['title'], ':desc' => $param['desc'], ':icon' => $param['icon']]);
+			$id = $this->query($sql, $bind);
 			$sql2 = 'INSERT INTO {article_content} (id, content) values ('. intval($id). ', :content )';
 			$this->query($sql2, [':content' => $param['content']]);
 			$this->DBManager()->transaction_commit();
@@ -66,8 +82,7 @@ class ArticleService extends \Min\Service
 			return $this->success();
 		} else {
 			return $this->error('更新失败', 1);
-		}
-		
+		}		
 	}
 
 	
@@ -89,9 +104,9 @@ class ArticleService extends \Min\Service
 				}
 				
 				if (is_numeric($p['tag'])) {
-					$param['filter'][] = 'tag = ' . $p['tag'];
+					$param['filter']['tag'] = 'tag = ' . $p['tag'];
 				} else {
-					$param['filter'][] = 'tag  in  (' . $p['tag']. ')';	
+					$param['filter']['tag'] = 'tag  in  (' . $p['tag']. ')';	
 				}
 				
 				$param_processed['tag'] = $tag;
@@ -100,7 +115,7 @@ class ArticleService extends \Min\Service
 				return $this->error('参数错误', 1);
 			} 
 		}
-
+		/*
 		if (!empty($p['region']) && ($region = intval($p['region'])) && ($region > 1)) {
 			
 			if ($region < 100000000) $region *= 1000;
@@ -119,6 +134,30 @@ class ArticleService extends \Min\Service
 				$param['filter'][] = '(region = 0 OR  region  =' . $region .')';
 			}	
 		}
+		*/
+		
+		$param['filter']['region'] = 'region = 0';
+		
+		if (!empty($p['region']) && ($region = intval($p['region'])) && ($region > 1)) {
+			
+			if ($region < 100000000) $region *= 1000;
+			// 不限 and self 
+			$param['filter']['region'] .= ' OR region = ' . $region;
+			// 省级 
+			if ( 0 != $region%10000000) {
+				// 非省级的要加上省ID
+				$param['filter']['region'] .= ' OR region = '. (intval($region/10000000) * 10000000);
+				if (0 != $region%100000) {	
+					// 非市级的要加上市ID
+					$param['filter']['region'] .= ' OR  region = '. (intval($region/100000) * 100000);
+					if (0 != $region%1000) {
+						$param['filter']['region'] .= ' OR  region = '. (intval($region/1000) * 1000);
+					}
+				}
+			}
+			
+			$param['filter']['region'] = '(' . $param['filter']['region']. ')';
+		}
 		
 		if (!empty($p['author'])) {
 			$param['filter'][] = 'author = ' . intval(session_get('UID'));
@@ -133,7 +172,7 @@ class ArticleService extends \Min\Service
 					$param_processed['order'] = 1;
 					break;
 				case 2 :
-					$param['order'] = ' ORDER BY ctime DESC ';
+					$param['order'] = ' ORDER BY start DESC ';
 					$param_processed['order'] = 2;
 					break;
 				case 3 :
@@ -156,6 +195,11 @@ class ArticleService extends \Min\Service
 		if (intval($number[0]['number']) > 0) { 
 			$sql = 'SELECT * FROM {article} ' . $filter . $param['order'] . $param['limit'];
 			$result['list'] = $db->query($sql, []);
+			foreach ($result['list'] as &$value) {
+				$value['region_name'] = \region_get($value['region']);
+				$value['tag_name'] = \article_tags($value['tag']);
+				$value['id_name'] = \int2str($value['id']);
+			}
 		} else {
 			$result['list'] = [];
 		}

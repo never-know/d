@@ -20,7 +20,7 @@ class MysqliNew
 
 	public function  __construct($db_key = '') 
 	{	
-		$this->conf = get_config('mysql');
+		$this->conf = config_get('mysql');
 		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 	}
 	 

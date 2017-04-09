@@ -91,7 +91,7 @@ function ip_address()
 	if (!isset($ip)) {		
 		$ip_address = $_SERVER['REMOTE_ADDR'];
 
-		if (1 == get_config('reverse_proxy')) {
+		if (1 == config_get('reverse_proxy')) {
    
 			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 				// If an array of known reverse proxy IPs is provided, then trust
@@ -108,7 +108,7 @@ function ip_address()
 				$forwarded[] = $ip_address;
 
 				// Eliminate all trusted IPs.
-				$untrusted = array_diff($forwarded, get_config('reverse_proxy_addresses', []));
+				$untrusted = array_diff($forwarded, config_get('reverse_proxy_addresses', []));
 
 				// The right-most IP is the most specific we can trust.
 				$ip_address = array_pop($untrusted);
@@ -155,10 +155,10 @@ function save_gz($data, $filename)
 function int2str($value)
 {	
 	$value = intval($value);
-	if ($value > 0 && $value < \PHP_INT_MAX) {	
+	if ($value > -1 && $value < \PHP_INT_MAX) {	
 		return base_convert($value, 10, 36);
 	} else {
-		throw new \Exception(1, '整型值错误');
+		throw new \Exception('整型值错误', 1);
 	}
 	 
 }
@@ -245,7 +245,7 @@ function get_token($value = '', $seed = false)
 	if (false === $seed) {
 		 $_SESSION[$form_id] = mt_rand(111111, 999999);
 	}
-	$key = session_id() . get_config('private_key') .$_SESSION[$form_id]. get_config('hash_salt');
+	$key = session_id() . config_get('private_key') .$_SESSION[$form_id]. config_get('hash_salt');
 	$hmac = base64_encode(hash_hmac('sha256', $value, $key, TRUE));
 	return strtr($hmac, array('+' => '-', '/' => '_', '=' => ''));
 }
@@ -261,6 +261,7 @@ function check_url($uri)
 {
     $uri = html_entity_decode($uri, ENT_QUOTES, 'UTF-8');
     return check_plain(str_replace(['(', ')', '%28', '%29'], '', strip_dangerous_protocols($uri))); 
+   // return check_plain( strip_dangerous_protocols($uri)); 
 }
 // 安全的在html中输出字符串	
 function check_plain($text) 
@@ -320,13 +321,16 @@ function watchdog($msg, $channel = 'debug', $level = 'DEBUG',  $extra = [])
 	App::getService('logger')->log($msg, $level, $channel, $extra);		
 }
 
-function get_config($section, $default = null)
+function config_get($section, $default = null)
 {
 	static $conf;
-	if(empty($conf)) {
+	if (empty($conf)) {
 		require CONF_PATH.'/settings.php';
 	}
-	return $conf[$section]?:$default;
+	if (empty($conf[$section]) && isset($default)) {
+		throw new \Exception('未定义的配置节点' . $section, 1);
+	}
+	return $conf[$section] ?? $default;
 }
 
 function site_offline() 
@@ -349,18 +353,16 @@ function request_not_found($code, $message = '请求失败', $redirect = '')
 	$result = (!empty($url) && preg_match('!^http[s]?://[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? ['url'=> $url, 'title'=> '上一页'] : ['url'=> HOME_PAGE, 'title'=> '首页'];
 	if ($code == 500) {
 		$result['message'] = '<p>
-           <strong>服务器遇到一个问题...</strong>
-         </p>
-         <p>懵啦。。。麻烦您再来一次</p>
+        <strong>服务器遇到一个问题...</strong>
+        </p>
+        <p>懵啦。。。麻烦您再来一次</p>
 		<hr> ';
 	} else {
-		 
-			$result['message'] = $message ?: ' <p>
-			   <strong>页面找不到了</strong>
-			 </p>
-			 <p>页面可能已经被移出，或者您请求的链接存在错误</p>
-			 <hr>';
-		 
+		$result['message'] = $message ?: ' <p>
+		   <strong>页面找不到了</strong>
+		 </p>
+		 <p>页面可能已经被移出，或者您请求的链接存在错误</p>
+		 <hr>'; 
 	}	
 	$result['template_path'] = '/layout/404';
 	view($result);
@@ -373,8 +375,15 @@ function app_tails()
 	// fatal errors 
 	$error = error_get_last(); 
 	if (isset($error['type'])) {
-		$error['title'] = 'Fatal Error Catched By app_tails ';
-		$message = error_message_format($error);
+		$message = 'Fatal Error Catched By app_tails: '
+		.	$error['message']
+		.	' in file '
+		.	$error['file']
+		.	'  at line '
+		.	$error['line']
+		.	' error code/type: '
+		.	$error['type'];
+		
 		watchdog($message, 'Fatal_Error', 'CRITICAL', debug_backtrace());
 	}
 	App::getService('logger')->record();
@@ -448,7 +457,7 @@ function  record_time($tag)
 function result_page($total, $page_size, $current_page){
 	return array(
 		'page_total' 	=> ceil($total/$page_size),
-		'current_page' 	=> $current_page,
+		'current_page' 	=> $current_page?:1,
 		'data_total' 	=> $total
 	);
 }
@@ -456,7 +465,7 @@ function plain_build_query($params, $separator){
 	
 	$joined = [];
 	foreach($params as $key => $value) {
-	   $joined[] = "$key=$value";
+	   $joined[] = "`$key`=$value";
 	}
 	return implode($separator, $joined);
 }

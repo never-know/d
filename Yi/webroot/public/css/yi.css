@@ -11,7 +11,7 @@ display:none;
 a,a:hover{color:#333;}
 
 .breadcrumb {
-    background: #f1f1f1;
+    background: #e8e8e8;
     margin: 10px 0 16px;
     padding: 2px;
 }
@@ -641,7 +641,8 @@ margin-right:22px;
 
 #article_list li{
 overflow:hidden;
-padding:8px 0 4px 30px;
+padding:8px 0 6px 30px;
+border-bottom:1px solid #e7e7e7;
 }
 #article_list a, #article_list span{
 float:left;
@@ -655,11 +656,14 @@ font-weight: normal;
 width:16%;
 }
 #article_list a.article_list_title{
-	width:56%;
+	width:50%;
     min-width: 380px;
     max-width: 580px;
 }
 #article_list .view_number{
+   width:10%;
+}
+#article_list .region{
    width:10%;
 }
 #article_list .collect{
@@ -668,7 +672,7 @@ width:30px;
 
 .filter{
 margin-top: 24px;
-height: 106px;
+height: 102px;
 border-top:1px solid #e3e3e3;
 }
 .filter dl{
@@ -676,9 +680,9 @@ border-bottom:1px solid #e3e3e3;
 padding:2px 0 2px 12px;
 }
 .filter dt{
-width: 10%;
-font-size: 16px;
-padding:2px 22px;
+width: 11%;
+font-size: 14px;
+padding:2px 12px 2px 6px;
 float:left;
 }
 .filter dt, .filter dl, .filter dd{
@@ -726,7 +730,7 @@ margin:0 10px;
 float: right;
 overflow:hidden;
 border-bottom:none;
-padding:2px 12px;
+padding:0 12px 2px;
 }
 .filter_order span{
 border-left:1px solid #e3e3e3;
@@ -744,8 +748,8 @@ color: white;
 	margin:20px 0;
 }
 #article_edit dt, #article_edit dd label{ 
-    line-height: 34px;
-    height: 34px;
+    line-height: 38px;
+    height: 38px;
 }
 #article_edit dt{
 	width: 80px;
@@ -764,7 +768,7 @@ color: white;
 	float:left;
 }
 #article_edit dd input{
-	height: 20px;
+	height: 24px;
 }
 #article_edit .tcal , #article_edit .ar_text_input{
 width: 400px;
@@ -780,23 +784,36 @@ float:left;
 }
 
 #article_edit  .ke-container{
-padding: 6px 22px;
+padding: 6px 12px;
 }
 #article_edit .single_upload .ke-upload-file{
 cursor:pointer;
+}
+
+
+
+
+#article_edit #img1 {
+display:block;
 }
 #article_edit .tag span {
 	float:left;
 	display:block;
 	margin-right:20px;
+	height:38px;
+	line-height:38px;
+ 
 	}
 #article_edit .tag span input, #article_edit .tag span label{
     float: left;
     display: block;
-    line-height: 32px;
-    height: 32px;
+    line-height: 38px;
+    height: 38px;
     margin-left: 4px;
     *margin-left: 2px;
+}
+#article_edit .diy_select{
+height:32px;line-height:32px;
 }
  
  /**** region select ***/
@@ -820,5 +837,201 @@ background-position:center;
 height:80px;
 }
  
+/* kindeditor simple ***********/
+
+/* container */
+.ke-container-simple {
+	display: block;
+	border: 1px solid #CCC;
+	background-color: #FFF;
+	overflow: hidden;
+}
+/* toolbar */
+.ke-container-simple .ke-toolbar {
+	border-bottom: 1px solid #CCC;
+	background-color: #FFF;
+	padding: 2px 5px;
+	overflow: hidden;
+}
+.ke-container-simple .ke-toolbar .ke-outline {
+	border: 1px solid #FFF;
+	background-color: transparent;
+	margin: 1px;
+	padding: 1px 2px;
+	font-size: 0;
+	line-height: 0;
+	overflow: hidden;
+	cursor: pointer;
+}
+.ke-container-simple .ke-toolbar .ke-on {
+	border: 1px solid #5690D2;
+}
+.ke-container-simple .ke-toolbar .ke-selected {
+	border: 1px solid #5690D2;
+	background-color: #E9EFF6;
+}
+.ke-container-simple .ke-toolbar  .ke-disabled {
+	cursor: default;
+}
+/* statusbar */
+.ke-container-simple .ke-statusbar {
+	position: relative;
+	background-color: #FFF;
+	border-top: 1px solid #CCCCCC;
+	font-size: 0;
+	line-height: 0;
+	*height: 12px;
+	overflow: hidden;
+	text-align: center;
+	cursor: s-resize;
+}
+/* menu */
+.ke-menu-simple {
+	border: 1px solid #A0A0A0;
+	background-color: #FFF;
+	color: #222222;
+	padding: 2px;
+	font-family: "sans serif",tahoma,verdana,helvetica;
+	font-size: 12px;
+	text-align: left;
+	overflow: hidden;
+}
+.ke-menu-simple .ke-menu-item {
+	border: 1px solid #FFF;
+	background-color: #FFF;
+	color: #222222;
+	height: 24px;
+	overflow: hidden;
+	cursor: pointer;
+}
+.ke-menu-simple .ke-menu-item-on {
+	border: 1px solid #5690D2;
+	background-color: #FFF;
+}
+/* colorpicker */
+.ke-colorpicker-simple {
+	border: 1px solid #A0A0A0;
+	background-color: #FEFEFE;
+	color: #222222;
+	padding: 2px;
+}
+.ke-colorpicker-simple .ke-colorpicker-cell {
+	font-size: 0;
+	line-height: 0;
+	border: 1px solid #FEFEFE;
+	cursor: pointer;
+	margin:3px;
+	padding:0;
+}
+.ke-colorpicker-simple .ke-colorpicker-cell-top {
+	font-family: "sans serif",tahoma,verdana,helvetica;
+	font-size: 12px;
+	line-height: 24px;
+	border: 1px solid #FEFEFE;
+	cursor: pointer;
+	margin:0;
+	padding:0;
+	text-align: center;
+}
+.ke-colorpicker-simple .ke-colorpicker-cell-on {
+	border: 1px solid #5690D2;
+}
+.ke-colorpicker-simple .ke-colorpicker-cell-selected {
+	border: 1px solid #2446AB;
+}
  
+/**** cal ****/
+
+
+/* input box in default state */ 
+.tcalInput {
+	background: url('../img/cal.gif') 100% 50% no-repeat;
+	padding-right: 20px;
+	cursor: pointer;
+}
+
+/* additional properties for input boxe in activated state, above still applies unless in conflict */
+.tcalActive {
+	background-image: url('../img/no_cal.gif');
+}
+/* container of calendar's pop-up */
+#tcal {
+	position: absolute;
+	visibility: hidden;
+	z-index: 100;
+	width: 260px;
+	background-color: white;
+	margin-top: 2px;
+	padding: 0 2px 2px 2px;
+	border: 1px solid silver;
+
+	-moz-box-shadow: 3px 3px 4px silver;
+	-webkit-box-shadow: 3px 3px 4px silver;
+	box-shadow: 3px 3px 4px silver;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='silver')";
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='silver');
+}
+
+/* table containing navigation and current month */
+#tcalControls {
+	border-collapse: collapse;
+	border: 0;
+	width: 100%;
+}
+#tcalControls td {
+	border-collapse: collapse;
+	border: 0;
+	padding: 0;
+	width: 16px;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+#tcalControls th {
+	border-collapse: collapse;
+	border: 0;
+	padding: 0;
+	line-height: 25px;
+	font-size: 10px;
+	text-align: center;
+	font-family: Tahoma, Geneva, sans-serif;
+	font-weight: bold;
+	white-space: nowrap;
+}
+#tcalPrevYear { background-image: url('../img/prev_year.gif'); }
+#tcalPrevMonth { background-image: url('../img/prev_mon.gif'); }
+#tcalNextMonth { background-image: url('../img/next_mon.gif'); }
+#tcalNextYear { background-image: url('../img/next_year.gif'); }
+
+/* table containing week days header and calendar grid */
+#tcalGrid {
+	border-collapse: collapse;
+	border: 1px solid silver;
+	width: 100%;
+}
+#tcalGrid th {
+	border: 1px solid silver;
+	border-collapse: collapse;
+	padding: 3px 0;
+	text-align: center;
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 10px;
+	background-color: gray;
+	color: white;
+}
+#tcalGrid td {
+	border: 0;
+	border-collapse: collapse;
+	padding: 2px 0;
+	text-align: center;
+	font-family: Tahoma, Geneva, sans-serif;
+	width: 14%;
+	font-size: 11px;
+	cursor: pointer;
+}		
+#tcalGrid td.tcalOtherMonth { color: silver; }
+#tcalGrid td.tcalWeekend { background-color: #ACD6F5; }
+#tcalGrid td.tcalToday { border: 1px solid red; }
+#tcalGrid td.tcalSelected { background-color: #FFB3BE; }		
+
  
