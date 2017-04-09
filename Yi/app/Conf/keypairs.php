@@ -24,9 +24,33 @@ function region_get($region_id)
 	}
 	if (empty($region)) {
 		if (0 == $run) {
-			register_shutdown_function(function(){
-				file_get_contents(HOME_PAGE.'/region/cache.html');
-			});
+		 
+			$time = microtime(true);
+			 
+			$context = stream_context_create(array(
+				 'http' => array(
+				  'timeout' => 1
+				 ) 
+			));  
+
+			file_get_contents(HOME_PAGE.'/region/cache.html', 0, $context);
+			 /*
+			$n  =2;
+			$a = 'error';
+			$fp = fsockopen('www.yi.com', 80,$n,$a, 1);
+			if ($fp) {
+				 
+				$out = "GET /region/cache.html HTTP/1.1\r\n";
+				$out .= "Host: www.yi.com\r\n";
+				$out .= "Connection: Close\r\n\r\n";
+				//stream_set_timeout($fp, 1, 1);
+				fwrite($fp, $out);
+				fclose($fp);
+			}
+			*/
+			watchdog(microtime(true)-$time);
+			 
+			
 			$run = 1;
 		}
 		return '加载中...';

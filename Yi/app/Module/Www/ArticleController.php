@@ -139,6 +139,6 @@ class ArticleController extends \Min\Controller
 	}
 	
 	public function test_get(){
-		$this->response();
+		phpinfo();
 	}	
 }
