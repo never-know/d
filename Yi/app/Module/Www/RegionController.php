@@ -45,7 +45,7 @@ class RegionController extends \Min\Controller
 
 		$cache->set('regionChain_0', [ 0 => $region[0]]);
 		$cache->set('regionAll', $regionAll);
-		
+		 
 		foreach ($nodes['body'] as $key => $value) {
 			if ($key < 100000000) {
 				$data = [ 0 => $region[0]];

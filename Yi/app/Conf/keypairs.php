@@ -26,29 +26,27 @@ function region_get($region_id)
 		if (0 == $run) {
 		 
 			$time = microtime(true);
-			 
+			/*
 			$context = stream_context_create(array(
-				 'http' => array(
-				  'timeout' => 1
-				 ) 
+				'http' => array(
+					'timeout' => 1
+				) 
 			));  
 
 			file_get_contents(HOME_PAGE.'/region/cache.html', 0, $context);
-			 /*
-			$n  =2;
-			$a = 'error';
-			$fp = fsockopen('www.yi.com', 80,$n,$a, 1);
-			if ($fp) {
-				 
+			*/
+			 
+			$fp = fsockopen('www.yi.com', 80);
+			if ($fp) { 
 				$out = "GET /region/cache.html HTTP/1.1\r\n";
 				$out .= "Host: www.yi.com\r\n";
 				$out .= "Connection: Close\r\n\r\n";
-				//stream_set_timeout($fp, 1, 1);
+				stream_set_timeout($fp, 0, 1);
 				fwrite($fp, $out);
 				fclose($fp);
 			}
-			*/
-			watchdog(microtime(true)-$time);
+			 
+			watchdog(microtime(true)*1000-$time*1000);
 			 
 			
 			$run = 1;

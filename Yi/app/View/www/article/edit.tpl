@@ -2,7 +2,7 @@
 	<div class="breadcrumb">
 		<span style="margin-left:28px;">文案＞</span><label class="subtitle">添加文案</label>
 	</div> 
-	<form name = "article_edit" id="article_edit" style="width:700px;overflow:hidden;" onsubmit="return false;">
+	<form name="article_edit" id="article_edit" style="width:700px;overflow:hidden;" onsubmit="return false;" target="iframe" action="/article/preview.html" method="post">
 		<dl>
 			<dt>标题：</dt> 
 			<dd><input type="text" name="title" maxlength = "30" id="title" class="ar_text_input"　
@@ -85,15 +85,17 @@
 		
 		<dl>
 			<dt>内容：</dt> 
-			<dd id="richtext"><textarea id="content" name="content" style="width:422px;height:500px;visibility:hidden;" >
+			<dd id="richtext"><textarea id="content" style="width:422px;height:500px;visibility:hidden;" >
 			</textarea>
 			<label>内容10-60000个字符</label>
 			</dd>
 		</dl>
-		<dl>
-			<input type="hidden" value="<?=get_token('www_article_edit');?>" name="csrf_token" id="csrf_token" />
+		<dl id="buttons">
+			<input type="hidden" name="csrf_token" id="csrf_token" />
+			<input type="hidden"  name="content" id="content_preview" />
 			<input type="hidden" value="<?=(int2str($result['detail']['id']));?>" name="id" id="article_id" />
-			<button href="javascript:;" style="width:120px;" type ="submit" class="login-btn" id="article_submit"  sindex="0"  >提交</a></button>
+			<button href="javascript:;" style="width:120px;" type ="submit" class="login-btn" id="article_submit"  sindex="0" token="<?=get_token('www_article_edit');?>">提交</a></button>
+			<button href="javascript:;" style="width:120px;" type ="submit" class="login-btn" id="article_preview"  sindex="0" token="<?=get_token('www_article_preview');?>">预览</a></button>
 		</dl>
 
 	</form>
@@ -103,7 +105,8 @@
 <script charset="utf-8" src="/public/kindeditor-4.1.10/kindeditor-min.js"></script>
 <script type="text/javascript" src="/public/js/tcal.js"></script> 
 <script type="text/javascript" src="/public/js/region.js"></script> 
-	
+<script type="text/javascript" src="/public/js/dialog.js"></script> 
+<iframe name="iframe" id="iframe" src="http://www.yi.com" ></iframe>	
 <script>
 	KindEditor.lang({
 	source : 'HTML代码',
@@ -402,8 +405,10 @@ KindEditor.ready(function(K) {
 });
 		
 		 
-Min.event.bind('article_submit','click',function(e){
+Min.event.bind('buttons','click',{handler: function(e){
 		var has_error = false;
+		var t = e.delegateTarget;
+		console.log(t);
 		var article_edit_error = function(id, message){
 			var tar = _$(id), next = Min.dom.next(tar);
 			next.style.color = error_bordercolor;
@@ -453,20 +458,33 @@ Min.event.bind('article_submit','click',function(e){
 		if (!tag) {
 			article_edit_error('tag');
 		}
-		
+		console.log(has_error);
 		if(has_error){
-			this.setAttribute("sindex", 0);
+			t.setAttribute("sindex", 0);
 			return false;
 		}
 		
-		var sindex	= this.getAttribute('sindex');
+		var sindex	= t.getAttribute('sindex');
 	
 		if(sindex == 0) {
-	
-			this.setAttribute("sindex", 1);
-			
+
+			 console.log(t.id);
+			if (t.id == 'article_preview') {
+				_$('content_preview').value = content;
+				_$('csrf_token').value = t.getAttribute('token');
+				_$('article_edit').submit();
+				_$('iframe').width=500 ;
+				_$('iframe').height=300
+				easyDialog.open({
+				  container : 'iframe',
+				  overlay:false,
+				  fixed : true
+				});	
+				return;
+			}
+			t.setAttribute("sindex", 1);
 			minAjax({
-				url:'http://www.' + site_domain + '/article/edit.html', 
+				url:'http://www.' + site_domain + '/article/'+ t.getAttribute('tot')+'.html', 
 				type:'POST', 
 				data:{
 					title:title,
@@ -476,7 +494,7 @@ Min.event.bind('article_submit','click',function(e){
 					date_end:date_end,
 					content:content,
 					region:_$('region_selected').value,
-					csrf_token:_$('csrf_token').value,
+					csrf_token:t.getAttribute('token'),
 					tag: tag,
 					id:_$('article_id').value
 				},
@@ -492,7 +510,7 @@ Min.event.bind('article_submit','click',function(e){
 				}
 			});
 		}
-});
+}, 'selector': 'button'});
 
 var article_edit_init = function(e){
 		var tar = e.currentTarget;
@@ -504,6 +522,6 @@ Min.event.bind('title','focus',article_edit_init);
 Min.event.bind('desc','focus',article_edit_init);
 Min.event.bind('date_start','focus',article_edit_init);
 Min.event.bind('date_end','focus',article_edit_init);
-		
+	
 </script>
 	

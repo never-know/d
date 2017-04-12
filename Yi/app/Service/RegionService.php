@@ -29,7 +29,7 @@ class RegionService extends \Min\Service
 	 */
 	public function allNode()
 	{
-		$sql = 'SELECT id, short_name, parent_id FROM {region} ORDER BY parent_id ASC , id ASC';
+		$sql = 'SELECT id, short_name, parent_id FROM {region} ORDER BY parent_id ASC, id ASC';
 		$result	= $this->query($sql);
 		
 		$region = [];

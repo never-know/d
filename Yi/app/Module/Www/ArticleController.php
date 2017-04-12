@@ -61,6 +61,49 @@ class ArticleController extends \Min\Controller
 		$this->response($result['body']);
 	}
 	
+	public function preview_post()
+	{
+		$result = $this->getPostData();
+		$result['meta'] = ['title' => $result['title'], 'description' => $result['desc']];
+		 
+		$this->response($result);
+	}
+	
+	private function getPostData()
+	{
+		$param = [];
+		$param['title'] 	= trim($_POST['title']);
+		$param['desc'] 		= trim($_POST['desc']);
+		$param['icon'] 		= $_POST['icon'];
+		 
+		if (!\validate('length', $param['title'], 32,1)) 	$this->error( '标题最多包含32个字符', 1);
+		if (!\validate('length', $param['desc'], 64,10)) 	$this->error('简介最多包含64个字符', 1);
+		if (!\validate('img_url', $param['icon'], 128,20)) 	$this->error('图像url不合法', 1);
+		if (!\validate('length', $_POST['content'], 60000,10)) $this->error('文章内容长度超限制', 1);
+		 
+		if (!empty($_POST['date_start']) && !\validate('date_Y-m-d', $_POST['date_start'])) {
+			$this->error('开始日期格式错误', 1);
+		}
+		if (!empty($_POST['date_end']) && ! \validate('date_Y-m-d', $_POST['date_end'])) {
+			$this->error('结束日期格式错误', 1);
+		}
+		
+		$param['start'] 	= strtr($_POST['date_start'], ['-' =>'']);
+		$param['end'] 		= strtr($_POST['date_end'], ['-' =>'']);
+		$param['region'] 	= intval($_POST['region']);
+		
+		// 判断 region Id 是否合法
+		$region_list		= $this->region_list($param['region']);
+		if (!(isset($region_list[$param['region']]) || ($end = end($region_list) && !empty($end[$param['region']])))) {
+			$this->error('无效的地区ID', 1);
+		}
+		
+		$param['tag'] 		= intval($_POST['tag']);
+		$param['content'] 	= \Min\Xss::filter($_POST['content']);
+		return $param;
+	
+	}
+	
 	public function add_get()
 	{
 		$result['params']['region'] 	= [0];
@@ -103,36 +146,8 @@ class ArticleController extends \Min\Controller
 	
 	public function edit_post()
 	{
-		$param = [];
-		$param['title'] 	= trim($_POST['title']);
-		$param['desc'] 		= trim($_POST['desc']);
-		$param['icon'] 		= $_POST['icon'];
-		 
-		if (!\validate('length', $param['title'], 32,1)) 	$this->error( '标题最多包含32个字符', 1);
-		if (!\validate('length', $param['desc'], 64,10)) 	$this->error('简介最多包含64个字符', 1);
-		if (!\validate('img_url', $param['icon'], 128,20)) 	$this->error('图像url不合法', 1);
-		if (!\validate('length', $_POST['content'], 60000,10)) $this->error('文章内容长度超限制', 1);
-		 
-		if (!empty($_POST['date_start']) && !\validate('date_Y-m-d', $_POST['date_start'])) {
-			$this->error('开始日期格式错误', 1);
-		}
-		if (!empty($_POST['date_end']) && ! \validate('date_Y-m-d', $_POST['date_end'])) {
-			$this->error('结束日期格式错误', 1);
-		}
-		
-		$param['start'] 	= strtr($_POST['date_start'], ['-' =>'']);
-		$param['end'] 		= strtr($_POST['date_end'], ['-' =>'']);
-		$param['region'] 	= intval($_POST['region']);
-		
-		// 判断 region Id 是否合法
-		$region_list		= $this->region_list($param['region']);
-		if (!(isset($region_list[$param['region']]) || ($end = end($region_list) && !empty($end[$param['region']])))) {
-			$this->error('无效的地区ID', 1);
-		}
-		
-		$param['tag'] 		= intval($_POST['tag']);
-		$param['content'] 	= \Min\Xss::filter($_POST['content']);
-		
+		$param = $this->getPostData();
+
 		if (!empty($_POST['id'])) $param['id'] = str2int($_POST['id']);
 
 		$this->response($this->request('\\App\\Service\\Article::add', $param));

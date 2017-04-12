@@ -10,6 +10,9 @@ Min.event = {
 		if( events.indexOf(options) == -1 ){
 			events.push( options );
 		 }else{
+		 
+			console.log(type);
+			console.log(options);
 			alert(" twice avoid!!!!!");
 		 }
 		// 同一事件类型只注册一次事件，防止重复注册
