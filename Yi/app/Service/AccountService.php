@@ -7,8 +7,11 @@ class AccountService extends \Min\Service
 {
 	// 是否清理 checkaccount 产生的缓存
 	private $clean_cache = false;
-	public $db_key = 'user';
-	public $cache_key = 'login';
+	private $stage = 1;
+	
+	private $db_key = 'user';
+	private $cache_key = 'login';
+ 
 	/**
 	* 检测账号是否存在
 	*
@@ -20,9 +23,11 @@ class AccountService extends \Min\Service
 	*	1 账号存在
 	*/
 
-	public function checkAccount($name) 
-	{			 		
-		if (validate('phone', $name)) {
+	public function checkAccount($name, $type = null) 
+	{	
+		if ('UID' === $type) {
+			$name = intval($name);
+		} elseif (validate('phone', $name)) {
 			$type = 'phone';
 		} elseif (validate('email', $name)) {			
 			$type = 'email';
@@ -65,15 +70,25 @@ class AccountService extends \Min\Service
 			if (!empty($result)) $cache->set($key, $result, 7200);
 		}
 		
-		if (!empty($result)) {	
+		if (!empty($result)) {
+			$this->stage = 2;
 			return $this->success($result);
 		} else {
+			$this->stage = 1;
 			return $this->error('账号不存在', 30206);
 		}
 	}
 
 	public function addUserByPhone($regist_data) {
 	
+		$check = $this->checkAccount($regist_data['phone']);
+		
+		if (0 == $check['statusCode']) {
+			return $this->error('该手机号码已被注册', 30205);
+		} elseif ($check['statusCode'] != 30206) {
+			return $check;
+		}
+		
 		if ($regist_data['pwd'] = password_hash($regist_data['pwd'], PASSWORD_BCRYPT, ['cost' => 9])) {	
 		
 			$sql = 'INSERT INTO {user} (phone, regtime, regip, pwd) VALUES ('. 
@@ -87,6 +102,7 @@ class AccountService extends \Min\Service
 			if ($reg_result > 1) {
 				//清理 注册缓存
 				$this->cache()->delete($this->getCacheKey('phone', intval($regist_data['phone'])));
+				$this->stage = 3;
 				return $this->success(['uid' => $reg_result, 'nick' => $regist_data['phone']]);
 			} else {
 				return $this->error('注册失败', 30204);
@@ -96,8 +112,12 @@ class AccountService extends \Min\Service
 		}
 	}
 	
-	public function initUser($user){
-	
+	public function initUser($user)
+	{
+		if (3 != $this->stage) {
+			throw new \Min\MinException('login first please', 20104);
+		}
+		
 		if($user['uid'] > 0) {
 			// 每次登陆都需要更换session id ;
 			session_regenerate_id();

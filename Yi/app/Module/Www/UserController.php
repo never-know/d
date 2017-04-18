@@ -9,6 +9,7 @@ class UserController
 	{
 		layout('type-login');
 	}
+	
 	private function reg()
 	{
 		if(!isset($_SESSION)){
@@ -17,7 +18,4 @@ class UserController
 		
 		layout('type-login');
 	}
-
-
-
 }

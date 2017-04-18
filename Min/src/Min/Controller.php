@@ -62,6 +62,9 @@ class Controller
 			record_time('service start:'. $server); 
 			$result = $obj->{$concrete[1]}($params);
 			record_time('service end:'. $server);
+			if (empty($result)) {
+				$this->error('返回丢失', 0);
+			}
 			if (0 !== $result['statusCode'] &&  true === $exit_on_error) {
 				$this->error($result['message'], $result['statusCode']);
 			}
