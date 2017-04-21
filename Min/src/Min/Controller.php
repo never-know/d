@@ -5,7 +5,16 @@ use Min\App;
 
 class Controller
 {	
+	const EXITNONE  = 0;
+	
+	const EXITALL 	= 1; 
+	
+    const EXITERROR = 2;
+	
+    const EXITOK 	= 3;
+
 	protected $sharedService = [];
+	
 	protected $cache_key = 'default';
 	
 	final public function __construct($action)
@@ -27,7 +36,15 @@ class Controller
 		exit; 
 	}
 	
-	final public function request($server, $params = null, $init = null, $exit_on_error = true, $shared = false)
+	/*
+	 *	params: 
+	 *		$server : CLASS::METHOD,
+	 *		$params : (init)
+	 *		$exit   : 0   1  2 on_error  3 on
+	 *
+	 */
+	
+	final public function request($server, $params = null, $exit_on_error = Controller::EXITALL, $shared = false)
 	{
 		$concrete = explode('::',$server);
 		
@@ -50,8 +67,9 @@ class Controller
 			}
 		}
 		
-		if (!empty($init)) {
-			$obj->init($init);	
+		if (isset($params['init'])) {
+			$obj->init($params['init']);	
+			unset($params['init']);
 		}
 		
 		if (empty($concrete[1])) {
@@ -63,16 +81,33 @@ class Controller
 			$result = $obj->{$concrete[1]}($params);
 			record_time('service end:'. $server);
 			if (empty($result)) {
-				$this->error('返回丢失', 0);
+				$this->error('返回丢失', 20101);
 			}
-			if (0 !== $result['statusCode'] &&  true === $exit_on_error) {
-				$this->error($result['message'], $result['statusCode']);
+			
+			switch ($exit_on_error) {
+				case self::EXITALL :
+					$this->response($result);
+					break;
+				case self::EXITERROR :
+					if (0 !== $result['statusCode']) {
+						$this->error($result['message'], $result['statusCode']);
+					}
+					break;
+				case self::EXITOK :
+					if (0 === $result['statusCode']) {
+						$this->success($result['message']);
+					}
+					break;
+				case self::EXITNONE :
+				default	:
+					return $result;
 			}
-			return $result;	
+ 
 		} catch (\Throwable $t) {
 			app_exception($t);
 		}
 	}
+	
 	final public function layout($layout = 'frame')
 	{	
 		require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
@@ -81,8 +116,13 @@ class Controller
 	
 	final public function success($result = [], $layout = 'frame')
 	{	
-		if (is_string($result)) $result = ['message' => $result];
-		$result['statusCode'] = 0;		
+		if (is_string($result)) {
+			$result = ['message' => $result];
+		} elseif (!isset($result['message'])) {
+			$result['message'] = '操作成功';
+		}
+		
+		$result['statusCode'] = 0;	
 		$this->response($result, $layout);
 	}
 

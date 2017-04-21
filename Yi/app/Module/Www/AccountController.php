@@ -32,46 +32,16 @@ class AccountController extends \Min\Controller
 			$this->error('两次新密码不相同', 30208);		
 		}
 
-		//$result = $this->request('\\App\\Service\\Account::checkAccount', ['name' => $name], false, true);
-		$account =  $this->request('\\App\\Service\\Account', null, null, false, true);
-		$result  = 	$account->checkAccount(session_get('UID'), 'UID');
-
+		$params = ['uid' => session_get('UID'), 'pwd' = $pwd, 'newpwd' => $newpwd];
+		$result =  $this->request('\\App\\Service\\Account::resetPwd', $params);
+		 
 		if (0 === $result['statusCode']) {
-			if (password_verify($pwd, $result['body']['pwd'])) {				
-
-				$this->success(['message'=>'登陆成功']);
-			} else {
-				unset($result);
-				$result['message'] = '账号密码错误';
-			}	 
-		} 
-		
-		$error_times = $this->loginErrorInc($name);
-		$result['statusCode'] = ($error_times > 3) ? 30202 : 30201;
-		$this->response($result);
+			$this->success('修改成功');
+		} else {
+			$this->error($result['message'], $result['statusCode']);
+		}	 
+		 
 	}
 
-	private function loginErrorTimes($key)
-	{	 
-		$var1 = intval(session_get('loginerror'));
-		$key = 'loginerror:'. $key;
-		$cache = $this->cache('login');
-		$var2 = $cache->get($key);
-		if ($var2 == false) {
-			$cache->set($key, 0, 7200);
-		}
-		if ( $var2 > $this->max_error_time ) {
-			$this->error('账户已锁定，请2小时后再登录', 30207);
-		}
-		
-		return max($var1, $var2);
-	}
 	
-	private function loginErrorInc($key)
-	{	
-		$var1 =session_inrc('loginerror');
-		$var2 = $this->cache('login')->incr('loginerror:'. $key);
-		return max($var1, $var2);
-	}
- 
 }

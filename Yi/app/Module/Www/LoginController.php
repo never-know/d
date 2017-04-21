@@ -34,7 +34,7 @@ class LoginController extends \Min\Controller
 			}
 		}
 
-		$login =  $this->request('\\App\\Service\\Account::login', ['name' => $name, 'pwd' => $pwd]);
+		$login =  $this->request('\\App\\Service\\Account::login', ['name' => $name, 'pwd' => $pwd], null , false);
 		 
 		if (0 === $login['statusCode']) {	
 			session_set('loginerror', null);
