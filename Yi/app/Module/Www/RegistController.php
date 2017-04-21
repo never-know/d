@@ -19,6 +19,12 @@ class RegistController extends \Min\Controller
 		$captcha 	= $_POST['captcha'];
 		$this->check($phone, $captcha, 'reg1');	
 		
+		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', $phone, null, false);
+
+		if (0 === $exit_result['statusCode']) {
+			$this->error('该手机号码已被注册', 30205);
+		} 
+		
 		$this->response($this->request('\\App\\Service\\Sms::send', $phone, 'reg'));	
 	}
 	
@@ -33,24 +39,22 @@ class RegistController extends \Min\Controller
 		if ($pwd != $repwd) {
 			$this->error('两次输入密码不相同', 30203);
 		}
-		$this->check($phone, $captcha, 'reg2', true);	
+		$this->check($phone, $captcha, 'reg2');	
 		
 		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'smscode' => $smscode], 'reg');
 
 		$regist_data = ['phone' => $phone, 'pwd' => $pwd, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip_address()];
 		
-		$account =  $this->request('\\App\\Service\\Account');
-		$regist_result = $account->addUserByPhone($regist_data);
-
-		if ($regist_result['body']['uid'] > 1) {
-			$account->initUser($regist_result['body']);
+		$account =  $this->request('\\App\\Service\\Account::addUserByPhone', $regist_data);
+		
+		if ($account['statusCode'] == 0) {
 			$this->success('注册成功');
 		} else {
-			$this->error('注册失败', 30204);
-		}		
+			$this->error($account['message'], $account['statusCode']);
+		} 		
 	}
 	
-	private function check($phone, $code, $type, $shared = false)
+	private function check($phone, $code, $type)
 	{	
 		if (1 !== validate('phone', $phone)) {
 			$this->error('手机号码格式错误', 30120);
@@ -59,12 +63,6 @@ class RegistController extends \Min\Controller
 		if (true !== $captcha->checkCode($code, $type)) {
 			$this->error('图片验证码错误', 30102);
 		}
-	
-		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', $phone, null, false, $shared);
-
-		if (0 === $exit_result['code']) {
-			$this->error('该手机号码已被注册', 30205);
-		} 
 	}
 	
 }

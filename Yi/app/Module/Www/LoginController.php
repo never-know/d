@@ -34,24 +34,21 @@ class LoginController extends \Min\Controller
 			}
 		}
 
-		//$result = $this->request('\\App\\Service\\Account::checkAccount', ['name' => $name], false, true);
-		$account =  $this->request('\\App\\Service\\Account', null, null, false, true);
-		$result  = 	$account->checkAccount($name);
-
-		if (0 === $result['statusCode']) {
-			if (password_verify($pwd, $result['body']['pwd'])) {				
-				session_set('loginerror', null);
-				$account->initUser($result['body']);
-				$this->success(['message'=>'登陆成功']);
-			} else {
-				unset($result);
-				$result['message'] = '账号密码错误';
-			}	 
+		$login =  $this->request('\\App\\Service\\Account::login', ['name' => $name, 'pwd' => $pwd]);
+		 
+		if (0 === $login['statusCode']) {	
+			session_set('loginerror', null);
+			$this->success('登陆成功');
+			
+		} else {
+		
+			$result['message'] = '账号密码错误';
+			$error_times = $this->loginErrorInc($name);
+			$result['statusCode'] = ($error_times > 3) ? 30202 : 30201;
+			$this->response($result);	
 		} 
 		
-		$error_times = $this->loginErrorInc($name);
-		$result['statusCode'] = ($error_times > 3) ? 30202 : 30201;
-		$this->response($result);
+		
 	}
 
 	private function loginErrorTimes($key)

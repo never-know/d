@@ -38,8 +38,7 @@ class AccountController extends \Min\Controller
 
 		if (0 === $result['statusCode']) {
 			if (password_verify($pwd, $result['body']['pwd'])) {				
-				 
-				 
+
 				$this->success(['message'=>'登陆成功']);
 			} else {
 				unset($result);
