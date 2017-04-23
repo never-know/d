@@ -1,3 +1,21 @@
+<?php
+$url = empty($_SERVER['HTTP_REFERER'])? null : check_plain($_SERVER['HTTP_REFERER']);
+	
+$result = (isset($url) && preg_match('!^http[s]?://[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? ['url'=> $url, 'title'=> '上一页'] : ['url'=> HOME_PAGE, 'title'=> '首页'];
+if ($code == 500) {
+	$result['message'] = '<p>
+	<strong>服务器遇到一个问题...</strong>
+	</p>
+	<p>懵啦。。。麻烦您再来一次</p>
+	<hr> ';
+} else {
+	$result['message'] = $message ?: ' <p>
+	   <strong>页面找不到了</strong>
+	 </p>
+	 <p>页面可能已经被移出，或者您请求的链接存在错误</p>
+	 <hr>'; 
+}	
+?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
 <head>

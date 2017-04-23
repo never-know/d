@@ -86,7 +86,7 @@ class Xss {
    *
    * @ingroup sanitization
    */
-	public static function filter($string, array $html_tags = NULL) {
+	public static function filter($string, array $html_tags = null) {
 		if (is_null($html_tags)) {
 		  $html_tags = static::$htmlTags;
 		}

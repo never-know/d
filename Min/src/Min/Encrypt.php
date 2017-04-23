@@ -17,7 +17,7 @@ class Encrypt
 		return _encrypt_decrypt('decrypt', $text, $method);
 	}
 	
-	private function _encrypt_decrypt($op = 'encrypt', $text = '', $method = NULL) 
+	private function _encrypt_decrypt($op = 'encrypt', $text = '', $method = null) 
 	{
 		$encryption_array = [];
 		$processed = '';

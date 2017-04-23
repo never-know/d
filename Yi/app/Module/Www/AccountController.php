@@ -39,9 +39,6 @@ class AccountController extends \Min\Controller
 			$this->success('修改成功');
 		} else {
 			$this->error($result['message'], $result['statusCode']);
-		}	 
-		 
+		}	 	 
 	}
-
-	
 }

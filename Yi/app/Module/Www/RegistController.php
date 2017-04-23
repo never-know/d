@@ -25,7 +25,7 @@ class RegistController extends \Min\Controller
 			$this->error('该手机号码已被注册', 30205);
 		} 
 		
-		$this->response($this->request('\\App\\Service\\Sms::send', $phone, 'reg'));	
+		$this->request('\\App\\Service\\Sms::send', $phone, 'reg', $this::EXITALL);	
 	}
 	
 	public function index_post()

@@ -33,7 +33,7 @@ class App
 				exit;
 			}
 		} 
-		request_not_found(404);	 
+		request_error_found(404);	 
 	}
 		
 	public static function getContainer()
@@ -86,8 +86,7 @@ class App
 		// notice   session.cookie_domain is used in account.service.php  inituser() function 
 		ini_set('session.gc_maxlifetime',3600);
   		//ini_set('session.cookie_secure', TRUE);
-  		define('IS_HTTPS', (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false);
-		ini_set('session.cookie_domain', COOKIE_DOMAIN);
+		defined('COOKIE_DOMAIN') && ini_set('session.cookie_domain', COOKIE_DOMAIN);
 		//ini_set('session.save_handler','redis');
 		//ini_set('session.save_path', 'tcp://127.0.0.1:6379?weight=2, tcp://127.0.0.1:6380?weight=1, tcp://127.0.0.1:6381?weight=2');
 		session_name($session_name);

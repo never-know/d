@@ -1,6 +1,40 @@
 <?php
 
 use Min\App;
+
+function min_init()
+{
+	defined('APP_PATH')			or exit;
+	defined('VIEW_EXT') 		or define('VIEW_EXT','.tpl');
+	defined('PHP_EXT')  		or define('PHP_EXT','.php');
+	defined('DEFAULT_ACTION') 	or define('DEFAULT_ACTION','index');
+	
+	defined('LOG_PATH') 	or define('LOG_PATH', APP_PATH.'/../log');	
+	defined('CACHE_PATH') 	or define('CACHE_PATH', APP_PATH.'/../cache');	
+	defined('PUBLIC_PATH') 	or define('PUBLIC_PATH', APP_PATH.'/../webroot/public');		// 图片上传在服务器上的基址
+	defined('ASSETS_URL') 	or define('ASSETS_URL', '//www.'. SITE_DOMAIN. '/public');					// 图片上传后的URL基址
+
+	defined('CONF_PATH') 	or define('CONF_PATH', APP_PATH.'/Conf');	
+	defined('VIEW_PATH') 	or define('VIEW_PATH', APP_PATH.'/View');
+	defined('MODULE_PATH') 	or define('MODULE_PATH', APP_PATH.'/Module');	
+	defined('SERVICE_PATH') or define('SERVICE_PATH', APP_PATH.'/Service');	
+	defined('VENDOR_PATH') 	or define('VENDOR_PATH', MIN_PATH.'/../vendor');
+	
+	define('REQUEST_METHOD', strtoupper($_SERVER['REQUEST_METHOD']));
+	define('IS_GET', (REQUEST_METHOD === 'GET'));
+	define('IS_POST', (REQUEST_METHOD === 'POST'));
+	define('IS_PUT', (REQUEST_METHOD === 'PUT'));
+	define('IS_DELETE', (REQUEST_METHOD === 'DELETE'));
+	define('IS_JSONP', isset($_GET['isJsonp']));
+	define('IS_AJAX', (isset($_REQUEST['isAjax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')));
+	define('IS_HTTPS', (isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON'));
+
+	spl_autoload_register('autoload');
+
+	set_error_handler('app_error');
+	set_exception_handler('app_exception');
+	register_shutdown_function('app_tails');
+}
 	
 function t($string, array $args = [], array $options = []) 
 { 
@@ -27,10 +61,10 @@ function t($string, array $args = [], array $options = [])
 	}
 }
 
-function view($result = [])
+function view(array $result = [])
 {
 	if (empty($result['template_path'])) {
-		$result['template_path'] =  '/'.App::getModule().'/'.  App::getController().'/'.  App::getAction();
+		$result['template_path'] =  '/'. App::getModule().'/'.  App::getController().'/'.  App::getAction();
 	}
 	require VIEW_PATH. $result['template_path']. VIEW_EXT;
 	 
@@ -174,12 +208,9 @@ function str2int($value)
 	}
 }
 
-function validate($type, $value, $max = 0, $min = 1)
+function validate($type, $value, int $max = 0, int $min = 1)
 {
 	if (!validate_utf8($value)) return false;
-	
-	$max = intval($max);
-	$min = intval($min);
 	
 	$pattern = [
 		'words' 		=> '/^[a-zA-Z0-9_]+$/',  			// 标准ascii字符串
@@ -215,25 +246,6 @@ function validate_utf8($text)
 	return (preg_match('/^./us', $text) == 1);
 }
 	
-function ajax_return($arr)
-{
-	if (!headers_sent()) {
-		header('Content-Type:application/json; charset=utf-8');
-	}
-	exit(safe_json_encode($arr));	
-}
-
-function jsonp_return($arr)
-{ 
-	if (is_numeric($_GET['callback'])) {
-		if (!headers_sent()) {
-			header('Content-Type:application/html; charset=utf-8');
-		}
-		echo 'callback',$_GET['callback'],'(',safe_json_encode($arr),')';
-	}
-	exit;
-}
-
 function get_token($value = '', $seed = false) 
 {	
 	if (empty($value)) {
@@ -338,36 +350,56 @@ function site_offline()
     redirect(OFFLINE_PAGE);
 }
 
-function request_not_found($code, $message = '请求失败', $redirect = '') 
+function request_error_found($code, $message = '请求失败', $redirect = null, $layout = null) 
 {	
-	if (IS_AJAX || IS_JSONP) {
-		$result['statusCode'] = $code;
-		$result['message'] = $message;
-		if (!empty($redirect)) $result['redirect'] = $redirect;
-		IS_AJAX  && ajax_return($result); 		
-		IS_JSONP && jsonp_return($result);
-	}
-	
-	$url = empty($_SERVER['HTTP_REFERER'])? null : check_plain($_SERVER['HTTP_REFERER']);
-	
-	$result = (!empty($url) && preg_match('!^http[s]?://[a-z]+\.'.str_replace('.', '\.', SITE_DOMAIN).'!', $url)) ? ['url'=> $url, 'title'=> '上一页'] : ['url'=> HOME_PAGE, 'title'=> '首页'];
-	if ($code == 500) {
-		$result['message'] = '<p>
-        <strong>服务器遇到一个问题...</strong>
-        </p>
-        <p>懵啦。。。麻烦您再来一次</p>
-		<hr> ';
+	$result['statusCode'] = $code;
+	$result['message'] 	  = $message;
+	if (isset($redirect)) 	$result['redirect'] = $redirect;
+	if (empty($layout)) 	$layout = 'layout_404';
+	 
+	final_response($result, $layout);
+}
+
+function min_header($headers)
+{
+	if (!headers_sent($file, $line)) {
+		header($headers);
 	} else {
-		$result['message'] = $message ?: ' <p>
-		   <strong>页面找不到了</strong>
-		 </p>
-		 <p>页面可能已经被移出，或者您请求的链接存在错误</p>
-		 <hr>'; 
-	}	
-	$result['template_path'] = '/layout/404';
-	view($result);
-	exit;
+		exit("Headers sent in {$file} on line {$line}");
+	}
 }	
+
+function final_response($result, $layout) {
+	
+	if (empty($layout) || substr($layout, 0, 7) == 'layout_') { 
+		if (IS_AJAX) {
+			$layout = 'JSON';
+		} elseif (IS_JSONP) {
+			$layout = 'JSONP';
+		} else {	
+			if ($result['body']) $result = $result['body'];
+			require VIEW_PATH. '/layout/'. ($layout?:'layout_frame'). VIEW_EXT;
+			exit;
+		}
+	} 
+ 
+	switch (strtoupper($layout)) {
+		case 'JSON' :
+			header('Content-Type:application/json; charset=utf-8');
+			exit(safe_json_encode($result));
+		case 'XML'  :
+			header('Content-Type:text/xml; charset=utf-8');
+			exit(xml_encode($result));
+		case 'JSONP':
+			header('Content-Type:application/json; charset=utf-8');
+			echo 'callback', intval($_GET['callback']), '(', safe_json_encode($result), ')';
+			exit;
+		case 'HTML' :
+		default :
+			exit($result);
+	  
+	} 
+}
 
 function app_tails()
 {
@@ -388,7 +420,7 @@ function app_tails()
 	}
 	App::getService('logger')->record();
 	if (isset($error['type'])) {
-		request_not_found(500);
+		request_error_found(500);
 	}
 }
 
@@ -416,7 +448,7 @@ function app_error($errno, $errstr, $errfile, $errline)
 	watchdog($message, 'unexpected_error', $type);
 	
 	if ($type == 'ERROR') {
-		request_not_found(500);
+		request_error_found(500);
 	}
 	return true;
 }
@@ -430,7 +462,7 @@ function app_exception($e, $channel = 'unexpected_expection')
 	}  
 	
 	watchdog(error_message_format($e), $channel, 'CRITICAL', $e->getTrace());
-	request_not_found(500);
+	request_error_found(500);
 }
 
 function error_message_format(\Throwable $e)
@@ -527,3 +559,4 @@ function shareid_encode($id, $type = null)
 		}
 	}
 }
+

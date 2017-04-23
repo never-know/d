@@ -2,7 +2,7 @@
 	<div class="breadcrumb">
 		<span style="margin-left:28px;">文案＞</span><label class="subtitle">添加文案</label>
 	</div> 
-	<form name="article_edit" id="article_edit" style="width:700px;overflow:hidden;" onsubmit="return false;" target="iframe" action="/article/preview.html" method="post">
+	<form name="article_edit" id="article_edit" style="width:700px;overflow:hidden;" onsubmit="return false;"    method="post">
 		<dl>
 			<dt>标题：</dt> 
 			<dd><input type="text" name="title" maxlength = "30" id="title" class="ar_text_input"　
@@ -57,7 +57,7 @@
 			<dt>结束日期：</dt> 
 			<dd>
 			<input type="text" name="date_end" id = "date_end" class="tcal" autocomplete="off" readonly="readonly" value="<?=($result['detail']['end']?(date('Y-m-d', strtotime($result['detail']['end']))):'');?>"/>
-				<label>至少大于当前日期2天，不填写则长期有效</label>
+				<label>不小于开始日期，不填写则长期有效</label>
 			</dd>
 		</dl>
 		
@@ -91,11 +91,9 @@
 			</dd>
 		</dl>
 		<dl id="buttons">
-			<input type="hidden" name="csrf_token" id="csrf_token" />
-			<input type="hidden"  name="content" id="content_preview" />
 			<input type="hidden" value="<?=(int2str($result['detail']['id']));?>" name="id" id="article_id" />
-			<button href="javascript:;" style="width:120px;" type ="submit" class="login-btn" id="article_submit"  sindex="0" token="<?=get_token('www_article_edit');?>">提交</a></button>
-			<button href="javascript:;" style="width:120px;" type ="submit" class="login-btn" id="article_preview"  sindex="0" token="<?=get_token('www_article_preview');?>">预览</a></button>
+			<button href="javascript:;" style="width:120px;" type ="submit" class="login-btn" id="article_submit"  sindex="0" token="<?=get_token('www_article_edit');?>" tot="edit">提交</a></button>
+			<button href="javascript:;" style="width:120px;" type ="submit" class="login-btn" id="article_preview"  sindex="0" token="<?=get_token('www_article_preview');?>" tot="preview">预览</a></button>
 		</dl>
 
 	</form>
@@ -106,7 +104,7 @@
 <script type="text/javascript" src="/public/js/tcal.js"></script> 
 <script type="text/javascript" src="/public/js/region.js"></script> 
 <script type="text/javascript" src="/public/js/dialog.js"></script> 
-<iframe name="iframe" id="iframe" src="http://www.yi.com" ></iframe>	
+<div  id="iframe"  ></div>	
 <script>
 	KindEditor.lang({
 	source : 'HTML代码',
@@ -434,15 +432,15 @@ Min.event.bind('buttons','click',{handler: function(e){
 		var date_end 	= _$('date_end').value;
 		var date_start 	= _$('date_start').value;
 		if(date_end) {
-			var today = f_tcalGenerateDate(new Date(),'Ymd');
+			//var today = f_tcalGenerateDate(new Date(),'Ymd');
 			var end = date_end.replace(/-/g, '');
 			
 			var start = date_start.replace(/-/g, '');
 			
-			var compare = start || today;
-			compare = Math.max(compare, today);
+			//var compare = start || today;
+		//	compare = Math.max(compare, today);
 
-			if( end -2 < compare ) {
+			if( end  < start ) {
 				article_edit_error('date_end');
 				 
 			}
@@ -469,6 +467,7 @@ Min.event.bind('buttons','click',{handler: function(e){
 		if(sindex == 0) {
 
 			 console.log(t.id);
+			 /*
 			if (t.id == 'article_preview') {
 				_$('content_preview').value = content;
 				_$('csrf_token').value = t.getAttribute('token');
@@ -482,6 +481,7 @@ Min.event.bind('buttons','click',{handler: function(e){
 				});	
 				return;
 			}
+			*/
 			t.setAttribute("sindex", 1);
 			minAjax({
 				url:'http://www.' + site_domain + '/article/'+ t.getAttribute('tot')+'.html', 
@@ -500,9 +500,18 @@ Min.event.bind('buttons','click',{handler: function(e){
 				},
 				success: function(data){
 					if(data.statusCode == 0) {
-						window.location.href = '/article/list.html'
+						if (t.id == 'article_preview') {
+							easyDialog.open({
+							  container : 'iframe',
+							  overlay:false,
+							  fixed : true
+							});	
+						} else {
+							window.location.href = '/article/list.html';
+						}
 					}else{
 						_$('article_submit').setAttribute("sindex", 0);
+						alert(data.message);
 					}
 				},
 				fail: function(){

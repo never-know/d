@@ -11,7 +11,7 @@ class Upload
 		'ext' 		=> ['jpg', 'jpeg', 'png', 'gif'],
 		'size' 		=> 1048576,
 		'base_path' => \PUBLIC_PATH,
-		'host' 		=> '//'. \PUBLIC_URL,
+		'host' 		=> '//'. \ASSETS_URL,
 		'repalce' 	=> true
 	];
 

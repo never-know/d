@@ -44,7 +44,7 @@ class ArticleController extends \Min\Controller
 		$result['body']['params']['region'] = $region_chain;
 		$result['body']['meta'] 			= $meta;
 		
-		$this->success($result['body']);
+		$this->response($result);
 	}
 	
 	public function detail_get()
@@ -55,21 +55,21 @@ class ArticleController extends \Min\Controller
 			$this->error('参数错误', 1);
 		}
 		
-		$result = $this->request('\\App\\Service\\Article::detail', $id);
+		$result = $this->request('\\App\\Service\\Article::detail', $id, $this::EXITERROR);
 		$result['body']['meta'] = ['menu_active' => 'article_list', 'title' => $result['body']['title'], 'description' => $result['body']['desc']];
-		 
-		$this->response($result['body']);
-	}
-	
-	public function preview_post()
-	{
-		$result = $this->getPostData();
-		$result['meta'] = ['title' => $result['title'], 'description' => $result['desc']];
 		 
 		$this->response($result);
 	}
 	
-	private function getPostData()
+	public function preview_post()
+	{
+		$result = $this->processPostData();
+		$result['meta'] = ['title' => $result['title'], 'description' => $result['desc']];
+		 
+		$this->success($result);
+	}
+	
+	private function processPostData()
 	{
 		$param = [];
 		$param['title'] 	= trim($_POST['title']);
@@ -122,7 +122,7 @@ class ArticleController extends \Min\Controller
 			'content' 	=> ''
 		];
 
-		$this->response($result);
+		$this->success($result);
 	}
 	
 	public function edit_get()
@@ -141,16 +141,16 @@ class ArticleController extends \Min\Controller
 		// last level region need processed special
 		if (0 != $article['body']['region']%1000) $result['params']['region'][] = $article['body']['region'];
 		$result['meta'] 				= ['menu_active' => 'article_list', 'title' =>'编辑文字'];
-		$this->response($result);
+		$this->success($result);
 	}
 	
 	public function edit_post()
 	{
-		$param = $this->getPostData();
+		$param = $this->processPostData();
 
 		if (!empty($_POST['id'])) $param['id'] = str2int($_POST['id']);
 
-		$this->response($this->request('\\App\\Service\\Article::add', $param));
+		$this->request('\\App\\Service\\Article::add', $param, $this::EXITALL);
 	}
 	
 	public function test_get(){

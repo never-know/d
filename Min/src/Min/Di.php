@@ -61,7 +61,7 @@ class Di
 		}
     }
 
-    public function setService($name,$class)
+    public function setService($name, $class)
 	{
         $this->registerService($name, $class);
     }

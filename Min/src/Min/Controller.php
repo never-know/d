@@ -86,18 +86,15 @@ class Controller
 			
 			switch ($exit_on_error) {
 				case self::EXITALL :
-					$this->response($result);
-					break;
-				case self::EXITERROR :
-					if (0 !== $result['statusCode']) {
-						$this->error($result['message'], $result['statusCode']);
-					}
-					break;
 				case self::EXITOK :
 					if (0 === $result['statusCode']) {
 						$this->success($result['message']);
 					}
-					break;
+				case self::EXITERROR :
+					if (0 !== $result['statusCode']) {
+						$this->error($result['message'], $result['statusCode']);
+					}
+				
 				case self::EXITNONE :
 				default	:
 					return $result;
@@ -108,36 +105,33 @@ class Controller
 		}
 	}
 	
-	final public function layout($layout = 'frame')
+	final public function layout($result, $layout = 'layout_frame')
 	{	
 		require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
 		exit;
 	}
 	
-	final public function success($result = [], $layout = 'frame')
+	final public function success($body = [], $layout = null)
 	{	
-		if (is_string($result)) {
-			$result = ['message' => $result];
-		} elseif (!isset($result['message'])) {
-			$result['message'] = '操作成功';
+		if (is_string($body)) {
+			$result = ['message' => $body];
+		} else {
+			$result['body'] 	= $body;
+			$result['message'] 	= '操作成功';
 		}
 		
 		$result['statusCode'] = 0;	
-		$this->response($result, $layout);
+		final_response($result, $layout);
 	}
 
-	final public function error($message, $code, $redirect = '')
+	final public function error($message, $code, $redirect = null, $return_type = null)
 	{	
-		request_not_found($code, $message, $redirect);
+		request_error_found($code, $message, $redirect, $return_type);
 	}
 	
-	final public function response($result = [], $layout = 'frame')
+	final public function response($result = [], $layout = null)
 	{		
-		IS_AJAX  && ajax_return($result); 		
-		IS_JSONP && jsonp_return($result);
-		
-		require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
-		exit;
+		final_response($result, $layout);
 	}
 	
 	final public function validToken($value)

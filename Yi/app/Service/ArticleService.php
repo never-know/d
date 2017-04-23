@@ -218,7 +218,7 @@ class ArticleService extends \Min\Service
 		if (empty($result)) {	
 			return $this->error('数据不存在', 1);	
 		} else { 
-			return $this->success($result);	
+			return $this->success(['detail' => $result]);	
 		}
 	}
 	 
