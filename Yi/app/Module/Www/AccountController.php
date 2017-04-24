@@ -33,12 +33,7 @@ class AccountController extends \Min\Controller
 		}
 
 		$params = ['uid' => session_get('UID'), 'pwd' = $pwd, 'newpwd' => $newpwd];
-		$result =  $this->request('\\App\\Service\\Account::resetPwd', $params);
-		 
-		if (0 === $result['statusCode']) {
-			$this->success('修改成功');
-		} else {
-			$this->error($result['message'], $result['statusCode']);
-		}	 	 
+		$result =  $this->request('\\App\\Service\\Account::resetPwd', $params, $this::EXITALL);
+	 	 
 	}
 }

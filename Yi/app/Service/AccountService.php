@@ -140,7 +140,7 @@ class AccountService extends \Min\Service
 			$pwd = password_hash($params['newpwd'], PASSWORD_BCRYPT, ['cost' => 9]);
 			$update = $this->query('update {user} set pwd ="'. $pwd.'" where uid = ' . $result['body']['uid']);
 			if ($update) {
-				return $this->success([], '修改成功');
+				return $this->success('修改成功');
 			} else {
 				return $this->error('修改失败', 30201);
 			}

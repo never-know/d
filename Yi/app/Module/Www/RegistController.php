@@ -14,18 +14,19 @@ class RegistController extends \Min\Controller
 	}
 	
 	public function send_post()
-	{	$this->error('', 500);
+	{	
+
 		$phone 		= $_POST['phone'];
 		$captcha 	= $_POST['captcha'];
 		$this->check($phone, $captcha, 'reg1');	
 		
-		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', $phone, null, false);
+		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', $phone);
 
 		if (0 === $exit_result['statusCode']) {
 			$this->error('该手机号码已被注册', 30205);
 		} 
 		
-		$this->request('\\App\\Service\\Sms::send', $phone, 'reg', $this::EXITALL);	
+		$this->request('\\App\\Service\\Sms::send', [ 0 => $phone, 'init' => 'reg'], $this::EXITALL);	
 	}
 	
 	public function index_post()
@@ -45,13 +46,8 @@ class RegistController extends \Min\Controller
 
 		$regist_data = ['phone' => $phone, 'pwd' => $pwd, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip_address()];
 		
-		$account =  $this->request('\\App\\Service\\Account::addUserByPhone', $regist_data);
-		
-		if ($account['statusCode'] == 0) {
-			$this->success('注册成功');
-		} else {
-			$this->error($account['message'], $account['statusCode']);
-		} 		
+		$this->request('\\App\\Service\\Account::addUserByPhone', $regist_data, $this::EXITALL);
+	
 	}
 	
 	private function check($phone, $code, $type)

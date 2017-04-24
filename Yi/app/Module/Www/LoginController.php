@@ -34,7 +34,7 @@ class LoginController extends \Min\Controller
 			}
 		}
 
-		$login =  $this->request('\\App\\Service\\Account::login', ['name' => $name, 'pwd' => $pwd], null , false);
+		$login =  $this->request('\\App\\Service\\Account::login', ['name' => $name, 'pwd' => $pwd]);
 		 
 		if (0 === $login['statusCode']) {	
 			session_set('loginerror', null);
@@ -47,8 +47,7 @@ class LoginController extends \Min\Controller
 			$result['statusCode'] = ($error_times > 3) ? 30202 : 30201;
 			$this->response($result);	
 		} 
-		
-		
+
 	}
 
 	private function loginErrorTimes($key)
@@ -69,7 +68,7 @@ class LoginController extends \Min\Controller
 	
 	private function loginErrorInc($key)
 	{	
-		$var1 =session_inrc('loginerror');
+		$var1 =	session_inrc('loginerror');
 		$var2 = $this->cache('login')->incr('loginerror:'. $key);
 		return max($var1, $var2);
 	}

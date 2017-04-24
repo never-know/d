@@ -10,9 +10,15 @@ class Service
 	
 	final public function success($body = [], $message = '操作成功')
 	{	
-		if (!empty($body)) $result['body'] = $body;
-		$result['statusCode'] = 0;
-		$result['message'] = $message;
+		$result = ['statusCode' => 0, 'message' => '操作成功'];
+		
+		if (!empty($body)) {
+			if (is_string($body)) {
+				$result['message'] = $body;
+			} elseif (is_array($body)) {
+				$result['body'] = $body;
+			}
+		}
 		return $result;
 	}
 

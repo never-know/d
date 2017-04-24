@@ -70,12 +70,19 @@ class Controller
 		if (isset($params['init'])) {
 			$obj->init($params['init']);	
 			unset($params['init']);
+			if (empty($params)) {
+				$params = null;
+			}
 		}
 		
 		if (empty($concrete[1])) {
 			return $obj;
 		}
 
+		if (is_array($params) && 1 == count($params)) {
+			$params = reset($params);
+		}
+		
 		try {	
 			record_time('service start:'. $server); 
 			$result = $obj->{$concrete[1]}($params);
@@ -113,14 +120,16 @@ class Controller
 	
 	final public function success($body = [], $layout = null)
 	{	
-		if (is_string($body)) {
-			$result = ['message' => $body];
-		} else {
-			$result['body'] 	= $body;
-			$result['message'] 	= '操作成功';
+		$result = ['statusCode' => 0, 'message' => '操作成功'];
+ 
+		if (!empty($body)) {
+			if (is_string($body)) {
+				$result['message'] = $body;
+			} elseif (is_array($body)) {
+				$result['body'] = $body;
+			}
 		}
-		
-		$result['statusCode'] = 0;	
+		 
 		final_response($result, $layout);
 	}
 
@@ -136,7 +145,7 @@ class Controller
 	
 	final public function validToken($value)
 	{	
-		if (!IS_GET && (empty($_POST['csrf_token']) || !valid_token($_POST['csrf_token'], $value))) {
+		if ((!IS_GET || IS_JSONP) && (empty($_POST['csrf_token']) || !valid_token($_POST['csrf_token'], $value))) {
 			$this->error('表单已过期', 30101);
 		}
 	}

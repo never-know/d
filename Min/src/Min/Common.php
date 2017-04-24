@@ -28,6 +28,10 @@ function min_init()
 	define('IS_JSONP', isset($_GET['isJsonp']));
 	define('IS_AJAX', (isset($_REQUEST['isAjax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')));
 	define('IS_HTTPS', (isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON'));
+	
+	if (!IS_GET && !IS_POST) {
+		parse_str(file_get_contents("php://input", $_POST);
+	}
 
 	spl_autoload_register('autoload');
 
@@ -201,7 +205,7 @@ function str2int($value)
 {
 	//if (validate('id_base36', $value) && strnatcmp('1y2p0ij32e8e7', $value) > 0){
 	// id_base36 最大12位，不会越界
-	if (validate('id_base36', $value)){
+	if (validate('id_base36', $value)) {
 		return intval(base_convert($value, 36, 10));
 	} else {
 		return false;
@@ -369,6 +373,8 @@ function min_header($headers)
 	}
 }	
 
+// $layout means layout if it starts with 'layout_', or  type like  json, xml otherwise
+
 function final_response($result, $layout) {
 	
 	if (empty($layout) || substr($layout, 0, 7) == 'layout_') { 
@@ -486,6 +492,7 @@ function  record_time($tag)
 	watchdog($tag. ' total:'. ($now - $_SERVER['REQUEST_TIME_FLOAT']) * 1000 . ';#this:'. ($now - $last_time) * 1000, 'timelog');
 	$last_time = $now;
 }
+
 function result_page($total, $page_size, $current_page){
 	return array(
 		'page_total' 	=> ceil($total/$page_size),
@@ -493,6 +500,7 @@ function result_page($total, $page_size, $current_page){
 		'data_total' 	=> $total
 	);
 }
+
 function plain_build_query($params, $separator){
 	
 	$joined = [];

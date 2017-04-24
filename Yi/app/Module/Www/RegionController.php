@@ -61,7 +61,7 @@ class RegionController extends \Min\Controller
 				$cache->set($cacheKey, $data);
 			}	
 		}
-		$this->success($result, 'success');
+		$this->success($result);
 	}
  
 }
