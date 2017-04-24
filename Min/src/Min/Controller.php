@@ -9,9 +9,9 @@ class Controller
 	
 	const EXITALL 	= 1; 
 	
-    const EXITERROR = 2;
+	const EXITERROR = 2;
 	
-    const EXITOK 	= 3;
+	const EXITOK 	= 3;
 
 	protected $sharedService = [];
 	
@@ -44,7 +44,7 @@ class Controller
 	 *
 	 */
 	
-	final public function request($server, $params = null, $exit_on_error = Controller::EXITALL, $shared = false)
+	final public function request($server, $params = null, $exit_on_error = Controller::EXITNONE, $shared = false)
 	{
 		$concrete = explode('::',$server);
 		
@@ -84,9 +84,12 @@ class Controller
 		}
 		
 		try {	
-			record_time('service start:'. $server); 
+			record_time('service start:'. $server);
+			
 			$result = $obj->{$concrete[1]}($params);
+			
 			record_time('service end:'. $server);
+			
 			if (empty($result)) {
 				$this->error('返回丢失', 20101);
 			}
