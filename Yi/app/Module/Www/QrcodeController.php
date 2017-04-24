@@ -22,7 +22,9 @@ class QrcodeController extends \Min\Controller
 			// add salary;
 			
 			// view log  logid, userid , article_id , type, time, openid, 
-			// 
+			// 文章 被分享次数， 被察看次数
+			// 用户分享被察看次数， 察看详情
+			
 
 			
 		}
