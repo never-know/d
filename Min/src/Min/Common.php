@@ -30,7 +30,7 @@ function min_init()
 	define('IS_HTTPS', (isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON'));
 	
 	if (!IS_GET && !IS_POST) {
-		parse_str(file_get_contents("php://input", $_POST);
+		parse_str(file_get_contents("php://input", $_POST));
 	}
 
 	spl_autoload_register('autoload');
@@ -383,7 +383,7 @@ function final_response($result, $layout) {
 		} elseif (IS_JSONP) {
 			$layout = 'JSONP';
 		} else {	
-			if ($result['body']) $result = $result['body'];
+			if (!empty($result['body'])) $result = $result['body'];
 			require VIEW_PATH. '/layout/'. ($layout?:'layout_frame'). VIEW_EXT;
 			exit;
 		}
@@ -529,7 +529,7 @@ function shareid_encode($id, $type = null)
 	$params 	= [];
 	$sub_time 	= 1325000000;
 
-	$params['hash_salt'] 	= get_conf('hash_salt');
+	$params['hash_salt'] 	= conf_get('hash_salt');
 
 	if (isset($type)) {
 		$params['id']		= $id;
@@ -568,3 +568,84 @@ function shareid_encode($id, $type = null)
 	}
 }
 
+/* 
+ * id格式 ：{article_id}{6}{time}{6}{type}{1}{salt}{2}{md5}{6}{uid}{n}
+ * 最小6位36进制对应的十进制 100000 => 60466176; 最大zzzzzz => 2176782335
+ * article_id 61000000 到 2176782335  转化为 6位字符串
+ * user_id  同上，n位字符串,  {id*n}{n}
+ * share_time   时间戳减 （1487411575-61000000）= 1325000000
+ * param id : int;
+ */
+ 
+// 6亿用户， 7亿数据 生成 24位字符串
+
+function shareid($id, $uid, $type)
+{ 
+	// test  test/shareidtest.html;
+	//$uid		= session_get('UID');
+	if (empty($uid)) {
+		return 'shareid';
+	}
+	
+	$time 		= $_SERVER['REQUEST_TIME'] - 1295672286;	//	197889303 
+	$uid		= session_get('UID') + 103656280;	
+	$aid		= $id  + 103656280;	
+	 
+	$salt	=   226;//mt_rand(37, 1295);  // 108 ;109   // 129
+	if ($salt < 88) {
+		// $salt2 < $salt3	差值 12
+		$salt2 = 108 - $salt;		//	range:	71-21
+		$salt3 = 120 - $salt;		//	range:	83-33		
+	
+	} elseif ($salt < 130){
+		// $salt2 < $salt3 差值 13
+		$salt2 = 183 - $salt;	//	range:	95-54
+		$salt3 = 196 - $salt;	//	range:	108-67
+	} else {
+		//$salt2 > $salt3 差值 1-11			
+		$salt2  = ($salt%108)?:108;		// 	range: 	22-108
+		$salt3  = ($salt%109)?:109;	 	//	range:	21-107
+		
+		// special process
+		if ($salt2 < 21 ) {
+			$salt2 = 59 - $salt2;		//	range:	(58-39) +  (21-30)
+		}
+		
+		if ($salt3 < 21) {
+			$salt3 = 79 - $salt3;		//	range:	(109-99) + (78-59)
+		}
+		 
+	}
+
+	//zzzzzzz: 78364164095
+	//1000000: 2176782336
+
+	$salt_36 	= base_convert($salt, 10, 36);
+	 
+	$parts 		= [];
+	$parts[]	= $type;
+	$parts[]	= $salt_36[0];
+	$parts[]	= base_convert(((($time % 286898) ?: 286898) * $salt2 + $uid) * $salt3, 10, 36);	//	579113185	7位
+	$parts[]	= base_convert($time * ((($salt%60)?:60) + 10), 10, 36);							//	2046年　	7位
+	$parts[]	= base_convert(((($time % 183868) ?: 183868) * $salt3 + $aid) * $salt2, 10, 36);	//  695186871	7位
+	$parts[]	= $salt_36[1];		 
+	/* 
+	$r = [];
+  
+	if (strlen($parts[2]) < 7) {
+		echo 'uid:', $salt,'--', $salt2,'--', $salt3, '<br>';
+	}
+	if (strlen($parts[3]) < 7) {
+		echo 'tim:',$salt,'--', $salt2,'--', $salt3, '<br>';
+	}
+	
+	if (strlen($parts[4])< 7) {
+		echo 'aid:',$salt,'--', $salt2,'--', $salt3, '<br>';
+	}
+	*/
+	//return strtr( $type. $salt_36[0]. base_convert(((($time % 286898) ?: 286898) * $salt2 + $uid) * $salt3, 10, 36). base_convert(((($time % 183868) ?: 183868) * $salt3 + $aid) * $salt2, 10, 36). base_convert($time * ($salt - 13), 10, 36). $salt_36[1], $pairs) ;
+	//return $r;
+	return strtr( implode('', $parts), 'comefu', 'fucome') ;
+	//$r['id'] = strtr( implode('', $parts), 'fucome', 'comefu') ;
+	//return $r;
+}
