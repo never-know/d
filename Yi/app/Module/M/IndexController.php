@@ -7,7 +7,7 @@ class IndexController extends \Min\Controller
 {
 	public function index_get()
 	{
-		$this->response();
+		$this->layout([], 'layout_m');
 	}
 	
 	public function test()

@@ -359,7 +359,7 @@ function request_error_found($code, $message = '请求失败', $redirect = null,
 	$result['statusCode'] = $code;
 	$result['message'] 	  = $message;
 	if (isset($redirect)) 	$result['redirect'] = $redirect;
-	if (empty($layout)) 	$layout = 'layout_404';
+	if (!isset($layout)) 	$layout = 'layout_404';
 	 
 	final_response($result, $layout);
 }
@@ -376,18 +376,12 @@ function min_header($headers)
 // $layout means layout if it starts with 'layout_', or  type like  json, xml otherwise
 
 function final_response($result, $layout) {
-	
-	if (empty($layout) || substr($layout, 0, 7) == 'layout_') { 
-		if (IS_AJAX) {
-			$layout = 'JSON';
-		} elseif (IS_JSONP) {
-			$layout = 'JSONP';
-		} else {	
-			if (!empty($result['body'])) $result = $result['body'];
-			require VIEW_PATH. '/layout/'. ($layout?:'layout_frame'). VIEW_EXT;
-			exit;
-		}
-	} 
+
+	if (IS_AJAX) {
+		$layout = 'JSON';
+	} elseif (IS_JSONP) {
+		$layout = 'JSONP';
+	}  
  
 	switch (strtoupper($layout)) {
 		case 'JSON' :
@@ -402,7 +396,9 @@ function final_response($result, $layout) {
 			exit;
 		case 'HTML' :
 		default :
-			exit($result);
+			if (!empty($result['body'])) $result = $result['body'];
+			require VIEW_PATH. '/layout/'. ($layout ?: 'layout_frame'). VIEW_EXT;
+			exit;
 	  
 	} 
 }
@@ -591,7 +587,7 @@ function shareid($id, $uid, $type)
 	$uid		= session_get('UID') + 103656280;	
 	$aid		= $id  + 103656280;	
 	 
-	$salt	=   226;//mt_rand(37, 1295);  // 108 ;109   // 129
+	$salt	=   mt_rand(37, 1295);  // 108 ;109   // 129
 	if ($salt < 88) {
 		// $salt2 < $salt3	差值 12
 		$salt2 = 108 - $salt;		//	range:	71-21
@@ -619,7 +615,7 @@ function shareid($id, $uid, $type)
 
 	//zzzzzzz: 78364164095
 	//1000000: 2176782336
-
+	echo ((($salt%60)?:60) + 10),'-';
 	$salt_36 	= base_convert($salt, 10, 36);
 	 
 	$parts 		= [];

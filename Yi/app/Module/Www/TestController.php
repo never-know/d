@@ -5,18 +5,30 @@ use Min\App;
 
 class TestController extends \Min\Controller
 { 
-	 
+	function from10_to62($num) {
+		$to = 62;
+		$dict = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$ret = '';
+		do {
+			$ret = $dict[($num%$to)] . $ret;
+			$num = intval($num/$to);
+		} while ($num > 0);
+		return $ret;
+	}
 	public function a_get()
 	{
 	
-		 	echo '100000: ',base_convert('100000',  36, 10), '<br>';
-		 	echo 'zzzzzz: ',base_convert('zzzzzz',  36, 10), '<br>';
+	
+		 	//echo '100000: ',base_convert('100000',  36, 10), '<br>';
+		 	//echo 'zzzzzz: ',base_convert('zzzzzz',  36, 10), '<br>';
 		$a =$u = []; 
 		$t = microtime(true)*10000;
-		for($i=0;$i<10;$i++){
-		
-		  echo  shareid(700000000, 600000000, 2), "<br>";
-		  sleep(1);
+		for($i=0;$i<60;$i++){
+			$shareid =  shareid(700000000, 600000000, 2);
+		  echo $shareid  , "<br>";
+		  echo $this->from10_to62(base_convert(substr($shareid, 0, 12), 36, 10)).
+			$this->from10_to62(base_convert(substr($shareid, 12), 36, 10));
+			echo "<br>";
 		  $_SERVER['REQUEST_TIME']++;
 		  //echo strlen($r['id']),"<br>";
 		  

@@ -115,7 +115,7 @@ class Controller
 		}
 	}
 	
-	final public function layout($result, $layout = 'layout_frame')
+	final public function layout($result = [], $layout = 'layout_frame')
 	{	
 		require VIEW_PATH.'/layout/'.$layout.VIEW_EXT;
 		exit;
