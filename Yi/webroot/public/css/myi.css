@@ -1,7 +1,6 @@
-﻿.weui_navbar+.weui_tab_bd{ 
-
+﻿
+.weui_navbar+.weui_tab_bd{ 
     padding-bottom: 50px;
-   
 }
 .weui_tabbar_icon{
     color: #888;
@@ -9,15 +8,22 @@
 .weui_bar_item_on .weui_tabbar_icon{
     color: #09bb07;
 }
- 
 .weui_tabbar{
 z-index:99;
 }
 
+.weui_media_box{
+padding:12px 16px;
+}
+.weui_media_box .weui_media_desc {
+font-size:14px;
+height: 40px;
+line-height:20px;
+
+}
 .weui_media_box.weui_media_appmsg .weui_media_info {
     margin-top: 10px;
-    padding-bottom: 5px;
-    font-size: 13px;
+    font-size: 12px;
     color: #cecece;
     line-height: 1em;
     list-style: none;
@@ -25,9 +31,13 @@ z-index:99;
 }
 .weui_media_box.weui_media_appmsg .weui_media_info_meta {
 float:left;
-    padding-right: 1em;
+padding-right: 1em;
 }
 
 .weui_media_box.weui_media_appmsg .weui_media_info_meta_extra{
 float:right;
+}
+.weui_media_box.weui_media_appmsg .weui_media_hd {
+margin-right:0;
+margin-left:.8em;
 }
