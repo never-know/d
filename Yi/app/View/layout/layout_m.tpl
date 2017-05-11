@@ -54,19 +54,6 @@
 		 
 	</div>		  
    
-	<script>
 	 
-	$('.weui_tabbar').tab.noConflict({
-			defaultIndex: <?=$result['meta']['menu_active'];?>,
-			activeClass:'weui_bar_item_on',
-			onChange:function(index){
-				console.log(index);
-			}
-	});
-
-	</script>
-	
-	 
-	
 </body>
 </html>

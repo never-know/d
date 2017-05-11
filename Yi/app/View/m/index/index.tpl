@@ -23,7 +23,7 @@
 	<p>1</p><p>1</p><p>1</p><p>1</p><p>1</p><p>1</p><p>1</p><p>1</p><p>1</p>
 	<p>1</p><p>last line</p>
 -->		
-		<div class="weui_panel weui_panel_access">
+		<div class="weui_panel weui_panel_access_new">
 			<div class="weui_panel_hd">图文组合列表</div>
 			<div class="weui_panel_bd" id="content_load">
 				 
