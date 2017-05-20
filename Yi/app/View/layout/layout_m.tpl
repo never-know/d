@@ -2,19 +2,18 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		
-		
-	 
 		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+		
 		<title><?=$result['meta']['title'];?></title>
 		<?php if(!empty($result['meta']['description'])) : ?>
 		<meta name="description" content="<?=$result['meta']['description'];?>">
 		<?php endif;?>
+		
 		<link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/0.4.3/weui.min.css"/>
 		<link rel="stylesheet" href="/public/css/jquery-weui.css"/>
-		<link rel="stylesheet" href="/public/css/myi.css"/>
-		 
+		<link rel="stylesheet" href="/public/css/myi.css?v=1"/>
 		<script src="/public/js/m/zepto.min.js"></script>
+		<script src="/public/js/m/fastclick.js"></script>
 		 
 		<style>
 			body, html {height: 100%;-webkit-tap-highlight-color: transparent;}
@@ -24,9 +23,9 @@
 <body ontouchstart style="background-color: #f8f8f8;">
 
 	<div class="weui_tab">
-
+		<div class="weui_tab_bd">	
 		<?php view($result); ?> 
-		 
+		</div>
 		<div class="weui_tabbar">
 			<?php if (!empty($result['meta']['menu_active'])) : ?>
 			<a href="javascript:;" class="weui_tabbar_item weui_bar_item_on">
@@ -41,7 +40,7 @@
 			<?php if (empty($result['meta']['menu_active'])) : ?>
 			<a href="javascript:;" class="weui_tabbar_item weui_bar_item_on">
 			<?php  else : ?>
-			<a href="/user.html" class="weui_tabbar_item">
+			<a href="/user/line.html" class="weui_tabbar_item">
 			<?php endif;?>
 				<div class="weui_tabbar_icon">
 				 
@@ -53,7 +52,20 @@
 		</div>
 		 
 	</div>		  
-   
+   <script>
+  if ('addEventListener' in document) {  
+    document.addEventListener('DOMContentLoaded', function() {  
+        FastClick.attach(document.body);  
+    }, false);  
+}  
+$('.weui_tabbar').tab({
+    defaultIndex: <?=(empty($result['meta']['menu_active'])?1:0);?>,
+    activeClass:'weui_bar_item_on',
+    onToggle:function(index){
+		console.log(index);
+    }
+});
+</script>
 	 
 </body>
 </html>

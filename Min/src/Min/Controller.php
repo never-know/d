@@ -19,8 +19,14 @@ class Controller
 	
 	final public function __construct($action)
 	{	
-		$csrf_key = implode('_', [App::getModule(), App::getController(), App::getAction()]);
-		$this->validToken($csrf_key);
+		// wx 特征参数
+		if (empty($_GET['signature']) && empty($_GET['nonce'])) {
+
+			if (!IS_GET || IS_JSONP) {
+				$csrf_key = implode('_', [App::getModule(), App::getController(), App::getAction()]);
+				$this->validToken($csrf_key);
+			}
+		}
 		
 		if (method_exists($this, 'onConstruct') === true) {
             $this->onConstruct();
@@ -148,7 +154,11 @@ class Controller
 	
 	final public function validToken($value)
 	{	
-		if ((!IS_GET || IS_JSONP) && (empty($_POST['csrf_token']) || !valid_token($_POST['csrf_token'], $value))) {
+		if (IS_GET && !IS_JSONP) return true;
+		
+		$csrf_token = IS_JSONP ? $_GET['csrf_token'] : $_POST['csrf_token'];
+		
+		if (empty($_POST['csrf_token']) || !valid_token($csrf_token, $value)) {
 			$this->error('表单已过期', 30101);
 		}
 	}

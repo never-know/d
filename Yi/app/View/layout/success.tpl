@@ -43,8 +43,8 @@ a {
     <div class="page">
 		<div class="content">
          操作成功
-       　</div>
-     　
+        </div>
+      
     </div>
 </body>
 

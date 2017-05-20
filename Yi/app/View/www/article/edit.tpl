@@ -5,7 +5,7 @@
 	<form name="article_edit" id="article_edit" style="width:700px;overflow:hidden;" onsubmit="return false;"    method="post">
 		<dl>
 			<dt>标题：</dt> 
-			<dd><input type="text" name="title" maxlength = "30" id="title" class="ar_text_input"　
+			<dd><input type="text" name="title" maxlength = "30" id="title" class="ar_text_input" 
 				value="<?=\check_plain($result['detail']['title']);?>">
 			<label>标题6-30个字符</label></dd>
 		</dl>

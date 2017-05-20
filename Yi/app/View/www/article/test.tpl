@@ -41,7 +41,7 @@ height:80px;
 	<form id="article_edit" style="width:700px;overflow:hidden;" onsubmit="return false;">
 		<dl>
 			<dt>标题：</dt> 
-			<dd><input type="text" name="title" maxlength = "30" id="title" class="ar_text_input"　
+			<dd><input type="text" name="title" maxlength = "30" id="title" class="ar_text_input" 
 				value="<?php 
 					echo (empty($result['t'])? '' : \check_plain($result['t']));
 				?>">
@@ -360,10 +360,10 @@ diy_select.prototype={
 			Min.css.removeClass('diy_select_list_loading', THAT.l[0]);
 			if(data.statusCode == 0 ){
 				for(var i=0; i<data.body[0].length; i++) {
-				　var li = document.createElement("li");
-	　　　		　li.setAttribute("sid", data.body[0][i].id);
-			　　　li.innerHTML = data.body[0][i].name;
-			　　　THAT.l[0].appendChild(li);
+				 var li = document.createElement("li");
+	   		 li.setAttribute("sid", data.body[0][i].id);
+			   li.innerHTML = data.body[0][i].name;
+			   THAT.l[0].appendChild(li);
 				}
 			}
 		 }); 
@@ -406,7 +406,7 @@ diy_select.prototype={
 				if(k > index){
 					a.innerHTML = '';
 					var li = document.createElement("li");
-	　　　			　li.setAttribute("sid", 0);
+	   			 li.setAttribute("sid", 0);
 					  var i = Min.dom.pre(a,'I');
 					  //ipt = Min.dom.pre(i);
 					  //ipt.value = 0;
@@ -428,9 +428,9 @@ diy_select.prototype={
 							if(key > 0 &&  index < THAT.lengths-1 ){
 				
 								for(var i=0; i < region[key].length; i++){
-								　var li = document.createElement("li");
-					　　　		　li.setAttribute("sid", region[key][i].id);
-							　　　li.innerHTML = region[key][i].name;
+								 var li = document.createElement("li");
+					   		 li.setAttribute("sid", region[key][i].id);
+							   li.innerHTML = region[key][i].name;
 								  THAT.l[index+1].appendChild(li);
 								}	
 							}
@@ -440,9 +440,9 @@ diy_select.prototype={
 				} else {
 					THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key);
 				for(var i=0; i < region[key].length; i++){
-				　var li = document.createElement("li");
-	　　　		　li.setAttribute("sid", region[key][i].id);
-			　　　li.innerHTML = region[key][i].name;
+				 var li = document.createElement("li");
+	   		 li.setAttribute("sid", region[key][i].id);
+			   li.innerHTML = region[key][i].name;
 				  THAT.l[index+1].appendChild(li);
 				
 				}
@@ -461,9 +461,9 @@ diy_select.prototype={
 			if(key > 0 && index < THAT.lengths-1 ){
 				THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key);
 				for(var i=0; i < region[key].length; i++){
-				　var li = document.createElement("li");
-	　　　		　li.setAttribute("sid", region[key][i].id);
-			　　　li.innerHTML = region[key][i].name;
+				 var li = document.createElement("li");
+	   		 li.setAttribute("sid", region[key][i].id);
+			   li.innerHTML = region[key][i].name;
 				  THAT.l[index+1].appendChild(li);
 				}	
 			}

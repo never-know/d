@@ -1,14 +1,6 @@
 
-<div class="weui_navbar">
-	<div class="weui_navbar_item" id="d2">
-		全部分类
-	</div>
-	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;max-width:60%;    overflow: hidden;" id="d3">
-		西湖区转塘街道西湖区转塘街道转塘街道转塘街道
-	</div>
-	
-</div>
-<div class="weui_tab_bd">
+
+ 
 <!--
 	<input type="text" id="a" readonly="" />
 	<header class="demos-header">
@@ -177,13 +169,21 @@
 				
 			</div>
 		</div>
-	
+	<div class="weui_navbar">
+	<div class="weui_navbar_item" id="d2">
+		全部分类
+	</div>
+	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;max-width:60%;    overflow: hidden;" id="d3">
+		西湖区转塘街道西湖区转塘街道转塘街道转塘街道
+	</div>
+	</div>
+ 
 	
 	<div class="weui-infinite-scroll">
 	  <div class="infinite-preloader"></div>
 	  正在加载... 
 	</div>
-</div>
+ 
 <script> 
 
 

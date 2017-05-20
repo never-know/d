@@ -11,7 +11,7 @@ class RegionController extends \Min\Controller
 	 * 	获取 id 所有子元素, 按 id 升序 
 	 *
 	 *	parameter: id
-	 *　result : [id => [[ID, SHORT_NAME, PARENT_ID], ...]]
+	 * result : [id => [[ID, SHORT_NAME, PARENT_ID], ...]]
 	 *
 	 */
 	 
@@ -30,7 +30,7 @@ class RegionController extends \Min\Controller
 	}
 	
 	/*
-	 * 	重置 region 相关缓存　regionChain_{id} 
+	 * 	重置 region 相关缓存 regionChain_{id} 
 	 */
 	 
 	public function cache_get()

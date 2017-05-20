@@ -63,7 +63,7 @@ a {
       <div class="error">
         <h1 class="header">
           <a href="/" class="logo">
-            <img src="/public/images/logo.jpg" srcset="/public/images/logo.jpg" alt="">
+            <img src="/public/images/logo16.jpg" srcset="/public/images/logo16.jpg" alt="">
           </a>
           - 404
         </h1>

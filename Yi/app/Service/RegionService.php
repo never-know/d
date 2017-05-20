@@ -9,7 +9,7 @@ class RegionService extends \Min\Service
 	 * 	获取 id 所有子元素, 按 id 升序 
 	 *
 	 *	parameter: id
-	 *　result : [id => [[ID, SHORT_NAME, PARENT_ID], ...]]
+	 * result : [id => [[ID, SHORT_NAME, PARENT_ID], ...]]
 	 *
 	 */
 	 
@@ -24,7 +24,7 @@ class RegionService extends \Min\Service
 	/*
 	 * 	region 表全部数据, 按 parent_id, id 升序 
 	 *
-	 *　result : [id => short_name, ...]
+	 * result : [id => short_name, ...]
 	 *
 	 */
 	public function allNode()
@@ -43,7 +43,7 @@ class RegionService extends \Min\Service
 	 * 	获取 id 所有自己, 父级, 父父级等元素的子元素, 按parent_id, id 升序 
 	 *
 	 *	parameter: id
-	 *　result : [[ID, SHORT_NAME, PARENT_ID], ...]
+	 * result : [[ID, SHORT_NAME, PARENT_ID], ...]
 	 *
 	 */
 	 

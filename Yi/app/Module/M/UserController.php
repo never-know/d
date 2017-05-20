@@ -11,11 +11,22 @@ class UserController extends \Min\Controller
 		$this->layout($result, 'layout_m');
 	}
 	
-	public function test()
+	public function profile_get()
 	{
-		$this->response();
+		$result['meta'] = ['title' =>'安逸时光,美丽分享'];
+		$this->layout($result, 'layout_m');
 	}
-
-
+	
+	public function grid_get()
+	{
+		$result['meta'] = ['title' =>'安逸时光,美丽分享'];
+		$this->layout($result, 'layout_m');
+	}
+	
+	public function line_get()
+	{
+		$result['meta'] = ['title' =>'安逸时光,美丽分享'];
+		$this->layout($result, 'layout_m');
+	}
 
 }

@@ -1,5 +1,9 @@
 <?php
-	
+	var_dump($_GET);
+	var_dump($_POST);
+	var_dump($_REQUEST);
+	var_dump(file_get_contents("php://input"));
+	exit;
 	require __DIR__ .'/../app/bootstrap.php';	
 	/*
 	echo base_convert(PHP_INT_MAX, 10, 36), "<br>";

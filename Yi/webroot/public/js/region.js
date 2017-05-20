@@ -46,7 +46,7 @@ diy_select.prototype={
 				if(k > index){
 					a.innerHTML = '';
 					var li = document.createElement("li");
-	　　　			　li.setAttribute("sid", 0);
+	    			 li.setAttribute("sid", 0);
 					  var i = Min.dom.pre(a,'I');
 					  li.innerHTML = i.innerHTML = '--不限--';
 					  a.appendChild(li);  
@@ -65,21 +65,21 @@ diy_select.prototype={
 							THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key)
 							if(key > 0 &&  index < THAT.lengths-1 ){
 								Min.obj.each(region[key], function(name, id){
-								　var li = document.createElement("li");
-					　　　		　li.setAttribute("sid", id);
-							　　　li.innerHTML = name;
+								 var li = document.createElement("li");
+					   		 li.setAttribute("sid", id);
+							   li.innerHTML = name;
 								  THAT.l[index+1].appendChild(li);
 								});	
 							}
 						}
 					}); 
-					
+					　
 				} else {
 					THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key);
 					Min.obj.each(region[key], function(name, id){
-					　	var li = document.createElement("li");
-		　　　		　	li.setAttribute("sid", id);
-				　　　	li.innerHTML = name;
+					 	var li = document.createElement("li");
+		   		 	li.setAttribute("sid", id);
+				   	li.innerHTML = name;
 						THAT.l[index+1].appendChild(li);
 					});	
 				}

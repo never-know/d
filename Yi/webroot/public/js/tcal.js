@@ -3,7 +3,7 @@
 // License: Public Domain... You're welcome.
 
 // default settins - this structure can be moved in separate file in multilangual applications
-　
+ 
 var A_TCALCONF = {
 	'cssprefix'  : 'tcal',
 	'months'     : ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '月9', '10月', '11月', '12月'],

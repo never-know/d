@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="/public/css/reset.css">
 <link rel="stylesheet" href="/public/font/iconfont.css">
 <link rel="stylesheet" href="/public/css/yi.css">
+<link rel="icon" href="//www.yi.com/favicon.ico" mce_href="//www.yi.com/favicon.ico" type="image/x-icon">
 <script type="text/javascript" src="/public/js/Min.js"></script>
 <script type="text/javascript" src="/public/js/event.js"></script>
 <script type="text/javascript" src="/public/js/cookie.js"></script>

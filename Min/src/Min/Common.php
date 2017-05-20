@@ -21,13 +21,13 @@ function min_init()
 	defined('VENDOR_PATH') 	or define('VENDOR_PATH', MIN_PATH.'/../vendor');
 	
 	define('REQUEST_METHOD', strtoupper($_SERVER['REQUEST_METHOD']));
-	define('IS_GET', (REQUEST_METHOD === 'GET'));
-	define('IS_POST', (REQUEST_METHOD === 'POST'));
-	define('IS_PUT', (REQUEST_METHOD === 'PUT'));
+	define('IS_GET', 	(REQUEST_METHOD === 'GET'));
+	define('IS_POST', 	(REQUEST_METHOD === 'POST'));
+	define('IS_PUT', 	(REQUEST_METHOD === 'PUT'));
 	define('IS_DELETE', (REQUEST_METHOD === 'DELETE'));
-	define('IS_JSONP', isset($_GET['isJsonp']));
-	define('IS_AJAX', (isset($_REQUEST['isAjax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')));
-	define('IS_HTTPS', (isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON'));
+	define('IS_JSONP', 	isset($_GET['isJsonp']));
+	define('IS_AJAX', 	(isset($_REQUEST['isAjax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')));
+	define('IS_HTTPS', 	(isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON'));
 	
 	if (!IS_GET && !IS_POST) {
 		parse_str(file_get_contents("php://input", $_POST));
@@ -622,7 +622,7 @@ function shareid($id, $uid, $type)
 	$parts[]	= $type;
 	$parts[]	= $salt_36[0];
 	$parts[]	= base_convert(((($time % 286898) ?: 286898) * $salt2 + $uid) * $salt3, 10, 36);	//	579113185	7位
-	$parts[]	= base_convert($time * ((($salt%60)?:60) + 10), 10, 36);							//	2046年　	7位
+	$parts[]	= base_convert($time * ((($salt%60)?:60) + 10), 10, 36);							//	2046年	7位
 	$parts[]	= base_convert(((($time % 183868) ?: 183868) * $salt3 + $aid) * $salt2, 10, 36);	//  695186871	7位
 	$parts[]	= $salt_36[1];		 
 	/* 
