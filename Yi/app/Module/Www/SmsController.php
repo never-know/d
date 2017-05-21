@@ -41,7 +41,7 @@ class SmsController extends \Min\Controller
 			usr_error(100, '手机号码格式错误');
 		}else{
 			$code = new \Min\Captcha;
-			if( true === $code->checkCode($_POST['code'],'reg')){
+			if( true === $code->checkCode($_POST['code'], 'reg')){
 				$account = app::service('account');
 				$result = $account->checkAccount($_POST['phone'],'phone');
 				if( 1 == $result ){

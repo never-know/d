@@ -5,13 +5,8 @@ use Min\App;
 
 class AccountService extends \Min\Service
 {
-	// 是否清理 checkaccount 产生的缓存
-	private $clean_cache = false;
-	private $stage = 1;
-	
 	private $db_key = 'user';
-	private $cache_key = 'login';
- 
+	private $cache_key = 'account';
 	/**
 	* 检测账号是否存在
 	*
@@ -79,9 +74,9 @@ class AccountService extends \Min\Service
 		}
 	}
 
-	public function addUserByPhone($regist_data) 
+	public function addUserByPhone($data) 
 	{
-		$check = $this->checkAccount($regist_data['phone']);
+		$check = $this->checkAccount($data['phone']);
 		
 		if (0 == $check['statusCode']) {
 			return $this->error('该手机号码已被注册', 30205);
@@ -89,11 +84,11 @@ class AccountService extends \Min\Service
 			return $check;
 		}
 		
-		if ($regist_data['pwd'] = password_hash($regist_data['pwd'], PASSWORD_BCRYPT, ['cost' => 9])) {	
+		if ($data['pwd'] = password_hash($data['pwd'], PASSWORD_BCRYPT, ['cost' => 9])) {	
 		
 			$sql = 'INSERT INTO {user} (phone, regtime, regip, pwd) VALUES ('. 
 			
-			implode(',', [intval($regist_data['phone']), intval($regist_data['regtime']), intval($regist_data['regip']), "'". $regist_data['pwd']. "')"]);
+			implode(',', [intval($data['phone']), intval($data['regtime']), intval($data['regip']), "'". $data['pwd']. "')"]);
 			
 			$reg_result =  $this->query($sql);
 			
@@ -101,8 +96,8 @@ class AccountService extends \Min\Service
 			
 			if ($reg_result > 1) {
 				//清理 注册缓存
-				$this->cache()->delete($this->getCacheKey('phone', intval($regist_data['phone'])));
-				$this->initUser(['uid' => $reg_result, 'nick' => $regist_data['phone']]);
+				//$this->cache()->delete($this->getCacheKey('phone', intval($data['phone'])));
+				$this->initUser(['uid' => $reg_result]);
 				return $this->success();
 			} else {
 				return $this->error('注册失败', 30204);
@@ -154,7 +149,7 @@ class AccountService extends \Min\Service
 		if($user['uid'] > 0) {
 			// 每次登陆都需要更换session id ;
 			session_regenerate_id();
-			setcookie('nick', $user['nick'], 0, '/', COOKIE_DOMAIN);
+			//if (!empty($user['nick'])) setcookie('nick', $user['nick'], 0, '/', COOKIE_DOMAIN);
 			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
 			// 此处应与 logincontroller islogged 相同
 			

@@ -22,11 +22,11 @@ class AccountService
 	*
 	*/
 
-	public function checkAccount($name,$type) {
+	public function checkAccount($name, $type) {
 
-		if( !in_array($type,['phone','email','name'])){
+		if (!in_array($type,['phone','email','name', 'openid'])) {
 			trigger_error('parameter error' , E_USER_ERROR);
-		}else{
+		} else {
 		
 			$key		= $type.md5($name);
 			$result 	= App::cacheManager('checkAccount')->get($key);
@@ -34,7 +34,7 @@ class AccountService
 			
 			if( empty($result) ){	
 				$sql = "SELECT 1 FROM user  WHERE  $type = ? limit 1";
-				$sql_result	= App::db('user#user')->query('single',$sql,'s',[$name]);
+				$sql_result	= App::db('user#user')->query('single', $sql, 's', [$name]);
 				if( !empty($sql_result) ){
 					$result = 1 ;
 				}elseif( $sql_result === null){

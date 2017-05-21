@@ -221,6 +221,7 @@ function validate($type, $value, int $max = 0, int $min = 1)
 		'quotes'		=>'/["\'\s]+/u',					// 引号空格
 		'nickname'		=> '/^[a-zA-Z0-9\-_\x{4e00}-\x{9fa5}]{3,31}$/u',   // 含中文昵称
 		'username'		=>'/^[a-zA-Z0-9\-_]{3,31}$/',						// 用户名
+		'openid'		=>'/^[a-zA-Z0-9\-_]{20,36}$/',						// openid
 		'email' 		=>'/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',	// 邮箱
 		'phone'			=> '/^(13|15|18|14|17)[\d]{9}$/',						// 手机
 		'alphabet'		=> '/^[a-z]+$/i',										// 字母不区分大小写
@@ -238,7 +239,7 @@ function validate($type, $value, int $max = 0, int $min = 1)
 	}
 	*/
 	 
-	return ((preg_match($pattern[$type],$value) == 1) && (!($type != 'length' && $max > 0) || preg_match($pattern['length'], $value) == 1));
+	return (isset($pattern[$type]) && (preg_match($pattern[$type],$value) == 1) && (!($type != 'length' && $max > 0) || preg_match($pattern['length'], $value) == 1));
 	 
 }
 

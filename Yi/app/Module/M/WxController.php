@@ -9,10 +9,13 @@ class WxController extends \Min\Controller
 	private $_receive;
 	private $_msg;
 	
-	public function index_get()
+	public function onConstruct()
 	{
 		$this->conf = config_get('anyitime');
-		
+	}
+	
+	public function index_get()
+	{
 		// 验证服务器
 		if (!empty($_GET['echostr'])) {
 			if ($this->checkSignature()) {
@@ -24,15 +27,17 @@ class WxController extends \Min\Controller
 	
 	public function index_post()
 	{
-		$this->conf = config_get('anyitime');
-		
 		if (!$this->checkSignature()) {
 			exit;
 		}
 		
 		$this->_receive = $this->getRev();
 		
-		$this->{'process_'. $this->_receive['MsgType']}();
+		$mt 	= strtolower($this->_receive['MsgType']);
+		
+		$func = ('event' == $mt)? ('process_event_'.strtolower($this->_receive['Event'])) : ('process_'. $mt); 
+		 
+		$this->{$func}();
 		
 		$this->reply();
 		
@@ -42,7 +47,7 @@ class WxController extends \Min\Controller
 	
 	private function process_text() 
 	{
-		$content = $this->_receive['content'];
+		$content = $this->getRevContent();
 		$this->text('您好，祝您生活愉快');
 	}
 	
@@ -53,42 +58,52 @@ class WxController extends \Min\Controller
 		$this->text('谢谢，已获得您的位置信息');
 	}
 	
-	private function process_event() 
+	private function process_event_subscribe() 
 	{
-		switch ($this->_receive['Event']) {
-			case 'subscribe' :
-			
-				break;
-			case 'unsubscribe' :
-			
-				break;
-			case 'LOCATION' :
-			
-				break;
-			case 'SCAN' :
-			
-				break;
-			case 'CLICK' :
-			
-				break;
-			case 'VIEW' :
-			
-				break;
+		$sceneid = $this->getRevSceneId();
+		watchdog($sceneid, 'wx_sceneid');
 		
-		
-		
-		
-		}
-		
-		$this->text('谢谢，已获得您的位置信息');
+		// 添加  yi_user_wx 
+		$param				= [];
+		$param['wip']		= ip_address();
+		$param['pid']	 	= ($sceneid ? base_convert($sceneid, 36, 10) : 0);
+		$param['ctime']	 	= $_SERVER['REQUEST_TIME'];
+		$param['openid']	= $this->getRevFrom();
+
+		$login =  $this->request('\\App\\Service\\Wuser::addUserByOpenid', $param);
+
+		$this->text('谢谢关注, 祝您生活愉快');
 	}
+	
+	private function process_event_unsubscribe() 
+	{
+		$this->text('goodbye');
+	}
+	private function process_event_location() 
+	{
+		$this->text('thank you');	
+	}
+	private function process_event_scan() 
+	{
+		$this->text('welcome back');	
+	}
+	private function process_event_click() 
+	{
+		exit('');
+	}
+	
+	private function process_event_view() 
+	{
+		exit('');
+	}
+	
 	
 	private function checkSignature()
 	{
-        $signature 	= $_GET["signature"]??'';
-	    //$signature 	= $_GET["msg_signature"]??$signature; //如果存在加密验证则用加密验证段
-        $timestamp 	= $_GET["timestamp"]??'';
-        $nonce 		= $_GET["nonce"]??'';
+        $signature 	= $_GET['signature']??'';
+	    //$signature 	= $_GET['msg_signature']??$signature; //如果存在加密验证则用加密验证段
+        $timestamp 	= $_GET['timestamp']??'';
+        $nonce 		= $_GET['nonce']??'';
 
 		$token 		= $this->conf['token'];
 		
@@ -102,36 +117,13 @@ class WxController extends \Min\Controller
 			return false;
 		}
 	}
-	
-	/**
-	 * 设置发送消息
-	 * @param array $msg 消息数组
-	 * @param bool $append 是否在原消息数组追加
-	 */
-    private function Message($msg = '',$append = false)
-	{
-    		if (is_null($msg)) {
-    			$this->_msg =array();
-    		} elseif (is_array($msg)) {
-    			if ($append)
-    				$this->_msg = array_merge($this->_msg,$msg);
-    			else
-    				$this->_msg = $msg;
-    			return $this->_msg;
-    		} else {
-    			return $this->_msg;
-    		}
-    }
-	
+	 
 	/**
      * 获取微信服务器发来的信息
      */
 	private function getRev()
 	{
-		//if ($this->_receive) return $this;
-		//$postStr = !empty($this->postxml)?$this->postxml:file_get_contents("php://input");
 		$postStr = file_get_contents("php://input");
-		//兼顾使用明文又不想调用valid()方法的情况
 		watchdog($postStr, 'wx_receive');
 		if (!empty($postStr)) {
 			return (array)simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -264,8 +256,8 @@ class WxController extends \Min\Controller
 	*/
 	private function getRevSceneId ()
 	{
-		if (isset($this->_receive['EventKey'])){
-			return str_replace('qrscene_','',$this->_receive['EventKey']);
+		if (isset($this->_receive['EventKey'])) {
+			return substr($this->_receive['EventKey'], 8);
 		} else{
 			return false;
 		}
@@ -328,7 +320,7 @@ class WxController extends \Min\Controller
 	 */
 	private function _auto_text_filter($text) 
 	{
-		if (!$this->_text_filter) return $text;
+		//if (!$this->_text_filter) return $text;
 		return str_replace("\r\n", "\n", $text);
 	}
 
@@ -346,15 +338,15 @@ class WxController extends \Min\Controller
 			'Content'		=>	$this->_auto_text_filter($text),
 			'CreateTime'	=>	time()
 		);
-		$this->Message($msg);
-		return $this;
+		$this->_msg = $msg;	
+		 
 	}
 	/**
 	 * 设置回复消息
 	 * Example: $obj->image('media_id')->reply();
 	 * @param string $mediaid
 	 */
-	private function image($mediaid='')
+	private function image($mediaid = '')
 	{
 		$msg = array(
 			'ToUserName' 	=> $this->getRevFrom(),
@@ -363,8 +355,7 @@ class WxController extends \Min\Controller
 			'Image'			=> array('MediaId'=>$mediaid),
 			'CreateTime'	=> time(),
 		);
-		$this->Message($msg);
-		return $this;
+		$this->_msg = $msg;	
 	}
 	
 	/**
@@ -381,7 +372,7 @@ class WxController extends \Min\Controller
 	 *  	"1"=>....
 	 *  )
 	 */
-	private function news($newsData=array())
+	private function news($newsData = [])
 	{
 		$count = count($newsData);
 
@@ -393,8 +384,7 @@ class WxController extends \Min\Controller
 			'ArticleCount'	=> $count,
 			'Articles'		=> $newsData
 		);
-		$this->Message($msg);
-		return $this;
+		$this->_msg = $msg;	
 	}
 
 	/**
@@ -404,15 +394,12 @@ class WxController extends \Min\Controller
 	 * @param string $msg 要发送的信息, 默认取$this->_msg
 	 * @param bool $return 是否返回信息而不抛出到浏览器 默认:否
 	 */
-	private function reply($msg = array(), $return = false)
+	private function reply($return = false)
 	{
-		if (empty($msg)) {
-		    if (empty($this->_msg))   //防止不先设置回复内容，直接调用reply方法导致异常
-		        return false;
-			$msg = $this->_msg;
-		}
-		
-		$xmldata=  $this->xml_encode($msg);
+		 
+		if (empty($this->_msg)) return false;   //防止不先设置回复内容，直接调用reply方法导致异常
+
+		$xmldata=  $this->xml_encode($this->_msg);
 		watchdog($xmldata, 'wx_replay');
 		if ($return)
 			return $xmldata;

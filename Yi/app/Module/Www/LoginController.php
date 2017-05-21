@@ -17,14 +17,18 @@ class LoginController extends \Min\Controller
 	
 	public function index_post()
 	{	
-		$name 		= $_POST['name'];
+		$phone 		= $_POST['phone'];
 		$pwd 		= $_POST['pwd'];
 		$captcha 	= $_POST['captcha'];
-		if (empty($name) || empty($pwd)) {	
+		if (empty($phone) || empty($pwd)) {	
 			$this->error('账号密码不能为空', 30208);		
 		}
+		
+		if (!validate('phone', $phone)) {
+			$this->error('手机号码格式错误', 30200);
+		}
 
-		if ($this->loginErrorTimes($name) > 2) {
+		if ($this->loginErrorTimes($phone) > 2) {
 		
 			if (empty($captcha)) $this->error('请输入图片验证码', 30103);
 			
@@ -34,7 +38,7 @@ class LoginController extends \Min\Controller
 			}
 		}
 
-		$login =  $this->request('\\App\\Service\\Account::login', ['name' => $name, 'pwd' => $pwd]);
+		$login =  $this->request('\\App\\Service\\Account::login', ['phone' => $phone, 'pwd' => $pwd]);
 		 
 		if (0 === $login['statusCode']) {	
 			session_set('loginerror', null);
@@ -43,11 +47,10 @@ class LoginController extends \Min\Controller
 		} else {
 		
 			$result['message'] = '账号密码错误';
-			$error_times = $this->loginErrorInc($name);
+			$error_times = $this->loginErrorInc($phone);
 			$result['statusCode'] = ($error_times > 3) ? 30202 : 30201;
 			$this->response($result);	
 		} 
-
 	}
 
 	private function loginErrorTimes($key)
