@@ -86,22 +86,23 @@ class AccountService extends \Min\Service
 		
 		if ($data['pwd'] = password_hash($data['pwd'], PASSWORD_BCRYPT, ['cost' => 9])) {	
 		
-			$sql = 'INSERT INTO {user} (phone, regtime, regip, pwd) VALUES ('. 
+			$sql = 'INSERT IGNORE INTO {user} (phone, regtime, regip, pwd) VALUES ('. 
 			
-			implode(',', [intval($data['phone']), intval($data['regtime']), intval($data['regip']), "'". $data['pwd']. "')"]);
+			implode(',', [intval($data['phone']), intval($data['regtime']), intval($data['regip']), '"'. $data['pwd']. '")']);
 			
 			$reg_result =  $this->query($sql);
 			
 			watchdog($reg_result);
 			
-			if ($reg_result > 1) {
+			if ($reg_result['id'] > 0) {
 				//清理 注册缓存
 				//$this->cache()->delete($this->getCacheKey('phone', intval($data['phone'])));
-				$this->initUser(['uid' => $reg_result]);
+				$this->initUser(['uid' => $reg_result['id']]);
 				return $this->success();
 			} else {
 				return $this->error('注册失败', 30204);
 			}
+			
 		} else {
 			throw new \Min\MinException('password_hash failed', 20104);
 		}

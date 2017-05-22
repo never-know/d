@@ -37,7 +37,7 @@ class ArticleService extends \Min\Service
 			$this->DBManager()->transaction_start();
 			$this->DBManager()->inTransaction();
 			$id = $this->query($sql, $bind);
-			$sql2 = 'INSERT INTO {article_content} (id, content) values ('. intval($id). ', :content )';
+			$sql2 = 'INSERT INTO {article_content} (id, content) values ('. intval($id['id']). ', :content )';
 			$this->query($sql2, [':content' => $param['content']]);
 			$this->DBManager()->transaction_commit();
 			return $this->success();

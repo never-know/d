@@ -70,9 +70,15 @@ class WxController extends \Min\Controller
 		$param['ctime']	 	= $_SERVER['REQUEST_TIME'];
 		$param['openid']	= $this->getRevFrom();
 
-		$login =  $this->request('\\App\\Service\\Wuser::addUserByOpenid', $param);
-
-		$this->text('谢谢关注, 祝您生活愉快');
+		$add =  $this->request('\\App\\Service\\Wuser::addUserByOpenid', $param);
+		
+		if ($add['statusCode'] == 30205) {
+			$this->text('谢谢您再次关注，你可以先绑定手机号码, 祝您生活愉快');
+		} elseif ($add['statusCode'] == 30207) {
+			$this->text('谢谢您再次关注, 祝您生活愉快');
+		} else {
+			$this->text('谢谢关注，你可以先绑定手机号码,祝您生活愉快');
+		}
 	}
 	
 	private function process_event_unsubscribe() 
@@ -85,7 +91,7 @@ class WxController extends \Min\Controller
 	}
 	private function process_event_scan() 
 	{
-		$this->text('welcome back');	
+		exit('');	
 	}
 	private function process_event_click() 
 	{

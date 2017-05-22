@@ -4,7 +4,17 @@
 
 query(user')->;
 
+ column is unique or primary
+ insert into table (column) values ("column_value")  ON DUPLICATE KEY UPDATE id =LAST_INSERT_ID(id) ;
+ 
+ insert into table (column) values ("column_value") ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), logincount =
+		(CASE logincount 
+			WHEN 12 THEN 13 
+			ELSE logincount 
+		end)
+
 ****/
+
 namespace Min\Backend;
 
 use Min\MinException as MinException;
@@ -151,7 +161,7 @@ class MysqliPDO
 						$result	= $stmt->rowCount();
 						break;
 					case 'INSERT' :
-						$result	= $this->lastInsertId($type);
+						$result	= ['id' => $this->lastInsertId($type), 'effect' => $stmt->rowCount()];
 						break;
 					case 'SELECT' :
 						if (preg_match('/limit\s+1\s*$/i',$sql)) {
@@ -201,7 +211,7 @@ class MysqliPDO
 				}
 				
 				if ($action === 'insert') {
-					$result = $this->lastInsertId($type);
+					$result = ['id' => $this->lastInsertId($type), 'effect' => $result];
 				}
 				return $result;
 				

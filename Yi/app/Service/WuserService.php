@@ -18,7 +18,7 @@ class WuserService extends \Min\Service
 	*	1 账号存在
 	*/
 
-	public function checkAccount($name, $join = false) 
+	public function checkAccount($name) 
 	{	
 		if ( is_numeric($name)) {
 			$type  = 'id';
@@ -36,11 +36,8 @@ class WuserService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-			if ($join) {
-				$sql = 'SELECT w.id, w.pid, w.openid, u.uid, u.phone  FROM {user_wx} AS w left join {user} AS u ON u.uid = w.userid WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
-			} else {
-				$sql = 'SELECT `id`, `pid`, `openid`,`userid` FROM {user_wx} WHERE '. $type. ' = '. $name .' LIMIT 1';
-			}
+			$sql = 'SELECT w.id, w.pid, w.openid, u.uid, u.phone  FROM {user_wx} AS w left join {user} AS u ON u.uid = w.userid WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
+			 
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -57,22 +54,25 @@ class WuserService extends \Min\Service
 	{
 		if (!empty($data['pid'])) {
 			$parent = $this->checkAccount($data['pid']);
-			if (0 != $parent['statusCode']) {
+			if (0 != $parent['statusCode'] || empty($parent['phone']) || $parent['openid'] == $data['openid']) {
 				$data['pid'] = 0;
 			}
+		} else {
+			$data['pid'] = 0;
 		}
-		
+		/*
 		$check = $this->checkAccount($data['openid']);
 		
 		if (0 == $check['statusCode']) {
-			return $this->error('该微信帐号已注册', 30205);
+			$code = (empty($check['phone']) ? 30205 : 30207);
+			return $this->error('该微信帐号已注册', $code);
 		} elseif ($check['statusCode'] != 30206) {
 			return $check;
 		}
-
+		*/
 		$sql = 'INSERT INTO {user_wx} (wip, pid,ctime, openid) VALUES ('. 
 		
-		implode(',', [intval($data['wip']), intval($data['pid']), intval($data['ctime']), "'". $data['openid']. "')"]);
+		implode(',', [intval($data['wip']), intval($data['pid']), intval($data['ctime']), '"'. $data['openid']. '")']) . ' ON DUPLICATE KEY  UPDATE pid = ( CASE pid WHEN 0 THEN ' . $data['pid'] . ' ELSE pid end ) ';
 		
 		$reg_result =  $this->query($sql);
 		
