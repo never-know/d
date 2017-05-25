@@ -90,14 +90,14 @@ class AccountService extends \Min\Service
 			
 			implode(',', [intval($data['phone']), intval($data['regtime']), intval($data['regip']), '"'. $data['pwd']. '")']);
 			
-			$reg_result =  $this->query($sql);
+			$result =  $this->query($sql);
 			
-			watchdog($reg_result);
+			watchdog($result);
 			
-			if ($reg_result['id'] > 0) {
+			if ($result['id'] > 0) {
 				//清理 注册缓存
 				//$this->cache()->delete($this->getCacheKey('phone', intval($data['phone'])));
-				$this->initUser(['uid' => $reg_result['id']]);
+				$this->initUser(['uid' => $result['id']]);
 				return $this->success();
 			} else {
 				return $this->error('注册失败', 30204);

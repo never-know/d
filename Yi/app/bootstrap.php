@@ -6,9 +6,10 @@
 	date_default_timezone_set('Asia/Shanghai');
 	
 	define('SITE_DOMAIN', 'yi.com');						// 主域名
+	define('SERVER_NAME', $_SERVER['SERVER_NAME']);						// 主域名
 	define('HOME_PAGE', 'http://www.'.SITE_DOMAIN);
 	
-	define('COOKIE_DOMAIN', '.'.SITE_DOMAIN);
+	define('COOKIE_DOMAIN', '.'. );
 
 	define('APP_PATH', __DIR__);
 
