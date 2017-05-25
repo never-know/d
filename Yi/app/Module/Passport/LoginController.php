@@ -94,7 +94,7 @@ class LoginController
 				
 				if( 0 === $miss['cache'] )	{
 					$cache = app::cache('loginerror')->connect();
-					$cache->set(md5($_POST['loginname']),$result,1200);
+					$cache->set(md5($_POST['loginname']), $result, 1200);
 				}
 				$loginerror = $cache->incr($cache_error_key);
 			

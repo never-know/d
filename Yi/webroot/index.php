@@ -1,6 +1,8 @@
 <?php
+
+	define('SITE_DOMAIN', 'yi.com');						 
+	require __DIR__ .'/../app/bootstrap.php';
 	
-	require __DIR__ .'/../app/bootstrap.php';	
 	/*
 	echo base_convert(PHP_INT_MAX, 10, 36), "<br>";
 	echo base_convert(487410776, 10, 36), "<br>";

@@ -20,7 +20,7 @@ class WuserService extends \Min\Service
 
 	private function checkAccount($name, $type = null) 
 	{	
-		if ($type = 'id') {
+		if ('id' == $type) {
 			$name = intval($name);
 		} elseif (validate('openid', $name)) {
 			$type = 'openid';
@@ -31,7 +31,7 @@ class WuserService extends \Min\Service
  
 		$cache 	= $this->cache('account');
 		$key 	= $this->getCacheKey($type, $name);
-		$result = $cache->get($key, true);
+		$result = $cache->get($key);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 

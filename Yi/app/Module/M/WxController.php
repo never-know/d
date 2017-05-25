@@ -5,7 +5,7 @@ use Min\App;
 
 class WxController extends \Min\Controller
 {
-	private $conf 	 [];
+	private $conf = [];
 	private $_msg;
 	private $_receive;
 	private $access_token;

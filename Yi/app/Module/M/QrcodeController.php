@@ -67,7 +67,7 @@ class NewsController extends \App\Module\M\WbaseController
 	public function getQRCode($uid, $default = null)
 	{
 		$cache 	= $this->cache('qrcode');
-		$result = $cache->get('qrcode_'. $uid, true);
+		$result = $cache->get('qrcode_'. $uid);
 		
 		if (empty($result) || $cache->getDisc() === $result) { 
 		

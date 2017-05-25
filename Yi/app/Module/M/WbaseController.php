@@ -14,8 +14,8 @@ class WbaseController extends \Min\Controller
 		}
 		
 		if (empty($openid)) {
-			redirect();
-			exit;
+			
+			exit('can not get openid');
 		}
 		
 		$this->login(true);
@@ -29,7 +29,7 @@ class WbaseController extends \Min\Controller
 		if (empty($_GET['code'])) {
 			$url = 'https://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 			$state = mt_rand(10000, 99999);
-			sesseion_set('state', $state);
+			session_set('state', $state);
 			redirect($wx->getOauthRedirect($url, $state, 'snsapi_base'));
 			exit;
 		} else {
@@ -45,7 +45,7 @@ class WbaseController extends \Min\Controller
  
 	final public function getWX()
 	{
-		require VENDOR_PATH. '/wx/WeBase.php';
+		require VENDOR_PATH. '/Wx/WxBase.php';
 		return new \WeBase();
 	}
 	

@@ -228,8 +228,8 @@ function validate($type, $value, int $max = 0, int $min = 1)
 		'quotes'		=>'/["\'\s]+/u',					// 引号空格
 		'nickname'		=> '/^[a-zA-Z0-9\-_\x{4e00}-\x{9fa5}]{3,31}$/u',   // 含中文昵称
 		'username'		=>'/^[a-zA-Z0-9\-_]{3,31}$/',						// 用户名
-		//'openid'		=> '/^(?=[a-zA-Z0-9\-_]{26,32}$)(.*[a-zA-Z].*)$',	//'/^[a-zA-Z0-9\-_][a-zA-Z]{20,36}$/',						// openid
-		'openid'		=> '/^(?=.*?[a-zA-Z])([a-zA-Z0-9\-_]{26,32})$',		//'/^[a-zA-Z0-9\-_][a-zA-Z]{20,36}$/',						// openid
+		//'openid'		=> '/^(?=[a-zA-Z0-9\-_]{26,32}$)(.*[a-zA-Z].*)$/',	//'/^[a-zA-Z0-9\-_][a-zA-Z]{20,36}$/',						// openid
+		'openid'		=> '/^(?=.*?[a-zA-Z])([a-zA-Z0-9\-_]{26,32})$/',		//'/^[a-zA-Z0-9\-_][a-zA-Z]{20,36}$/',						// openid
 		'email' 		=>'/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',	// 邮箱
 		'phone'			=> '/^(13|15|18|14|17)[\d]{9}$/',						// 手机
 		'alphabet'		=> '/^[a-z]+$/i',										// 字母不区分大小写
@@ -359,7 +359,7 @@ function config_get($section, $default = null)
 	if (empty($conf)) {
 		require CONF_PATH.'/settings.php';
 	}
-	if (empty($conf[$section]) && isset($default)) {
+	if (!isset($conf[$section]) && !isset($default)) {
 		throw new \Exception('未定义的配置节点' . $section, 1);
 	}
 	return $conf[$section] ?? $default;
@@ -550,6 +550,34 @@ function app_exception($e, $channel = 'unexpected_expection')
 	
 	watchdog(error_message_format($e), $channel, 'CRITICAL', $e->getTrace());
 	request_error_found(500);
+}
+
+function min_error($t)
+{
+	$dest_file = LOG_PATH.'/FatalError'.date('/Y-m-d').'.log';
+		
+	$records =  date('Y/m/d H:i:s', $_SERVER['REQUEST_TIME'])
+			. ' [IP: '
+			. long2ip(ip_address())
+			. '] ['
+			. $_SERVER['REQUEST_URI']
+			. '] ['
+			. ($_SERVER['HTTP_REFERER']??'')
+			. '] [pid '
+			. getmypid()
+			. '] ['
+			. session_id()
+			. '] ['
+			. (session_get('UID') ?: 0)
+			. ']'
+			. PHP_EOL;
+		
+		$records   .= error_message_format($t);
+		$records   .= PHP_EOL;	
+		$records   .= safe_json_encode(debug_backtrace());
+		$records   .= PHP_EOL;
+		error_log($records, 3, $dest_file, '');
+
 }
 
 function error_message_format(\Throwable $e)

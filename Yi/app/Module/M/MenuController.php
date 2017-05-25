@@ -58,7 +58,7 @@ class MenuController extends \Min\Controller
 		
 		$cache 	= $this->cache('wx');
 		$key = 'wechat_access_token_'.$this->appid;
-		$result = $cache->get($key, true);
+		$result = $cache->get($key);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 		
@@ -70,7 +70,7 @@ class MenuController extends \Min\Controller
 					return false;
 				}
 				
-				$expire = $result['expires_in'] ? intval($result['expires_in'])-100 : 7100;
+				$expire = ($result['expires_in'] ? (intval($result['expires_in'])-100) : 7100);
 				$cache->set($key, $result, $expire);
 			}
 		}

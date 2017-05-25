@@ -4,12 +4,10 @@
 	error_reporting(E_ALL);
 	ini_set('display_error','on');
 	date_default_timezone_set('Asia/Shanghai');
-	
-	define('SITE_DOMAIN', 'yi.com');						// 主域名
-	define('SERVER_NAME', $_SERVER['SERVER_NAME']);						// 主域名
-	define('HOME_PAGE', 'http://www.'.SITE_DOMAIN);
-	
-	define('COOKIE_DOMAIN', '.'. );
+
+	define('SERVER_NAME', $_SERVER['SERVER_NAME']);	
+	define('HOME_PAGE', 'https://'. SERVER_NAME);	
+	define('COOKIE_DOMAIN', SERVER_NAME);
 
 	define('APP_PATH', __DIR__);
 
@@ -32,5 +30,5 @@
 		\Min\App::bootstrap($di, true);
 		
 	} catch (\Throwable $t){
-		app_exception($t);
+		min_error($t);
 	}

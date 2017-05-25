@@ -1,7 +1,7 @@
 <?php
 use Min\App;
 
-class WeMenu
+class WeBase
 {
 	const API_URL_PREFIX = 'https://api.weixin.qq.com/cgi-bin';
 	const AUTH_URL = '/token?grant_type=client_credential&';
@@ -47,7 +47,7 @@ class WeMenu
 	private $access_token;
 	private $user_token;
 	
-	public function _construct()
+	public function __construct()
 	{
 		$conf 				= config_get('anyitime');
 		$this->token 		= $conf['token'];
@@ -205,8 +205,7 @@ class WeMenu
 	    {
 	        $json = json_decode($result,true);
 	        if (!$json || !empty($json['errcode'])) {
-	            $this->errCode = $json['errcode'];
-	            $this->errMsg = $json['errmsg'];
+	           watchdog($result, 'wx_result_error');
 	            return false;
 	        }
 	        return $json['short_url'];

@@ -31,7 +31,7 @@ class FileCache
      * @param string $id
      * @param int $expiration 0 means on limit  
      */
-    public function get($id, $expiration = 3600)
+    public function get($id)
     {
         $file_name = $this->getFileName($id);
 		if (is_file($file_name)) {
@@ -69,6 +69,8 @@ class FileCache
                 return false;
             }
         }
+		
+		if ($expiration > 0) $expiration += $_SERVER['REQUEST_TIME'];
 		
 		$tmp = tempnam($dir, 'swap');
 		if (file_put_contents($tmp, safe_json_encode(['data'=>$data, 'expiration' => $expiration]))) {
