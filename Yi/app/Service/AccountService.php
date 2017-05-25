@@ -40,26 +40,26 @@ class AccountService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-			// mysqli prepare
+		
 			/* 
 			$mark = ($arr['type'] == 'phone') ? 'd': 's';
-			$sql = 'SELECT * FROM {user}  WHERE '.$arr['type'].' = ? ';
+			$sql = 'SELECT * FROM {user}  WHERE '.$arr['type'].' = ? '; 	// mysqli prepare
 			$result	= $this->queryi($sql, $mark, [$arr['name']]);
 			 */
 			
-			// mysqli normal 
+			
 			/*
-			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name'];
+			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name']; // mysqli normal 
 			$result	= $this->query($sql);
 			*/
-			// pdo 
+			
 			/*
-			$sql = 'SELECT phone FROM {user}  WHERE '. $arr['type']. ' = :type Limit 1';
+			$sql = 'SELECT phone FROM {user}  WHERE '. $arr['type']. ' = :type Limit 1'; // pdo 
 			$result	= $this->query($sql, [':type' => $arr['name']]);
 			 */
 			 
-			// pdo normal 
-			$sql = 'SELECT * FROM {user} WHERE '. $type. ' = '. $name .' LIMIT 1';
+			
+			$sql = 'SELECT * FROM {user} WHERE '. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -95,8 +95,8 @@ class AccountService extends \Min\Service
 			watchdog($reg_result);
 			
 			if ($reg_result['id'] > 0) {
-				//清理 注册缓存
-				//$this->cache()->delete($this->getCacheKey('phone', intval($data['phone'])));
+				
+				//$this->cache()->delete($this->getCacheKey('phone', intval($data['phone'])));//清理 注册缓存
 				$this->initUser(['uid' => $reg_result['id']]);
 				return $this->success();
 			} else {
@@ -148,8 +148,8 @@ class AccountService extends \Min\Service
 	private function initUser($user)
 	{ 
 		if($user['uid'] > 0) {
-			// 每次登陆都需要更换session id ;
-			session_regenerate_id();
+			
+			session_regenerate_id();// 每次登陆都需要更换session id ;
 			//if (!empty($user['nick'])) setcookie('nick', $user['nick'], 0, '/', COOKIE_DOMAIN);
 			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
 			// 此处应与 logincontroller islogged 相同

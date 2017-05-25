@@ -140,7 +140,7 @@ class SmsService extends \Min\Service
 		session_inrc('sms_'. $this->type. '_times');
 		
 		$key = $this->getKey($phone);
-		session_set($key, ['code'=> $code, 'ctime'=> $_SERVER['REQUEST_TIME'], 'type' => $this->pairs[$this->type], 'id' => $result]);	
+		session_set($key, ['code'=> $code, 'ctime'=> $_SERVER['REQUEST_TIME'], 'type' => $this->pairs[$this->type], 'id' => $result['id']]);	
 		
 		$cache = $this->cache('sms');
 		$cache->incr($key);

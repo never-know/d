@@ -210,7 +210,7 @@ class MysqliPDO
 						break;
 				}
 				
-				if ($action === 'insert') {
+				if ($action === 'INSERT') {
 					$result = ['id' => $this->lastInsertId($type), 'effect' => $result];
 				}
 				return $result;

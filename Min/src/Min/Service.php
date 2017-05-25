@@ -35,14 +35,14 @@ class Service
 		return $result;
 	}
 	
-	final public function query($sql, $param = [], $throwable = true)
+	final public function query($sql, $param = [], $throwable = false)
 	{	
 		record_time('query start');
 		try {	
 			$result = $this->DBManager()->query($sql, $param);
 		} catch (\Throwable $t) {
-			
 			if ($param === false || $throwable === false) {
+				watchdog($t);
 				$result = false;
 			} else {
 				throw $t;
