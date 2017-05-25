@@ -3,7 +3,7 @@ namespace App\Module\M;
 
 use Min\App;
 
-class IndexController extends \Min\Controller
+class IndexController extends \App\Module\M\WbaseController
 {
 	public function index_get()
 	{
@@ -11,11 +11,5 @@ class IndexController extends \Min\Controller
 		$this->layout($result, 'layout_m');
 	}
 	
-	public function test()
-	{
-		$this->response();
-	}
-
-
-
+	 
 }

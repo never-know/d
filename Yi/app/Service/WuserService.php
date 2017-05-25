@@ -18,10 +18,9 @@ class WuserService extends \Min\Service
 	*	1 账号存在
 	*/
 
-	public function checkAccount($name) 
+	private function checkAccount($name, $type = null) 
 	{	
-		if ( is_numeric($name)) {
-			$type  = 'id';
+		if ($type = 'id') {
 			$name = intval($name);
 		} elseif (validate('openid', $name)) {
 			$type = 'openid';
@@ -36,7 +35,7 @@ class WuserService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-			$sql = 'SELECT w.id, w.pid, w.subscribe, w.openid, u.uid, u.phone  FROM {user_wx} AS w left join {user} AS u ON u.uid = w.userid WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
+			$sql = 'SELECT w.id, w.pid, w.openid, w.subscribe, u.uid, u.phone  FROM {user_wx} AS w left join {user} AS u ON u.uid = w.userid WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
 			 
 			$result	= $this->query($sql, false);
  			  
@@ -52,50 +51,79 @@ class WuserService extends \Min\Service
 
 	public function addUserByOpenid($data) 
 	{
-		if (!empty($data['pid'])) {
-			$parent = $this->checkAccount($data['pid']);
-			if (0 != $parent['statusCode'] || empty($parent['phone']) || $parent['openid'] == $data['openid']) {
-				$data['pid'] = 0;
-			}
-		} else {
-			$data['pid'] = 0;
+		if (!validate('openid', $data['openid']) || !in_array($data['subscribe'],[2,3]) || !isset($data['wip']) || empty($data['ctime'])) {
+			return $this->error('参数错误', 30200);
 		}
+
+		$data['wip'] 	= intval($data['wip']);
+		$data['ctime'] 	= intval($data['ctime']);
 		
 		$check = $this->checkAccount($data['openid']);
-		
+		 
 		if (0 === $check['statusCode']) {
-			$code = (($check['body']['subscribe'] == 2) ? '30208' : (empty($check['phone']) ? 30205 : 30207));
-			$sql = 'UPDATE {user_wx} SET subscribe = 3, pid = ( CASE pid WHEN 0 THEN ' . $data['pid'] . ' ELSE pid end )  WHERE id = ' . $check['body']['id'];	
+			if ($data['subscribe'] == 2) {
+				$this->initUser($check['body']);
+				return $this->success();
+			}
+			$code = (($check['subscribe'] == 2 ) ? 30208 : (empty($check['phone']) ? 30205 : 30207));
+			
+		} elseif ($check['statusCode'] != 30206) {
+			return $check;
+		}
+
+		$data['pid']	= max(intval($data['pid']), 0);
+		
+		if ( $data['pid'] > 0) {
+			$parent = $this->checkAccount($data['pid'], 'id');
+			if (0 !== $parent['statusCode'] || empty($parent['phone']) || empty($parent['uid']) || $parent['subscribe'] == 2 || $parent['openid'] == $data['openid']) {
+				$data['pid'] = 0;
+			}
+		}
+		
+		if ($check['statusCode'] == 30206) {
+		
+			$inserts =  [
+				$data['wip'], 
+				$data['pid'], 
+				$data['subscribe'], 
+				$data['ctime'], 
+				'"'. $data['openid']. '")'
+			];
+			
+			$sql = 'INSERT INTO {user_wx} (wip, pid, subscribe, ctime, openid) VALUES ( '. implode(',', $inserts) .' ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)';
 		} else {
-			$sql = 'INSERT INTO {user_wx} (wip, pid, ctime, subscribe, openid) VALUES ('. 
 		
-			implode(',', [intval($data['wip']), intval($data['pid']), intval($data['ctime']), 3, '"'. $data['openid']. '")']);
-		
-			/*
-				$sql = 'INSERT INTO {user_wx} (wip, pid,ctime, subscribe,openid) VALUES ('. 
-				implode(',', [intval($data['wip']), intval($data['pid']), intval($data['ctime']), 3, '"'. $data['openid']. '")']) . ' ON DUPLICATE KEY  UPDATE id = LAST_INSERT_ID(id), subscribe = 3 ,pid = ( CASE pid WHEN 0 THEN ' . $data['pid'] . ' ELSE pid end ) ';
-			*/
+			$sql = 'UPDATE {user_wx} set subscribe = 3 ';
+			
+			if (empty($check['wip'])) {
+				$sql .= ' , wid = '. $data['wip'];
+			}
+			
+			if ($check['pid'] == 0 && $data['pid'] != 0) {
+				$sql .= ', pid = '. $data['pid']; 
+			}
+			$sql .= ' WHERE id = ' .$check['body']['id'];
 		}
 		
 		$result =  $this->query($sql);
 		
 		watchdog($result);
 		
-		if ($result === false) {
-			return $this->error('注册失败', 30204);
-		} else {
-			if (isset($code)) {
-				return $this->error('微信帐号已存在', $code);
-			} else {
+		if ($result !== false) {
+			if ($check['statusCode'] == 30206) {
+				if (2 == $data['subscribe'])  $this->initUser($result['body']);
 				return $this->success();
+			} else {
+				return $this->error('帐号已存在', $code);
 			}
-		}
-		 
+		} else {
+			return $this->error('注册失败', 30204);
+		} 
 	}
 
-	public function login($params) 
+	public function login($openid) 
 	{
-		$result = $this->checkAccount($params, true);
+		$result = $this->checkAccount($openid);
 		
 		if ($result['statusCode'] !== 0) {
 			return $result;
@@ -104,21 +132,17 @@ class WuserService extends \Min\Service
 			return $this->success();
 		}	
 	}
-	
-
+ 
 	private function initUser($user)
 	{ 
-		if (!empty($user['uid'])) {
-			// 每次登陆都需要更换session id ;
-			session_regenerate_id();
-			//setcookie('nick', $user['nick'], 0, '/', COOKIE_DOMAIN);
-			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
-			// 此处应与 logincontroller islogged 相同
-			setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 100, '/', COOKIE_DOMAIN);
-			session_set('logined', 1);
-			session_set('UID', $user['uid']);
-		} 
+		session_regenerate_id();
 		
+		if (!empty($user['id'])) {
+			session_set('openid_id', $user['id']);
+		} 
+		if (!empty($user['uid'])) {
+			session_set('UID', $user['uid']);
+		}
 		session_set('user', $user);	 
 	}
 	

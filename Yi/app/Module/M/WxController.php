@@ -5,9 +5,10 @@ use Min\App;
 
 class WxController extends \Min\Controller
 {
-	private $conf = [];
-	private $_receive;
+	private $conf 	 [];
 	private $_msg;
+	private $_receive;
+	private $access_token;
 	
 	public function onConstruct()
 	{
@@ -69,15 +70,16 @@ class WxController extends \Min\Controller
 		$param['pid']	 	= ($sceneid ? base_convert($sceneid, 36, 10) : 0);
 		$param['ctime']	 	= $_SERVER['REQUEST_TIME'];
 		$param['openid']	= $this->getRevFrom();
+		$param['subscribe']	= 3;
 
 		$add =  $this->request('\\App\\Service\\Wuser::addUserByOpenid', $param);
 		
 		if ($add['statusCode'] == 30205) {
-			$this->text('谢谢您再次关注，你可以先绑定手机号码, 祝您生活愉快');
+			$this->text('谢谢您再次关注，<a href="https://www.baidu.com" > 你可以先绑定手机号码 </a>, 祝您生活愉快');
 		} elseif ($add['statusCode'] == 30207) {
-			$this->text('谢谢您再次关注, 祝您生活愉快');
+			$this->text('<a href="https://www.baidu.com" >谢谢您再次关注</a>, 祝您生活愉快');
 		} else {
-			$this->text('谢谢关注，你可以先绑定手机号码,祝您生活愉快');
+			$this->text('谢谢关注，<a href="https://www.baidu.com" >你可以先绑定手机号码</a>,祝您生活愉快');
 		}
 	}
 	
@@ -102,8 +104,7 @@ class WxController extends \Min\Controller
 	{
 		exit('');
 	}
-	
-	
+
 	private function checkSignature()
 	{
         $signature 	= $_GET['signature']??'';
@@ -138,8 +139,7 @@ class WxController extends \Min\Controller
 		}
 		 
 	}
-	
-	
+
 	/**
 	 * 获取消息发送者
 	 */
@@ -412,11 +412,13 @@ class WxController extends \Min\Controller
 		else
 			echo $xmldata;
 	}
-	
+ 
 	function __call($name, $args)
 	{
 		exit('error');
     }
+	
+	
 
 
 }

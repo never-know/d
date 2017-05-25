@@ -36,10 +36,10 @@ function region_get($region_id)
 			file_get_contents(HOME_PAGE.'/region/cache.html', 0, $context);
 			*/
 			 
-			$fp = fsockopen('www.yi.com', 80);
+			$fp = fsockopen('www.'. SITE_DOMAIN, 80);
 			if ($fp) { 
 				$out = "GET /region/cache.html HTTP/1.1\r\n";
-				$out .= "Host: www.yi.com\r\n";
+				$out .= "Host: www.". SITE_DOMAIN."\r\n";
 				$out .= "Connection: Close\r\n\r\n";
 				stream_set_timeout($fp, 0, 1);
 				fwrite($fp, $out);

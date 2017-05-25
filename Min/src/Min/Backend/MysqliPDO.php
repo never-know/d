@@ -91,7 +91,6 @@ class MysqliPDO
 				));
             
 			} catch (\Throwable $t) {
-				watchdog($t);
 				$error_code = 1;
 			}	
 			
@@ -130,8 +129,10 @@ class MysqliPDO
 	private function realQuery($type, $sql, $action, $param)
 	{
 		$round = 3;
+		
 		while ($round > 0) {
 			$round -- ;
+			$result = [];
 			$on_error = false;	
 			try {
 				$stmt =  $this->connect($type)->prepare($sql); 
@@ -156,18 +157,17 @@ class MysqliPDO
 				$stmt->execute();
 	 
 				switch ($action) {
+					case 'INSERT' :
+						$result['id'] 		= $this->lastInsertId($type);
 					case 'UPDATE' :
 					case 'DELETE' :
-						$result	= $stmt->rowCount();
-						break;
-					case 'INSERT' :
-						$result	= ['id' => $this->lastInsertId($type), 'effect' => $stmt->rowCount()];
+						$result['effect'] 	= $stmt->rowCount();
 						break;
 					case 'SELECT' :
 						if (preg_match('/limit\s+1\s*$/i',$sql)) {
-							$result	= $stmt->fetch(\PDO::FETCH_ASSOC);
+							$result		= $stmt->fetch(\PDO::FETCH_ASSOC);
 						} else {
-							$result	= $stmt->fetchAll(\PDO::FETCH_ASSOC);
+							$result		= $stmt->fetchAll(\PDO::FETCH_ASSOC);
 						}
 						break;
 				}
@@ -176,6 +176,7 @@ class MysqliPDO
 			} catch (\Throwable $e) {
 				$on_error = true;
 				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array(intval($e->errorInfo[1]), [2006, 2013])) {
+					watchdog($e);
 					continue; 
 				} 
 				
@@ -192,13 +193,14 @@ class MysqliPDO
 		$round = 3 ;
 		while ($round > 0) {
 			$round -- ;
+			$result = [];
 			$on_error = false;
 			try {
 				switch ($action) {
 					case 'UPDATE' :
 					case 'DELETE' :
 					case 'INSERT' :
-						$result	= $this->connect($type)->exec($sql);
+						$result['effect']	= $this->connect($type)->exec($sql);
 						break;	
 					case 'SELECT' :	
 						$stmt	= $this->connect($type)->query($sql);
@@ -209,16 +211,17 @@ class MysqliPDO
 						}
 						break;
 				}
-				
+
 				if ($action === 'INSERT') {
-					$result = ['id' => $this->lastInsertId($type), 'effect' => $result];
+					$result['id'] =  $this->lastInsertId($type);
 				}
 				return $result;
 				
 			} catch (\Throwable $e) {
-				watchdog($e);
+				
 				$on_error = true;
 				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->errorInfo[1], [2006, 2013])) {
+					watchdog($e);
 					continue; 
 				} 
 				
@@ -230,10 +233,8 @@ class MysqliPDO
 		}	
 	}
 	
-	public function transaction_start() 
+	public function transaction_start($type = 'master') 
 	{
-		$type = 'master';
-		
 		if(empty($this->intrans[$this->active_db])) {
 			$this->intrans[$this->active_db] = 1;
 			$round = 3;
@@ -261,9 +262,8 @@ class MysqliPDO
 		}	 
 	}
 	
-	public function transaction_commit() 
+	public function transaction_commit($type = 'master') 
 	{	
-		$type = 'master';
 		if (1 === $this->intrans[$this->active_db]) {
 			return $this->connect($type)->commit(); 
 		} 
@@ -271,9 +271,8 @@ class MysqliPDO
 		return true;
 	}
 		 
-	public function transaction_rollback()
+	public function transaction_rollback($type = 'master')
 	{ 
-		$type = 'master';
 		if ($this->intrans[$this->active_db] == 1 ) {
 			return $this->connect($type)->rollBack();
 		} 
@@ -291,10 +290,10 @@ class MysqliPDO
         return $this->connect($type)->lastInsertId();
     }
 	
-	public function inTransaction() {
-		$type = 'master';
+	public function inTransaction($type = 'master') 
+	{
+
 		return $this->connect($type)->inTransaction();
-		 
 	}
 	
 	public function close($type)

@@ -1,9 +1,6 @@
 <?php
-namespace App\Module\M;
-
-use Min\App;
-
-class MenuController extends \Min\Controller
+ 
+class WeMenu
 {
 	const API_URL_PREFIX = 'https://api.weixin.qq.com/cgi-bin';
 	const AUTH_URL = '/token?grant_type=client_credential&';
@@ -18,65 +15,48 @@ class MenuController extends \Min\Controller
 	private $appsecret;
 	private $access_token;
  
-	public function onConstruct()
+	public function _construct($conf)
 	{
-		$conf				= config_get('anyitime');
 		$this->appid 		= $conf['appid'];
 		$this->appsecret 	= $conf['appsecret'];
 	}
 	
-	public function index_get()
-	{
-		if ('yb' != $_GET['master']) {
-			exit;
-		}
-		
-		$menu = [
-     	    'button' => [
-					[
-					'type' 	=> 'view',
-					'name' 	=> '首页',
-					'url' 	=> 'https://m.anyitime.com'
-				]
-			]
-     	];
-		
-		$result = $this->createMenu($menu);
-		$this->response($result, 'JSON');
-		
-	}
-
 	/**
 	 * 获取access_token
 	 * @param string $appid 如在类初始化时已提供，则可为空
 	 * @param string $appsecret 如在类初始化时已提供，则可为空
 	 * @param string $token 手动指定access_token，非必要情况不建议用
 	 */
-	private function checkAuth() 
-	{
-		if (!empty($this->access_token)) return true;
-		
-		$cache 	= $this->cache('wx');
-		$key = 'wechat_access_token_'.$this->appid;
-		$result = $cache->get($key, true);
-		
-		if (empty($result) || $cache->getDisc() === $result) {
-		
-			$r = http_get(self::API_URL_PREFIX.self::AUTH_URL.'appid='.$this->appid.'&secret='.$this->appsecret);
-			if ($r) {
-				$result = json_decode($r, true);
-				if (!$result || isset($result['errcode'])) {
-					watchdog($r, 'wx_result');
-					return false;
-				}
-				
-				$expire = $result['expires_in'] ? intval($result['expires_in'])-100 : 7100;
-				$cache->set($key, $result, $expire);
-			}
+	private function checkAuth($appid='',$appsecret='',$token=''){
+		if (!$appid || !$appsecret) {
+			$appid = $this->appid;
+			$appsecret = $this->appsecret;
 		}
-		 
-		$this->access_token = $result['access_token'];
-		return true;	
+		if ($token) { //手动指定token，优先使用
+		    $this->access_token=$token;
+		    return $this->access_token;
+		}
+
+		$authname = 'wechat_access_token'.$appid;
+		if ($rs = $this->getCache($authname))  {
+			$this->access_token = $rs;
+			return $rs;
+		}
+
+		$result = http_get(self::API_URL_PREFIX.self::AUTH_URL.'appid='.$appid.'&secret='.$appsecret);
+		if ($result)
+		{
+			$json = json_decode($result,true);
+			if (!$json || isset($json['errcode'])) {
+				watchdog($result, 'wx_result_error')
+				return false;
+			}
+			$this->access_token = $json['access_token'];
+			$expire = $json['expires_in'] ? intval($json['expires_in'])-100 : 3600;
+			$this->setCache($authname,$this->access_token,$expire);
+			return $this->access_token;
+		}
+		return false;
 	}
 
 	
@@ -134,13 +114,13 @@ class MenuController extends \Min\Controller
      * 8、location_select：弹出地理位置选择器
 	 */
 	public function createMenu($data){
-		if (!$this->checkAuth()) return false;
+		if (!$this->access_token && !$this->checkAuth()) return false;
 		$result = http_post(self::API_URL_PREFIX.self::MENU_CREATE_URL.'access_token='.$this->access_token,safe_json_encode($data));
 		if ($result)
 		{
 			$json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				 watchdog($result, 'wx_result');
+				watchdog($result, 'wx_result_error')
 				return false;
 			}
 			return true;
@@ -159,7 +139,7 @@ class MenuController extends \Min\Controller
 		{
 			$json = json_decode($result,true);
 			if (!$json || isset($json['errcode'])) {
-				watchdog($result, 'wx_result');
+				watchdog($result, 'wx_result_error')
 				return false;
 			}
 			return $json;
@@ -178,7 +158,7 @@ class MenuController extends \Min\Controller
 		{
 			$json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				watchdog($result, 'wx_result');
+				watchdog($result, 'wx_result_error')
 				return false;
 			}
 			return true;
@@ -199,7 +179,7 @@ class MenuController extends \Min\Controller
 		{
 			$json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				watchdog($result, 'wx_result');
+				watchdog($result, 'wx_result_error')
 				return false;
 			}
 			return true;
@@ -220,7 +200,7 @@ class MenuController extends \Min\Controller
 		{
 			$json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				watchdog($result, 'wx_result');
+				watchdog($result, 'wx_result_error')
 				return false;
 			}
 			return true;
@@ -241,12 +221,12 @@ class MenuController extends \Min\Controller
 		{
 			$json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				watchdog($result, 'wx_result');
+				watchdog($result, 'wx_result_error')
 				return false;
 			}
 			return $json;
 		}
 		return false;
 	}
-	
+
 }
