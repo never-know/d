@@ -11,11 +11,5 @@ class IndexController extends \App\Module\M\WbaseController
 		$this->layout($result, 'layout_m');
 	}
 	
-	public function test()
-	{
-		$this->response();
-	}
-
-
-
+	 
 }

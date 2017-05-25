@@ -1,6 +1,6 @@
 <?php
  
-class WeUser
+class WuserController extends \Min\Controller
 {
 	const API_URL_PREFIX = 'https://api.weixin.qq.com/cgi-bin';
 	const AUTH_URL = '/token?grant_type=client_credential&';
@@ -24,121 +24,42 @@ class WeUser
 		$this->appid 		= $conf['appid'];
 		$this->appsecret 	= $conf['appsecret'];
 	}
-	
-	/**
-	 * GET 请求
-	 * @param string $url
-	 */
-	private function http_get($url){
-		$oCurl = curl_init();
-		if(stripos($url,"https://")!==FALSE){
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, FALSE);
-			curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
-		}
-		curl_setopt($oCurl, CURLOPT_URL, $url);
-		curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
-		$sContent = curl_exec($oCurl);
-		$aStatus = curl_getinfo($oCurl);
-		curl_close($oCurl);
-		if(intval($aStatus["http_code"])==200){
-			return $sContent;
-		}else{
-			return false;
-		}
-	}
 
-	/**
-	 * POST 请求
-	 * @param string $url
-	 * @param array $param
-	 * @param boolean $post_file 是否文件上传
-	 * @return string content
-	 */
-	private function http_post($url,$param,$post_file=false){
-		$oCurl = curl_init();
-		if(stripos($url,"https://")!==FALSE){
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
-			curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
-		}
-	        if (PHP_VERSION_ID >= 50500 && class_exists('\CURLFile')) {
-	            	$is_curlFile = true;
-	        } else {
-	        	$is_curlFile = false;
-	            	if (defined('CURLOPT_SAFE_UPLOAD')) {
-	                	curl_setopt($oCurl, CURLOPT_SAFE_UPLOAD, false);
-	            	}
-	        }
-		if (is_string($param)) {
-	            	$strPOST = $param;
-	        }elseif($post_file) {
-	            	if($is_curlFile) {
-		                foreach ($param as $key => $val) {
-		                    	if (substr($val, 0, 1) == '@') {
-		                        	$param[$key] = new \CURLFile(realpath(substr($val,1)));
-		                    	}
-		                }
-	            	}
-			$strPOST = $param;
-		} else {
-			$aPOST = array();
-			foreach($param as $key=>$val){
-				$aPOST[] = $key."=".urlencode($val);
-			}
-			$strPOST =  join("&", $aPOST);
-		}
-		curl_setopt($oCurl, CURLOPT_URL, $url);
-		curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt($oCurl, CURLOPT_POST,true);
-		curl_setopt($oCurl, CURLOPT_POSTFIELDS,$strPOST);
-		$sContent = curl_exec($oCurl);
-		$aStatus = curl_getinfo($oCurl);
-		curl_close($oCurl);
-		if(intval($aStatus["http_code"])==200){
-			return $sContent;
-		}else{
-			return false;
-		}
-	}
 	/**
 	 * 获取access_token
 	 * @param string $appid 如在类初始化时已提供，则可为空
 	 * @param string $appsecret 如在类初始化时已提供，则可为空
 	 * @param string $token 手动指定access_token，非必要情况不建议用
 	 */
-	private function checkAuth($appid='',$appsecret='',$token=''){
-		if (!$appid || !$appsecret) {
-			$appid = $this->appid;
-			$appsecret = $this->appsecret;
-		}
-		if ($token) { //手动指定token，优先使用
-		    $this->access_token=$token;
-		    return $this->access_token;
-		}
-
-		$authname = 'wechat_access_token'.$appid;
-		if ($rs = $this->getCache($authname))  {
-			$this->access_token = $rs;
-			return $rs;
-		}
-
-		$result = $this->http_get(self::API_URL_PREFIX.self::AUTH_URL.'appid='.$appid.'&secret='.$appsecret);
-		if ($result)
-		{
-			$json = json_decode($result,true);
-			if (!$json || isset($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
-				return false;
+	private function checkAuth() 
+	{
+		if (!empty($this->access_token)) return true;
+		
+		$cache 	= $this->cache('wx');
+		$key = 'wechat_access_token_'.$this->appid;
+		$result = $cache->get($key, true);
+		
+		if (empty($result) || $cache->getDisc() === $result) {
+		
+			$r = $this->http_get(self::API_URL_PREFIX.self::AUTH_URL.'appid='.$this->appid.'&secret='.$this->appsecret);
+			if ($r) {
+				$result = json_decode($r, true);
+				if (!$result || isset($result['errcode'])) {
+					watchdog($r, 'wx_result');
+					return false;
+				}
+				
+				$expire = $result['expires_in'] ? intval($result['expires_in'])-100 : 7100;
+				$cache->set($key, $result, $expire);
 			}
-			$this->access_token = $json['access_token'];
-			$expire = $json['expires_in'] ? intval($json['expires_in'])-100 : 3600;
-			$this->setCache($authname,$this->access_token,$expire);
-			return $this->access_token;
 		}
-		return false;
+		 
+		$this->access_token = $result['access_token'];
+		return true;
+		
 	}
+
+	
 
 	
 		/**
@@ -152,8 +73,7 @@ class WeUser
 		{
 			$json = json_decode($result,true);
 			if (isset($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
+				watchdog($result, 'wx_result_error');
 				return false;
 			}
 			return $json;
@@ -175,14 +95,14 @@ class WeUser
 		{
 			$json = json_decode($result,true);
 			if (isset($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
+				watchdog($result, 'wx_result_error');
 				return false;
 			}
 			return $json;
 		}
 		return false;
 	}
+	
 	/**
 	 * 批量获取关注者详细信息
 	 * @param array $openids user_list{{'openid:xxxxxx'},{},{}}
@@ -196,8 +116,7 @@ class WeUser
 		{
 			$json = json_decode($result,true);
 			if (isset($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
+				watchdog($result, 'wx_result_error');
 				return false;
 			}
 			return $json;
@@ -222,8 +141,7 @@ class WeUser
 	    {
 	        $json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
+				watchdog($result, 'wx_result_error');
 				return false;
 			}
 			return $json;
@@ -242,8 +160,7 @@ class WeUser
 		{
 			$json = json_decode($result,true);
 			if (isset($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
+				watchdog($result, 'wx_result_error');
 				return false;
 			}
 			return $json;
@@ -290,8 +207,7 @@ class WeUser
 		{
 			$json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
+				watchdog($result, 'wx_result_error');
 				return false;
 			}
 			return $json;
@@ -315,8 +231,7 @@ class WeUser
 		{
 			$json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
+				watchdog($result, 'wx_result_error');
 				return false;
 			}
 			return $json;
@@ -341,8 +256,7 @@ class WeUser
 		{
 			$json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
+				watchdog($result, 'wx_result_error');
 				return false;
 			}
 			return $json;
@@ -367,14 +281,13 @@ class WeUser
 		{
 			$json = json_decode($result,true);
 			if (!$json || !empty($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
+				watchdog($result, 'wx_result_error');
 				return false;
 			}
 			return $json;
 		}
 		return false;
-	} 
+	}
 
 
 }

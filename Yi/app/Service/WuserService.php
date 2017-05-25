@@ -18,7 +18,7 @@ class WuserService extends \Min\Service
 	*	1 账号存在
 	*/
 
-	public function checkAccount($name, $type = null) 
+	private function checkAccount($name, $type = null) 
 	{	
 		if ($type = 'id') {
 			$name = intval($name);
@@ -110,7 +110,7 @@ class WuserService extends \Min\Service
 		
 		if ($result !== false) {
 			if ($check['statusCode'] == 30206) {
-				if ($data['subscribe']) $this->initUser($result['body']);
+				if (2 == $data['subscribe']) $this->initUser($result['body']);
 				return $this->success();
 			} else {
 				return $this->error('帐号已存在', $code);
@@ -121,9 +121,9 @@ class WuserService extends \Min\Service
 		}
 	}
 
-	public function login($params) 
+	public function login($openid) 
 	{
-		$result = $this->checkAccount($params);
+		$result = $this->checkAccount($openid);
 		
 		if ($result['statusCode'] !== 0) {
 			return $result;

@@ -5,7 +5,6 @@ use Min\App;
 
 class WxController extends \Min\Controller
 {
-	const MEDIA_UPLOAD_URL = '/media/upload?';
 	private $conf 	 [];
 	private $_msg;
 	private $_receive;
@@ -105,47 +104,7 @@ class WxController extends \Min\Controller
 	{
 		exit('');
 	}
-	
-	/**
-	 * 获取access_token
-	 * @param string $appid 如在类初始化时已提供，则可为空
-	 * @param string $appsecret 如在类初始化时已提供，则可为空
-	 * @param string $token 手动指定access_token，非必要情况不建议用
-	 */
-	private function checkAuth($appid='',$appsecret='',$token=''){
-		if (!$appid || !$appsecret) {
-			$appid = $this->appid;
-			$appsecret = $this->appsecret;
-		}
-		if ($token) { //手动指定token，优先使用
-		    $this->access_token=$token;
-		    return $this->access_token;
-		}
 
-		$authname = 'wechat_access_token'.$appid;
-		if ($rs = $this->getCache($authname))  {
-			$this->access_token = $rs;
-			return $rs;
-		}
-
-		$result = $this->http_get(self::API_URL_PREFIX.self::AUTH_URL.'appid='.$appid.'&secret='.$appsecret);
-		if ($result)
-		{
-			$json = json_decode($result,true);
-			if (!$json || isset($json['errcode'])) {
-				$this->errCode = $json['errcode'];
-				$this->errMsg = $json['errmsg'];
-				return false;
-			}
-			$this->access_token = $json['access_token'];
-			$expire = $json['expires_in'] ? intval($json['expires_in'])-100 : 3600;
-			$this->setCache($authname,$this->access_token,$expire);
-			return $this->access_token;
-		}
-		return false;
-	}
-
-	
 	private function checkSignature()
 	{
         $signature 	= $_GET['signature']??'';
@@ -180,8 +139,7 @@ class WxController extends \Min\Controller
 		}
 		 
 	}
-	
-	
+
 	/**
 	 * 获取消息发送者
 	 */
