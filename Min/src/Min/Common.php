@@ -129,14 +129,14 @@ function current_path()
   return $_SERVER['PATH_INFO_ORIGIN'].'.html?'.http_build_query($_GET);
 }
  
-function ip_address() 
+function ip_address($typ = 'iplong') 
 {
 	static  $ip = null;
 	
 	if (!isset($ip)) {		
 		$ip_address = $_SERVER['REMOTE_ADDR'];
 
-		if (1 == config_get('reverse_proxy')) {
+		if (1 == config_get('reverse_proxy', 0)) {
    
 			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 				// If an array of known reverse proxy IPs is provided, then trust
@@ -163,10 +163,12 @@ function ip_address()
 		$ip = ip2long($ip_address);
 		if (false == $ip){
 			watchdog('invalid ip address : '.$ip_address, 'USER_ABNORMAL_IP', 'NOTICE');
+		}else {
+			$ip = ['ip' => $ip_address, 'iplong' => $iplong];
 		}
 	}
 
-	return $ip;
+	return $ip[$type] ?? '0';
 }
 
 function redirect($url, $time = 0, $msg = '') 
@@ -360,7 +362,7 @@ function config_get($section, $default = null)
 		require CONF_PATH.'/settings.php';
 	}
 	if (!isset($conf[$section]) && !isset($default)) {
-		throw new \Exception('未定义的配置节点' . $section, 1);
+		throw new \Exception('未定义的配置节点:' . $section, 1);
 	}
 	return $conf[$section] ?? $default;
 }
@@ -505,6 +507,7 @@ function app_tails()
 		
 		watchdog($message, 'Fatal_Error', 'CRITICAL', debug_backtrace());
 	}
+	
 	App::getService('logger')->record();
 	if (isset($error['type'])) {
 		request_error_found(500);
@@ -558,7 +561,7 @@ function min_error($t)
 		
 	$records =  date('Y/m/d H:i:s', $_SERVER['REQUEST_TIME'])
 			. ' [IP: '
-			. long2ip(ip_address())
+			. ip_address('ip')
 			. '] ['
 			. $_SERVER['REQUEST_URI']
 			. '] ['
@@ -577,7 +580,6 @@ function min_error($t)
 		$records   .= safe_json_encode(debug_backtrace());
 		$records   .= PHP_EOL;
 		error_log($records, 3, $dest_file, '');
-
 }
 
 function error_message_format(\Throwable $e)
@@ -688,10 +690,8 @@ function shareid_encode($id, $type = null)
  
 // 6亿用户， 7亿数据 生成 24位字符串
 
-function shareid($id, $uid, $type)
+function shareid($id, $type, $uid)
 { 
-	// test  test/shareidtest.html;
-	//$uid		= session_get('UID');
 	if (empty($uid)) {
 		return 'shareid';
 	}
@@ -722,13 +722,12 @@ function shareid($id, $uid, $type)
 		
 		if ($salt3 < 21) {
 			$salt3 = 79 - $salt3;		//	range:	(109-99) + (78-59)
-		}
-		 
+		}	 
 	}
 
 	//zzzzzzz: 78364164095
 	//1000000: 2176782336
-	echo ((($salt%60)?:60) + 10),'-';
+	//echo ((($salt%60)?:60) + 10),'-';
 	$salt_36 	= base_convert($salt, 10, 36);
 	 
 	$parts 		= [];
@@ -738,23 +737,7 @@ function shareid($id, $uid, $type)
 	$parts[]	= base_convert($time * ((($salt%60)?:60) + 10), 10, 36);							//	2046年	7位
 	$parts[]	= base_convert(((($time % 183868) ?: 183868) * $salt3 + $aid) * $salt2, 10, 36);	//  695186871	7位
 	$parts[]	= $salt_36[1];		 
-	/* 
-	$r = [];
-  
-	if (strlen($parts[2]) < 7) {
-		echo 'uid:', $salt,'--', $salt2,'--', $salt3, '<br>';
-	}
-	if (strlen($parts[3]) < 7) {
-		echo 'tim:',$salt,'--', $salt2,'--', $salt3, '<br>';
-	}
-	
-	if (strlen($parts[4])< 7) {
-		echo 'aid:',$salt,'--', $salt2,'--', $salt3, '<br>';
-	}
-	*/
-	//return strtr( $type. $salt_36[0]. base_convert(((($time % 286898) ?: 286898) * $salt2 + $uid) * $salt3, 10, 36). base_convert(((($time % 183868) ?: 183868) * $salt3 + $aid) * $salt2, 10, 36). base_convert($time * ($salt - 13), 10, 36). $salt_36[1], $pairs) ;
-	//return $r;
-	return strtr( implode('', $parts), 'comefu', 'fucome') ;
-	//$r['id'] = strtr( implode('', $parts), 'fucome', 'comefu') ;
-	//return $r;
+	 
+	return strtr(implode('', $parts), 'comefu', 'fucome');
+	 
 }

@@ -42,6 +42,8 @@ class ShareService extends \Min\Service
 		$check = $this->check($data['sid']);
 		
 		if (0 !== $check['statusCode'] || $check['body']['content_id'] != $data['id'] || $data['current_user'] == $check['body']['user_id']) {
+		
+			return $this->success();		// can not find share user then return directly
 			$data['salary'] = $data['sid'] = $check['body']['user_id'] = 0;
 		}
 		
@@ -49,16 +51,14 @@ class ShareService extends \Min\Service
 		$params['viewer_id'] 	= intval($data['viewer_id']);
 		$params['content_id'] 	= intval($data['id']);
 		$params['share_user'] 	= intval($check['body']['user_id']);
-
-		if ($params['share_user'] > 0) {
-			$sql_count = 'SELECT count(1) as count FROM {share_view} WHERE '. plain_build_query($params, ' AND '). ' LIMIT 1';
-			$count = $this->query($sql_count);
-			if ($count['count'] > 2) {
-				return $this->success(['userid' => $params['share_user']]);
-			}
-		}
 		
-		$params['view_time'] 	= intval($data['view_time']);
+		$sql_count = 'SELECT count(1) as count FROM {share_view} WHERE '. plain_build_query($params, ' AND '). ' LIMIT 1';
+		$count = $this->query($sql_count);
+		if ($count['count'] > 2) {
+			return $this->success(['userid' => $params['share_user']]);
+		}
+		 
+		$params['view_time'] 	= intval($data['view_time'])?:time();
 		$params['salary'] 		= intval($data['salary']);
 		$params['share_id'] 	= json_encode($data['sid']);
 		

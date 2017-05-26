@@ -10,7 +10,7 @@ class WbaseController extends \Min\Controller
 		$openid = session_get('openid');
 		
 		if (!isset($openid)) {
-			$this->getOpenid();
+			$openid = $this->getOpenid();
 		}
 		
 		if (empty($openid)) {
@@ -39,7 +39,9 @@ class WbaseController extends \Min\Controller
 			} else {
 				$openid = 0;
 			} 
-			session_set('openid', $openid);
+			
+			if (!empty($openid) session_set('openid', $openid);
+			return $openid;
 		}
 	}
  

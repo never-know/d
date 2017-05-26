@@ -3,7 +3,7 @@ namespace App\Module\M;
 
 use Min\App;
 
-class NewsController extends \App\Module\M\WbaseController
+class QrcodeController extends \App\Module\M\WbaseController
 {
 	public function onConstruct()
 	{
@@ -12,27 +12,11 @@ class NewsController extends \App\Module\M\WbaseController
 			$this->getOpenid();
 		}
 	}
-	
-	public function index_get()
-	{
-		$id = intval($_GET['id']);
-		if($id < 1) {
-			$this->error('商品不存在', 1000);
-		}
-		
-		$openid = session_get('openid');
  
-		if (!empty($openid)) {
-			$this->request('\\App\\Service\\Wuser::addUserByOpenid', ['openid' => $openid, 'subscribe' => 2]);
-		}
-
-		$news = $this->request('\\App\\Service\\News::detail', $id);
-	}
- 
-	public function qrcode()
+	public function index()
 	{
-		$uid 		= session_get('UID') ?? 0;
-		$openid_id 	= session_get('openid_id') ?? 0;
+		$uid 		= session_get('UID');
+		$openid_id 	= session_get('openid_id');
 		
 		$shared_userid	= 0;
 		
@@ -52,11 +36,16 @@ class NewsController extends \App\Module\M\WbaseController
 			}
 		} 
 		
-		if ($shared_userid == 0) {
-			$img = WX_QRCODE;
+		$senceid = ($shared_userid?:$uid);
+		
+		if ($senceid) {
+			$img = $this->getQRCode($senceid, WX_QRCODE);
 		} else {
-			$img = $this->getQRCode($shared_userid, WX_QRCODE);
+			$img = WX_QRCODE;
 		}
+		
+		redirect($img);
+		exit;
 	}
 	 
 	public static function __call($name, $arguments = [])

@@ -27,8 +27,7 @@
 	$di->setShared('logger', '\\Min\\Logger');
 	
 	try {
-		\Min\App::bootstrap($di, true);
-		
+		\Min\App::bootstrap($di, true);	
 	} catch (\Throwable $t){
-		min_error($t);
+		app_exception($t);
 	}
