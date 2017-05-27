@@ -123,11 +123,22 @@ class Controller
 	
 	final public function layout($result = [], $layout = 'layout_frame')
 	{	
-		require VIEW_PATH. strtr($layout, '_', '/') .VIEW_EXT;
+		if (empty($layout)) {
+			$layout = implode('/', ['', App::getModule(), App::getController(), App::getAction()]);
+		} else {
+			$layout = '/layout/'. $layout;
+		}
+ 		require VIEW_PATH. $layout. VIEW_EXT;
 		exit;
 	}
 	
-	final public function success($body = [], $layout = null)
+	final public function view($result = [])
+	{	
+		view($result);
+		exit;
+	}
+	
+	final public function success($body = [], $layout = 'layout_frame')
 	{	
 		$result = ['statusCode' => 0, 'message' => '操作成功'];
  
@@ -142,12 +153,12 @@ class Controller
 		final_response($result, $layout);
 	}
 
-	final public function error($message, $code, $redirect = null, $return_type = null)
+	final public function error($message, $code, $layout = 'layout_frame')
 	{	
-		request_error_found($code, $message, $redirect, $return_type);
+		final_response(['statusCode' => $code, 'message' => $message], $layout);
 	}
 	
-	final public function response($result = [], $layout = null)
+	final public function response($result = [], $layout = 'layout_frame')
 	{		
 		final_response($result, $layout);
 	}

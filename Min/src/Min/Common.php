@@ -29,7 +29,7 @@ function min_init()
 	define('IS_HTTPS', 	(isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON'));
 	
 	if (!IS_GET && !IS_POST) {
-		parse_str(file_get_contents("php://input", $_POST));
+		parse_str(file_get_contents('php://input', $_POST));
 	}
 
 	spl_autoload_register('autoload');
@@ -67,10 +67,9 @@ function t($string, array $args = [], array $options = [])
 function view(array $result = [])
 {
 	if (empty($result['template_path'])) {
-		$result['template_path'] =  '/'. App::getModule().'/'.  App::getController().'/'.  App::getAction();
+		$result['template_path'] =   implode('/', ['', App::getModule(), App::getController(), App::getAction()]);
 	}
 	require VIEW_PATH. $result['template_path']. VIEW_EXT;
-	 
 }
 
 function autoload($class)
@@ -440,12 +439,12 @@ function http_post($url, $param, $post_file = false)
 	}
 }
 
-function request_error_found($code, $message = '请求失败', $redirect = null, $layout = null) 
+function request_error_found($code, $message = '请求失败', $layout = null, $redirect = null) 
 {	
 	$result['statusCode'] = $code;
 	$result['message'] 	  = $message;
+	
 	if (isset($redirect)) 	$result['redirect'] = $redirect;
-	if (!isset($layout)) 	$layout = 'layout_404';
 	 
 	final_response($result, $layout);
 }
@@ -482,10 +481,19 @@ function final_response($result, $layout) {
 			exit;
 		case 'HTML' :
 		default :
+			if (in_array($result['statusCode'], [500, 404])) {
+				$layout = 'layout_404';
+			}  
+			
 			if (!empty($result['body'])) $result = $result['body'];
-			require VIEW_PATH. '/layout/'. ($layout ?: 'layout_frame'). VIEW_EXT;
+			
+			if (empty($layout) || substr($layout, 0, 7) != 'layout_') {
+				$result['template_path'] = $layout;
+				view($result);
+			} else {
+				require VIEW_PATH. '/layout/'. $layout. VIEW_EXT;
+			}
 			exit;
-	  
 	} 
 }
 
@@ -615,7 +623,7 @@ function plain_build_query($params, $separator){
 	
 	$joined = [];
 	foreach($params as $key => $value) {
-	   $joined[] = "`$key`=$value";
+	   $joined[] = "`$key`={$value}";
 	}
 	return implode($separator, $joined);
 }

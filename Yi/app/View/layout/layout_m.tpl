@@ -53,11 +53,9 @@
 		 
 	</div>		  
    <script>
-  if ('addEventListener' in document) {  
-    document.addEventListener('DOMContentLoaded', function() {  
-        FastClick.attach(document.body);  
-    }, false);  
-}  
+  $(function() {
+    FastClick.attach(document.body);
+	});
 $('.weui_tabbar').tab({
     defaultIndex: <?=(empty($result['meta']['menu_active'])?1:0);?>,
     activeClass:'weui_bar_item_on',

@@ -56,8 +56,8 @@
 
 </body>
 
-<script type="text/javascript" src="https://m.anyitime.com/public/m/zepto.min.js"></script>
-<script type="text/javascript" src="https://m.anyitime.com/public/m/fastclick.js"></script>
+<script type="text/javascript" src="https://m.anyitime.com/public/js/m/zepto.min.js"></script>
+<script type="text/javascript" src="https://m.anyitime.com/public/js/m/fastclick.js"></script>
  
 <script>
 $(function(){ 

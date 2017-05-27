@@ -12,7 +12,8 @@ class BindController extends \Min\Controller
 	}
 	public function fastclick_get()
 	{
-		$result['meta'] = ['title' =>'绑定手机号码'];
-		$this->layout($result, 'layout_m');
+		
+		$result['meta'] = ['title' =>'fastclick'];
+		$this->layout($result, null);
 	}
 }

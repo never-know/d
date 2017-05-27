@@ -5,9 +5,9 @@ use Min\App;
 
 class TestController extends \Min\Controller
 {
-	public function test_get()
+	public function index_get()
 	{
-		$this->request('\\App\\Service\\Test::index');
+		$this->layout($result, null);
 		
 	}
 	
