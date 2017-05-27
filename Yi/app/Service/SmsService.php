@@ -226,7 +226,7 @@ class SmsService extends \Min\Service
 		
 		// 无效地址
 		$ip = ip_address();
-		if(false == $ip || session_get('ip_address') != $ip) {
+		if (false == $ip || session_get('ip_address') != $ip) {
 			$this->watchdog('invalid ip address : 30104');
 			return false; 
 		}

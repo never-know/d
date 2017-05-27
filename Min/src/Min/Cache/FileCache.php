@@ -138,7 +138,10 @@ class FileCache
 		} else {
 			return false;
 		}
-		
 	}
 	
+	public function getDisc()
+	{
+		return 'FileCache';
+	}
 }

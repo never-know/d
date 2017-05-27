@@ -1,4 +1,6 @@
-﻿
+﻿.hide{
+display:none;
+}
 .weui_navbar+.weui_tab_bd{ 
     padding-bottom: 50px;
 }

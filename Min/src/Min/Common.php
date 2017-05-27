@@ -5,20 +5,19 @@ use Min\App;
 function min_init()
 {
 	defined('APP_PATH')			or exit;
-	defined('VIEW_EXT') 		or define('VIEW_EXT','.tpl');
-	defined('PHP_EXT')  		or define('PHP_EXT','.php');
-	defined('DEFAULT_ACTION') 	or define('DEFAULT_ACTION','index');
+	defined('VIEW_EXT') 		or define('VIEW_EXT', '.tpl');
+	defined('PHP_EXT')  		or define('PHP_EXT', '.php');
+	defined('DEFAULT_ACTION') 	or define('DEFAULT_ACTION', 'index');
 	
-	defined('LOG_PATH') 	or define('LOG_PATH', APP_PATH.'/../log');	
-	defined('CACHE_PATH') 	or define('CACHE_PATH', APP_PATH.'/../cache');	
-	defined('PUBLIC_PATH') 	or define('PUBLIC_PATH', APP_PATH.'/../webroot/public');		// 图片上传在服务器上的基址
-	defined('ASSETS_URL') 	or define('ASSETS_URL', '//www.'. SITE_DOMAIN. '/public');					// 图片上传后的URL基址
-
-	defined('CONF_PATH') 	or define('CONF_PATH', APP_PATH.'/Conf');	
-	defined('VIEW_PATH') 	or define('VIEW_PATH', APP_PATH.'/View');
-	defined('MODULE_PATH') 	or define('MODULE_PATH', APP_PATH.'/Module');	
-	defined('SERVICE_PATH') or define('SERVICE_PATH', APP_PATH.'/Service');	
-	defined('VENDOR_PATH') 	or define('VENDOR_PATH', MIN_PATH.'/../vendor');
+	defined('LOG_PATH') 	or define('LOG_PATH', APP_PATH. '/../log');	
+	defined('CACHE_PATH') 	or define('CACHE_PATH', APP_PATH. '/../cache');	
+	defined('PUBLIC_PATH') 	or define('PUBLIC_PATH', APP_PATH. '/../webroot/public');	//图片上传在服务器上的基址
+	
+	defined('CONF_PATH') 	or define('CONF_PATH', APP_PATH. '/Conf');	
+	defined('VIEW_PATH') 	or define('VIEW_PATH', APP_PATH. '/View');
+	defined('MODULE_PATH') 	or define('MODULE_PATH', APP_PATH. '/Module');	
+	defined('SERVICE_PATH') or define('SERVICE_PATH', APP_PATH. '/Service');	
+	defined('VENDOR_PATH') 	or define('VENDOR_PATH', MIN_PATH. '/../vendor');
 	
 	define('REQUEST_METHOD', strtoupper($_SERVER['REQUEST_METHOD']));
 	define('IS_GET', 	(REQUEST_METHOD === 'GET'));
@@ -129,7 +128,7 @@ function current_path()
   return $_SERVER['PATH_INFO_ORIGIN'].'.html?'.http_build_query($_GET);
 }
  
-function ip_address($typ = 'iplong') 
+function ip_address($type = 'iplong') 
 {
 	static  $ip = null;
 	
@@ -160,8 +159,8 @@ function ip_address($typ = 'iplong')
 			}
 		}
 		
-		$ip = ip2long($ip_address);
-		if (false == $ip){
+		$iplong = ip2long($ip_address);
+		if (false == $iplong){
 			watchdog('invalid ip address : '.$ip_address, 'USER_ABNORMAL_IP', 'NOTICE');
 		}else {
 			$ip = ['ip' => $ip_address, 'iplong' => $iplong];

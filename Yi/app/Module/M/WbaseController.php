@@ -14,7 +14,6 @@ class WbaseController extends \Min\Controller
 		}
 		
 		if (empty($openid)) {
-			
 			exit('can not get openid');
 		}
 		
@@ -40,7 +39,7 @@ class WbaseController extends \Min\Controller
 				$openid = 0;
 			} 
 			
-			if (!empty($openid) session_set('openid', $openid);
+			if (!empty($openid)) session_set('openid', $openid);
 			return $openid;
 		}
 	}
@@ -68,11 +67,11 @@ class WbaseController extends \Min\Controller
 		
 		if ($redirect) {
 			if (3 != $user['subscribe']) {
-				$url = 'https://m.anyitime.com/qrcode.html';	// 未关注,跳转关注页
+				$url = HOME_PAGE. '/qrcode.html';	// 未关注,跳转关注页
 			} elseif (empty($user['uid'])) {
-				$url = 'https://m.anyitime.com/bind.html';	// 未绑定手机,跳转绑定页
+				$url = HOME_PAGE. '/bind.html';		// 未绑定手机,跳转绑定页
 			} else {
-				$url = 'https://m.anyitime.com';			// other redirect homepage
+				$url = HOME_PAGE;					// other redirect homepage
 			}
 			
 			redirect($url);
