@@ -280,8 +280,7 @@ try{
    $k ='helloworld';
 
 //$connect = new \mysqli('192.168.1.105', 'root', '123456', 'test', 3306);
-// ts001:a123456@121.43.182.222:3306#annyi
-$connect = new \mysqli('121.43.182.222', 'ts001', 'a123456', 'annyi', 3306);
+ 
 	
 	$query = "SELECT * from yi_sms WHERE id=?   LIMIT 1";
 	$stmt = $connect->prepare($query);
