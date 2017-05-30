@@ -31,7 +31,7 @@ class FileCache
      * @param string $id
      * @param int $expiration 0 means on limit  
      */
-    public function get($id)
+    public function get($id, $decode = true)
     {
         $file_name = $this->getFileName($id);
 		if (is_file($file_name)) {

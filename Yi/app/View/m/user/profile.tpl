@@ -25,7 +25,7 @@
           <div class="weui_cell_bd weui_cell_primary">
             <p>昵称</p>
           </div>
-          <div class="weui_cell_ft weui_cell_ft_fix">Noota</div>
+          <div class="weui_cell_ft weui_cell_ft_fix" id="nick">Noota</div>
         </div>
         <div class="weui_cell" href="javascript:;">
           <div class="weui_cell_bd weui_cell_primary">
@@ -48,11 +48,12 @@
     </div>
 	<script>
 	 $(document).on("click", "#show-nickname", function() {
-        $.prompt("输入昵称看看", "你的昵称", function(text) {
-          $.alert("您的昵称是:"+text, "哦");
+        $.prompt("", "设置昵称", function(text) {
+          //$.alert("您的昵称是:"+text, "哦");
+		  $('#nick').html(text);
         }, function() {
           //取消操作
-        }, 'Noota');
+        },  $('#nick').html());
       });
 	</script>
 

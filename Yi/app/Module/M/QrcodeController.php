@@ -56,7 +56,7 @@ class QrcodeController extends \App\Module\M\WbaseController
 	public function getQRCode($uid, $default = null)
 	{
 		$cache 	= $this->cache('qrcode');
-		$result = $cache->get('qrcode_'. $uid);
+		$result = $cache->get('qrcode_'. $uid, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) { 
 		

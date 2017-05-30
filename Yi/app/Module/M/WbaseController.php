@@ -7,6 +7,7 @@ class WbaseController extends \Min\Controller
 {
 	public function onConstruct()
 	{
+	/*
 		$openid = session_get('openid');
 		
 		if (!isset($openid)) {
@@ -18,7 +19,7 @@ class WbaseController extends \Min\Controller
 		}
 		
 		$this->login(true);
-		
+	*/	
 	}
 	
 	final public function getOpenid()

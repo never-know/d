@@ -17,7 +17,7 @@ class ShareService extends \Min\Service
 		 
 		$cache 	= $this->cache('share');
 		$key 	= $this->getCacheKey($type, $name);
-		$result = $cache->get($key);
+		$result = $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
  

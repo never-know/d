@@ -15,12 +15,12 @@ trait RegionTrait
 		$cache = $this->cache('region');
 		
 		if ($region_id > 0) {
-			$region_list = $cache->get($key);
+			$region_list = $cache->get($key, true);
 		}
 		
 		if (empty($region_list)) {
 		
-			$region_list = $cache->get('regionChain_0');
+			$region_list = $cache->get('regionChain_0', true);
 			
 			if (empty($region_list)) {
 				$region_list0 = $this->request('\\App\\Service\\Region::nodeChain', 0);

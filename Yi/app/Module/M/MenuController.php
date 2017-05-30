@@ -58,7 +58,7 @@ class MenuController extends \Min\Controller
 		
 		$cache 	= $this->cache('wx');
 		$key = 'wechat_access_token_'.$this->appid;
-		$result = $cache->get($key);
+		$result = $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 		

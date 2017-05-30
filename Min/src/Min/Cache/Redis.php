@@ -59,6 +59,7 @@ class Redis{
 				$retRes = $this->connect()->set($key, $value);
 			}
 			watchdog($retRes, 'redis', 'DEBUG', 'set key:'. $key. '@'. $value);
+			return $retRes;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis', 'CRITICAL');
 			return self::DISCONNECT;

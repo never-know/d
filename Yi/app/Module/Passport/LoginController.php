@@ -71,7 +71,7 @@ class LoginController
 				$service = app::service('account');
 				if( 1 === $miss['cache']){
 					$cache = app::cache('loginerror')->connect();
-					$result = $cache->get(md5($_POST['loginname']));
+					$result = $cache->get(md5($_POST['loginname']), true);
 				}
 				
 				if(!isset($result) || false == $result){

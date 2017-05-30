@@ -51,7 +51,7 @@ class TestService extends \Min\Service
  
 		$cache 	= $this->cache('account');
 		$key 	= $this->getCacheKey($type, $name);
-		$result = $cache->get($key);
+		$result = $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
