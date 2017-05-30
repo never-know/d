@@ -33,7 +33,7 @@ class WbaseController extends \Min\Controller
 			redirect($wx->getOauthRedirect($url, $state, 'snsapi_base'));
 			exit;
 		} else {
-			if (isset($_GET['state']) && $_GET['state'] == sesseion_set('state')) {
+			if (isset($_GET['state']) && $_GET['state'] == session_get('state')) {
 				$r = $wx->getOauthAccessToken();
 				$openid = $r['openid']??0;
 			} else {
