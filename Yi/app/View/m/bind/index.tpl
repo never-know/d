@@ -9,7 +9,7 @@
     height: 38px;
     line-height: 38px;
     margin-left: 5px;
-    padding: 6px 16px 2px 16px;
+    padding: 6px 12px 2px 16px;
     vertical-align: middle;
 }
 
@@ -57,12 +57,12 @@
 .weui-agree input:checked {
     -webkit-appearance: none;
 }
-.weui_vcode .weui_cell_hd, .weui_vcode .weui_cell_bd{
+.weui_vcode2 .weui_cell_hd, .weui_vcode2 .weui_cell_bd{
     font-size: 16px;
     height: 16px;
     line-height: 16px;
     margin-left: 5px;
-    padding: 18px 0 12px 12px;
+    padding: 14px 0 8px 12px;
     vertical-align: middle;
 
 }
@@ -112,18 +112,18 @@ footer a {
 	</style>
 <form id="form">
 	
-    <div class="weui_cells weui_cells_form">
+    <div class="weui_cells weui_cells_form" style="margin-bottom: 4px;">
        
-		<div class="weui_cell weui_vcode">
+		<div class="weui_cell weui_vcode2">
                 <div class="weui_cell_hd"><label class="weui_label">+86</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     <input class="weui_input" type="tel" required pattern="[0-9]{11}" maxlength="11"  emptytips="请输入手机号" notmatchtips="请输入正确的手机号" placeholder="请输入手机号码">
                 </div>
             </div>
-        <div class="weui_cell weui_vcode">
+        <div class="weui_cell weui_vcode2">
             <div class="weui_cell_hd"><label class="weui_label">验证码</label></div>
             <div class="weui_cell_bd weui_cell_primary">
-                <input class="weui_input" type="number" required="" placeholder="点击验证码更换" tips="请输入验证码">
+                <input class="weui_input" type="number" required="" placeholder="请输入验证码" tips="请输入验证码">
             </div>
             <div class="weui_cell_ft">
                 <i class="weui_icon_warn"></i>

@@ -101,6 +101,10 @@ line-height:16px;
 height:16px;
 font-size:16px;
 }
+.weui_label {
+  
+    width: 60px;
+}
 .weui_cell_ft_fix {
 font-size:14px;
 }
