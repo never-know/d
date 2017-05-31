@@ -8,7 +8,7 @@
 		<meta name="description" content="<?=$result['meta']['description'];?>">
 		<?php endif;?>
 		<link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/0.4.3/weui.min.css"/>
-		<link rel="stylesheet" href="/public/css/jquery-weui.min.css"/>
+		<link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/0.8.3/css/jquery-weui.min.css"/>
 		<link rel="stylesheet" href="/public/css/myi.css?v=1"/>
 		<script src="/public/js/m/zepto_fx.min.js"></script>		
 		<style>
