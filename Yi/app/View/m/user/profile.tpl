@@ -5,7 +5,7 @@
         <span class="weui_cell_ft" ></span>返回
     </a>
 	</div>
-	<div class="weui_panel" style="margin-top: 20px;">
+	<div class="weui_panel" style="margin-top: 14px;">
    
       <div class="weui_panel_bd" style="background:#fff;">
         <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">
