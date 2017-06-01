@@ -1,22 +1,21 @@
  	
 	
 	<style>
-	.weui-vcode-btn {
-       border-left: 1px solid #e5e5e5;
+.weui-vcode-btn {
+    border-left: 1px solid #e5e5e5;
     color: #3cc51f;
     display: inline-block;
     font-size: 16px;
-    height: 38px;
-    line-height: 38px;
     margin-left: 5px;
-   /* padding: 6px 12px 2px 16px;*/
-    vertical-align: middle;
+    font-size: 16px;
+    margin-left: 5px;
+      padding: 10px 0 6px 16px; 
 }
 
 .weui-agree {
     display: inline-block;
-    font-size: 16px;
-    padding: 6px 4px 6px 15px;
+    font-size: 14px;
+    padding: 6px 4px 0 15px;
 }
 .weui-agree-checkbox {
     background-color: #ffffff;
@@ -35,6 +34,7 @@
 }
 .weui-agree+a {
     color: #586c94;
+	font-size:14px;
 }
 .weui-agree-checkbox:checked::before {
     color: #09bb07;
@@ -57,16 +57,15 @@
 .weui-agree input:checked {
     -webkit-appearance: none;
 }
+ 
 .weui_vcode2 .weui_cell_hd, .weui_vcode2 .weui_cell_bd{
     font-size: 16px;
-      height: 38px;
-    line-height: 38px;
     margin-left: 5px;
-    /*padding: 14px 0 8px 12px;*/
-    vertical-align: middle;
+    padding: 8px 0 4px 0; 
+  
 
 }
-
+ 
 
 .demos-title {
   text-align: center;
@@ -108,7 +107,12 @@ footer a {
   color: #999;
   text-decoration: none;
 }
-	
+.weui_label {
+   width: 72px; 
+} 
+	.weui_btn{
+padding-top: 4px;
+}
 	</style>
 <form id="form">
 	

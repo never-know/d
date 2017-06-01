@@ -9,7 +9,7 @@
 		<?php endif;?>
 		<link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/0.4.3/weui.min.css"/>
 		<link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/0.8.3/css/jquery-weui.min.css"/>
-		<link rel="stylesheet" href="/public/css/myi.css?v=2"/>
+		<link rel="stylesheet" href="/public/css/myi.css?v=6"/>
 		<script src="/public/js/m/zepto_fx.min.js"></script>		
 		<style>
 			body, html {height: 100%;-webkit-tap-highlight-color: transparent;}
@@ -22,6 +22,7 @@
 		<div class="weui_tab_bd">	
 		<?php view($result); ?> 
 		</div>
+		<?php if (!empty($result['show_bottom'])) : ?>
 		<div class="weui_tabbar">
 			<?php if (!empty($result['meta']['menu_active'])) : ?>
 			<a href="javascript:;" class="weui_tabbar_item weui_bar_item_on">
@@ -46,7 +47,7 @@
 				<p class="weui_tabbar_label">我的</p>
 			</a>       
 		</div>
-		 
+		<?php endif;?>
 	</div>	
 	
    <script>

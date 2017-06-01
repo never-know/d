@@ -1,4 +1,8 @@
-
+	<div class="weui_cells weui_cells_access weui_return">
+		<a class="weui_cell" onclick="window.location.href='/user/line.html'" style="margin-top:2px;">
+			<span class="weui_cell_ft" style="padding-right:6px;" ></span>返回
+		</a>
+	</div>
 	<div class="weui_msg">
       <div class="weui_icon_area"><i class="weui_icon_success weui_icon_msg"></i></div>
       <div class="weui_text_area">
