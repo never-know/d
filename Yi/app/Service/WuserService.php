@@ -138,7 +138,7 @@ class WuserService extends \Min\Service
 		session_regenerate_id();
 		
 		if (!empty($user['id'])) {
-			session_set('openid_id', $user['id']);
+			session_set('wxuser_id', $user['id']);
 		} 
 		if (!empty($user['uid'])) {
 			session_set('UID', $user['uid']);

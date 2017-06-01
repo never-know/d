@@ -68,7 +68,7 @@ class WbaseController extends \Min\Controller
 		
 		if ($redirect) {
 			if (3 != $user['subscribe']) {
-				$url = HOME_PAGE. '/qrcode.html';	// 未关注,跳转关注页
+				$url = HOME_PAGE. '/bind/qrcode.html';	// 未关注,跳转关注页
 			} elseif (empty($user['uid'])) {
 				$url = HOME_PAGE. '/bind.html';		// 未绑定手机,跳转绑定页
 			} else {

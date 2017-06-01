@@ -16,7 +16,7 @@ class QrcodeController extends \App\Module\M\WbaseController
 	public function index()
 	{
 		$uid 		= session_get('UID');
-		$openid_id 	= session_get('openid_id');
+		$wxuser_id 	= session_get('wxuser_id');
 		
 		$shared_userid	= 0;
 		
@@ -27,7 +27,7 @@ class QrcodeController extends \App\Module\M\WbaseController
 				parse_str($url['query'], $params);
 				if (isset($params['id']) && isset($params['sid']) && validate('words', $params['sid'])) {
 					$params['view_time'] 	= $_SERVER['REQUEST_TIME'];
-					$params['viewer_id'] 	= $openid_id;
+					$params['viewer_id'] 	= $wxuser_id;
 					$params['salary'] 		= 20;
 					$params['current_user'] = $uid;
 					$result = $this->request('\\App\\Service\\Share::record', $params);
@@ -35,11 +35,9 @@ class QrcodeController extends \App\Module\M\WbaseController
 				}
 			}
 		} 
-		
-		$senceid = ($shared_userid?:$uid);
-		
-		if ($senceid) {
-			$img = $this->getQRCode($senceid, WX_QRCODE);
+ 
+		if ($shared_userid) {
+			$img = $this->getQRCode($shared_userid, WX_QRCODE);
 		} else {
 			$img = WX_QRCODE;
 		}
