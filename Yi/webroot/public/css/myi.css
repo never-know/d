@@ -20,13 +20,21 @@ padding-top: 4px;
 font-size: 16px;
 }
  
-	.weui_return .weui_cell_ft:after{
+.weui_return .weui_cell_ft:after{
     height: 8px;
     width: 8px;
 	-webkit-transform: rotate(225deg);transform: rotate(225deg);
 	}
 	 
- 
+ .weui_return a{
+ padding-top:12px;
+ }
+ .weui_return{
+ margin-top:10px;
+ }
+ .weui_return .weui_cell_ft{
+ padding-left:6px;
+ }
 /* 首页 */
 .weui_panel_access_new .weui_media_box{
 padding:12px 16px;
