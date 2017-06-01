@@ -60,7 +60,7 @@
     </div>
  
  
-	<div class="weui_cells weui_cells_access" style="margin-top: 14px;">
+	<div class="weui_cells weui_cells_access">
 
         <a class="weui_cell" href="javascript:;">
           <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
@@ -86,7 +86,7 @@
         </a>
     </div>
 	
-	<div class="weui_cells weui_cells_access" style="margin-top: 14px;">
+	<div class="weui_cells weui_cells_access">
 		 <a class="weui_cell" href="javascript:;">
           <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
