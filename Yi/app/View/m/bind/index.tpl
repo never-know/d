@@ -9,7 +9,7 @@
     height: 38px;
     line-height: 38px;
     margin-left: 5px;
-    padding: 6px 12px 2px 16px;
+   /* padding: 6px 12px 2px 16px;*/
     vertical-align: middle;
 }
 
@@ -59,10 +59,10 @@
 }
 .weui_vcode2 .weui_cell_hd, .weui_vcode2 .weui_cell_bd{
     font-size: 16px;
-    height: 16px;
-    line-height: 16px;
+      height: 38px;
+    line-height: 38px;
     margin-left: 5px;
-    padding: 14px 0 8px 12px;
+    /*padding: 14px 0 8px 12px;*/
     vertical-align: middle;
 
 }
