@@ -93,10 +93,17 @@ font-size: 13px;
 color:#888;
 }
 .weui_cell_bd p, .weui_cell_ft_fix {
+
+margin:6px 0 2px;
+}
+.weui_input{
 line-height:16px;
 height:16px;
 font-size:16px;
-margin:6px 0 2px;
+}
+.weui_label {
+  
+    width: 60px;
 }
 .weui_cell_ft_fix {
 font-size:14px;
