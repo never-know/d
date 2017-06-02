@@ -65,21 +65,30 @@
         <a class="weui_cell" href="javascript:;">
           <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
-            <p>安逸积分</p>
+            <p>我的收益</p>
           </div>
           <div class="weui_cell_ft weui_cell_ft_fix">3000</div>
         </a>
-        <a class="weui_cell" href="javascript:;">
+		<a class="weui_cell" href="javascript:;">
           <div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
             <p>我的钱包</p>
           </div>
           <div class="weui_cell_ft weui_cell_ft_fix">&nbsp;</div>
         </a>
+	</div>
+	<div class="weui_cells weui_cells_access">
+        <a class="weui_cell" href="javascript:;">
+          <div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>
+          <div class="weui_cell_bd weui_cell_primary">
+            <p>我的分享</p>
+          </div>
+          <div class="weui_cell_ft weui_cell_ft_fix">&nbsp;</div>
+        </a>
 		<a class="weui_cell" href="javascript:;">
 		<div class="weui_cell_hd"><img src="/public/images/order.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
-            <p>帐户设置</p>
+            <p>我的会员</p>
           </div>
           <div class="weui_cell_ft">
           </div>
@@ -87,24 +96,11 @@
     </div>
 	
 	<div class="weui_cells weui_cells_access">
-		 <a class="weui_cell" href="javascript:;">
-          <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
-          <div class="weui_cell_bd weui_cell_primary">
-            <p>安逸积分</p>
-          </div>
-          <div class="weui_cell_ft weui_cell_ft_fix">3000</div>
-        </a>
-        <a class="weui_cell" href="javascript:;">
-          <div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>
-          <div class="weui_cell_bd weui_cell_primary">
-            <p>我的钱包</p>
-          </div>
-          <div class="weui_cell_ft weui_cell_ft_fix">&nbsp;</div>
-        </a>
+
 		<a class="weui_cell" href="javascript:;">
 		<div class="weui_cell_hd"><img src="/public/images/order.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
-            <p>帐户设置</p>
+            <p>我的消息</p>
           </div>
           <div class="weui_cell_ft">
           </div>
@@ -112,7 +108,7 @@
         <a class="weui_cell" href="javascript:;">
 		<div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
-            <p>地址设置</p>
+            <p>帐户设置</p>
           </div>
           <div class="weui_cell_ft">
           </div>
