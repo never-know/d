@@ -127,7 +127,7 @@ margin-right: 16px;
 margin-left: 6px;
 }
 
-.weui_cells{
+.weui_cells, .weui_panel{
 box-shadow: rgba(0,0,0,0.1) 0px 0px 8px 0;
 }
 .weui_cells:after, .weui_cells:before {

@@ -22,7 +22,7 @@
       </div>
        
     </div>
-	<div class="weui-row weui-no-gutter weui_margin_fix" style="position:relative;    box-shadow: rgba(0,0,0,0.1) 0 2px 4px 0;">
+	<div class="weui-row weui-no-gutter weui_margin_fix" style="position:relative;    box-shadow: rgba(0,0,0,0.1) 0 0px 8px 0;">
       <div class="weui-col-50" onclick="window.location.href='/balance/income.html'"><p>50.25</p><span>今日收益(元)</span></div>
       <div class="weui-col-50"><p>1000.75</p><span>帐户余额(元)</span></div>
     </div>
