@@ -117,7 +117,7 @@ color:#888;
 }
 .weui_cell_bd p, .weui_cell_ft_fix {
 
-padding:4px 0 0 0;
+padding:3px 0 0 0;
 }
 .weui_cell_ft_fix {
 font-size:14px;
@@ -130,9 +130,7 @@ margin-left: 6px;
 .weui_cells, .weui_panel{
 box-shadow: rgba(0,0,0,0.1) 0px 0px 8px 0;
 }
-.weui_cells:after, .weui_cells:before {
-border:none;
-}
+
 .weui_dialog_ft {
   
     line-height: 50px;

@@ -11,51 +11,11 @@
     margin-left: 5px;
       padding: 10px 0 6px 16px; 
 }
-
-.weui-agree {
-    display: inline-block;
-    font-size: 14px;
-    padding: 6px 4px 0 15px;
-}
-.weui-agree-checkbox {
-    background-color: #ffffff;
-    border: 1px solid #d1d1d1;
-    border-radius: 3px;
-    font-size: 0;
-    height: 16px;
-    outline: 0 none;
-    position: relative;
-    top: 2px;
-    vertical-align: 0;
-    width: 16px;
-}
-.weui-agree-text {
-    color: #999999;
-}
-.weui-agree+a {
+ 
+ 
+.weui_cells_tips a {
     color: #586c94;
-	font-size:14px;
-}
-.weui-agree-checkbox:checked::before {
-    color: #09bb07;
-    content: "\EA08";
-    display: inline-block;
-    font-family: "weui";
-    font-size: 16px;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: normal;
-    left: 50%;
-    position: absolute;
-    text-align: center;
-    text-decoration: inherit;
-    text-transform: none;
-    top: 50%;
-    transform: translate(-50%, -48%) scale(0.73);
-    vertical-align: middle;
-}
-.weui-agree input:checked {
-    -webkit-appearance: none;
+	 
 }
  
 .weui_vcode2 .weui_cell_hd, .weui_vcode2 .weui_cell_bd{
@@ -116,7 +76,7 @@ padding-top: 4px;
 	</style>
 <form id="form">
 	
-    <div class="weui_cells weui_cells_form" style="margin-bottom: 4px;">
+    <div class="weui_cells weui_cells_form" style="margin-bottom: 8px;">
        
 		<div class="weui_cell weui_vcode2">
                 <div class="weui_cell_hd"><label class="weui_label">+86</label></div>
@@ -135,14 +95,8 @@ padding-top: 4px;
             </div>
         </div>
     </div>
-	<label for="weuiAgree" class="weui-agree">
-			<input id="weuiAgree" class="weui-agree-checkbox" type="checkbox" checked  disabled="disabled">
-			<span class="weui-agree-text">
-				阅读并同意
-			</span>
-	</label>
-	<a href="#abc"  data-target="#full" class="open-popup">《安逸时光网服务条款》</a>
-	
+	<div class="weui_cells_tips">确认绑定代表您同意<a href="#abc"  data-target="#full" class="open-popup">《安逸时光网服务条款》</a></div>
+	 
     <div class="weui_btn_area" id="abc">
         <a id="formSubmitBtn" href="javascript:" class="weui_btn weui_btn_primary">确认绑定</a>
     </div>

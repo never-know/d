@@ -22,7 +22,7 @@
       </div>
        
     </div>
-	<div class="weui-row weui-no-gutter weui_margin_fix" style="position:relative;    box-shadow: rgba(0,0,0,0.1) 0 0px 8px 0;">
+	<div class="weui-row weui-no-gutter weui_margin_fix" style="position:relative;    box-shadow: rgba(0,0,0,0.1) 0 2px 4px 0;">
       <div class="weui-col-50" onclick="window.location.href='/balance/income.html'"><p>50.25</p><span>今日收益(元)</span></div>
       <div class="weui-col-50"><p>1000.75</p><span>帐户余额(元)</span></div>
     </div>
@@ -76,23 +76,16 @@
           </div>
           <div class="weui_cell_ft weui_cell_ft_fix">&nbsp;</div>
         </a>
-		<a class="weui_cell" href="javascript:;">
-		<div class="weui_cell_hd"><img src="/public/images/order.png" alt="" width="24"></div>
-          <div class="weui_cell_bd weui_cell_primary">
-            <p>我的积分</p>
-          </div>
-          <div class="weui_cell_ft">
-          </div>
-        </a>
-	</div>
-	<div class="weui_cells weui_cells_access">
-        <a class="weui_cell" href="javascript:;">
+		 <a class="weui_cell" href="javascript:;">
           <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
             <p>我的分享</p>
           </div>
           <div class="weui_cell_ft weui_cell_ft_fix">&nbsp;</div>
         </a>
+	</div>
+	<div class="weui_cells weui_cells_access">
+       
 		<a class="weui_cell" href="javascript:;">
 		<div class="weui_cell_hd"><img src="/public/images/order.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
@@ -126,6 +119,9 @@
 	}
 	.weui_dialog_bd{
 	font-size:0;
+	}
+	.weui_cells:after, .weui_cells:before {
+	border:none;
 	}
 	</style>	
 	 
