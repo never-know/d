@@ -52,6 +52,11 @@
           </div>
         </div>
     </div>
+	<style>
+	.weui_panel:before, .weui_panel:after {
+     border: none;  
+	}
+	</style>
 	<script>
 	 $(document).on("click", "#show-nickname", function() {
         $.prompt("", "设置昵称", function(text) {

@@ -103,10 +103,6 @@ height: 44px;
 line-height: 22px;
 position: relative;
 }
-.weui_margin_fix{
-/* margin-top: 1.17647059em;*/
-background:#fff;
-}
 
 .col-50-first div:before{
 content: " ";

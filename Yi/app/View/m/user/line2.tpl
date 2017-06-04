@@ -21,7 +21,7 @@
       </div>
        
     </div>
-	<div class="weui-row weui-no-gutter weui_margin_fix" style="position:relative;box-shadow: rgba(0,0,0,0.1) 0 2px 4px 0;">
+	<div class="weui-row weui-no-gutter" style="position:relative;background:#fff;box-shadow: rgba(0,0,0,0.1) 0 2px 4px 0;">
       <a class="weui-col-50 col-50-first" href="/balance/income.html">
 		<div>
 			<p>50.25</p>
@@ -37,7 +37,7 @@
 	  </a>
     </div>
 	 
-	<div class="weui-grids weui_margin_fix"  style="margin-top: 1.17647059em; display:none;" >
+	<div class="weui-grids"  style="margin-top: 1.17647059em;background:#fff; display:none;" >
  
 		  <a href="javascript:;" class="weui_grid js_grid">
 			<div class="weui_grid_icon">

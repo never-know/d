@@ -21,7 +21,7 @@
       </div>
        
     </div>
-	<div class="weui-row weui-no-gutter weui_margin_fix" style="position:relative;">
+	<div class="weui-row weui-no-gutter" style="position:relative;background:#fff;">
       <a class="weui-col-50 col-50-first" href="/balance/income.html">
 		<div>
 			<p>50.25</p>
