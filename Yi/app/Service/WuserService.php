@@ -39,7 +39,7 @@ class WuserService extends \Min\Service
 			 
 			$result	= $this->query($sql, false);
  			  
-			if (!empty($result)) $cache->set($key, $result, 7200);
+			if (!empty($result)) $cache->set($key, $result);
 		}
 		
 		if (!empty($result)) {
@@ -131,6 +131,12 @@ class WuserService extends \Min\Service
 			$this->initUser($result['body']);
 			return $this->success();
 		}	
+	}
+	
+	public function bind()
+	{
+		$result = $this->checkAccount($openid);
+	
 	}
  
 	private function initUser($user)

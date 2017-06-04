@@ -30,7 +30,7 @@ class WbaseController extends \Min\Controller
 			$url = 'https://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 			$state = mt_rand(10000, 99999);
 			session_set('state', $state);
-			redirect($wx->getOauthRedirect($url, $state, 'snsapi_base'));
+			redirect($wx->getOauthRedirect($url, $state, 'snsapi_userinfo'));
 			exit;
 		} else {
 			if (isset($_GET['state']) && $_GET['state'] == session_get('state')) {

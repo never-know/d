@@ -172,7 +172,6 @@ function ip_address($type = 'iplong')
 function redirect($url, $time = 0, $msg = '') 
 {
 	$url = str_replace(array('\n', '\r'), '', $url);
-	$url = check_url($url);
 	$msg = $msg ?: '系统跳转中！';
 	if (!headers_sent()) {
 		if (0 == $time) {
