@@ -6,9 +6,9 @@
           <div class="weui_media_hd">
             <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
           </div>
-          <div class="weui_media_bd" style="margin-left:.5em;margin-top:6px;letter-spacing: 0px;">
+          <div class="weui_media_bd" style="margin-left:.5em;margin-top:4px;letter-spacing: 0px;">
             <h4 class="weui_media_title">Noota</h4>
-            <p class="weui_media_desc" style="margin-top:2px;font-size:15px;">18357193201</p>
+            <p class="weui_media_desc" style="font-size:15px;">18357193201</p>
           </div>
 		   <div class="weui_media_hd" id="qrcode" style="text-align: right;margin-right: 0;">
             <img class="weui_media_appmsg_thumb" src="/public/images/abc.png"  style="width:36px;vertical-align: middle;" alt="">
@@ -22,14 +22,14 @@
        
     </div>
 	<div class="weui-row weui-no-gutter" style="position:relative;background:#fff;">
-      <a class="weui-col-50 col-50-first" href="/balance/income.html">
+      <a class="weui-col-50 col-50-first" href="/balance/detail/today.html">
 		<div>
 			<p>50.25</p>
 			<span>今日收益(元)</span>
 		</div>
 		</a>
 		
-      <a class="weui-col-50" href="/balance/items.html">
+      <a class="weui-col-50" href="/balance/income.html">
 	  <div>
 		<p>1000.75</p>
 		<span>帐户余额(元)</span>
@@ -72,21 +72,21 @@
  
 	<div class="weui_cells weui_cells_access">
 
-        <a class="weui_cell" href="javascript:;">
+        <a class="weui_cell" href="/balance/items.html">
           <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
             <p>我的收益</p>
           </div>
           <div class="weui_cell_ft">3000</div>
         </a>
-		<a class="weui_cell" href="javascript:;">
+		<a class="weui_cell" href="/balance/income.html">
           <div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
             <p>我的钱包</p>
           </div>
           <div class="weui_cell_ft">&nbsp;</div>
         </a>
-		 <a class="weui_cell" href="javascript:;">
+		 <a class="weui_cell" href="/share/log.html">
           <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
             <p>我的分享</p>
@@ -96,7 +96,7 @@
 	</div>
 	<div class="weui_cells weui_cells_access">
        
-		<a class="weui_cell" href="javascript:;">
+		<a class="weui_cell" href="/my/team.html">
 		<div class="weui_cell_hd"><img src="/public/images/order.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
             <p>我的会员</p>
@@ -104,7 +104,7 @@
           <div class="weui_cell_ft">
           </div>
         </a>
-		<a class="weui_cell" href="javascript:;">
+		<a class="weui_cell" href="/my/message.html">
 		<div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
             <p>我的消息</p>
@@ -112,7 +112,7 @@
           <div class="weui_cell_ft">
           </div>
         </a>
-        <a class="weui_cell" href="javascript:;">
+        <a class="weui_cell" href="/account/setting.html">
 		<div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
             <p>帐户设置</p>

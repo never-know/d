@@ -9,7 +9,7 @@
         <h1 class="page-hd-title">
             累计 1999.62
         </h1>
-        <div class="weui-row weui-no-gutter" style="position:relative;">
+        <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
 			<a class="weui-col-50 col-50-first" href="/balance/income.html">
 				<div>
 					<p>50.25</p>
