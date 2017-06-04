@@ -1,6 +1,6 @@
 <style>
 .page-hd {
-    margin: 16px 0;
+    margin: 14px 0;
 	background-color:#fff;
 	padding-top:16px  ;
 	text-align:center;

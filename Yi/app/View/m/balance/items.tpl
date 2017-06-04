@@ -1,6 +1,6 @@
 <style>
 .page-hd {
-    margin: 16px 0;
+    margin: 14px 0;
 	background-color:#fff;
 	padding-top:16px  ;
 	
@@ -26,9 +26,6 @@
 .page-bd ul {
 	list-style: none;
 }
-	
- 
- 
 .page-bd li {
     background-color: #fff;
     border-radius: 2px;
@@ -37,7 +34,7 @@
     overflow: hidden;
     vertical-align: bottom;
 	font-size:14px;
-	    line-height: 16px;
+	line-height: 16px;
 }
 
 .page-bd a {

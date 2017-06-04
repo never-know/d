@@ -16,7 +16,7 @@
 		</style>
 	</head>
 
-<body ontouchstart style="background-color: #f8f8f8;">
+<body ontouchstart style="background-color: #f8f8f8;background-color:#f3f3f3">
 
 	<div class="weui_tab">
 		<div class="weui_tab_bd">	
