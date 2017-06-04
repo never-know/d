@@ -11,12 +11,9 @@
 		<link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/0.8.3/css/jquery-weui.min.css"/>
 		<link rel="stylesheet" href="/public/css/myi.css?v=9"/>
 		<script src="/public/js/m/zepto_fx.min.js"></script>		
-		<style>
-			body, html {height: 100%;-webkit-tap-highlight-color: transparent;}
-		</style>
 	</head>
 
-<body ontouchstart style="background-color: #f8f8f8;background-color:#f3f3f3">
+<body ontouchstart style="background-color: #f8f8f8;background-color:#f1f1f1">
 
 	<div class="weui_tab">
 		<div class="weui_tab_bd">	

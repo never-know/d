@@ -1,90 +1,11 @@
-<style>
-.page-hd {
-    margin: 14px 0;
-	background-color:#fff;
-	padding-top:16px  ;
-	
-}
-.page-hd-title {
-    font-size: 20px;
-    font-weight: 400;
-    margin-bottom: 6px;
-	text-align:center;
-	color:red;
-}
-.page-hd-desc {
-    color: #888;
-    font-size: 14px;
-    margin-top: 5px;
-    text-align: left;
-}
-	
-	
-.page-bd {
-	padding: 0;
-}
-.page-bd ul {
-	list-style: none;
-}
-.page-bd li {
-    background-color: #fff;
-    border-radius: 2px;
-    cursor: pointer;
-    margin: 2px 0;
-    overflow: hidden;
-    vertical-align: bottom;
-	font-size:14px;
-	line-height: 16px;
-}
 
-.page-bd a {
-    align-items: center;
-    padding: 13px 20px 9px 20px;
-    transition: all 0.3s ease 0s;
-    display: -webkit-flex;
-    display: -webkit-box;
-    display: flex;
-	color:#000;
-}
-
-  
-
-.page-bd a p {
-     -webkit-box-flex: 1;
-    -webkit-flex: 1;
-    flex: 1;
-}
-
-li a:after {
-     content: " ";
-    display: inline-block;
-    -webkit-transform: rotate(45deg);
-    transform: rotate(45deg);
-    height: 6px;
-    width: 6px;
-    border-width: 2px 2px 0 0;
-    border-color: #c8c8cd;
-    border-style: solid;
-    position: relative;
-    margin-left: .3em;
-}
- 
- 
-
-li a:active{
-background-color:#f6f6f6;
-}
-	
-	</style>
-	
-	
 	<div class="weui_cells weui_cells_access weui_return">
-		<a class="weui_cell" onclick="window.location.href='/user/line.html'">
+		<a class="weui_cell" onclick="history.go(-1);">
 			<span class="weui_cell_ft" ></span>返回
 		</a>
 	</div>
 	
-	<div class="page-hd" style="box-shadow: rgba(0,0,0,0.1) 0 0px 8px 0;">
+	<div class="page-hd">
         <h1 class="page-hd-title">
             累计 1999.62
         </h1>

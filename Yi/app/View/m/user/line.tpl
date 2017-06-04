@@ -1,8 +1,7 @@
 
-	<div class="weui_panel weui_panel_access" style="margin-top: 10px;
-    box-shadow: rgba(0,0,0,0.1) 0 0px 20px 0;">
+	<div class="weui_panel weui_panel_access" style="margin-top: 10px;">
    
-      <div class="weui_panel_bd" style="/*background-color:#01a9da;background-color: #009264;background-color:#33b2c8;background-color:#7ed6a4;background-color:#1ac9f6;background-color:#d839ce;background-color:#e62a31;background-color:#489ef1;background-color:#ec151c;*/">
+      <div class="weui_panel_bd">
         <a href="/user/profile.html" class="weui_media_box weui_media_appmsg" style="padding: 12px 15px 12px 22px;">
           <div class="weui_media_hd">
             <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
@@ -22,7 +21,7 @@
       </div>
        
     </div>
-	<div class="weui-row weui-no-gutter weui_margin_fix" style="position:relative;box-shadow: rgba(0,0,0,0.1) 0 2px 4px 0;">
+	<div class="weui-row weui-no-gutter weui_margin_fix" style="position:relative;">
       <a class="weui-col-50 col-50-first" href="/balance/income.html">
 		<div>
 			<p>50.25</p>
@@ -125,14 +124,18 @@
     </div>
  
 	<style>
+	 
 	.weui_dialog, .weui_toast{
 		top:10%;
 	}
 	.weui_dialog_bd{
-	font-size:0;
+		font-size:0;
 	}
 	a.weui-col-50:active{
 		background-color:#e8e8e8;
+	}
+	.weui_panel:before  {
+	 border:none; 
 	}
 	</style>	
 	 
