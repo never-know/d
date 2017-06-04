@@ -283,7 +283,6 @@ bottom:0;
 .page-hd {
     margin: 12px 0;
 	background-color:#fff;
-	padding-top:16px  ;
 	text-align:center;
 }
 .page-hd-title {
@@ -291,11 +290,12 @@ bottom:0;
     font-weight: 400;
     margin-bottom: 8px;
 	color:red;
+	padding-top: 16px;
 }
 .page-hd-desc {
     color: #888;
     font-size: 14px;
-	padding-bottom: 12px;
+	padding-bottom: 10px;
 }
 	
 	

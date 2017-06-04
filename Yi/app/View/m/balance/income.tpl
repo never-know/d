@@ -3,11 +3,11 @@
 			<span class="weui_cell_ft" ></span>返回
 		</a>
 	</div>
-	<div class="weui_msg">
-      <div class="weui_icon_area"><i class="weui_icon_success weui_icon_msg"></i></div>
-      <div class="weui_text_area">
-        <h2 class="weui_msg_title">￥100.00</h2>
-        <p class="weui_msg_desc">我的余额</p>
+	<div class="weui_msg" style="padding-top:12px;">
+       
+      <div class="weui_text_area" style="background: white;padding: 20px;">
+		<p class="weui_msg_desc">帐户余额</p>
+        <h1  style="color:red;padding-top:4px;"><strong >￥</strong>100.00</h1>
       </div>
       <div class="weui_opr_area">
         <p class="weui_btn_area">
