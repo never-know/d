@@ -3,20 +3,19 @@
     margin: 16px 0;
 	background-color:#fff;
 	padding-top:16px  ;
+	text-align:center;
 	
 }
 .page-hd-title {
     font-size: 20px;
     font-weight: 400;
     margin-bottom: 6px;
-	text-align:center;
 	color:red;
 }
 .page-hd-desc {
     color: #888;
     font-size: 14px;
-    margin-top: 5px;
-    text-align: left;
+	padding-bottom: 12px;
 }
 	
 	
@@ -42,12 +41,11 @@
 
 .page-bd a {
     align-items: center;
-    padding: 13px 20px 9px 20px;
+  padding: 13px 20px 9px 20px;
     transition: all 0.3s ease 0s;
     display: -webkit-flex;
     display: -webkit-box;
     display: flex;
-	color:#000;
 }
 
   
@@ -89,42 +87,27 @@ background-color:#f6f6f6;
 	
 	<div class="page-hd" style="box-shadow: rgba(0,0,0,0.1) 0 0px 8px 0;">
         <h1 class="page-hd-title">
-            累计 1999.62
+            ￥ 1999.62
         </h1>
-        <div class="weui-row weui-no-gutter" style="position:relative;">
-			<a class="weui-col-50 col-50-first" href="/balance/income.html">
-				<div>
-					<p>50.25</p>
-					<span>分享收益 (元)</span>
-				</div>
-			</a>
-		
-			<a class="weui-col-50" href="/balance/items.html">
-				<div>
-					<p>1000.75</p>
-					<span>团队收益 (元)</span>
-				</div>
-			</a>
-		</div>
-	 
+         <p class="page-hd-desc">2017-3-6</p>
     </div>
 	
   <div class="page-bd">  
         <ul>
 			<li>
-                <a href="/balance/detail.html">
+                <a>
                     <p>2017-01-31</p>
 					<div class="weui_cell_ft">+100.12</div>
                 </a>
             </li>
 			<li>
-                 <a href="/balance/detail.html">
+                <a class="weui-flex">
                     <p class="weui-flex-item">2017-01-30</p>
 					<div class="weui_cell_ft">+30.68</div>
                 </a>
             </li>
 			<li>
-                <a href="/balance/detail.html">
+                <a class="weui-flex">
                     <p class="weui-flex-item">2017-01-29</p>
 					<div class="weui_cell_ft">+990.57</div>
                 </a>
