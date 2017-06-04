@@ -84,17 +84,21 @@ border:none;
 .weui-row.weui-no-gutter .weui-col-50 {
 width: 50%;
 text-align: center;
+padding: 10px 0;
+position:relative;
+}
+
+.weui-row.weui-no-gutter .weui-col-50 div{
 height: 44px;
 line-height: 22px;
-margin: 10px 0;
-position:relative;
+position: relative;
 }
 .weui_margin_fix{
 /* margin-top: 1.17647059em;*/
 background:#fff;
 }
 
-.weui-col-50:first-child:before{
+.weui-col-50 div:first-child:before{
 content: " ";
 position: absolute;
 right: 0;
@@ -115,11 +119,11 @@ color:red;
 font-size: 13px;
 color:#888;
 }
-.weui_cell_bd p, .weui_cell_ft_fix {
-
-padding:3px 0 0 0;
+.weui_cell{
+padding: 12px 15px 8px 15px;
 }
-.weui_cell_ft_fix {
+ 
+.weui_cell_ft {
 font-size:14px;
 }
 .weui_cell_hd img {
@@ -132,8 +136,7 @@ box-shadow: rgba(0,0,0,0.1) 0px 0px 8px 0;
 }
 
 .weui_dialog_ft {
-  
-    line-height: 50px;
+line-height: 50px;
 }
  
   /*

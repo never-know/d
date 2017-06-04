@@ -38,7 +38,7 @@
 
 .page-bd a {
     align-items: center;
-    padding: 10px 20px;
+    padding: 12px 20px 8px 20px;
     transition: all 0.3s ease 0s;
     display: -webkit-flex;
     display: -webkit-box;
@@ -91,7 +91,7 @@ background-color:#f6f6f6;
   <div class="page-bd">  
         <ul>
 			<li>
-                <a>
+                <a class="">
                     <p>2017-01-31</p>
 					 <div class="weui_cell_ft">说明文字</div>
                 </a>
@@ -106,25 +106,40 @@ background-color:#f6f6f6;
                     <p class="weui-flex-item">2017-01-29</p>
                 </a>
             </li>
-			<li>
-				<a class="weui_cell" href="javascript:;">
-          <div class="weui_cell_bd weui_cell_primary">
-            <p>cell standard</p>
-          </div>
-          <div class="weui_cell_ft">说明文字</div>
-        </a>
-			</li>
-			<a class="weui_cell" href="javascript:;">
-          <div class="weui_cell_bd weui_cell_primary">
-            <p>cell standard</p>
-          </div>
-          <div class="weui_cell_ft">说明文字</div>
-        </a>
-		<a class="weui_cell" href="javascript:;">
-          <div class="weui_cell_bd weui_cell_primary">
-            <p>cell standard</p>
-          </div>
-         
-        </a>
+			
 		</ul>
     </div>      
+<div class="weui_cells weui_cells_access">
+
+        <a class="weui_cell" href="javascript:;">
+          <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
+          <div class="weui_cell_bd weui_cell_primary">
+            <p>我的收益</p>
+          </div>
+          <div class="weui_cell_ft weui_cell_ft_fix">3000</div>
+        </a>
+		<a class="weui_cell" href="javascript:;">
+          <div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>
+          <div class="weui_cell_bd weui_cell_primary">
+            <p>我的钱包</p>
+          </div>
+          <div class="weui_cell_ft weui_cell_ft_fix">&nbsp;</div>
+        </a>
+		 <a class="weui_cell" href="javascript:;">
+          <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
+          <div class="weui_cell_bd weui_cell_primary">
+            <p>我的分享</p>
+          </div>
+          <div class="weui_cell_ft weui_cell_ft_fix">&nbsp;</div>
+        </a>
+	</div>
+	
+	<style>
+	.weui_cell_bd p, .weui_cell_ft_fix {
+    padding:   0;
+}
+
+.weui_cell {
+padding:12px 15px 8px 15px;
+}
+	</style>
