@@ -3,7 +3,7 @@ namespace App\Module\M;
 
 use Min\App;
 
-class BalanceController extends \Min\Controller
+class BalanceController extends \App\Module\M\WbaseController
 {
 	public function income_get()
 	{
