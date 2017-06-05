@@ -606,7 +606,7 @@ function  record_time($tag)
 	static $last_time;
 	if (is_null($last_time)) $last_time = $_SERVER['REQUEST_TIME_FLOAT']*10000;
 	$now = microtime(true)*10000;
-	watchdog($tag. ' total:'. ($now - $_SERVER['REQUEST_TIME_FLOAT']) . ';#this:'. ($now - $last_time) , 'timelog');
+	watchdog($tag. ' total:'. ($now - $_SERVER['REQUEST_TIME_FLOAT']*10000) . ';#this:'. ($now - $last_time) , 'timelog');
 	$last_time = $now;
 }
 
