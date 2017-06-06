@@ -51,7 +51,7 @@ class RegistController extends \Min\Controller
 	
 	private function check($phone, $code, $type)
 	{	
-		if (1 !== validate('phone', $phone)) {
+		if (!validate('phone', $phone)) {
 			$this->error('手机号码格式错误', 30120);
 		}
 		$captcha = new \Min\Captcha;

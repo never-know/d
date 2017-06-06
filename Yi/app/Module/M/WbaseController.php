@@ -5,9 +5,8 @@ use Min\App;
 
 class WbaseController extends \Min\Controller
 {
-	public function onConstruct()
+	public function onConstruct($redirect = true)
 	{
-	 
 		$openid = session_get('openid');
 		
 		if (!isset($openid)) {
@@ -18,8 +17,7 @@ class WbaseController extends \Min\Controller
 			exit('can not get openid');
 		}
 		
-		$this->login(true);
-	 
+		return $this->login($redirect); 
 	}
 	
 	final public function getOpenid()
@@ -53,34 +51,55 @@ class WbaseController extends \Min\Controller
 	
 	final public function login($redirect = false)
 	{
-		$user 		= session_get('user');
 		$openid 	= session_get('openid');
+		$logged 	= session_get('logged');
 		
-		if (empty($user)) {
-			$this->request('\\App\\Service\\Wuser::login', $openid);	// 登陆
+		if (empty($logged)) {
+			$result = $this->request('\\App\\Service\\Wuser::login', $openid);	// 登陆
+			if (0 === $result['statusCode']) {
+				session_set('logged', 1);
+				$user = $result['body'];
+				$this->initUser($user);
+			}
 		}
 		
-		$user 		= session_get('user');
-		 
-		if (!empty($user['uid']) && !empty($user['openid']) && 3 == $user['subscribe']) {
+		$uid 		= session_get('UID');
+		$wxid 		= session_get('wxid');
+
+		//if (!empty($uid) && !empty($openid) && 3 == $user['subscribe']) {
+		if ( $uid > 0 &&  $wxid > 0) {
 			return true;
 		} 
+ 
+		if (!$redirect)  return false;
 		
-		if ($redirect) {
-			if (3 != $user['subscribe']) {
-				$url = HOME_PAGE. '/bind/qrcode.html';	// 未关注,跳转关注页
-			} elseif (empty($user['uid'])) {
-				$url = HOME_PAGE. '/bind.html';		// 未绑定手机,跳转绑定页
-			} else {
-				$url = HOME_PAGE;					// other redirect homepage
-			}
-			
-			redirect($url);
-			
-			exit;
-			
+		if (3 != $user['subscribe']) {
+			$url = HOME_PAGE. '/bind/qrcode.html';	// 未关注,跳转关注页
+		} elseif (empty($user['uid'])) {
+			$url = HOME_PAGE. '/bind.html';			// 未绑定手机,跳转绑定页
 		} else {
-			return false;
+			$url = HOME_PAGE;						// other redirect homepage
 		}
+		
+		redirect($url);
+		exit;
+	}
+ 
+	final protected function initUser($user)
+	{ 
+		session_regenerate_id();
+
+		if (!empty($user['uid'])) {
+			session_set('UID', $user['uid']);
+		}
+		
+		if (!empty($user['wxid'])) {
+			session_set('wxid', $user['wxid']);
+		} 
+		
+		if (!empty($user['phone'])) {
+			session_set('phone', $user['phone']);
+		}
+		//session_set('user', $user);	 
 	}
 }

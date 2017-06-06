@@ -20,7 +20,7 @@ class AccountService extends \Min\Service
 
 	public function checkAccount($name, $type = null) 
 	{	
-		if ('UID' === $type) {
+		if ('uid' === $type) {
 			$name = intval($name);
 		} elseif (validate('phone', $name)) {
 			$type = 'phone';
@@ -107,6 +107,52 @@ class AccountService extends \Min\Service
 		}
 	}
 	
+	public function addUserByWx($data) 
+	{
+		$check = $this->checkAccount($data['phone']);
+		
+		if (0 == $check['statusCode']) {
+			return $this->error('该手机号码已被注册', 30205);
+		} elseif ($check['statusCode'] != 30206) {
+			return $check;
+		}
+		
+		$wxid = intval($data['wxuser_id']);
+		if ($wxid < 1 || empty($data['openid'][24])) {
+			return $this->error('参数错误', 30205);
+		}
+
+		$processed_data = [
+			'phone' 	=> $data['phone'], 
+			'regtime' 	=> intval($data['regtime']), 
+			'regip' 	=> intval($data['regip'])
+		];
+		
+		$sql = 'INSERT INTO {user} (phone, regtime, regip) VALUES ('. implode(',', $processed_data) . ')';
+
+		$this->DBManager()->transaction_start();
+		$ins = $this->query($sql);
+		
+		if ($ins['id'] > 0) {
+		
+			$openid = safe_json_encode($data['openid']); 
+			
+			$sql2 = 'UPDATE {user_wx} SET userid = ' .$ins['id'] . ' WHERE id = ' . $wxid . ' and openid = ' . $openid ;
+			
+			$upd = $this->query($sql2);
+			
+			if ($upd['effect'] > 0) {
+				$this->DBManager()->transaction_commit();
+				$this->cache()->delete($this->getCacheKey('wxid', 	$wxid)); 	//清理 缓存
+				$this->cache()->delete($this->getCacheKey('openid', $openid));		//清理 缓存
+				return $this->success(['uid' => $ins['id'], 'wxid' => $wxid]);
+			} 
+		}
+		
+		$this->DBManager()->transaction_rollback();
+		return $this->error('失败', 1);
+	}
+	
 	public function login($params) 
 	{
 		$result = $this->checkAccount($params['name']);
@@ -125,7 +171,7 @@ class AccountService extends \Min\Service
 	
 	public function resetPwd($params) 
 	{
-		$result = $this->checkAccount($params['uid'], 'UID');
+		$result = $this->checkAccount($params['uid'], 'uid');
 		
 		if ($result['statusCode'] !== 0) {
 			return $result;
@@ -133,7 +179,7 @@ class AccountService extends \Min\Service
 		
 		if (password_verify($params['pwd'], $result['body']['pwd'])) {					 
 			$pwd = password_hash($params['newpwd'], PASSWORD_BCRYPT, ['cost' => 9]);
-			$update = $this->query('update {user} set pwd ="'. $pwd.'" where uid = ' . $result['body']['uid']);
+			$update = $this->query('UPDATE {user} SET pwd ="'. $pwd.'" WHERE uid = ' . $result['body']['uid']);
 			if ($update) {
 				return $this->success('修改成功');
 			} else {
@@ -158,10 +204,5 @@ class AccountService extends \Min\Service
 			session_set('UID', $user['uid']);
 			session_set('user', $user);
 		}
-	}
-	
-	private function getCacheKey($type, $value)
-	{
-		return '{account}:'.$type. ':'. $value;
 	}
 }

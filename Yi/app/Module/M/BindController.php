@@ -3,8 +3,20 @@ namespace App\Module\M;
 
 use Min\App;
 
-class BindController extends \Min\Controller
+class BindController extends \App\Module\M\WbaseController
 {
+	public function onConstruct()
+	{
+		$binded = parent::onConstruct(false);
+		if ($binded) {
+			$result['statusCode'] 		= 30200;
+			$result['message'] 			= '帐号已绑定手机号码';
+			$result['body']['template_path'] 	= '/bind/binded';
+			$result['body']['phone'] 			= session_get('user')['phone'];
+			$this->response($result, 'layout_m');
+		}	
+	}
+	
 	public function index_get()
 	{
 		$result['meta'] = ['title' =>'绑定手机号码'];
@@ -13,14 +25,50 @@ class BindController extends \Min\Controller
 	
 	public function index_post()
 	{
-		//$result['meta'] = ['title' =>'绑定手机号码'];
-		if (!validate('phone', $_POST['phone'])) {
-			$this->error('手机号码格式错误', 1);
+		$phone 		= trim($_POST['phone']);
+		$smscode 	= trim($_POST['smscode']);
+		
+		$this->check($phone);
+		
+		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'smscode' => $smscode], 'bind');
+		
+		$regist_data	= ['phone' => $phone, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip_address(), 'wxid' => session_get('wxid'), 'openid' => session_get('openid')];
+		
+		$user = $this->request('\\App\\Service\\Account::addUserByWx', $regist_data);
+		
+		if (0 === $user['statusCode']) {
+			$this->initUser($user['body']);
+			$this->success('绑定成功');
+		} else {
+			$this->error($user['message'], $user['statusCode']);
 		}
-		
-		
-		$this->layout($result, 'layout_m');
 	}
+ 
+	public function send_post()
+	{	
+		$phone 		= trim($_POST['phone']);
+		
+		$this->check($phone);
+		 
+		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', $phone);
+
+		if (0 === $exit_result['statusCode']) {
+			$this->error('该手机号码已被注册', 30205);
+		} 
+		
+		$this->request('\\App\\Service\\Sms::send', [ 0 => $phone, 'init' => 'bind'], $this::EXITALL);	
+	}
+	
+	
+	private function check($phone)
+	{	
+		if (!validate('phone', $phone)) {
+			$this->error('手机号码格式错误', 30120);
+		}
+	}
+
+	/*************test ******************/
+	
 	
 	public function fastclick_get()
 	{
@@ -28,4 +76,5 @@ class BindController extends \Min\Controller
 		$result['meta'] = ['title' =>'fastclick'];
 		$this->layout($result, null);
 	}
+	 
 }

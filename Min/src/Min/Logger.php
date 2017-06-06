@@ -58,7 +58,7 @@ class Logger
 		
 		$records =  date('Y/m/d H:i:s', $_SERVER['REQUEST_TIME'])
 				. ' [IP: '
-				. long2ip(ip_address())
+				. ip_address('ip')
 				. '] ['
 				. $_SERVER['REQUEST_URI']
 				. '] ['

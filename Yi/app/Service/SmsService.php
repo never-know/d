@@ -13,9 +13,11 @@ class SmsService extends \Min\Service
 	private $timeout = 120;
 	private $pairs = [
 						'reg' 			=> 1,
-						'quicklogin' 	=> 2,
-						'resetpwd'		=> 3,
-						'notice' 		=> 4
+						'bind' 			=> 2,
+						'quicklogin' 	=> 3,
+						'resetpwd'		=> 4,
+						'notice' 		=> 5,
+						
 					];
 					
 	public function __construct()

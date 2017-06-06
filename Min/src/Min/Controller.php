@@ -184,5 +184,10 @@ class Controller
 		$value = $cache_setting[$this->cache_key] ?? $cache_setting['default'];
 		return App::getService($value['bin'], $value['key']);
 	}
+	
+	final public function getCacheKey($type, $value)
+	{
+		return '{'$this->cache_key.'}:'.$type. ':'. strtr($value, '"', '');
+	}
 
 }

@@ -5,7 +5,7 @@ use Min\App;
 
 class WuserService extends \Min\Service
 {
-	protected $cache_key = 'account';
+	private $cache_key = 'account';
 	 
 	/**
 	* 检测账号是否存在
@@ -20,7 +20,7 @@ class WuserService extends \Min\Service
 
 	private function checkAccount($name, $type = null) 
 	{	
-		if ('id' == $type) {
+		if ('wxid' == $type) {
 			$name = intval($name);
 		} elseif (validate('openid', $name)) {
 			$type = 'openid';
@@ -29,13 +29,13 @@ class WuserService extends \Min\Service
 			return $this->error('账号格式错误', 30200);		
 		}
  
-		$cache 	= $this->cache('account');
+		$cache 	= $this->cache();
 		$key 	= $this->getCacheKey($type, $name);
 		$result = $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-			$sql = 'SELECT w.id, w.pid, w.openid, w.subscribe, u.uid, u.phone  FROM {user_wx} AS w left join {user} AS u ON u.uid = w.userid WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
+			$sql = 'SELECT w.wxid, w.pid, w.openid, w.subscribe, u.uid, u.phone  FROM {user_wx} AS w left join {user} AS u ON u.uid = w.userid WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
 			 
 			$result	= $this->query($sql, false);
  			  
@@ -62,9 +62,9 @@ class WuserService extends \Min\Service
 		 
 		if (0 === $check['statusCode']) {
 			if ($data['subscribe'] == 2) {
-				$this->initUser($check['body']);
-				return $this->success();
+				return $this->success($check['body']);
 			}
+			
 			$code = (($check['subscribe'] == 2 ) ? 30208 : (empty($check['phone']) ? 30205 : 30207));
 			
 		} elseif ($check['statusCode'] != 30206) {
@@ -74,7 +74,7 @@ class WuserService extends \Min\Service
 		$data['pid']	= max(intval($data['pid']), 0);
 		
 		if ( $data['pid'] > 0) {
-			$parent = $this->checkAccount($data['pid'], 'id');
+			$parent = $this->checkAccount($data['pid'], 'wxid');
 			if (0 !== $parent['statusCode'] || empty($parent['phone']) || empty($parent['uid']) || $parent['subscribe'] == 2 || $parent['openid'] == $data['openid']) {
 				$data['pid'] = 0;
 			}
@@ -111,8 +111,8 @@ class WuserService extends \Min\Service
 		
 		if ($result !== false) {
 			if ($check['statusCode'] == 30206) {
-				if (2 == $data['subscribe'])  $this->initUser($result['body']);
-				return $this->success();
+				if (2 != $data['subscribe'])  $result['body'] = [];
+				return $this->success($result['body']);
 			} else {
 				return $this->error('帐号已存在', $code);
 			}
@@ -123,37 +123,15 @@ class WuserService extends \Min\Service
 
 	public function login($openid) 
 	{
-		$result = $this->checkAccount($openid);
-		
+		return $this->checkAccount($openid);
+		/*
 		if ($result['statusCode'] !== 0) {
 			return $result;
 		} else {
 			$this->initUser($result['body']);
 			return $this->success();
-		}	
-	}
-	
-	public function bind()
-	{
-		$result = $this->checkAccount($openid);
-	
-	}
- 
-	private function initUser($user)
-	{ 
-		session_regenerate_id();
-		
-		if (!empty($user['id'])) {
-			session_set('wxuser_id', $user['id']);
-		} 
-		if (!empty($user['uid'])) {
-			session_set('UID', $user['uid']);
 		}
-		session_set('user', $user);	 
+		*/		
 	}
 	
-	private function getCacheKey($type, $value)
-	{
-		return '{account}:'.$type. ':'. $value;
-	}
 }
