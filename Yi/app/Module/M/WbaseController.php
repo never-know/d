@@ -49,43 +49,36 @@ class WbaseController extends \Min\Controller
 		return new \WeBase();
 	}
 	
-	final public function login($redirect = false)
+	final public function login($redirect = true)
 	{
 		$openid 	= session_get('openid');
 		$logged 	= session_get('logged');
 		
-		if (empty($logged)) {
+		if (!empty($logged)) {
+			$user 		= session_get($user);
+		} else {
 			$result = $this->request('\\App\\Service\\Wuser::login', $openid);	// 登陆
 			if (0 === $result['statusCode']) {
 				session_set('logged', 1);
 				$user = $result['body'];
 				$this->initUser($user);
-			}
+			}  
 		}
 		
-		$uid 		= session_get('UID');
-		$wxid 		= session_get('wxid');
-
-		//if (!empty($uid) && !empty($openid) && 3 == $user['subscribe']) {
-		if ( $uid > 0 &&  $wxid > 0) {
+		if (empty($user) || 3 != $user['subscribe']) {
+			$url = HOME_PAGE. '/bind/qrcode.html';	 
+		} elseif ($user['uid'] > 0) {
 			return true;
-		} 
- 
-		if (!$redirect)  return false;
-		
-		if (3 != $user['subscribe']) {
-			$url = HOME_PAGE. '/bind/qrcode.html';	// 未关注,跳转关注页
-		} elseif (empty($user['uid'])) {
-			$url = HOME_PAGE. '/bind.html';			// 未绑定手机,跳转绑定页
+		} elseif (!$redirect) {
+			return false;
 		} else {
-			$url = HOME_PAGE;						// other redirect homepage
+			$url = HOME_PAGE. '/bind.html';	
 		}
 		
-		redirect($url);
-		exit;
+		$this->response(['redirect' => $url]);
 	}
  
-	final protected function initUser($user)
+	final public function initUser($user)
 	{ 
 		session_regenerate_id();
 
@@ -97,9 +90,6 @@ class WbaseController extends \Min\Controller
 			session_set('wxid', $user['wxid']);
 		} 
 		
-		if (!empty($user['phone'])) {
-			session_set('phone', $user['phone']);
-		}
-		//session_set('user', $user);	 
+		session_set('user', $user);	 
 	}
 }

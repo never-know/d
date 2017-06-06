@@ -180,7 +180,7 @@ function redirect($url, $time = 0, $msg = '')
 			header('refresh:'. intval($time). ';url='. $url);
 			echo($msg);
 		}
-		exit();
+		exit;
 	} else {
 		$str  = '<meta http-equiv="Refresh" content="'. intval($time). ';URL='. $url. '">';
 		if ($time != 0) $str .= $msg;
@@ -442,9 +442,7 @@ function request_error_found($code, $message = '请求失败', $layout = null, $
 {	
 	$result['statusCode'] = $code;
 	$result['message'] 	  = $message;
-	
-	if (isset($redirect)) 	$result['redirect'] = $redirect;
-	 
+	if (isset($redirect)) 	$result['redirect'] = $redirect;	 
 	final_response($result, $layout);
 }
 
@@ -482,7 +480,11 @@ function final_response($result, $layout) {
 		default :
 			if (in_array($result['statusCode'], [500, 404])) {
 				$layout = 'layout_404';
-			}  
+			}
+			
+			if (!empty($result['redirect'])) {
+				redirect($result['redirect']);
+			}
 			
 			if (!empty($result['body'])) $result = $result['body'];
 			
@@ -492,6 +494,7 @@ function final_response($result, $layout) {
 			} else {
 				require VIEW_PATH. '/layout/'. $layout. VIEW_EXT;
 			}
+			
 			exit;
 	} 
 }

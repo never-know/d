@@ -24,7 +24,7 @@ class NewsController extends \App\Module\M\WbaseController
  
 		if (!empty($openid)) {
 			$user = $this->request('\\App\\Service\\Wuser::addUserByOpenid', ['openid' => $openid, 'subscribe' => 2]);
-			$this->initUser($user);
+			$this->initUser($user['body']);
 		}
 
 		$news = $this->request('\\App\\Service\\News::detail', $id);

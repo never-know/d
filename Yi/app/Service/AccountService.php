@@ -95,7 +95,7 @@ class AccountService extends \Min\Service
 			watchdog($result);
 			
 			if ($result['id'] > 0) {
-				//$this->cache()->delete($this->getCacheKey('phone', intval($data['phone'])));//清理 注册缓存
+				$this->cache()->delete($this->getCacheKey('phone', $data['phone']));//清理 注册缓存
 				$this->initUser(['uid' => $result['id']]);
 				return $this->success();
 			} else {
@@ -145,7 +145,7 @@ class AccountService extends \Min\Service
 				$this->DBManager()->transaction_commit();
 				$this->cache()->delete($this->getCacheKey('wxid', 	$wxid)); 	//清理 缓存
 				$this->cache()->delete($this->getCacheKey('openid', $openid));		//清理 缓存
-				return $this->success(['uid' => $ins['id'], 'wxid' => $wxid]);
+				return $this->success(['uid' => $ins['id'], 'wxid' => $wxid, 'phone' => $data['phone']]);
 			} 
 		}
 		

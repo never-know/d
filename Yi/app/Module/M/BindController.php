@@ -72,7 +72,6 @@ class BindController extends \App\Module\M\WbaseController
 	
 	public function fastclick_get()
 	{
-		
 		$result['meta'] = ['title' =>'fastclick'];
 		$this->layout($result, null);
 	}
