@@ -75,7 +75,7 @@ class WbaseController extends \Min\Controller
 			$url = HOME_PAGE. '/bind.html';	
 		}
 		
-		$this->response(['redirect' => $url]);
+		$this->response(['statusCode' => '307' , 'redirect' => $url]);
 	}
  
 	final public function initUser($user)
