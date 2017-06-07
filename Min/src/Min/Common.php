@@ -47,14 +47,14 @@ function t($string, array $args = [], array $options = [])
 		foreach ($args as $key => $value) {
 			switch ($key[0]) {
 				case '@':
-					$value = check_plain($value);
+					$args[$key] = check_plain($value);
 					break;
 				case ':':
-					$value = check_url($value);
+					$args[$key] = check_url($value);
 					break;
 				case '%':
 				default:
-					$value = '<em class="placeholder">' . check_plain($value) . '</em>';
+					$args[$key] = '<em class="placeholder">' . check_plain($value) . '</em>';
 					break;
 
 				case '!':

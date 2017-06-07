@@ -89,7 +89,7 @@ class Service
 	
 	final public function getCacheKey($type, $value)
 	{
-		return '{'. $this->cache_key.'}:'.$type. ':'. strtr($value, '"', '');
+		return '{'. $this->cache_key.'}:'.$type. ':'. strtr($value, ['"'=>'']);
 	}
 	
 	final public function watchdog($data, $extra = null)
