@@ -53,20 +53,18 @@ class WbaseController extends \Min\Controller
 	{
 		$openid 	= session_get('openid');
 		$logged 	= session_get('logged');
-		watchdog($openid.intval($logged), 'openid + logged');
 		
 		if (!empty($logged)) {
 			$user 	= session_get('user');
 		} else {
 			$result = $this->request('\\App\\Service\\Wuser::login', $openid);	// 登陆
-			watchdog($result, 'result');
 			if (0 === $result['statusCode']) {
 				session_set('logged', 1);
 				$user = $result['body'];
 				$this->initUser($user);
 			}  
 		}
-		watchdog($user, 'user');
+		
 		if (empty($user) || 3 != $user['subscribe']) {
 			$url = HOME_PAGE. '/bind/qrcode.html';	 
 		} elseif ($user['uid'] > 0) {
@@ -82,8 +80,6 @@ class WbaseController extends \Min\Controller
  
 	final public function initUser($user)
 	{ 
-		session_regenerate_id();
-
 		if (!empty($user['uid'])) {
 			session_set('UID', $user['uid']);
 		}
@@ -91,7 +87,6 @@ class WbaseController extends \Min\Controller
 		if (!empty($user['wxid'])) {
 			session_set('wxid', $user['wxid']);
 		} 
-		
 		session_set('user', $user);	 
 	}
 }
