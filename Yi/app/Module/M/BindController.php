@@ -5,7 +5,7 @@ use Min\App;
 
 class BindController extends \App\Module\M\WbaseController
 {
-	public function onConstruct()
+	public function onConstruct($redirect = true)
 	{
 		$binded = parent::onConstruct(false);
 		if ($binded) {

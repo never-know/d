@@ -55,7 +55,7 @@ class WbaseController extends \Min\Controller
 		$logged 	= session_get('logged');
 		
 		if (!empty($logged)) {
-			$user 		= session_get($user);
+			$user 		= session_get('user');
 		} else {
 			$result = $this->request('\\App\\Service\\Wuser::login', $openid);	// 登陆
 			if (0 === $result['statusCode']) {
