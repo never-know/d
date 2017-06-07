@@ -7,16 +7,12 @@ class QrcodeController extends \App\Module\M\WbaseController
 {
 	public function onConstruct()
 	{
-		$openid = session_get('openid');
-		if (!isset($openid)) {
-			$this->getOpenid();
-		}
 	}
  
 	public function index()
 	{
 		$uid 		= session_get('UID');
-		$wxuser_id 	= session_get('wxuser_id');
+		$wxid 		= session_get('wxid');
 		
 		$shared_userid	= 0;
 		
@@ -27,7 +23,7 @@ class QrcodeController extends \App\Module\M\WbaseController
 				parse_str($url['query'], $params);
 				if (isset($params['id']) && isset($params['sid']) && validate('words', $params['sid'])) {
 					$params['view_time'] 	= $_SERVER['REQUEST_TIME'];
-					$params['viewer_id'] 	= $wxuser_id;
+					$params['viewer_id'] 	= $wxid;
 					$params['salary'] 		= 20;
 					$params['current_user'] = $uid;
 					$result = $this->request('\\App\\Service\\Share::record', $params);
@@ -35,21 +31,18 @@ class QrcodeController extends \App\Module\M\WbaseController
 				}
 			}
 		} 
- 
+		$img = config_get('wx_qrcode');
+		
 		if ($shared_userid) {
-			$img = $this->getQRCode($shared_userid, WX_QRCODE);
-		} else {
-			$img = WX_QRCODE;
-		}
+			$img = $this->getQRCode($shared_userid, $img);
+		} 
 		
 		redirect($img);
+		
 		exit;
 	}
 	 
-	public static function __call($name, $arguments = [])
-	{  
-		return null;
-	}
+	 
 
 	public function getQRCode($uid, $default = null)
 	{
@@ -67,5 +60,12 @@ class QrcodeController extends \App\Module\M\WbaseController
 	 
 		return $result['url']?:$default;
 		 
+	}
+	
+	
+	public function  subscribe_get()
+	{
+		$this->layout([], null);
+	
 	}
 }

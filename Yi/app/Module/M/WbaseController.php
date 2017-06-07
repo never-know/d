@@ -66,7 +66,7 @@ class WbaseController extends \Min\Controller
 		}
 		
 		if (empty($user) || 3 != $user['subscribe']) {
-			$url = HOME_PAGE. '/bind/qrcode.html';	 
+			$url = HOME_PAGE. '/qrcode/subscribe.html';	 
 		} elseif ($user['uid'] > 0) {
 			return true;
 		} elseif (!$redirect) {
