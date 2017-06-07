@@ -5,7 +5,7 @@ use Min\App;
 
 class WuserService extends \Min\Service
 {
-	private $cache_key = 'account';
+	protected $cache_key = 'account';
 	 
 	/**
 	* 检测账号是否存在

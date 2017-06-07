@@ -3,10 +3,10 @@ namespace Min;
 
 class Service
 {	
-	protected $db_key = 'default';
-	protected $cache_key = 'default';
-	protected $log_type = 'debug';
-	protected $log_level = 'DEBUG';
+	protected $db_key 		= 'default';
+	protected $cache_key 	= 'default';
+	protected $log_type 	= 'debug';
+	protected $log_level 	= 'DEBUG';
 	
 	final public function success($body = [], $message = '操作成功')
 	{	
@@ -89,7 +89,7 @@ class Service
 	
 	final public function getCacheKey($type, $value)
 	{
-		return '{'$this->cache_key.'}:'.$type. ':'. strtr($value, '"', '');
+		return '{'. $this->cache_key.'}:'.$type. ':'. strtr($value, '"', '');
 	}
 	
 	final public function watchdog($data, $extra = null)

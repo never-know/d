@@ -5,8 +5,8 @@ use Min\App;
 
 class AccountService extends \Min\Service
 {
-	private $db_key = 'user';
-	private $cache_key = 'account';
+	protected $db_key = 'user';
+	protected $cache_key = 'account';
 	/**
 	* 检测账号是否存在
 	*
@@ -34,7 +34,7 @@ class AccountService extends \Min\Service
 			return $this->error('账号格式错误', 30200);		
 		}
 		 
-		$cache 	= $this->cache('account');
+		$cache 	= $this->cache();
 		$key 	= $this->getCacheKey($type, $name);
 		$result = $cache->get($key, true);
 		
@@ -133,7 +133,7 @@ class AccountService extends \Min\Service
 		$this->DBManager()->transaction_start();
 		$ins = $this->query($sql);
 		
-		if ($ins['id'] > 0) {
+		if (isset($ins['id']) && $ins['id'] > 0) {
 		
 			$openid = safe_json_encode($data['openid']); 
 			
@@ -141,7 +141,7 @@ class AccountService extends \Min\Service
 			
 			$upd = $this->query($sql2);
 			
-			if ($upd['effect'] > 0) {
+			if (isset($upd['effect']) && $upd['effect'] > 0) {
 				$this->DBManager()->transaction_commit();
 				$this->cache()->delete($this->getCacheKey('wxid', 	$wxid)); 	//清理 缓存
 				$this->cache()->delete($this->getCacheKey('openid', $openid));		//清理 缓存
