@@ -133,14 +133,14 @@ class WuserService extends \Min\Service
 		
 		$check = $this->checkAccount($data['openid']);
 		 
-		if ((0 !== $check['statusCode'] || 2 == $data['subscribe']) && 30206 != $check['statusCode']) {
+		if (30206 != $check['statusCode'] && (0 !== $check['statusCode'] || 2 == $data['subscribe'])) {
 			return $check;	
 		}
-		
+		/*
 		if (0 === $check['statusCode'] && 2 == $data['subscribe']) {
 			return $check;	
 		}
-
+		*/
 		$data['pid']	= max(intval($data['pid']), 0);
 		
 		if ( $data['pid'] > 0) {
