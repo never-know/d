@@ -119,10 +119,10 @@ class MysqliPDO
 		
 		$type = (!empty($this->intrans[$this->active_db]) || empty($this->conf[$this->active_db]['rw_separate']) || 'select' !== $action) ? 'master' : 'slave'; 
 		
-		if (empty($param)) {
-			return $this->nonPrepareQuery($type, $sql, $action);
-		} else {
+		if (is_array($param) && !empty($param)) {
 			return $this->realQuery($type, $sql, $action, $param);
+		} else {
+			return $this->nonPrepareQuery($type, $sql, $action);
 		}
 	}
 	

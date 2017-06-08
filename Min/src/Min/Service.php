@@ -35,7 +35,7 @@ class Service
 		return $result;
 	}
 	
-	final public function query($sql, $param = [], $throwable = false)
+	final public function query($sql, $param = false, $throwable = false)
 	{	
 		record_time('query start');
 		try {	
