@@ -109,7 +109,7 @@ class WuserService extends \Min\Service
 		
 		watchdog($result);
 		
-		if ($result !== false) {
+		if ($result != false) {
 			if ($check['statusCode'] == 30206) {
 				if (2 != $data['subscribe'])  $result['body'] = [];
 				return $this->success($result['body']);
