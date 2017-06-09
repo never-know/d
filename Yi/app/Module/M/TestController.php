@@ -33,6 +33,12 @@ class TestController extends \Min\Controller
 		
 	}
 	
+	public function ondumpkeytest_get()
+	{
+			$user = $this->request('\\App\\Service\\Wuser::test');
+			exit;
+	
+	}
 	 
 
 }

@@ -49,6 +49,10 @@ class WuserService extends \Min\Service
 		}
 	}
 
+	/*
+		when subscribe 	subscribe  => 3
+		when view 		subscribe  => 2
+	*/
 	public function addUserByOpenid($data) 
 	{
 		if (!validate('openid', $data['openid']) || !in_array($data['subscribe'],[2,3]) || !isset($data['wip']) || empty($data['ctime'])) {
@@ -60,107 +64,37 @@ class WuserService extends \Min\Service
 		
 		$check = $this->checkAccount($data['openid']);
 		 
-		if (0 === $check['statusCode']) {
-			if ($data['subscribe'] == 2) {
-				return $this->success($check['body']);
-			}
-			
-			$code = (($check['subscribe'] == 2 ) ? 30208 : (empty($check['phone']) ? 30205 : 30207));
-			
-		} elseif ($check['statusCode'] != 30206) {
-			return $check;
-		}
-
-		$data['pid']	= max(intval($data['pid']), 0);
-		
-		if ( $data['pid'] > 0) {
-			$parent = $this->checkAccount($data['pid'], 'wxid');
-			if (0 !== $parent['statusCode'] || empty($parent['phone']) || empty($parent['uid']) || $parent['subscribe'] == 2 || $parent['openid'] == $data['openid']) {
-				$data['pid'] = 0;
-			}
-		}
-		
-		if ($check['statusCode'] == 30206) {
-		
-			$inserts =  [
-				$data['wip'], 
-				$data['pid'], 
-				$data['subscribe'], 
-				$data['ctime'], 
-				'"'. $data['openid']. '")'
-			];
-			
-			$sql = 'INSERT INTO {user_wx} (wip, pid, subscribe, ctime, openid) VALUES ( '. implode(',', $inserts) .' ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)';
-		} else {
-		
-			$sql = 'UPDATE {user_wx} set subscribe = 3 ';
-			
-			if (empty($check['wip'])) {
-				$sql .= ' , wid = '. $data['wip'];
-			}
-			
-			if ($check['pid'] == 0 && $data['pid'] != 0) {
-				$sql .= ', pid = '. $data['pid']; 
-			}
-			$sql .= ' WHERE id = ' .$check['body']['id'];
-		}
-		
-		$result =  $this->query($sql);
-		
-		watchdog($result);
-		
-		if ($result != false) {
-			if ($check['statusCode'] == 30206) {
-				if (2 != $data['subscribe'])  $result['body'] = [];
-				return $this->success($result['body']);
-			} else {
-				return $this->error('帐号已存在', $code);
-			}
-		} else {
-			return $this->error('注册失败', 30204);
-		} 
-	}
-	
-	
-	public function addUserByOpenidWhenSubscribe($data) 
-	{
-		if (!validate('openid', $data['openid']) ||$data['subscribe'] != 3 || !isset($data['wip']) || empty($data['ctime'])) {
-			return $this->error('参数错误', 30200);
-		}
-
-		$data['wip'] 	= intval($data['wip']);
-		$data['ctime'] 	= intval($data['ctime']);
-		
-		$check = $this->checkAccount($data['openid']);
-		 
-		if (30206 != $check['statusCode'] && (0 !== $check['statusCode'] || 2 == $data['subscribe'])) {
+		if (0 !== $check['statusCode'] && 30206 != $check['statusCode']) {
 			return $check;	
 		}
-		/*
+		 
 		if (0 === $check['statusCode'] && 2 == $data['subscribe']) {
 			return $check;	
 		}
-		*/
+		 
 		$data['pid']	= max(intval($data['pid']), 0);
 		
 		if ( $data['pid'] > 0) {
+		
 			$parent = $this->checkAccount($data['pid'], 'wxid');
-			if (0 !== $parent['statusCode'] || empty($parent['body']['phone']) || empty($parent['body']['uid']) || $parent['body']['subscribe'] == 2 || $parent['body']['openid'] == $data['openid']) {
+			
+			if (empty($parent['body']['uid']) || $parent['body']['openid'] == $data['openid']) {
 				$data['pid'] = 0;
 			}
 		}
 		
-		if ($check['statusCode'] == 30206) {
+		if (30206 == $check['statusCode']) {
 		
 			$inserts =  [
 				$data['wip'], 
 				$data['pid'], 
 				$data['subscribe'], 
 				$data['ctime'], 
-				'"'. $data['openid']. '")'
+				json_encode($data['openid'])
 			];
 			
-			$sql = 'INSERT INTO {user_wx} (wip, pid, subscribe, ctime, openid) VALUES ( '. implode(',', $inserts) .' ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)';
+			$sql = 'INSERT INTO {user_wx} (wip, pid, subscribe, ctime, openid) VALUES ( '. implode(',', $inserts) .') ON DUPLICATE KEY UPDATE wxid = LAST_INSERT_ID(wxid)';
+			
 		} else {
 		
 			$sql = 'UPDATE {user_wx} set subscribe = 3 ';
@@ -184,7 +118,8 @@ class WuserService extends \Min\Service
 		}
 		
 		if ($check['statusCode'] == 30206) {
-			return $this->success();
+			if (2 == $data['subscribe'])  $result['wxid'] = $result['id'];
+			return $this->success($result);
 		} else {
 			$code = (($check['subscribe'] == 2 ) ? 30208 : (empty($check['phone']) ? 30205 : 30207));
 			return $this->error('帐号已存在', $code);
@@ -195,14 +130,23 @@ class WuserService extends \Min\Service
 	public function login($openid) 
 	{
 		return $this->checkAccount($openid);
-		/*
-		if ($result['statusCode'] !== 0) {
-			return $result;
-		} else {
-			$this->initUser($result['body']);
-			return $this->success();
-		}
-		*/		
+	}
+	
+	public function test() {
+	
+		$inserts =  [
+				123, 
+				123, 
+				2, 
+				123, 
+				json_encode('o3GfAwTiDSmQaPo_0Vl4Ks-d-5ts')
+			];
+			
+		$sql = 'INSERT INTO {user_wx} (wip, pid, subscribe, ctime, openid) VALUES ( '. implode(',', $inserts) .') ON DUPLICATE KEY UPDATE wxid = LAST_INSERT_ID(wxid)';
+		
+		$result = $this->query($sql);
+		
+		var_dump($result);exit;
 	}
 	
 }
