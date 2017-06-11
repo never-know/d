@@ -9,7 +9,7 @@ class IndexController extends \App\Module\M\WbaseController
 	{
 		$result['meta'] = ['menu_active' => 1, 'title' =>'安逸时光,美丽分享'];
 		$result['show_bottom'] = 1;
-		$this->layout($result, 'layout_m');
+		$this->success($result);
 	}
 	
 	 

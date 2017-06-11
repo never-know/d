@@ -14,7 +14,7 @@ class Controller
 	const EXITOK 	= 3;
 
 	protected $sharedService = [];
-	
+
 	protected $cache_key = 'default';
 	
 	final public function __construct($action)
@@ -34,7 +34,7 @@ class Controller
 		
 		$key = $action.'_'.(strtolower($_SERVER['REQUEST_METHOD'])?:'get');
 		
-		if (method_exists($this, $key)){
+		if (method_exists($this, $key)) {
 			$this->{$key}();
 		} else {
 			$this->error('无效请求', 404);
@@ -120,13 +120,15 @@ class Controller
 			app_exception($t);
 		}
 	}
-	
-	final public function layout($result = [], $layout = 'layout_frame')
+	/*
+	final public function layout($result = [], $layout = '')
 	{	
-		if (empty($layout)) {
+		if ( is_null($layout)) {
 			$layout = implode('/', ['', App::getModule(), App::getController(), App::getAction()]);
+		} elseif ('' === $layout) {
+			$layout = '/layout/layout_'. ;
 		} else {
-			$layout = '/layout/'. $layout;
+		
 		}
  		require VIEW_PATH. $layout. VIEW_EXT;
 		exit;
@@ -137,8 +139,9 @@ class Controller
 		view($result);
 		exit;
 	}
+	*/
 	
-	final public function success($body = [], $layout = 'layout_frame')
+	final public function success($body = [], $layout = 'layout_')
 	{	
 		$result = ['statusCode' => 0, 'message' => '操作成功'];
  
@@ -153,12 +156,12 @@ class Controller
 		final_response($result, $layout);
 	}
 
-	final public function error($message, $code, $layout = 'layout_frame')
+	final public function error($message, $code, $layout = 'layout_')
 	{	
 		final_response(['statusCode' => $code, 'message' => $message], $layout);
 	}
 	
-	final public function response($result = [], $layout = 'layout_frame')
+	final public function response($result = [], $layout = 'layout_')
 	{		
 		final_response($result, $layout);
 	}

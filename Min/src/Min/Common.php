@@ -478,22 +478,23 @@ function final_response($result, $layout) {
 			exit;
 		case 'HTML' :
 		default :
-			if (in_array($result['statusCode'], [500, 404])) {
-				$layout = 'layout_404';
-			}
-			
 			if (!empty($result['redirect'])) {
 				redirect($result['redirect']);
 			}
 			
-			if (!empty($result['body'])) $result = $result['body'];
-			
-			if (empty($layout) || substr($layout, 0, 7) != 'layout_') {
-				$result['template_path'] = $layout;
-				view($result);
-			} else {
-				require VIEW_PATH. '/layout/'. $layout. VIEW_EXT;
+			if (in_array($result['statusCode'], [500, 404])) {
+				$layout = 'layout_404';
 			}
+			
+			//if (!empty($result['body'])) $result = $result['body'];
+			
+			if (!empty($layout) && substr($layout, 0, 7) == 'layout_') {
+				if (!isset($layout[7])) $layout .= App::getModule(); 
+				require VIEW_PATH. '/layout/'. $layout. VIEW_EXT;
+			} else {
+				if (!empty($layout)) $result['template_path'] = $layout;
+				view($result);
+			} 
 			
 			exit;
 	} 

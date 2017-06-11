@@ -65,7 +65,7 @@ class QrcodeController extends \App\Module\M\WbaseController
 	
 	public function  subscribe_get()
 	{
-		$this->layout([]);
+		$this->success();
 	
 	}
 }

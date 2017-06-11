@@ -6,7 +6,7 @@ use Min\App;
 class WbaseController extends \Min\Controller
 {
 	public function onConstruct($redirect = true)
-	{
+	{ 
 		$openid = session_get('openid');
 		
 		if (!isset($openid)) {
@@ -17,7 +17,7 @@ class WbaseController extends \Min\Controller
 			exit('can not get openid');
 		}
 		
-		return $this->login($redirect); 
+		return $this->login($redirect);  
 	}
 	
 	final public function getOpenid()

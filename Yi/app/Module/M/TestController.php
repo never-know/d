@@ -7,12 +7,12 @@ class TestController extends \Min\Controller
 {
 	public function index_get()
 	{
-		$this->layout($result, null);
+		$this->success([], null);
 		
 	}
 	public function popup_get()
 	{
-		$this->layout($result, null);
+		$this->success([], null);
 		
 	}
 	public function redis_get()

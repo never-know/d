@@ -11,16 +11,16 @@ class BindController extends \App\Module\M\WbaseController
 		if ($binded) {
 			$result['statusCode'] 		= 30200;
 			$result['message'] 			= '帐号已绑定手机号码';
-			$result['body']['template_path'] 	= '/bind/binded';
+			$result['template_path'] 	= '/bind/binded';
 			$result['body']['phone'] 			= session_get('user')['phone'];
-			$this->response($result, 'layout_m');
+			$this->success($result);
 		}	
 	}
 	
 	public function index_get()
 	{
 		$result['meta'] = ['title' =>'绑定手机号码'];
-		$this->layout($result, 'layout_m');
+		$this->success($result);
 	}
 	
 	public function index_post()
@@ -59,6 +59,12 @@ class BindController extends \App\Module\M\WbaseController
 		$this->request('\\App\\Service\\Sms::send', [ 0 => $phone, 'init' => 'bind'], $this::EXITALL);	
 	}
 	
+	public function binded_get()
+	{
+		$this->error('微信号已绑定手机', 309);
+	
+	}
+	
 	
 	private function check($phone)
 	{	
@@ -73,7 +79,7 @@ class BindController extends \App\Module\M\WbaseController
 	public function fastclick_get()
 	{
 		$result['meta'] = ['title' =>'fastclick'];
-		$this->layout($result, null);
+		$this->success($result, null);
 	}
 	 
 }

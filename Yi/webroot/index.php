@@ -1,8 +1,8 @@
 <?php
 
-	define('SITE_DOMAIN', 'yi.com');
-	define('HOME_PAGE', 'http://m.yi.com');		
-	define('ASSETS_URL', '//www.yi.com/public');	// 图片上传后的URL基址
+	define('SITE_DOMAIN', 'anyitime.com');
+	define('HOME_PAGE', 'http://m.anyitime.com');		
+	define('ASSETS_URL', '//www.anyitime.com/public');	// 图片上传后的URL基址
 	
 	require __DIR__ .'/../app/bootstrap.php';
 	
