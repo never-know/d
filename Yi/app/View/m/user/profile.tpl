@@ -54,7 +54,7 @@
     </div>
 	<style>
 	.weui_panel:before, .weui_panel:after {
-     border: none;  
+		border: none;  
 	}
 	</style>
 	<script>

@@ -486,7 +486,7 @@ function final_response($result, $layout) {
 				$layout = 'layout_404';
 			}
 			
-			//if (!empty($result['body'])) $result = $result['body'];
+			if (!empty($result['body'])) $result = $result['body'];
 			
 			if (!empty($layout) && substr($layout, 0, 7) == 'layout_') {
 				if (!isset($layout[7])) $layout .= App::getModule(); 

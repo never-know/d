@@ -11,9 +11,9 @@ class BindController extends \App\Module\M\WbaseController
 		if ($binded) {
 			$result['statusCode'] 		= 30200;
 			$result['message'] 			= '帐号已绑定手机号码';
-			$result['template_path'] 	= '/bind/binded';
+			$result['body']['template_path'] 	= '/bind/binded';
 			$result['body']['phone'] 			= session_get('user')['phone'];
-			$this->success($result);
+			$this->response($result);
 		}	
 	}
 	
