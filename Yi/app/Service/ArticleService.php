@@ -70,7 +70,7 @@ class ArticleService extends \Min\Service
 			':icon' 	=> $param['icon']
 		];
 		
-		$sql = 'UPDATE {article} SET ' . \plain_build_query($set, ', ') .' WHERE id = '. $param['id'];
+		$sql = 'UPDATE {article} SET ' . \build_query_common($set, ', ') .' WHERE id = '. $param['id'];
 
 		$result = $this->query($sql, $bind);
 		

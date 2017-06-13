@@ -117,7 +117,7 @@ class AccountService extends \Min\Service
 			return $check;
 		}
 		
-		$wxid = intval($data['wxuser_id']);
+		$wxid = intval($data['wxid']);
 		if ($wxid < 1 || empty($data['openid'][24])) {
 			return $this->error('参数错误', 30205);
 		}
@@ -128,7 +128,7 @@ class AccountService extends \Min\Service
 			'regip' 	=> intval($data['regip'])
 		];
 		
-		$sql = 'INSERT INTO {user} (phone, regtime, regip) VALUES ('. implode(',', $processed_data) . ')';
+		$sql = 'INSERT INTO {user} ' . build_query_insert($processed_data);
 
 		$this->DBManager()->transaction_start();
 		$ins = $this->query($sql);

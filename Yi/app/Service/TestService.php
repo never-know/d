@@ -22,8 +22,7 @@ class TestService extends \Min\Service
 	 
 		var_dump($result);
 		exit;
-	
-	
+ 
 	}
 	 
 	/**

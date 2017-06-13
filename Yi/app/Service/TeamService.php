@@ -5,24 +5,7 @@ use Min\App;
 
 class TeamService extends \Min\Service
 {
-	public function member($pid)
-	{
-		$pid	= intval($pid);
-		if ($pid < 0) {
-			return $this->error('参数错误', 30000);
-		}
-		
-		$sql = 'SELECT u1.wxid, count(u2.pid) as children FROM {user_wx} AS u1 LEFT JOIN {user_wx} AS u2 ON u1.wxid = u2.pid WHERE u1.pid = ' .$pid . ' GROUP BY u1.wxid';
-		
-		$result = $this->query($sql);
-		
-		if ($result) {
-			return $this->success($result);
-		} else {
-			return $this->error('加载失败', 122222);
-		}
-
-	}
+	
 
 	public function add($param)
 	{
@@ -89,7 +72,7 @@ class TeamService extends \Min\Service
 			':icon' 	=> $param['icon']
 		];
 		
-		$sql = 'UPDATE {article} SET ' . \plain_build_query($set, ', ') .' WHERE id = '. $param['id'];
+		$sql = 'UPDATE {article} SET ' . \build_query_common($set, ', ') .' WHERE id = '. $param['id'];
 
 		$result = $this->query($sql, $bind);
 		

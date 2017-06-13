@@ -132,6 +132,25 @@ class WuserService extends \Min\Service
 		return $this->checkAccount($openid);
 	}
 	
+	public function member($pid)
+	{
+		$pid	= intval($pid);
+		if ($pid < 0) {
+			return $this->error('参数错误', 30000);
+		}
+		
+		$sql = 'SELECT u1.wxid, count(u2.pid) as children FROM {user_wx} AS u1 LEFT JOIN {user_wx} AS u2 ON u1.wxid = u2.pid WHERE u1.pid = ' . $pid . ' GROUP BY u1.wxid';
+		
+		$result = $this->query($sql);
+		
+		if ($result) {
+			return $this->success($result);
+		} else {
+			return $this->error('加载失败', 122222);
+		}
+
+	}
+	
 	public function test() {
 	
 		$inserts =  [

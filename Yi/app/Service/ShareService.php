@@ -5,7 +5,8 @@ use Min\App;
 
 class ShareService extends \Min\Service
 {
- 
+	protected $cache_key = 'share';
+	
 	public function check($name, $type = null) 
 	{	
 		if (validate('word', $name)) {
@@ -52,7 +53,7 @@ class ShareService extends \Min\Service
 		$params['content_id'] 	= intval($data['id']);
 		$params['share_user'] 	= intval($check['body']['user_id']);
 		
-		$sql_count = 'SELECT count(1) as count FROM {share_view} WHERE '. plain_build_query($params, ' AND '). ' LIMIT 1';
+		$sql_count = 'SELECT count(1) as count FROM {share_view} WHERE '. build_query_common($params, ' AND '). ' LIMIT 1';
 		$count = $this->query($sql_count);
 		if ($count['count'] > 2) {
 			return $this->success(['userid' => $params['share_user']]);
@@ -63,7 +64,7 @@ class ShareService extends \Min\Service
 		$params['share_id'] 	= json_encode($data['sid']);
 		
 		
-		$sql = 'INSERT INTO {share_view} (viewer_id, content_id, share_user, view_time, salary, share_id) values ('. implode(',', array_values($params)). ')';
+		$sql = 'INSERT INTO {share_view} ' . build_query_insert($params);
 		
 		$result =  $this->query($sql);
 		
@@ -74,61 +75,57 @@ class ShareService extends \Min\Service
 		}
 	}
 	
-	public function login($params) 
+	public function logs($p)
 	{
-		$result = $this->checkAccount($params['name']);
-		
-		if (0 !== $result['statusCode']) {
-			return $result;
+		$uid = intval($p['uid']);
+		if ($uid < 1) {
+			return $this->error('参数错误', 30000);
 		}
-		
-		if (password_verify($params['pwd'], $result['body']['pwd'])) {					 
-			$this->initUser($result['body']);
-			return $this->success();
-		} else {
-			return $this->error('帐号密码错误', 30201);
-		}		
-	}
+	 
+		$result 	= [];
+		$page		= max(intval($p['page'] ?? 1), 1) - 1;
+		$page_size  = max(intval($p['page_size'] ?? 10), 1);
 	
-	public function resetPwd($params) 
-	{
-		$result = $this->checkAccount($params['uid'], 'UID');
 		
-		if (0  !== $result['statusCode']) {
-			return $result;
-		}
+		$sql_count = 'SELECT count(1) AS count FROM {share_record} WHERE user_id = ' . $uid . ' LIMIT 1';
+		$count = $this->query($sql_count);
 		
-		if (password_verify($params['pwd'], $result['body']['pwd'])) {					 
-			$pwd = password_hash($params['newpwd'], PASSWORD_BCRYPT, ['cost' => 9]);
-			$update = $this->query('update {user} set pwd ="'. $pwd.'" where uid = ' . $result['body']['uid']);
-			if ($update) {
-				return $this->success('修改成功');
-			} else {
-				return $this->error('修改失败', 30201);
-			}
-		} else {
-			return $this->error('密码错误', 30201);
-		}		
-	}
-	
-	private function initUser($user)
-	{ 
-		if($user['uid'] > 0) {
-			// 每次登陆都需要更换session id ;
-			session_regenerate_id();
-			//if (!empty($user['nick'])) setcookie('nick', $user['nick'], 0, '/', COOKIE_DOMAIN);
-			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
-			// 此处应与 logincontroller islogged 相同
+		$result['page'] 	= \result_page($count['count'], $page_size, $page);
+		
+		if ($count['count'] > 0 && $result['page']['current_page'] <= $result['page']['total_page']) {
+			$limit 		= 'LIMIT ' . $page * $page_size . ',' .$page_size;
 			
-			setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 100, '/', COOKIE_DOMAIN);
-			session_set('logined', 1);
-			session_set('UID', $user['uid']);
-			session_set('user', $user);
+			/*
+			$result_sql = 'SELECT c.title, s.*, 0 AS views FROM {share_record} as s LEFT JOIN {article} AS a ON a.id = s.content_id WHERE s.user_id = ' . $uid . ' ORDER BY s.share_id DESC ' . $limit ;
+			
+			$result['list'] = $this->query($result_sql);
+			
+			if (!empty($result['list'])) {
+
+				$views_sql = 'SELECT share_id, count(share_id) AS count FROM {share_views} WHERE share_id in ( ' . implode(',', array_column($result['list'], 'share_id')). ') GROUP BY share_id'; 
+				
+				$views = $this->query($views_sql);
+				
+				$summary = array_column($views, 'count', 'share_id');
+				
+				foreach ($result['list'] as  &$item) {
+					$item['views'] = $summary[$item['share_id']] 
+				}
+			}
+			*/
+			
+			$result_sql = 'SELECT a.title,a.icon, s.*, count(v.share_id) AS views FROM {share_record} as s LEFT JOIN {article} AS a ON a.id = s.content_id LEF T JOIN {share_views} AS v on v.share_id = s.share_id WHERE s.user_id = ' . $uid . ' GROUP BY s.share_id ORDER BY s.share_id DESC ' . $limit ;
+			
+			$result['list'] = $this->query($result_sql);
+ 	
 		}
+		
+		if (empty($result['list'])) {
+			$result['list'] = [];
+		}		
+		
+		return $this->success($result);
 	}
 	
-	private function getCacheKey($type, $value)
-	{
-		return '{account}:'.$type. ':'. $value;
-	}
+	 
 }
