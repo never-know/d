@@ -625,7 +625,7 @@ function result_page($total, $page_size, $current_page)
 
 function build_query_insert($params)
 {
-	return '(`'. implode('`,`', array_keys($params)) .'`) values ('. implode(',', array_values($params)). ')'
+	return '(`'. implode('`,`', array_keys($params)) .'`) values ('. implode(',', array_values($params)). ')';
 }
 
 function build_query_common($params, $separator)

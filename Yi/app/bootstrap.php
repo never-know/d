@@ -15,7 +15,7 @@
 	define('MIN_PATH', APP_PATH.'/../../Min/src');
 	
 	try {
-		require MIN_PATH.'/Min/Common.php';
+		require MIN_PATH . '/Min/Common.php';
 	
 		min_init();
 	
