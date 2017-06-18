@@ -19,6 +19,9 @@ function min_init()
 	defined('SERVICE_PATH') or define('SERVICE_PATH', APP_PATH. '/Service');	
 	defined('VENDOR_PATH') 	or define('VENDOR_PATH', MIN_PATH. '/../vendor');
 	
+	
+	defined('PAGE_SIZE') 	or define('PAGE_SIZE', 10);
+	
 	define('REQUEST_METHOD', strtoupper($_SERVER['REQUEST_METHOD']));
 	define('IS_GET', 	(REQUEST_METHOD === 'GET'));
 	define('IS_POST', 	(REQUEST_METHOD === 'POST'));
@@ -459,6 +462,8 @@ function min_header($headers)
 
 function final_response($result, $layout) {
 
+	static $runed = false;
+	
 	if (IS_AJAX) {
 		$layout = 'JSON';
 	} elseif (IS_JSONP) {
@@ -483,10 +488,19 @@ function final_response($result, $layout) {
 			}
 			
 			if (in_array($result['statusCode'], [500, 404])) {
-				$layout = 'layout_404';
+				$layout = config_get('error_template_' . App::getModule(), 'layout_404');
+				if ($runed == true) {
+					$layout = '/'.strtr($layout, '_', '/');
+				}
 			}
 			
-			if (!empty($result['body'])) $result = $result['body'];
+			$runed = true;
+
+			if (!empty($result['body'])) {
+				$result['body']['message'] 		= $result['message'];
+				$result['body']['statusCode'] 	= $result['statusCode'];
+				$result = $result['body'];	
+			}
 			
 			if (!empty($layout) && substr($layout, 0, 7) == 'layout_') {
 				if (!isset($layout[7])) $layout .= App::getModule(); 
@@ -614,12 +628,16 @@ function  record_time($tag)
 	$last_time = $now;
 }
 
-function result_page($total, $page_size, $current_page)
+function result_page($total)
 {
+	$current_page	= max(intval($_REQUEST['page'] ?? 1), 1);
+	$page_size  	= max(intval($_REQUEST['page_size'] ?? PAGE_SIZE), 2);
+
 	return array(
 		'total_page' 	=> ceil($total/$page_size),
-		'current_page' 	=> $current_page?:1,
-		'total_data' 	=> $total
+		'current_page' 	=> $current_page,
+		'total_data' 	=> $total,
+		'limit'			=>  (' LIMIT ' . (($current_page-1) * $page_size) . ',' . $page_size)
 	);
 }
 

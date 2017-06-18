@@ -77,23 +77,22 @@ class ShareService extends \Min\Service
 	
 	public function logs($p)
 	{
-		$uid = intval($p['uid']);
+		$uid = intval($p);
 		if ($uid < 1) {
 			return $this->error('参数错误', 30000);
 		}
-	 
-		$result 	= [];
-		$page		= max(intval($p['page'] ?? 1), 1) - 1;
-		$page_size  = max(intval($p['page_size'] ?? 10), 1);
-	
-		
+ 
 		$sql_count = 'SELECT count(1) AS count FROM {share_record} WHERE user_id = ' . $uid . ' LIMIT 1';
 		$count = $this->query($sql_count);
 		
-		$result['page'] 	= \result_page($count['count'], $page_size, $page);
+		if (!isset($count['count'])) {
+			return $this->error('加载失败', 20106);
+		}  
 		
-		if ($count['count'] > 0 && $result['page']['current_page'] <= $result['page']['total_page']) {
-			$limit 		= 'LIMIT ' . $page * $page_size . ',' .$page_size;
+		$page 	= \result_page($count['count']);
+		
+		if ($count['count'] > 0 && $page['current_page'] <= $page['total_page']) {
+			 
 			
 			/*
 			$result_sql = 'SELECT c.title, s.*, 0 AS views FROM {share_record} as s LEFT JOIN {article} AS a ON a.id = s.content_id WHERE s.user_id = ' . $uid . ' ORDER BY s.share_id DESC ' . $limit ;
@@ -114,17 +113,18 @@ class ShareService extends \Min\Service
 			}
 			*/
 			
-			$result_sql = 'SELECT a.title,a.icon, s.*, count(v.share_id) AS views FROM {share_record} as s LEFT JOIN {article} AS a ON a.id = s.content_id LEF T JOIN {share_views} AS v on v.share_id = s.share_id WHERE s.user_id = ' . $uid . ' GROUP BY s.share_id ORDER BY s.share_id DESC ' . $limit ;
+			$result_sql = 'SELECT a.title,a.icon, s.*, count(v.share_id) AS views FROM {share_record} as s LEFT JOIN {article} AS a ON a.id = s.content_id LEF T JOIN {share_views} AS v on v.share_id = s.share_id WHERE s.user_id = ' . $uid . ' GROUP BY s.share_id ORDER BY s.share_id DESC ' . $page['limit'] ;
 			
-			$result['list'] = $this->query($result_sql);
+			$list = $this->query($result_sql);
+			if (false === $list) {
+				return $this->error('加载失败', 20106);
+			} 
  	
+		} else {
+			$list = [];
 		}
-		
-		if (empty($result['list'])) {
-			$result['list'] = [];
-		}		
-		
-		return $this->success($result);
+		 	
+		return $this->success(['page' => $page, 'list' => $list]);
 	}
 	
 	 

@@ -32,24 +32,9 @@
 	
 	<div class="page-hd">
         <h1 class="page-hd-title">
-			共计 129 名
+			用户 <?=$result['phone'];?> 下级成员, 共计 <?=$result['page']['total_data'];?> 名
         </h1>
-        <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
-			<a class="weui-col-50 col-50-first" href="javascript:;">
-				<div>
-					<p>100</p>
-					<span>直属成员(名)</span>
-				</div>
-			</a>
-		
-			<a class="weui-col-50" href="javascript:;">
-				<div>
-					<p>20</p>
-					<span>二级成员(名)</span>
-				</div>
-			</a>
-		</div>
-	 
+        
     </div>
 	
 	 
@@ -57,61 +42,57 @@
 			 
 			<div class="weui_panel_bd" id="content_load">
 	 
-				<a href="/my/subteam/2.html" class="weui_media_box weui_media_appmsg">
+				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
                    <div class="weui_media_hd">
                         <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
                     </div>
                     <div class="weui_media_bd">
                         <p class="weui_media_desc">183****8890</p>
 						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥300</li>
-							<li class="weui_media_info_meta">下级 123人</li> 
+							<li class="weui_media_info_meta">贡献收益 ￥3200</li>
+							
 					  </ul>
                     </div>
-					<div class="weui_panel_ft">&nbsp;</div>
-					 
+					
                 </a>
-				<a href="/my/subteam/2.html" class="weui_media_box weui_media_appmsg">
+				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
                    <div class="weui_media_hd">
                         <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
                     </div>
                     <div class="weui_media_bd">
                         <p class="weui_media_desc">183****8890</p>
 						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥300</li>
-							<li class="weui_media_info_meta">下级 123人</li> 
+							<li class="weui_media_info_meta">贡献收益 ￥3200</li>
+							
 					  </ul>
                     </div>
-					<div class="weui_panel_ft">&nbsp;</div>
-					 
+					
                 </a>
-				<a href="/my/subteam/2.html" class="weui_media_box weui_media_appmsg">
+				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
                    <div class="weui_media_hd">
                         <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
                     </div>
                     <div class="weui_media_bd">
                         <p class="weui_media_desc">183****8890</p>
 						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥300</li>
-							<li class="weui_media_info_meta">下级 123人</li> 
+							<li class="weui_media_info_meta">贡献收益 ￥3200</li>
+							
 					  </ul>
                     </div>
-					<div class="weui_panel_ft">&nbsp;</div>
-					 
+					
                 </a>
-				<a href="/my/subteam/2.html" class="weui_media_box weui_media_appmsg">
+				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
                    <div class="weui_media_hd">
                         <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
                     </div>
                     <div class="weui_media_bd">
                         <p class="weui_media_desc">183****8890</p>
 						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥300</li>
-							<li class="weui_media_info_meta">下级 123人</li> 
+							<li class="weui_media_info_meta">贡献收益 ￥3200</li>
+							
 					  </ul>
                     </div>
-					<div class="weui_panel_ft">&nbsp;</div>
-					 
+					
                 </a>
 	
 			</div>

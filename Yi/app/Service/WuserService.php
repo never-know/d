@@ -18,7 +18,7 @@ class WuserService extends \Min\Service
 	*	1 账号存在
 	*/
 
-	private function checkAccount($name, $type = null) 
+	public function checkAccount($name, $type = null) 
 	{	
 		if ('wxid' == $type) {
 			$name = intval($name);
@@ -132,22 +132,42 @@ class WuserService extends \Min\Service
 		return $this->checkAccount($openid);
 	}
 	
-	public function member($pid)
+	public function member($p)
 	{
-		$pid	= intval($pid);
+		$pid	= intval($p);
+		
 		if ($pid < 0) {
 			return $this->error('参数错误', 30000);
 		}
+
+		$sql_count = 'SELECT count(1) AS count FROM {user_wx} WHERE pid = ' . $pid . ' LIMIT 1';
+	  
+		$count = $this->query($sql_count);
 		
-		$sql = 'SELECT u1.wxid, count(u2.pid) as children FROM {user_wx} AS u1 LEFT JOIN {user_wx} AS u2 ON u1.wxid = u2.pid WHERE u1.pid = ' . $pid . ' GROUP BY u1.wxid';
+		if (!isset($count['count'])) {
+			return $this->error('加载失败', 20106);
+		}  
 		
-		$result = $this->query($sql);
+		$page 	= \result_page($count['count']);
 		
-		if ($result) {
-			return $this->success($result);
+		if ($count['count'] > 0 && $page['current_page'] <= $page['total_page']) {
+			
+			$sql = 'SELECT u1.wxid, u2.phone, count(u3.pid) as children FROM {user_wx} AS u1 
+			LEFT JOIN {user} AS u2 ON u1.userid = u2.uid
+			LEFT JOIN {user_wx} AS u3 ON u1.wxid = u3.pid 
+			WHERE u1.pid = ' . $pid . ' GROUP BY u1.wxid ORDER BY u1.wxid DESC ' . $page['limit'];
+		
+			$list = $this->query($sql);
+			
+			if (false === $list) {
+				return $this->error('加载失败', 20106);
+			} 
+			
 		} else {
-			return $this->error('加载失败', 122222);
+			$list = [];
 		}
+
+		return $this->success(['page' => $page, 'list' => $list]);
 
 	}
 	

@@ -28,6 +28,7 @@ $message=array(
 		20103 => '无效的SMS类型',
 		20104 => 'password_hash failed'
 		20105 => 'SMS参数未配置'
+		20106 => '数据加载失败'
 
 // 服务级错误 started with 3 (与用户行为相关)
 

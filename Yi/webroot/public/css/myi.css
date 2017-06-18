@@ -51,7 +51,7 @@ margin-top:12px;
 .weui_tabbar:before, .weui_navbar:after {
 border-color:#d6d6d6;
 }
-.weui_panel_access_new .weui_media_box{
+.weui_media_box{
 padding:12px 16px;
 }
 .weui_panel_access_new .weui_media_box .weui_media_desc {
@@ -68,6 +68,14 @@ line-height:20px;
     list-style: none;
     overflow: hidden;
 }
+
+.weui_panel_access .weui_media_box.weui_media_appmsg .weui_media_info li,
+.weui_panel_access_new .weui_media_box.weui_media_appmsg .weui_media_info li{
+height:16px;
+}
+
+
+
 .weui_panel_access .weui_media_box.weui_media_appmsg .weui_media_info_meta,
 .weui_panel_access_new .weui_media_box.weui_media_appmsg .weui_media_info_meta {
 float:left;
@@ -289,7 +297,7 @@ bottom:0;
 .page-hd-title {
     font-size: 20px;
     font-weight: 400;
-    margin-bottom: 8px;
+    padding-bottom: 8px;
 	color:red;
 	padding-top: 14px;
 }
@@ -356,3 +364,23 @@ bottom:0;
 .page-bd li a:active{
 background-color:#f6f6f6;
 }
+
+
+/*****team***/
+
+.weui_panel_team .weui_media_box.weui_media_appmsg .weui_media_hd {
+    margin-right: 1em;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+}
+.weui_panel_team .weui_media_bd {
+padding-top:4px;
+}
+
+/******balance*********/
+
+.balance_reocrds .weui_cell_primary p{
+font-size: 13px;
+} 

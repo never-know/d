@@ -5,7 +5,7 @@
         <span class="weui_cell_ft" ></span>返回
     </a>
 	</div>
-	<div class="weui_panel weui_panel_access" style="margin-top: 14px;">
+	<div class="weui_panel weui_panel_access hide" style="margin-top: 14px;">
    
       <div class="weui_panel_bd" style="background:#fff;">
         <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">
@@ -52,24 +52,6 @@
           </div>
         </div>
     </div>
-	
-	<div class="weui_cells weui_cells_access">
-
-        <div class="weui_cell" href="javascript:;" >
-          <div class="weui_cell_bd weui_cell_primary">
-            <p>常用搜索地址</p>
-          </div>
-          <div class="weui_cell_ft weui_cell_ft_fix"></div>
-        </div>
-        <div class="weui_cell" href="javascript:;">
-          <div class="weui_cell_bd weui_cell_primary" id="balance_account">
-            <p>提现帐户设置</p>
-          </div>
-          <div class="weui_cell_ft weui_cell_ft_fix"></div>
-        </div>
-    </div>
-	
-	
 	<style>
 	.weui_panel:before, .weui_panel:after {
 		border: none;  
@@ -82,15 +64,6 @@
 		  $('#nick').html(text);
         }, function() {
           //取消操作
-        },  $('#nick').html());
-      });
-	  
-	   $(document).on("click", "#balance_account", function() {
-        $.prompt("", "设置昵称", function(text) {
-         
-		  $('#nick').html(text);
-        }, function() {
-         
         },  $('#nick').html());
       });
 	</script>

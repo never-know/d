@@ -34,7 +34,7 @@
 			<?php if (empty($result['meta']['menu_active'])) : ?>
 			<a href="javascript:;" class="weui_tabbar_item weui_bar_item_on">
 			<?php  else : ?>
-			<a href="/user/line.html" class="weui_tabbar_item">
+			<a href="/user.html" class="weui_tabbar_item">
 			<?php endif;?>
 				<div class="weui_tabbar_icon">
 				 

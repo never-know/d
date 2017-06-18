@@ -5,6 +5,14 @@ use Min\App;
 
 class TestController extends \Min\Controller
 { 
+
+	function b_get()
+	{
+		var_dump([] == false);
+		
+		var_dump(validate('nickname', '{'));
+	
+	}
 	function from10_to62($num) {
 		$to = 62;
 		$dict = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -146,7 +154,8 @@ class TestController extends \Min\Controller
 	}
 	
 	
-	function shareidtest_get(){
+	function shareidtest_get()
+	{
 	
 		echo "<style>div{display:block;float:left;width:135px;
 		
@@ -228,7 +237,8 @@ class TestController extends \Min\Controller
 	}
 	
 	
-	function abc_get(){
+	function abc_get()
+	{
 	
 		for($i=80;$i<110;$i++){
 		

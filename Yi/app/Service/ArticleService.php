@@ -181,31 +181,41 @@ class ArticleService extends \Min\Service
 					break;					 
 			}
 		}
-		
-		$page		= max(intval($p['page'] ?? 1), 1) - 1;
-		$page_size  = max(intval($p['page_size'] ?? 10), 0) ?: 10;
-		$param['limit'] = ' LIMIT ' . $page * $page_size . ',' .$page_size;
-		
-		$db = $this->DBManager();
 
 		$filter = empty($param['filter']) ? '' : ' WHERE ' . implode(' AND ', $param['filter']);
-		$sql_number = 'SELECT count(1) as number FROM {article} ' . $filter; 
-		$number = $db->query($sql_number, []);
 		
-		if (intval($number[0]['number']) > 0) { 
-			$sql = 'SELECT * FROM {article} ' . $filter . $param['order'] . $param['limit'];
-			$result['list'] = $db->query($sql, []);
-			foreach ($result['list'] as &$value) {
-				$value['region_name'] = \region_get($value['region']);
-				$value['tag_name'] = \article_tags($value['tag']);
-				$value['id_name'] = \int2str($value['id']);
+		$sql_count = 'SELECT count(1) as count FROM {article} ' . $filter; 
+		
+		$count = $this->query($sql_count);
+		
+		if (!isset($count['count'])) {
+			return $this->error('加载失败', 20106);
+		}  
+		
+		$page 	= \result_page($count['count']);
+		
+		
+		if ($count['count'] > 0 && $page['current_page'] <= $page['total_page']) {
+		
+			$sql = 'SELECT * FROM {article} ' . $filter . $param['order'] . $page['limit'];
+			$list = $this->query($sql);
+			
+			if (false === $list) {
+				return $this->error('加载失败', 20106);
+			} 
+			
+			foreach ($list as &$value) {
+				$value['id_name'] 		= \int2str($value['id']);
+				$value['tag_name'] 		= \article_tags($value['tag']);
+				$value['region_name'] 	= \region_get($value['region']);				
 			}
 		} else {
-			$result['list'] = [];
+			$list = [];
 		}
 		
 		$result['params'] 	= $param_processed;
-		$result['page'] 	= \result_page($number[0]['number'], $page_size, $page);
+		$result['page'] 	= $page;
+		$result['list'] 	= $list;
 		
 		return $this->success($result);
 		
