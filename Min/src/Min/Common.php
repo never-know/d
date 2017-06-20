@@ -646,14 +646,27 @@ function build_query_insert($params)
 	return '(`'. implode('`,`', array_keys($params)) .'`) values ('. implode(',', array_values($params)). ')';
 }
 
-function build_query_common($params, $separator)
+function build_query_common($separator, $params)
 {
-	
 	$joined = [];
 	foreach($params as $key => $value) {
 	   $joined[] = "`$key`={$value}";
 	}
 	return implode($separator, $joined);
+}
+
+function param_hash(array $param)
+{
+	foreach ($param as $key => $value) {
+		if ($value === [] || $value === '' || is_null($value)) {
+			unset($param[$key]);
+		} elseif (is_array($value)) {
+			$param[$key] = implode('|', $value);
+		}
+	}
+	
+	return md5(build_query_common('&', $param));
+	
 }
 
 /* 

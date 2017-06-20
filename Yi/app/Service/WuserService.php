@@ -150,7 +150,11 @@ class WuserService extends \Min\Service
 		
 		$page 	= \result_page($count['count']);
 		
-		if ($count['count'] > 0 && $page['current_page'] <= $page['total_page']) {
+		if ($page['current_page'] > $page['total_page']) {
+		
+			$list = [];
+			
+		} else {
 			
 			$sql = 'SELECT u1.wxid, u2.phone, count(u3.pid) as children FROM {user_wx} AS u1 
 			LEFT JOIN {user} AS u2 ON u1.userid = u2.uid
@@ -163,10 +167,8 @@ class WuserService extends \Min\Service
 				return $this->error('加载失败', 20106);
 			} 
 			
-		} else {
-			$list = [];
 		}
-
+		
 		return $this->success(['page' => $page, 'list' => $list]);
 
 	}

@@ -86,7 +86,7 @@ class Controller
 		}
 
 		if (is_array($params) && 1 == count($params)) {
-			$params = reset($params);
+			$params = end($params);
 		}
 		
 		try {	

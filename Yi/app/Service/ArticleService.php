@@ -70,7 +70,7 @@ class ArticleService extends \Min\Service
 			':icon' 	=> $param['icon']
 		];
 		
-		$sql = 'UPDATE {article} SET ' . \build_query_common($set, ', ') .' WHERE id = '. $param['id'];
+		$sql = 'UPDATE {article} SET ' . \build_query_common(', ', $set) .' WHERE id = '. $param['id'];
 
 		$result = $this->query($sql, $bind);
 		
@@ -195,7 +195,9 @@ class ArticleService extends \Min\Service
 		$page 	= \result_page($count['count']);
 		
 		
-		if ($count['count'] > 0 && $page['current_page'] <= $page['total_page']) {
+		if ($page['current_page'] > $page['total_page']) {
+			$list = [];
+		} else {
 		
 			$sql = 'SELECT * FROM {article} ' . $filter . $param['order'] . $page['limit'];
 			$list = $this->query($sql);
@@ -209,9 +211,7 @@ class ArticleService extends \Min\Service
 				$value['tag_name'] 		= \article_tags($value['tag']);
 				$value['region_name'] 	= \region_get($value['region']);				
 			}
-		} else {
-			$list = [];
-		}
+		}  
 		
 		$result['params'] 	= $param_processed;
 		$result['page'] 	= $page;

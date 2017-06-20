@@ -3,11 +3,51 @@ namespace App\Service;
 
 use Min\App;
 
-class ShareService extends \Min\Service
+class MessageService extends \Min\Service
 {
-	protected $cache_key = 'share';
+
+	public function list($p)
+	{
+		$p = intval($p);
+		
+		if ($p < 0) {
+			return $this->error('参数错误', 30000);
+		}
+
+		$sql_count = 'SELECT count(1) AS count FROM {user_message} WHERE uid = ' . $p . ' LIMIT 1';
+	  
+		$count = $this->query($sql_count);
+		
+		if (!isset($count['count'])) {
+			return $this->error('加载失败', 20106);
+		}  
+		
+		$page 	= \result_page($count['count']);
+		
+		if ($page['current_page'] > $page['total_page']) {
+
+			$list = [];
+			
+		} else {
+			
+			$sql = 'SELECT m.id, m.title, m.type, m.uid, m.read_time as readed, r.read_time FROM {user_message} AS m 
+			LEFT JOIN {user_message_read} AS r 
+			ON m.type = 0 AND r.message_id = m.id AND r.uid = '. $p . 
+			' WHERE m.uid = ' . $p . ' OR ( m.uid = 0 AND m.postime > '. session_get('user')['regtime'] .') ORDER BY m.id DESC ' . $page['limit'];
+		
+			$list = $this->query($sql);
+			
+			if (false === $list) {
+				return $this->error('加载失败', 20106);
+			} 
+			
+		}
+		
+		return $this->success(['page' => $page, 'list' => $list]);
+
+	}
 	
-	public function check($name, $type = null) 
+	public function list($p) 
 	{	
 		if (validate('word', $name)) {
 			$type = 'share_id';
