@@ -24,7 +24,6 @@ class MysqliPDO
 	private $ref = null; 
 	private $conf = [];
 	private $intrans = [];
-	private $query_log = [];
 	private $connections = [];
 	private $active_db	= 'default';
 	private $prefix_key	= 'default';
@@ -104,7 +103,8 @@ class MysqliPDO
 	 
 	public function query($sql, $param)
 	{
-		$this->query_log[] = $sql = strtr($sql, ['{' => $this->conf[$this->active_db]['prefix'][$this->prefix_key], '}' => '']);
+		//$sql = strtr($sql, ['{{' => $this->conf[$this->active_db]['prefix'][$this->prefix_key], '}}' => '']);
+		$sql = preg_replace('/\{\{([a-z_]+)\}\}/', $this->conf[$this->active_db]['prefix'][$this->prefix_key] . '$1', $sql, 10);
 		
 		watchdog($sql);
 		

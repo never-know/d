@@ -59,7 +59,7 @@ class AccountService extends \Min\Service
 			 */
 			 
 			
-			$sql = 'SELECT * FROM {user} WHERE '. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
+			$sql = 'SELECT * FROM {{user}} WHERE '. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -86,7 +86,7 @@ class AccountService extends \Min\Service
 		
 		if ($data['pwd'] = password_hash($data['pwd'], PASSWORD_BCRYPT, ['cost' => 9])) {	
 		
-			$sql = 'INSERT IGNORE INTO {user} (phone, regtime, regip, pwd) VALUES ('. 
+			$sql = 'INSERT IGNORE INTO {{user}} (phone, regtime, regip, pwd) VALUES ('. 
 			
 			implode(',', [intval($data['phone']), intval($data['regtime']), intval($data['regip']), '"'. $data['pwd']. '")']);
 			
@@ -128,7 +128,7 @@ class AccountService extends \Min\Service
 			'regip' 	=> intval($data['regip'])
 		];
 		
-		$sql = 'INSERT INTO {user} ' . build_query_insert($processed_data);
+		$sql = 'INSERT INTO {{user}} ' . build_query_insert($processed_data);
 
 		$this->DBManager()->transaction_start();
 		$ins = $this->query($sql);
@@ -137,7 +137,7 @@ class AccountService extends \Min\Service
 		
 			$openid = safe_json_encode($data['openid']); 
 			
-			$sql2 = 'UPDATE {user_wx} SET userid = ' .$ins['id'] . ' WHERE id = ' . $wxid . ' and openid = ' . $openid ;
+			$sql2 = 'UPDATE {{user_wx}} SET userid = ' .$ins['id'] . ' WHERE id = ' . $wxid . ' and openid = ' . $openid ;
 			
 			$upd = $this->query($sql2);
 			
@@ -179,7 +179,7 @@ class AccountService extends \Min\Service
 		
 		if (password_verify($params['pwd'], $result['body']['pwd'])) {					 
 			$pwd = password_hash($params['newpwd'], PASSWORD_BCRYPT, ['cost' => 9]);
-			$update = $this->query('UPDATE {user} SET pwd ="'. $pwd.'" WHERE uid = ' . $result['body']['uid']);
+			$update = $this->query('UPDATE {{user}} SET pwd ="'. $pwd.'" WHERE uid = ' . $result['body']['uid']);
 			if ($update) {
 				return $this->success('修改成功');
 			} else {

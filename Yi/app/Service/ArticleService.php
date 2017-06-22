@@ -30,14 +30,13 @@ class ArticleService extends \Min\Service
 			':icon' 	=> $param['icon']
 		];
 		
-		$sql = 'INSERT INTO {article} (`' . implode('`, `', array_keys($set)). '`) VALUES ('.
-			implode(',', $set);
+		$sql = 'INSERT INTO {{article}} ' . query_build_insert($set);
 
 		try {
 			$this->DBManager()->transaction_start();
 			$this->DBManager()->inTransaction();
 			$id = $this->query($sql, $bind);
-			$sql2 = 'INSERT INTO {article_content} (id, content) values ('. intval($id['id']). ', :content )';
+			$sql2 = 'INSERT INTO {{article_content}} (id, content) values ('. intval($id['id']). ', :content )';
 			$this->query($sql2, [':content' => $param['content']]);
 			$this->DBManager()->transaction_commit();
 			return $this->success();
@@ -70,11 +69,11 @@ class ArticleService extends \Min\Service
 			':icon' 	=> $param['icon']
 		];
 		
-		$sql = 'UPDATE {article} SET ' . \build_query_common(', ', $set) .' WHERE id = '. $param['id'];
+		$sql = 'UPDATE {{article}} SET ' . \build_query_common(', ', $set) .' WHERE id = '. $param['id'];
 
 		$result = $this->query($sql, $bind);
 		
-		$sql2 = 'UPDATE {article_content} SET content = :content  WHERE id = '. $param['id'];
+		$sql2 = 'UPDATE {{article_content}} SET content = :content  WHERE id = '. $param['id'];
 		
 		$result2 = $this->query($sql2, [':content' => $param['content']]);
 			 
@@ -184,7 +183,7 @@ class ArticleService extends \Min\Service
 
 		$filter = empty($param['filter']) ? '' : ' WHERE ' . implode(' AND ', $param['filter']);
 		
-		$sql_count = 'SELECT count(1) as count FROM {article} ' . $filter; 
+		$sql_count = 'SELECT count(1) as count FROM {{article}} ' . $filter; 
 		
 		$count = $this->query($sql_count);
 		
@@ -199,7 +198,7 @@ class ArticleService extends \Min\Service
 			$list = [];
 		} else {
 		
-			$sql = 'SELECT * FROM {article} ' . $filter . $param['order'] . $page['limit'];
+			$sql = 'SELECT * FROM {{article}} ' . $filter . $param['order'] . $page['limit'];
 			$list = $this->query($sql);
 			
 			if (false === $list) {
@@ -223,7 +222,7 @@ class ArticleService extends \Min\Service
 	
 	public function detail($id)
 	{
-		$sql = 'SELECT a.*, ac.content FROM {article} AS a LEFT JOIN {article_content} AS ac on ac.id = a.id  WHERE a.id = '. intval($id) . '  LIMIT 1';
+		$sql = 'SELECT a.*, ac.content FROM {{article}} AS a LEFT JOIN {{article_content}} AS ac on ac.id = a.id  WHERE a.id = '. intval($id) . '  LIMIT 1';
 		$result = $this->query($sql);
 		if (empty($result)) {	
 			return $this->error('数据不存在', 1);	

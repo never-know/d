@@ -10,7 +10,7 @@ class TestController extends \Min\Controller
 	{
 		var_dump([] == false);
 		
-		var_dump(validate('nickname', '{'));
+		var_dump(validate('nickname', '{{{{'));
 	
 	}
 	function from10_to62($num) {
