@@ -48,7 +48,7 @@ class SmsService extends \Min\Service
 		
 		$sc =  $this->get($phone);  
 		
-		if (empty($sc) || $this->timeout < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
+		if (empty($sc) || $this->timeout < ($_SERVER['REQUEST_TIME'] - $sc['send_time'])) {
 			
 			$code = mt_rand(111111, 999999);
 			
@@ -59,7 +59,7 @@ class SmsService extends \Min\Service
 			}	
 			
 		} else {
-			//return $this->error('短信验证码已发送, 如未收到，请'. (120 + $sc['ctime'] - $_SERVER['REQUEST_TIME']).'秒后重发或者使用微信扫码登陆', 30113);
+			//return $this->error('短信验证码已发送, 如未收到，请'. (120 + $sc['send_time'] - $_SERVER['REQUEST_TIME']).'秒后重发或者使用微信扫码登陆', 30113);
 			$this->watchdog('will not send again in '. $this->timeout. ' seconds');
 			return $this->success();
 		}
@@ -69,9 +69,9 @@ class SmsService extends \Min\Service
 	{
 		$sc = $this->get($arr['phone']);	
 		
-		if (isset($sc['ctime']) && isset($sc['code'])) {
+		if (isset($sc['send_time']) && isset($sc['code'])) {
 			
-			if (900 < ($_SERVER['REQUEST_TIME'] - $sc['ctime'])) {
+			if (900 < ($_SERVER['REQUEST_TIME'] - $sc['send_time'])) {
 				return $this->error('短信验证码已过期，请重新发送', 30111);
 			} elseif ($sc['code'] == $arr['code']) {
 			
@@ -123,7 +123,7 @@ class SmsService extends \Min\Service
 		
 		if (empty($result)) {
 		
-			$sql = 'SELECT * FROM {sms} WHERE phone = '.$phone .' and type = '. $this->pairs[$this->type]. ' AND used = 0 ORDER BY ctime DESC LIMIT 1';
+			$sql = 'SELECT * FROM {sms} WHERE phone = '.$phone .' and type = '. $this->pairs[$this->type]. ' AND used = 0 ORDER BY send_time DESC LIMIT 1';
 			$result	= $this->query($sql);
 		}
 		
@@ -135,14 +135,14 @@ class SmsService extends \Min\Service
 		$hash = md5($_SERVER['HTTP_USER_AGENT']);
 		$ip = ip_address();
 		
-		$sql = 'INSERT INTO  {sms}  (phone, type, ip, used,  ctime ,code, hash) values ('
+		$sql = 'INSERT INTO  {sms}  (phone, type, ip, used,  send_time ,code, hash) values ('
 				. implode(',', [$phone, $this->pairs[$this->type], $ip, 0, $_SERVER['REQUEST_TIME'], "'". $code. "'", "'". $hash. "')"]);
 		
 		$result	= $this->query($sql);
 		session_inrc('sms_'. $this->type. '_times');
 		
 		$key = $this->getKey($phone);
-		session_set($key, ['code'=> $code, 'ctime'=> $_SERVER['REQUEST_TIME'], 'type' => $this->pairs[$this->type], 'id' => $result['id']]);	
+		session_set($key, ['code'=> $code, 'send_time'=> $_SERVER['REQUEST_TIME'], 'type' => $this->pairs[$this->type], 'id' => $result['id']]);	
 		
 		$cache = $this->cache('sms');
 		$cache->incr($key);
@@ -208,7 +208,7 @@ class SmsService extends \Min\Service
 			// $result->code = 15  ==> 每个号码每小时最多发送7次 
 			return $this->error('发送失败', 30112);
 		} else {
-			$this->set($phone, ['code' => $code, 'ctime' => $_SERVER['REQUEST_TIME']]);
+			$this->set($phone, ['code' => $code, 'send_time' => $_SERVER['REQUEST_TIME']]);
 			return $this->success();
 		}
 
@@ -240,7 +240,7 @@ class SmsService extends \Min\Service
 		$result = $cache->get($key);
 		 
 		if ($cache->getDisc() === $result) {	// 注意 字符串和0和布尔值比较
-			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  phone =  '.$phone .' AND type = '. $this->pairs[$this->type]. ' AND used = 0 AND ctime > '. ($_SERVER['REQUEST_TIME'] - 7200);
+			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  phone =  '.$phone .' AND type = '. $this->pairs[$this->type]. ' AND used = 0 AND send_time > '. ($_SERVER['REQUEST_TIME'] - 7200);
 		
 			$result = $this->query($sql);
 			$result = intval($result[0]['no']);
@@ -261,7 +261,7 @@ class SmsService extends \Min\Service
 		$result = $cache->get($key);
 		
 		if ($cache->getDisc() === $result) {
-			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. $ip. ' AND used = 0 AND ctime > '. ($_SERVER['REQUEST_TIME'] - 7200) ;
+			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. $ip. ' AND used = 0 AND send_time > '. ($_SERVER['REQUEST_TIME'] - 7200) ;
 		
 			$result = $this->query($sql);
 			$result = intval($result[0]['no']);
@@ -286,7 +286,7 @@ class SmsService extends \Min\Service
 
 		if ($cache->getDisc() === $result) {
 		
-			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. ip_address(). ' AND used = 0 AND ctime > '. ($_SERVER['REQUEST_TIME'] - 7200) .' AND hash = \''. $hash .'\'';
+			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. ip_address(). ' AND used = 0 AND send_time > '. ($_SERVER['REQUEST_TIME'] - 7200) .' AND hash = \''. $hash .'\'';
 		
 			$result = $this->query($sql);
 			$result = intval($result[0]['no']);

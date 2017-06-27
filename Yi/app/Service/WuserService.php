@@ -20,10 +20,10 @@ class WuserService extends \Min\Service
 
 	public function checkAccount($name, $type = null) 
 	{	
-		if ('wxid' == $type) {
+		if ('wx_id' == $type) {
 			$name = intval($name);
-		} elseif (validate('openid', $name)) {
-			$type = 'openid';
+		} elseif (validate('open_id', $name)) {
+			$type = 'open_id';
 			$name = safe_json_encode($name);
 		} else {	 
 			return $this->error('账号格式错误', 30200);		
@@ -35,7 +35,7 @@ class WuserService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-			$sql = 'SELECT w.wxid, w.pid, w.openid, w.subscribe, u.uid, u.phone  FROM {user_wx} AS w left join {user} AS u ON u.uid = w.userid WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
+			$sql = 'SELECT w.wx_id, w.parent_id, w.open_id, w.subscribe_status, u.user_id, u.phone, u.register_time  FROM {user_wx} AS w left join {user} AS u ON u.user_id = w.user_id WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
 			 
 			$result	= $this->query($sql);
  			  
@@ -55,14 +55,14 @@ class WuserService extends \Min\Service
 	*/
 	public function addUserByOpenid($data) 
 	{
-		if (!validate('openid', $data['openid']) || !in_array($data['subscribe'],[2,3]) || !isset($data['wip']) || empty($data['ctime'])) {
+		if (!validate('open_id', $data['open_id']) || !in_array($data['subscribe_status'],[2,3]) || !isset($data['wx_ip']) || empty($data['subscribe_time'])) {
 			return $this->error('参数错误', 30200);
 		}
 
-		$data['wip'] 	= intval($data['wip']);
-		$data['ctime'] 	= intval($data['ctime']);
+		$data['wx_ip'] 			= intval($data['wx_ip']);
+		$data['subscribe_time'] = intval($data['subscribe_time']);
 		
-		$check = $this->checkAccount($data['openid']);
+		$check = $this->checkAccount($data['open_id']);
 		 
 		if (0 !== $check['statusCode'] && 30206 != $check['statusCode']) {
 			return $check;	
@@ -72,41 +72,41 @@ class WuserService extends \Min\Service
 			return $check;	
 		}
 		 
-		$data['pid']	= max(intval($data['pid']), 0);
+		$data['parent_id']	= max(intval($data['parent_id']), 0);
 		
-		if ( $data['pid'] > 0) {
+		if ( $data['parent_id'] > 0) {
 		
-			$parent = $this->checkAccount($data['pid'], 'wxid');
+			$parent = $this->checkAccount($data['parent_id'], 'wx_id');
 			
-			if (empty($parent['body']['uid']) || $parent['body']['openid'] == $data['openid']) {
-				$data['pid'] = 0;
+			if (empty($parent['body']['user_id']) || $parent['body']['open_id'] == $data['open_id']) {
+				$data['parent_id'] = 0;
 			}
 		}
 		
 		if (30206 == $check['statusCode']) {
 		
 			$inserts =  [
-				$data['wip'], 
-				$data['pid'], 
-				$data['subscribe'], 
-				$data['ctime'], 
-				json_encode($data['openid'])
+				$data['wx_ip'], 
+				$data['parent_id'], 
+				$data['subscribe_status'], 
+				$data['subscribe_time'], 
+				json_encode($data['open_id'])
 			];
 			
-			$sql = 'INSERT INTO {user_wx} (wip, pid, subscribe, ctime, openid) VALUES ( '. implode(',', $inserts) .') ON DUPLICATE KEY UPDATE wxid = LAST_INSERT_ID(wxid)';
+			$sql = 'INSERT INTO {user_wx} (wx_ip, parent_id, subscribe_status, subscribe_time, open_id) VALUES ( '. implode(',', $inserts) .') ON DUPLICATE KEY UPDATE wx_id = LAST_INSERT_ID(wx_id)';
 			
 		} else {
 		
-			$sql = 'UPDATE {user_wx} set subscribe = 3 ';
+			$sql = 'UPDATE {user_wx} set subscribe_status = 3 ';
 			
-			if (empty($check['body']['wip'])) {
-				$sql .= ' , wid = '. $data['wip'];
+			if (empty($check['body']['wx_ip'])) {
+				$sql .= ' , wx_ip = '. $data['wx_ip'];
 			}
 			
-			if ($check['body']['pid'] == 0 && $data['pid'] != 0) {
-				$sql .= ', pid = '. $data['pid']; 
+			if ($check['body']['parent_id'] == 0 && $data['parent_id'] != 0) {
+				$sql .= ', parent_id = '. $data['parent_id']; 
 			}
-			$sql .= ' WHERE id = ' .$check['body']['id'];
+			$sql .= ' WHERE wx_id = ' .$check['body']['wx_id'];
 		}
 		
 		$result =  $this->query($sql);
@@ -118,10 +118,10 @@ class WuserService extends \Min\Service
 		}
 		
 		if ($check['statusCode'] == 30206) {
-			if (2 == $data['subscribe'])  $result['wxid'] = $result['id'];
+			if (2 == $data['subscribe_status'])  $result['wx_id'] = $result['id'];
 			return $this->success($result);
 		} else {
-			$code = (($check['subscribe'] == 2 ) ? 30208 : (empty($check['phone']) ? 30205 : 30207));
+			$code = (($check['subscribe_status'] == 2 ) ? 30208 : (empty($check['phone']) ? 30205 : 30207));
 			return $this->error('帐号已存在', $code);
 		}
 		 
@@ -132,15 +132,15 @@ class WuserService extends \Min\Service
 		return $this->checkAccount($openid);
 	}
 	
-	public function member($p)
+	public function member($pid)
 	{
-		$pid	= intval($p);
+		$pid	= intval($pid);
 		
 		if ($pid < 0) {
 			return $this->error('参数错误', 30000);
 		}
 
-		$sql_count = 'SELECT count(1) AS count FROM {user_wx} WHERE pid = ' . $pid . ' LIMIT 1';
+		$sql_count = 'SELECT count(1) AS count FROM {user_wx} WHERE parent_id = ' . $pid . ' LIMIT 1';
 	  
 		$count = $this->query($sql_count);
 		
@@ -156,10 +156,10 @@ class WuserService extends \Min\Service
 			
 		} else {
 			
-			$sql = 'SELECT u1.wxid, u2.phone, count(u3.pid) as children FROM {user_wx} AS u1 
-			LEFT JOIN {user} AS u2 ON u1.userid = u2.uid
-			LEFT JOIN {user_wx} AS u3 ON u1.wxid = u3.pid 
-			WHERE u1.pid = ' . $pid . ' GROUP BY u1.wxid ORDER BY u1.wxid DESC ' . $page['limit'];
+			$sql = 'SELECT u1.wx_id, u2.phone, count(u3.parent_id) as children FROM {user_wx} AS u1 
+			LEFT JOIN {user} AS u2 ON u1.user_id = u2.user_id
+			LEFT JOIN {user_wx} AS u3 ON u1.wx_id = u3.parent_id 
+			WHERE u1.parent_id = ' . $pid . ' GROUP BY u1.wx_id ORDER BY u1.wx_id DESC ' . $page['limit'];
 		
 			$list = $this->query($sql);
 			

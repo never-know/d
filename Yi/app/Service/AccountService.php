@@ -21,14 +21,15 @@ class AccountService extends \Min\Service
 	public function checkAccount($name, $type = null) 
 	{	
 		if ('uid' === $type) {
+			$type = 'user_id';
 			$name = intval($name);
 		} elseif (validate('phone', $name)) {
 			$type = 'phone';
 		} elseif (validate('email', $name)) {			
 			$type = 'email';
 			$name = safe_json_encode($name);
-		} elseif (validate('username', $name)) {	 
-			$type = 'username';
+		} elseif (validate('user_name', $name)) {	 
+			$type = 'user_name';
 			$name = safe_json_encode($name);
 		} else {	 
 			return $this->error('账号格式错误', 30200);		
@@ -84,11 +85,11 @@ class AccountService extends \Min\Service
 			return $check;
 		}
 		
-		if ($data['pwd'] = password_hash($data['pwd'], PASSWORD_BCRYPT, ['cost' => 9])) {	
+		if ($data['password'] = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 9])) {	
 		
-			$sql = 'INSERT IGNORE INTO {{user}} (phone, regtime, regip, pwd) VALUES ('. 
+			$sql = 'INSERT IGNORE INTO {{user}} (phone, register_time, register_ip, password) VALUES ('. 
 			
-			implode(',', [intval($data['phone']), intval($data['regtime']), intval($data['regip']), '"'. $data['pwd']. '")']);
+			implode(',', [intval($data['phone']), intval($data['register_time']), intval($data['register_ip']), '"'. $data['password']. '")']);
 			
 			$result =  $this->query($sql);
 			
@@ -96,7 +97,7 @@ class AccountService extends \Min\Service
 			
 			if ($result['id'] > 0) {
 				$this->cache()->delete($this->getCacheKey('phone', $data['phone']));//清理 注册缓存
-				$this->initUser(['uid' => $result['id']]);
+				$this->initUser(['user_id' => $result['id']]);
 				return $this->success();
 			} else {
 				return $this->error('注册失败', 30204);
@@ -117,15 +118,15 @@ class AccountService extends \Min\Service
 			return $check;
 		}
 		
-		$wxid = intval($data['wxid']);
-		if ($wxid < 1 || empty($data['openid'][24])) {
+		$wxid = intval($data['wx_id']);
+		if ($wxid < 1 || empty($data['open_id'][24])) {
 			return $this->error('参数错误', 30205);
 		}
 
 		$processed_data = [
 			'phone' 	=> $data['phone'], 
-			'regtime' 	=> intval($data['regtime']), 
-			'regip' 	=> intval($data['regip'])
+			'register_time' 	=> intval($data['register_time']), 
+			'register_ip' 	=> intval($data['register_ip'])
 		];
 		
 		$sql = 'INSERT INTO {{user}} ' . build_query_insert($processed_data);
@@ -135,17 +136,17 @@ class AccountService extends \Min\Service
 		
 		if (isset($ins['id']) && $ins['id'] > 0) {
 		
-			$openid = safe_json_encode($data['openid']); 
+			$open_id = safe_json_encode($data['open_id']); 
 			
-			$sql2 = 'UPDATE {{user_wx}} SET userid = ' .$ins['id'] . ' WHERE id = ' . $wxid . ' and openid = ' . $openid ;
+			$sql2 = 'UPDATE {{user_wx}} SET user_id = ' .$ins['id'] . ' WHERE wx_id = ' . $wx_id . ' and open_id = ' . $open_id ;
 			
 			$upd = $this->query($sql2);
 			
 			if (isset($upd['effect']) && $upd['effect'] > 0) {
 				$this->DBManager()->transaction_commit();
-				$this->cache()->delete($this->getCacheKey('wxid', 	$wxid)); 	//清理 缓存
-				$this->cache()->delete($this->getCacheKey('openid', $openid));		//清理 缓存
-				return $this->success(['uid' => $ins['id'], 'wxid' => $wxid, 'phone' => $data['phone']]);
+				$this->cache()->delete($this->getCacheKey('wx_id', 	$wx_id)); 	//清理 缓存
+				$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
+				return $this->success(['user_id' => $ins['id'], 'wx_id' => $wx_id, 'phone' => $data['phone']]);
 			} 
 		}
 		
@@ -161,7 +162,7 @@ class AccountService extends \Min\Service
 			return $result;
 		}
 		
-		if (password_verify($params['pwd'], $result['body']['pwd'])) {					 
+		if (password_verify($params['password'], $result['body']['password'])) {					 
 			$this->initUser($result['body']);
 			return $this->success();
 		} else {
@@ -171,15 +172,15 @@ class AccountService extends \Min\Service
 	
 	public function resetPwd($params) 
 	{
-		$result = $this->checkAccount($params['uid'], 'uid');
+		$result = $this->checkAccount($params['user_id'], 'uid');
 		
 		if ($result['statusCode'] !== 0) {
 			return $result;
 		}
 		
-		if (password_verify($params['pwd'], $result['body']['pwd'])) {					 
+		if (password_verify($params['password'], $result['body']['password'])) {					 
 			$pwd = password_hash($params['newpwd'], PASSWORD_BCRYPT, ['cost' => 9]);
-			$update = $this->query('UPDATE {{user}} SET pwd ="'. $pwd.'" WHERE uid = ' . $result['body']['uid']);
+			$update = $this->query('UPDATE {{user}} SET password ="'. $pwd.'" WHERE user_id = ' . $result['body']['user_id']);
 			if ($update) {
 				return $this->success('修改成功');
 			} else {
@@ -192,7 +193,7 @@ class AccountService extends \Min\Service
 	
 	private function initUser($user)
 	{ 
-		if($user['uid'] > 0) {
+		if($user['user_id'] > 0) {
 			
 			session_regenerate_id();// 每次登陆都需要更换session id ;
 			//if (!empty($user['nick'])) setcookie('nick', $user['nick'], 0, '/', COOKIE_DOMAIN);
@@ -201,7 +202,7 @@ class AccountService extends \Min\Service
 			
 			setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 100, '/', COOKIE_DOMAIN);
 			session_set('logined', 1);
-			session_set('UID', $user['uid']);
+			session_set('USER_ID', $user['user_id']);
 			session_set('user', $user);
 		}
 	}

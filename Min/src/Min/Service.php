@@ -96,4 +96,30 @@ class Service
 	{	
 		watchdog($data, $this->log_type, $this->log_level, $extra);
 	}
+	
+	final public function common_list($sql_count, $sql_list) 
+	{
+		$count = $this->query($sql_count);
+		
+		if (!isset($count['count'])) {
+			return $this->error('加载失败', 20106);
+		}  
+		
+		$page 	= \result_page($count['count']);
+		
+		if ($page['current_page'] > $page['total_page']) {
+		
+			$list = [];	
+			
+		} else {
+		
+			$list = $this->query($sql_list . $page['limit']);
+			
+			if (false === $list) {
+				return $this->error('加载失败', 20106);
+			} 	
+		}
+		
+		return $this->success(['page' => $page, 'list' => $list]);
+	}
 }

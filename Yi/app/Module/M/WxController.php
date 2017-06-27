@@ -66,11 +66,11 @@ class WxController extends \Min\Controller
 		
 		// 添加  yi_user_wx 
 		$param				= [];
-		$param['wip']		= ip_address();
-		$param['pid']	 	= ($sceneid ? base_convert($sceneid, 36, 10) : 0);
-		$param['ctime']	 	= $_SERVER['REQUEST_TIME'];
-		$param['openid']	= $this->getRevFrom();
-		$param['subscribe']	= 3;
+		$param['wx_ip']		= ip_address();
+		$param['parent_id']	 	= ($sceneid ? base_convert($sceneid, 36, 10) : 0);
+		$param['subscribe_time']	 	= $_SERVER['REQUEST_TIME'];
+		$param['open_id']	= $this->getRevFrom();
+		$param['subscribe_status']	= 3;
 
 		$add =  $this->request('\\App\\Service\\Wuser::addUserByOpenid', $param);
 		

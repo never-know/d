@@ -637,6 +637,7 @@ function result_page($total)
 		'total_page' 	=> ceil($total/$page_size),
 		'current_page' 	=> $current_page,
 		'total_data' 	=> $total,
+		'page_size'		=> $page_size,
 		'limit'			=>  (' LIMIT ' . (($current_page-1) * $page_size) . ',' . $page_size)
 	);
 }

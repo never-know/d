@@ -11,8 +11,8 @@ class QrcodeController extends \App\Module\M\WbaseController
  
 	public function index()
 	{
-		$uid 		= session_get('UID');
-		$wxid 		= session_get('wxid');
+		$user_id 		= session_get('USER_ID');
+		$wx_id 		= session_get('wx_id');
 		
 		$shared_userid	= 0;
 		
@@ -23,9 +23,9 @@ class QrcodeController extends \App\Module\M\WbaseController
 				parse_str($url['query'], $params);
 				if (isset($params['id']) && isset($params['sid']) && validate('words', $params['sid'])) {
 					$params['view_time'] 	= $_SERVER['REQUEST_TIME'];
-					$params['viewer_id'] 	= $wxid;
+					$params['viewer_id'] 	= $wx_id;
 					$params['salary'] 		= 20;
-					$params['current_user'] = $uid;
+					$params['current_user'] = $user_id;
 					$result = $this->request('\\App\\Service\\Share::record', $params);
 					$shared_userid = ($result['body']['userid']??0);	// 分享者 用户ID
 				}
@@ -44,17 +44,17 @@ class QrcodeController extends \App\Module\M\WbaseController
 	 
 	 
 
-	public function getQRCode($uid, $default = null)
+	public function getQRCode($user_id, $default = null)
 	{
 		$cache 	= $this->cache('qrcode');
-		$result = $cache->get('qrcode_'. $uid, true);
+		$result = $cache->get('qrcode_'. $user_id, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) { 
 		
-			$result = $this->getWX()->getQRCode($uid);
+			$result = $this->getWX()->getQRCode($user_id);
 			
 			if (!empty($result)) {
-				$cache->set('qrcode_'. $uid, $result, $result['expire_seconds']);
+				$cache->set('qrcode_'. $user_id, $result, $result['expire_seconds']);
 			}	
 		}
 	 

@@ -119,7 +119,6 @@ class ShareService extends \Min\Service
 			if (false === $list) {
 				return $this->error('加载失败', 20106);
 			} 
- 	
 		} 
 		 	
 		return $this->success(['page' => $page, 'list' => $list]);

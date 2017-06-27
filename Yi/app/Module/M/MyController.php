@@ -7,7 +7,7 @@ class MyController extends \App\Module\M\WbaseController
 {
 	public function team_get()
 	{
-		$result = $this->request('\\App\\Service\\Wuser::member', session_get('wxid'));
+		$result = $this->request('\\App\\Service\\Wuser::member', session_get('wx_id'));
 		
 		if (isset($result['body']['list'])) {
 			foreach ($result['body']['list'] as &$value) {
@@ -27,9 +27,9 @@ class MyController extends \App\Module\M\WbaseController
 		
 		$wuser = $this->request('\\App\\Service\\Wuser');
  
-		$result = $wuser->checkAccount($id, 'wxid');
+		$result = $wuser->checkAccount($id, 'wx_id');
 		
-		if (isset($result['body']['pid']) && $result['body']['pid'] == session_get('wxid')) {
+		if (isset($result['body']['parent_id']) && $result['body']['parent_id'] == session_get('wx_id')) {
 			$result = $wuser->member($id);
 			if (isset($result['body']['list'])) {
 				foreach ($result['body']['list'] as &$value) {

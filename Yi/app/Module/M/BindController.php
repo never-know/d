@@ -32,7 +32,7 @@ class BindController extends \App\Module\M\WbaseController
 		
 		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'smscode' => $smscode], 'bind');
 		
-		$regist_data	= ['phone' => $phone, 'regtime' => $_SERVER['REQUEST_TIME'], 'regip'=> ip_address(), 'wxid' => session_get('wxid'), 'openid' => session_get('openid')];
+		$register_data	= ['phone' => $phone, 'register_time' => $_SERVER['REQUEST_TIME'], 'register_ip'=> ip_address(), 'wx_id' => session_get('wxid'), 'open_id' => session_get('open_id')];
 		
 		$user = $this->request('\\App\\Service\\Account::addUserByWx', $regist_data);
 		

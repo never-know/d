@@ -7,14 +7,14 @@ class WbaseController extends \Min\Controller
 {
 	public function onConstruct($redirect = true)
 	{ 
-		$openid = session_get('openid');
+		$open_id = session_get('open_id');
 		
-		if (!isset($openid)) {
-			$openid = $this->getOpenid();
+		if (!isset($open_id)) {
+			$open_id = $this->getOpenid();
 		}
 		
-		if (empty($openid)) {
-			exit('can not get openid');
+		if (empty($open_id)) {
+			exit('can not get open_id');
 		}
 		
 		return $this->login($redirect);  
@@ -33,13 +33,13 @@ class WbaseController extends \Min\Controller
 		} else {
 			if (isset($_GET['state']) && $_GET['state'] == session_get('state')) {
 				$r = $wx->getOauthAccessToken();
-				$openid = $r['openid']??0;
+				$open_id = $r['openid']??0;
 			} else {
-				$openid = 0;
+				$open_id = 0;
 			} 
 			
-			if (!empty($openid)) session_set('openid', $openid);
-			return $openid;
+			if (!empty($open_id)) session_set('open_id', $open_id);
+			return $open_id;
 		}
 	}
  
@@ -51,13 +51,13 @@ class WbaseController extends \Min\Controller
 	
 	final public function login($redirect = true)
 	{
-		$openid 	= session_get('openid');
+		$open_id 	= session_get('open_id');
 		$logged 	= session_get('logged');
 		
 		if (!empty($logged)) {
 			$user 	= session_get('user');
 		} else {
-			$result = $this->request('\\App\\Service\\Wuser::login', $openid);	// 登陆
+			$result = $this->request('\\App\\Service\\Wuser::login', $open_id);	// 登陆
 			if (0 === $result['statusCode']) {
 				session_set('logged', 1);
 				$user = $result['body'];
@@ -65,9 +65,9 @@ class WbaseController extends \Min\Controller
 			}  
 		}
 		
-		if (empty($user) || 3 != $user['subscribe']) {
+		if (empty($user) || 3 != $user['subscribe_status']) {
 			$url = HOME_PAGE. '/qrcode/subscribe.html';	 
-		} elseif ($user['uid'] > 0) {
+		} elseif ($user['user_id'] > 0) {
 			return true;
 		} elseif (!$redirect) {
 			return false;
@@ -80,12 +80,12 @@ class WbaseController extends \Min\Controller
  
 	final public function initUser($user)
 	{ 
-		if (!empty($user['uid'])) {
-			session_set('UID', $user['uid']);
+		if (!empty($user['user_id'])) {
+			session_set('USER_ID', $user['user_id']);
 		}
 		
-		if (!empty($user['wxid'])) {
-			session_set('wxid', $user['wxid']);
+		if (!empty($user['wx_id'])) {
+			session_set('wx_id', $user['wx_id']);
 		} 
 		session_set('user', $user);	 
 	}
