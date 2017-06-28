@@ -97,7 +97,7 @@ class Service
 		watchdog($data, $this->log_type, $this->log_level, $extra);
 	}
 	
-	final public function common_list($sql_count, $sql_list) 
+	final public function commonList($sql_count, $sql_list) 
 	{
 		$count = $this->query($sql_count);
 		

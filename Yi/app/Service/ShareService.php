@@ -7,7 +7,7 @@ class ShareService extends \Min\Service
 {
 	protected $cache_key = 'share';
 	
-	public function check($name, $type = null) 
+	public function check($name) 
 	{	
 		if (validate('word', $name)) {
 			$type = 'share_id';
@@ -75,53 +75,17 @@ class ShareService extends \Min\Service
 		}
 	}
 	
-	public function logs($p)
+	public function logs($uid)
 	{
-		$uid = intval($p);
+		$uid = intval($uid);
 		if ($uid < 1) {
 			return $this->error('参数错误', 30000);
 		}
  
-		$sql_count = 'SELECT count(1) AS count FROM {share_record} WHERE user_id = ' . $uid . ' LIMIT 1';
-		$count = $this->query($sql_count);
+		$sql_count 	= 'SELECT count(1) AS count FROM {share_record} WHERE user_id = ' . $uid . ' LIMIT 1';
+		$sql_list 	= 'SELECT a.title,a.icon, s.*, count(v.share_id) AS views FROM {share_record} as s LEFT JOIN {article} AS a ON a.id = s.content_id LEF T JOIN {share_views} AS v on v.share_id = s.share_id WHERE s.user_id = ' . $uid . ' GROUP BY s.share_id ORDER BY s.share_id DESC';
 		
-		if (!isset($count['count'])) {
-			return $this->error('加载失败', 20106);
-		}  
-		
-		$page 	= \result_page($count['count']);
-		
-		if ($page['current_page'] > $page['total_page']) {
-			$list = []; 
-		} else {
-			/*
-			$result_sql = 'SELECT c.title, s.*, 0 AS views FROM {share_record} as s LEFT JOIN {article} AS a ON a.id = s.content_id WHERE s.user_id = ' . $uid . ' ORDER BY s.share_id DESC ' . $limit ;
-			
-			$result['list'] = $this->query($result_sql);
-			
-			if (!empty($result['list'])) {
-
-				$views_sql = 'SELECT share_id, count(share_id) AS count FROM {share_views} WHERE share_id in ( ' . implode(',', array_column($result['list'], 'share_id')). ') GROUP BY share_id'; 
-				
-				$views = $this->query($views_sql);
-				
-				$summary = array_column($views, 'count', 'share_id');
-				
-				foreach ($result['list'] as  &$item) {
-					$item['views'] = $summary[$item['share_id']] 
-				}
-			}
-			*/
-			
-			$result_sql = 'SELECT a.title,a.icon, s.*, count(v.share_id) AS views FROM {share_record} as s LEFT JOIN {article} AS a ON a.id = s.content_id LEF T JOIN {share_views} AS v on v.share_id = s.share_id WHERE s.user_id = ' . $uid . ' GROUP BY s.share_id ORDER BY s.share_id DESC ' . $page['limit'] ;
-			
-			$list = $this->query($result_sql);
-			if (false === $list) {
-				return $this->error('加载失败', 20106);
-			} 
-		} 
-		 	
-		return $this->success(['page' => $page, 'list' => $list]);
+		return $this->commonList($sql_count, $sql_list);
 	}
 	
 	 

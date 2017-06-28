@@ -183,40 +183,24 @@ class ArticleService extends \Min\Service
 
 		$filter = empty($param['filter']) ? '' : ' WHERE ' . implode(' AND ', $param['filter']);
 		
-		$sql_count = 'SELECT count(1) as count FROM {{article}} ' . $filter; 
+		$sql_count 	= 'SELECT count(1) as count FROM {{article}} ' . $filter; 
+		$sql_list 	= 'SELECT * FROM {{article}} ' . $filter . $param['order'];
 		
-		$count = $this->query($sql_count);
+		$result = $this->commonList($sql_count, $sql_list);
 		
-		if (!isset($count['count'])) {
-			return $this->error('加载失败', 20106);
-		}  
-		
-		$page 	= \result_page($count['count']);
-		
-		
-		if ($page['current_page'] > $page['total_page']) {
-			$list = [];
-		} else {
-		
-			$sql = 'SELECT * FROM {{article}} ' . $filter . $param['order'] . $page['limit'];
-			$list = $this->query($sql);
-			
-			if (false === $list) {
-				return $this->error('加载失败', 20106);
-			} 
-			
-			foreach ($list as &$value) {
-				$value['id_name'] 		= \int2str($value['id']);
-				$value['tag_name'] 		= \article_tags($value['tag']);
-				$value['region_name'] 	= \region_get($value['region']);				
-			}
-		}  
-		
-		$result['params'] 	= $param_processed;
-		$result['page'] 	= $page;
-		$result['list'] 	= $list;
-		
-		return $this->success($result);
+		if ($result['statusCode'] !== 0) {
+			return $result;
+		}
+ 	
+		foreach ($result['body']['list'] as &$value) {
+			$value['id_name'] 		= \int2str($value['id']);
+			$value['tag_name'] 		= \article_tags($value['tag']);
+			$value['region_name'] 	= \region_get($value['region']);				
+		}
+ 
+		$result['body']['params'] 	= $param_processed;
+ 
+		return $result;
 		
 	}
 	

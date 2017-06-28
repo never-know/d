@@ -140,36 +140,13 @@ class WuserService extends \Min\Service
 			return $this->error('参数错误', 30000);
 		}
 
-		$sql_count = 'SELECT count(1) AS count FROM {user_wx} WHERE parent_id = ' . $pid . ' LIMIT 1';
-	  
-		$count = $this->query($sql_count);
-		
-		if (!isset($count['count'])) {
-			return $this->error('加载失败', 20106);
-		}  
-		
-		$page 	= \result_page($count['count']);
-		
-		if ($page['current_page'] > $page['total_page']) {
-		
-			$list = [];
-			
-		} else {
-			
-			$sql = 'SELECT u1.wx_id, u2.phone, count(u3.parent_id) as children FROM {user_wx} AS u1 
+		$sql_count 	= 'SELECT count(1) AS count FROM {user_wx} WHERE parent_id = ' . $pid . ' LIMIT 1';
+		$sql_list	= 'SELECT u1.wx_id, u2.phone, count(u3.parent_id) as children FROM {user_wx} AS u1 
 			LEFT JOIN {user} AS u2 ON u1.user_id = u2.user_id
 			LEFT JOIN {user_wx} AS u3 ON u1.wx_id = u3.parent_id 
-			WHERE u1.parent_id = ' . $pid . ' GROUP BY u1.wx_id ORDER BY u1.wx_id DESC ' . $page['limit'];
-		
-			$list = $this->query($sql);
-			
-			if (false === $list) {
-				return $this->error('加载失败', 20106);
-			} 
-			
-		}
-		
-		return $this->success(['page' => $page, 'list' => $list]);
+			WHERE u1.parent_id = ' . $pid . ' GROUP BY u1.wx_id ORDER BY u1.wx_id DESC';
+	  
+		return $this->commonList($sql_count, $sql_list);
 
 	}
 	

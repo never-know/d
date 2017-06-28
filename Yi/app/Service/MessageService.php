@@ -17,35 +17,14 @@ class MessageService extends \Min\Service
 		$sql_count = 'SELECT count(m.message_id) as count FROM {{message}} AS m 
 			LEFT JOIN {{message_read}} AS r 
 			ON m.user_id = 0 AND r.message_id = m.message_id AND r.user_id = '. $p . 
-			' WHERE (m.user_id = ' . $p . ' OR  m.user_id = 0) AND m.post_time > '. session_get('user')['register_time']. ' LIMIT 1'
-	  
-		$count = $this->query($sql_count);
-		
-		if (!isset($count['count'])) {
-			return $this->error('加载失败', 20106);
-		}  
-		
-		$page 	= \result_page($count['count']);
-		
-		if ($page['current_page'] > $page['total_page']) {
-
-			$list = [];
-			
-		} else {
-			
-			$sql = 'SELECT m.message_id, m.user_id, m.read_time , m.message_type, m.title, r.read_time as readed FROM {{message}} AS m 
+			' WHERE (m.user_id = ' . $p . ' OR  m.user_id = 0) AND m.post_time > '. session_get('user')['register_time']. ' LIMIT 1';
+		$sql_list 	= 'SELECT m.message_id, m.user_id, m.read_time , m.message_type, m.title, r.read_time as readed FROM {{message}} AS m 
 			LEFT JOIN {{message_read}} AS r 
 			ON m.user_id = 0 AND r.message_id = m.message_id AND r.user_id = '. $p . 
-			' WHERE (m.user_id = ' . $p . ' OR  m.user_id = 0) AND m.post_time > '. session_get('user')['register_time'] .' ORDER BY m.message_id DESC ' . $page['limit'];
-		
-			$list = $this->query($sql);
+			' WHERE (m.user_id = ' . $p . ' OR  m.user_id = 0) AND m.post_time > '. session_get('user')['register_time'] .' ORDER BY m.message_id DESC';
 			
-			if (false === $list) {
-				return $this->error('加载失败', 20106);
-			} 
-		}
-
-		return $this->success(['page' => $page, 'list' => $list]);
+		return $this->commonList($sql_count, $sql_list);
+	  
 	}
 	
 	
@@ -145,7 +124,6 @@ class MessageService extends \Min\Service
 		}
 		
 		return $this->success($info);
-	
 	}
 	
 	
