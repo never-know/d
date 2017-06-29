@@ -230,16 +230,16 @@ function validate($type, $value, int $max = 0, int $min = 1)
 		'quotes'		=>'/["\'\s]+/u',					// 引号空格
 		'nickname'		=> '/^[a-zA-Z0-9\-_\x{4e00}-\x{9fa5}]{3,31}$/u',   // 含中文昵称
 		'username'		=>'/^[a-zA-Z0-9\-_]{3,31}$/',						// 用户名
-		//'openid'		=> '/^(?=[a-zA-Z0-9\-_]{26,32}$)(.*[a-zA-Z].*)$/',	//'/^[a-zA-Z0-9\-_][a-zA-Z]{20,36}$/',						// openid
-		'openid'		=> '/^(?=.*?[a-zA-Z])([a-zA-Z0-9\-_]{26,32})$/',		//'/^[a-zA-Z0-9\-_][a-zA-Z]{20,36}$/',						// openid
+		'openid'		=> '/^(?=.*?[a-zA-Z])([a-zA-Z0-9\-_]{26,32})$/',		//'/^[a-zA-Z0-9\-_][a-zA-Z]{20,36}$/',						 
 		'email' 		=>'/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',	// 邮箱
 		'phone'			=> '/^(13|15|18|14|17)[\d]{9}$/',						// 手机
 		'alphabet'		=> '/^[a-z]+$/i',										// 字母不区分大小写
 		'date_Y-m-d' 	=> '/^20(1[789]|2[\d])\-(0[1-9]|1[012])\-(0[1-9]|[12][\d]|3[01])$/', //合法日期
 		'img_url'	 	=> '@^(http[s]?:)?//[a-zA-Z0-9_.]+(/[a-zA-Z0-9_]+)+(\.(jpg|png|jpeg))?$@',  // 合法图片地址	
 		'length'		=> '/^.{'. $min. ','. $max. '}$/us',
-		'id_base36'			=> '/^[a-z0-9]{1,12}$/'  // 最大12位,暂不使用13位的数据
+		'id_base36'		=> '/^[a-z0-9]{1,12}$/'  // 最大12位,暂不使用13位的数据
 	];
+	
 	/*
 	if ($type != 'length' && $max > 0) {
 		$length = '/^.{'. $min. ','. $max .'}$/us';
@@ -488,7 +488,7 @@ function final_response($result, $layout) {
 			}
 			
 			if (in_array($result['statusCode'], [500, 404])) {
-				$layout = config_get('error_template_' . App::getModule(), 'layout_404');
+				$layout = config_get('error_template_' . strtolower(App::getModule()), 'layout_404');
 				if ($runed == true) {
 					$layout = '/'.strtr($layout, '_', '/');
 				}
@@ -638,7 +638,7 @@ function result_page($total)
 		'current_page' 	=> $current_page,
 		'total_data' 	=> $total,
 		'page_size'		=> $page_size,
-		'limit'			=>  (' LIMIT ' . (($current_page-1) * $page_size) . ',' . $page_size)
+		'limit'			=>  (' LIMIT ' . (($current_page - 1) * $page_size) . ',' . $page_size)
 	);
 }
 

@@ -99,11 +99,14 @@ class Service
 	
 	final public function commonList($sql_count, $sql_list) 
 	{
-		$count = $this->query($sql_count);
-		
-		if (!isset($count['count'])) {
-			return $this->error('加载失败', 20106);
-		}  
+		if (is_numeric($sql_count)) {
+			$count['count'] = $sql_count;
+		} else {
+			$count = $this->query($sql_count);
+			if (!isset($count['count'])) {
+				return $this->error('加载失败', 20106);
+			}  
+		}
 		
 		$page 	= \result_page($count['count']);
 		

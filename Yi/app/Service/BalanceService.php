@@ -5,6 +5,13 @@ use Min\App;
 
 class BalanceService extends \Min\Service
 {
+	/*   
+		@param 
+		
+		user_id
+		
+	 */	
+	 
 	public function allList($user_id)
 	{
 		$user_id 		= intval($user_id);
@@ -18,6 +25,14 @@ class BalanceService extends \Min\Service
 		
 		return $this->commonList($sql_count, $sql_list);
 	}
+	
+	/*   
+		@param 
+		
+		user_id
+		register_time
+		
+	 */	  
 	
 	public function incomeList($p)
 	{
@@ -43,7 +58,7 @@ class BalanceService extends \Min\Service
 			$begin 	= date('ymd', $today - (($page['current_page'] - 1) * $page['page_size']));
 			$end 	= date('ymd', $begin - $page['page_size']);
 		
-			$sql = 'SELECT sum(money) AS money, post_day FROM {{balance_log}} WHERE user_id = '.$user_id . ' AND post_day <= ' . $begin . ' AND post_day > ' . $end . ' AND balance_type >= 1 AND balance_type <= 3 GROUY BY post_day ORDER BY log_id DESC';
+			$sql = 'SELECT sum(money) AS money, post_day FROM {{balance_log}} WHERE user_id = '.$user_id . ' AND post_day <= ' . $begin . ' AND post_day > ' . $end . ' AND balance_type > 0 AND balance_type < 3 GROUY BY post_day ORDER BY log_id DESC';
 	  
 			$list = $this->query($sql);
 			
@@ -55,6 +70,18 @@ class BalanceService extends \Min\Service
 		return $this->success(['page' => $page, 'list' => $list]);
 	}
 	
+	/*   
+		@param 
+		
+		user_id
+		start		ymd, between(170803, 991230)
+		
+		@result
+		
+		
+		
+	 */	  
+	
 	public function dailyList($p)
 	{
 		$param				= [];
@@ -65,11 +92,47 @@ class BalanceService extends \Min\Service
 			return $this->error('参数错误', 30000);
 		}
 
-		$sql_count 	= 'SELECT count(1) as count FROM {{balance_log}} WHERE ' . build_query_common(' AND ', $param) . ' AND balance_type >= 1 AND balance_type <= 3 LIMIT 1';
+		$sql_count 	= 'SELECT count(1) as count, sum(money) as money, balance_type FROM {{balance_log}} WHERE ' . build_query_common(' AND ', $param) . ' AND balance_type > 0 AND balance_type < 3 GROUP BY balance_type';
+		
+		$summary = $this->query($sql_count);
+		
+		if (empty($summary)) {
+			return $this->error('加载失败', 20106);
+		}
+		
+		$count 	= 0;
+		
+		$money	= [ 0 ];
+		
+		foreach ($summary as $value) {
+			$count += $value['count'];
+			$money[$value['balance_type']] = $value['money'];
+			$money[0] += $value['money'];
+			
+		}
+		
 		$sql_list 	= 'SELECT * FROM {{balance_log}} WHERE ' . build_query_common(' AND ', $param) . ' ORDER BY log_id DESC';
 		
-		return $this->commonList($sql_count, $sql_list);
+		$result = $this->commonList($count, $sql_list);
+		
+		if (0 === $result['statusCode']) {
+			$result['body']['summary'] = $money
+		}
+		
+		return $result;
 	}
+	
+	/*   
+		@param 
+		
+		user_id
+		balance_type
+		relation_id
+		balance
+		money
+		post_time		UNIX时间戳
+		
+	 */	 
 	 
 	private function record($data) 
 	{
@@ -78,12 +141,11 @@ class BalanceService extends \Min\Service
 		$param['user_id'] 		= intval($data['user_id']);
 		$param['balance_type'] 	= intval($data['balance_type']);
 		$param['relation_id'] 	= intval($data['relation_id']);
-
-		foreach ($param as $value) {
-			if ($value < 1) {
-				$this->error('参数错误', 20107);
-			}
+		
+		if (!in_array($param['balance_type'], config_get('balance_type')) || $param['user_id'] < 1 || $param['relation_id'] < 1) {
+			$this->error('参数错误', 20107);
 		}
+ 
 	
 		$param['balance'] 		= intval($data['balance']);
 		$param['money'] 		= intval($data['money']);
@@ -106,6 +168,14 @@ class BalanceService extends \Min\Service
 		}
 	}
 	
+	/*   
+		@param
+		
+		log_id
+		user_id
+		
+	 */	
+	
 	public function info($data)
 	{
 		$param = [];
@@ -117,11 +187,11 @@ class BalanceService extends \Min\Service
 			return $this->error('参数错误', 20107);
 		}
 		
-		$sql = 'SELECT * FROM {{balance_log}}  AS bl 
+		$sql = 'SELECT * FROM {{balance_log}} AS bl 
 		LEFT JOIN {{share_view}} AS sv ON bl.balance_type = 3 AND bl.realtion_id = sv.view_id 
-		LEFT JOIN {{withdraw}} AS w ON bl.balance_type = 4 AND bl.realtion_id = w.apply_id 
-		
-		
+		LEFT JOIN {{draw}} AS d ON bl.balance_type = 4 AND bl.realtion_id = d.draw_id 
+		LEFT JOIN {{user}} AS u ON bl.balance_type = 5 AND bl.realtion_id = u.user_id 
+
 		WHERE ' . \query_bulid_common(' AND ', $param) . '  LIMIT 1';
 		
 		$info = $this->query($sql);
