@@ -21,7 +21,7 @@ class DrawService extends \Min\Service
 		}
 
 		$sql_count 	= 'SELECT count(1) as count FROM {{draw}} WHERE user_id = ' .$user_id . '  LIMIT 1';
-		$sql_list 	= 'SELECT * FROM {{balance_log}} WHERE user_id = ' .$user_id . ' ORDER BY draw_id DESC';
+		$sql_list 	= 'SELECT * FROM {{draw}} WHERE user_id = ' .$user_id . ' ORDER BY draw_id DESC';
 		
 		return $this->commonList($sql_count, $sql_list);
 	} 
@@ -56,8 +56,16 @@ class DrawService extends \Min\Service
 			return $this->error('error', 20107); 
 		}
 		
-		if ($balance['balance'] - $balance['block'] < $param['draw_money']) {
+		if ($balance['balance'] < $param['draw_money']) {
 			return $this->error('余额不足或已有提现', 20107); 
+		}
+		
+		$update = 'UPDATE {{balance}} SET balance = balance - ' . $param['draw_money'] .' WHERE user_id = ' . $param['user_id'] . ' AND balance = ' . $balance['balance'];
+		
+		$result = $this->query($update);
+		
+		if (empty($result) || $result['effect'] < 1) {
+			return $this->error('操作失败', 20100);
 		}
 	
 		$param['draw_status'] 	= 2;
@@ -66,8 +74,20 @@ class DrawService extends \Min\Service
 		$sql = 'INSERT INTO {{draw}} ' . query_build_insert($param);
 		
 		$result = $this->query($sql);
+		
+		
 
 		if ($result['id'] > 0) {
+		
+			$balance_log = [];
+			$balance_log['user_id'] 		= $param['user_id'];
+			$balance_log['balance_type'] 	= 11;
+			$balance_log['relation_id'] 	= $result['id'];
+			$balance_log['money'] 			= 0 - $param['draw_money'];
+			$balance_log['balance'] 		= $balance['balance'] + $balance_log['money'];
+			$balance_log['post_time'] 		= $param['draw_time'];
+		
+		
 			return $this->success();
 		} else {
 			return $this->error('fail', 30204);
@@ -104,13 +124,7 @@ class DrawService extends \Min\Service
 		
 		if (3 == $update['draw_status']) {
 		
-			$balance_log = [];
-			$balance_log['user_id'] 		= $param['user_id'];
-			$balance_log['balance_type'] 	= 11;
-			$balance_log['relation_id'] 	= $result['id'];
-			$balance_log['balance'] 		= $param['user_id'];
-			$balance_log['money'] 			= $param['user_id'];
-			$balance_log['post_time'] 		= $update['update_time'];
+			
 	
 		}
 		
