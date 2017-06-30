@@ -117,7 +117,7 @@ class MysqliPDO
 			throw new \PDOException('Can not recognize action in sql: '. $sql, -4);
 		}
 		
-		$type = (!empty($this->intrans[$this->active_db]) || empty($this->conf[$this->active_db]['rw_separate']) || 'select' !== $action) ? 'master' : 'slave'; 
+		$type = (!empty($this->intrans[$this->active_db]) || empty($this->conf[$this->active_db]['rw_separate']) || 'SELECT' !== $action) ? 'master' : 'slave'; 
 		
 		if (is_array($param) && !empty($param)) {
 			return $this->realQuery($type, $sql, $action, $param);
@@ -131,14 +131,17 @@ class MysqliPDO
 		$round = 3;
 		
 		while ($round > 0) {
-			$round -- ;
+			
 			$result = [];
 			$on_error = false;	
+			
 			try {
 				$stmt =  $this->connect($type)->prepare($sql); 
+				
 				foreach ($param as $key => $value) {
 					
 					$vaule_type = \PDO::PARAM_STR;
+					
                     switch ($value) {
                         case is_int($value):
                             $vaule_type = \PDO::PARAM_INT;
@@ -159,6 +162,9 @@ class MysqliPDO
 				switch ($action) {
 					case 'INSERT' :
 						$result['id'] 		= $this->lastInsertId($type);
+						if ($result['id'] < 1) {
+							throw new \Exception('lastInsertId error', 12000);
+						}
 					case 'UPDATE' :
 					case 'DELETE' :
 						$result['effect'] 	= $stmt->rowCount();
@@ -171,16 +177,22 @@ class MysqliPDO
 						}
 						break;
 				}
+				
 				return $result;	
 				
 			} catch (\Throwable $e) {
+			
 				$on_error = true;
-				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array(intval($e->errorInfo[1]), [2006, 2013])) {
+				
+				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->errorInfo[1], [2006, 2013])) {
+				
 					watchdog($e);
+					$round -- ;
 					continue; 
 				} 
 				
-				throw $e;				
+				throw $e;
+				
 			} finally {
 				if (!empty($stmt)) 	$stmt->closeCursor();
 				if (true === $on_error) $this->close($type);
@@ -192,7 +204,7 @@ class MysqliPDO
 	{	
 		$round = 3 ;
 		while ($round > 0) {
-			$round -- ;
+			
 			$result = [];
 			$on_error = false;
 			try {
@@ -214,7 +226,11 @@ class MysqliPDO
 
 				if ($action === 'INSERT') {
 					$result['id'] =  $this->lastInsertId($type);
+					if ($result['id'] < 1) {
+						throw new \Exception('lastInsertId error', 12000);
+					}
 				}
+				
 				return $result;
 				
 			} catch (\Throwable $e) {
@@ -222,6 +238,7 @@ class MysqliPDO
 				$on_error = true;
 				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->errorInfo[1], [2006, 2013])) {
 					watchdog($e);
+					$round -- ;
 					continue; 
 				} 
 				
@@ -233,7 +250,7 @@ class MysqliPDO
 		}	
 	}
 	
-	public function transaction_start($type = 'master') 
+	public function start($type = 'master') 
 	{
 		if(empty($this->intrans[$this->active_db])) {
 			$this->intrans[$this->active_db] = 1;
@@ -262,7 +279,7 @@ class MysqliPDO
 		}	 
 	}
 	
-	public function transaction_commit($type = 'master') 
+	public function commit($type = 'master') 
 	{	
 		if (1 === $this->intrans[$this->active_db]) {
 			return $this->connect($type)->commit(); 
@@ -271,7 +288,7 @@ class MysqliPDO
 		return true;
 	}
 		 
-	public function transaction_rollback($type = 'master')
+	public function rollBack($type = 'master')
 	{ 
 		if ($this->intrans[$this->active_db] == 1 ) {
 			return $this->connect($type)->rollBack();

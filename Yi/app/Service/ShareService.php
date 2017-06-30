@@ -22,7 +22,7 @@ class ShareService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
  
-			$sql = 'SELECT * FROM {share_record} WHERE '. $type. ' = '. $name .' LIMIT 1';
+			$sql = 'SELECT * FROM {share} WHERE '. $type. ' = '. $name .' LIMIT 1';
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -38,41 +38,109 @@ class ShareService extends \Min\Service
 		}
 	}
 
-	public function record($data) 
+	public function view($data) 
 	{
 		$check = $this->check($data['sid']);
 		
-		if (0 !== $check['statusCode'] || $check['body']['content_id'] != $data['id'] || $data['current_user'] == $check['body']['user_id']) {
+		if (0 !== $check['statusCode'] || $check['body']['content_id'] != $data['id'] || $data['current_user'] == $check['body']['user_id']) {	
 		
-			return $this->success();		// can not find share user then return directly
-			$data['salary'] = $data['sid'] = $check['body']['user_id'] = 0;
+			return $this->success();//$data['salary'] = $data['sid'] = $check['body']['user_id'] = 0;
 		}
+				
+		$db = $this->DBManager();
+
+		$times = 3;
 		
-		$params 				= [];
-		$params['viewer_id'] 	= intval($data['viewer_id']);
-		$params['content_id'] 	= intval($data['id']);
-		$params['share_user'] 	= intval($check['body']['user_id']);
+		while ($times > 0) {
 		
-		$sql_count = 'SELECT count(1) as count FROM {share_view} WHERE '. build_query_common(' AND ', $params). ' LIMIT 1';
-		$count = $this->query($sql_count);
-		if ($count['count'] > 2) {
-			return $this->success(['userid' => $params['share_user']]);
-		}
+			try {
+				
+				$db->start();
+				
+				$params 				= [];
+				$params['viewer_id'] 	= intval($data['viewer_id']);
+				$params['content_id'] 	= intval($data['id']);
+				$params['share_user'] 	= intval($check['body']['user_id']);
+				
+				$sql_count = 'SELECT count(1) as count FROM {share_view} WHERE '. build_query_common(' AND ', $params). ' LIMIT 1';
+		
+				$count = $db->query($sql_count);
+				
+				if ($count['count'] > 2) {
+					return $this->success(['userid' => $params['share_user']]);
+				}
+ 
+				$sql = 'SELECT * FROM {{balance}} WHERE user_id = ' . $param['share_user'] . ' LIMIT 1';
+				$balance = $db->query($sql);
+				
+				if (!isset($balance['balance'])) {
+					return $this->error('error', 20107); 
+				}
+ 
+				$balance_left = $balance['balance'] + $param['salary'];
+				
+				$update = 'UPDATE {{balance}} SET balance = ' . $balance_left .' WHERE user_id = ' . $param['share_user'] . ' AND balance = ' . $balance['balance'];
+	 
+				$update_result = $db->query($update);
+				
+				if (empty($update_result)) {
+					throw new \Exception('操作失败', 20102);
+				}
+				
+				if ( $update_result['effect'] == 0) {
+					$db->rollBack();
+					$times--;
+					continue;
+				}
+				
+				$params['view_time'] 	= intval($data['view_time']);
+				$params['salary'] 		= intval($data['salary']);
+				$params['share_id'] 	= json_encode($data['sid']);
+				
+				$view_sql = 'INSERT INTO {share_view} ' . build_query_insert($params);
+				
+				$view_result =  $db->query($view_sql);
+				
+				$count = $db->query($sql_count);
+				
+				if ($count['count'] > 2) {
+					$db->rollBack();
+					return $this->success(['userid' => $params['share_user']]);
+				}
+			
+				$balance_log = [];
+				$balance_log['user_id'] 		= $param['share_user'];
+				$balance_log['balance_type'] 	= 2;
+				$balance_log['relation_id'] 	= $view_result['id'];
+				$balance_log['money'] 			= $params['salary'];
+				$balance_log['balance'] 		= $balance_left;
+				 
+				list($balance_log['post_day'], $balance_log['post_hour']) = explode(' ', date('ymd His', $param['draw_time']), 2);
+
+				$log_sql = 'INSERT INTO {{balance_log}} ' . query_build_insert($balance_log);
+					
+				$db->query($log_sql);
+				
+				$adv_sql = 'UPDATE {{advertiser}} SET balance =  balance - ' . ($params['salary'] * 3) . ' WHERE adv_id = ' . $check['adv_id']; 
+				
+				$db->query($adv_sql);
+				
+				$db->commit();
+				
+				return $this->success(['userid' => $params['share_user']]);
+			
+			} catch (\Throwable $t) {
+			
+				watchdog($t);
+				
+				$db->rollBack();
+				
+				return $this->error('操作失败', 20102);
+			}
+			
+		}	
+			
 		 
-		$params['view_time'] 	= intval($data['view_time'])?:time();
-		$params['salary'] 		= intval($data['salary']);
-		$params['share_id'] 	= json_encode($data['sid']);
-		
-		
-		$sql = 'INSERT INTO {share_view} ' . build_query_insert($params);
-		
-		$result =  $this->query($sql);
-		
-		if ($result['id'] > 0) {
-			return $this->success(['userid' => $params['share_user']]);
-		} else {
-			return $this->error('fail', 30204);
-		}
 	}
 	
 	public function logs($uid)

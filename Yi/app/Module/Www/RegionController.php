@@ -1,12 +1,12 @@
 <?php
 namespace App\Module\Www;
 
-use App\Traits\RegionTrait;
+use App\Traits\RegionControllerTrait;
 use Min\App;
 
 class RegionController extends \Min\Controller
 {
-	use RegionTrait;
+	use RegionControllerTrait;
 	/*
 	 * 	获取 id 所有子元素, 按 id 升序 
 	 *

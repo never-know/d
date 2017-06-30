@@ -31,18 +31,28 @@ class ArticleService extends \Min\Service
 		];
 		
 		$sql = 'INSERT INTO {{article}} ' . query_build_insert($set);
-
+		
+		$db = $this->DBManager();
+		
 		try {
-			$this->DBManager()->transaction_start();
-			$this->DBManager()->inTransaction();
-			$id = $this->query($sql, $bind);
-			$sql2 = 'INSERT INTO {{article_content}} (id, content) values ('. intval($id['id']). ', :content )';
-			$this->query($sql2, [':content' => $param['content']]);
-			$this->DBManager()->transaction_commit();
+			$db->start();
+			//$db->inTransaction();
+			$id = $db->query($sql, $bind);
+			 
+			$sql2 = 'INSERT INTO {{article_content}} (id, content) values ('. $id['id']. ', :content )';
+			
+			$content = $db->query($sql2, [':content' => $param['content']]);
+			 
+			$db->commit();
+			
 			return $this->success();
+			
 		} catch (\Throwable $t) {
+		
 			watchdog($t);
-			$this->DBManager()->transaction_rollback();
+			
+			$db->rollBack();
+			
 			return $this->error('失败', 1);
 		}
 	}	
@@ -77,7 +87,7 @@ class ArticleService extends \Min\Service
 		
 		$result2 = $this->query($sql2, [':content' => $param['content']]);
 			 
-		if ($result && $result2) {
+		if (!empty($result) && !empty($result2)) {
 			return $this->success();
 		} else {
 			return $this->error('更新失败', 1);
