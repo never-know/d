@@ -84,7 +84,7 @@ class DrawService extends \Min\Service
 			$balance_log['balance_type'] 	= 11;
 			$balance_log['relation_id'] 	= $result['id'];
 			$balance_log['money'] 			= 0 - $param['draw_money'];
-			$balance_log['balance'] 		= $balance['balance'] + $balance_log['money'];
+			$balance_log['balance'] 		= $balance['balance'] + $balance_log['money']; 
 			$balance_log['post_time'] 		= $param['draw_time'];
 		
 		
