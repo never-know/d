@@ -643,8 +643,20 @@ function result_page($total)
 }
 
 function build_query_insert($params)
-{
-	return '(`'. implode('`,`', array_keys($params)) .'`) values ('. implode(',', array_values($params)). ')';
+{	
+	$param = reset($params);
+	$values = [];
+	if (is_array($param)) {
+		$fields = array_keys($param);
+		foreach ($params as $value) {
+			$values[] = implode(',', array_values($value));
+		}
+	} else {
+		$fields = array_keys($params);
+		$values[] = implode(',', array_values($params));
+	}
+	
+	return '(`'. implode('`,`', array_keys($params)) .'`) values ('. implode('),', $values). ')';
 }
 
 function build_query_common($separator, $params)

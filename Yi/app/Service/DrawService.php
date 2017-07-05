@@ -59,20 +59,22 @@ class DrawService extends \Min\Service
 			
 				$db->start();
 				
-				$sql = 'SELECT * FROM {{balance}} WHERE user_id = ' . $param['user_id'] . ' LIMIT 1';
+				$sql = 'SELECT * FROM {{user_balance}} WHERE user_id = ' . $param['user_id'] . ' LIMIT 1 FOR UPDATE';
 				$balance = $db->query($sql);
 				
 				if (!isset($balance['balance'])) {
-					return $this->error('error', 20107); 
+					
+					 throw new \Exception('操作失败', 20102);
 				}
 				
 				if ($balance['balance'] < $param['draw_money']) {
+					$db->rollBack();
 					return $this->error('余额不足或已有提现', 20107); 
 				}
 				
 				$balance_left = $balance['balance'] - $param['draw_money'];
 				
-				$update = 'UPDATE {{balance}} SET balance = ' . $balance_left .' WHERE user_id = ' . $param['user_id'] . ' AND balance = ' . $balance['balance'];
+				$update = 'UPDATE {{user_balance}} SET balance = ' . $balance_left .' WHERE user_id = ' . $param['user_id'] . ' AND balance = ' . $balance['balance'];
 	 
 				$update_result = $db->query($update);
 				

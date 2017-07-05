@@ -170,7 +170,7 @@ class MysqliPDO
 						$result['effect'] 	= $stmt->rowCount();
 						break;
 					case 'SELECT' :
-						if (preg_match('/limit\s+1\s*$/i',$sql)) {
+						if (preg_match('/LIMIT\s+1\s*(FOR UPDATE)?$/',$sql)) {
 							$result		= $stmt->fetch(\PDO::FETCH_ASSOC);
 						} else {
 							$result		= $stmt->fetchAll(\PDO::FETCH_ASSOC);
