@@ -108,17 +108,24 @@ class AccountService extends \Min\Service
 		}
 	}
 	
+	/*
+		
+	
+	*/
+	
+	
 	public function addUserByWx($data) 
 	{
-		$wxid = intval($data['wx_id']);
-		if ($wxid < 1 || empty($data['open_id'][24])) {
+		$wx_id = intval($data['wx_id']);
+		
+		if ($wx_id < 1 || empty($data['open_id'][24])) {
 			return $this->error('参数错误', 30205);
 		}
 		
 		$check = $this->checkAccount($data['phone']);
 		
 		if (0 == $check['statusCode']) {
-			if (2 == $check['body']['user_type'] || !empty($check['body']['open_id'])) {
+			if (!empty($check['body']['open_id']) || 2 == $check['body']['user_type']) {
 				return $this->error('该手机号码已被绑定', 30205);
 			} 
 		} elseif ($check['statusCode'] != 30206) {
@@ -132,6 +139,7 @@ class AccountService extends \Min\Service
 			$db->start();
 			
 			if (30206 == $check['statusCode']) {
+			
 				$processed_data = [
 					'user_type'		=> 2,
 					'phone' 		=> $data['phone'], 
@@ -143,10 +151,10 @@ class AccountService extends \Min\Service
 
 				$ins = $db->query($sql);
 				
-				$check['body']['user_id'] = $ins['id']?:0;	
+				$check['body']['user_id'] = $ins['id'];	
 			}
 			
-			if ( $check['body']['user_id'] > 0) {
+			if ($check['body']['user_id'] > 0) {
 			
 				$open_id = safe_json_encode($data['open_id']); 
 				
@@ -154,7 +162,7 @@ class AccountService extends \Min\Service
 				
 				$upd = $db->query($sql2);
 				
-				if (isset($upd['effect']) && $upd['effect'] > 0) {
+				if ($upd['effect'] > 0) {
 					$db->commit();
 					$this->cache()->delete($this->getCacheKey('wx_id', 	$wx_id)); 	//清理 缓存
 					$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存

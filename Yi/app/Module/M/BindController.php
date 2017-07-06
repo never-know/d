@@ -8,6 +8,7 @@ class BindController extends \App\Module\M\WbaseController
 	public function onConstruct($redirect = true)
 	{
 		$binded = parent::onConstruct(false);
+		
 		if ($binded) {
 			$result['statusCode'] 		= 30200;
 			$result['message'] 			= '帐号已绑定手机号码';
@@ -32,7 +33,7 @@ class BindController extends \App\Module\M\WbaseController
 		
 		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'smscode' => $smscode], 'bind');
 		
-		$register_data	= ['phone' => $phone, 'register_time' => $_SERVER['REQUEST_TIME'], 'register_ip'=> ip_address(), 'wx_id' => session_get('wxid'), 'open_id' => session_get('open_id')];
+		$register_data	= ['phone' => $phone, 'register_time' => $_SERVER['REQUEST_TIME'], 'register_ip'=> ip_address(), 'wx_id' => session_get('wx_id'), 'open_id' => session_get('open_id')];
 		
 		$user = $this->request('\\App\\Service\\Account::addUserByWx', $regist_data);
 		
@@ -53,8 +54,10 @@ class BindController extends \App\Module\M\WbaseController
 		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', $phone);
 
 		if (0 === $exit_result['statusCode']) {
-			$this->error('该手机号码已被注册', 30205);
-		} 
+			if (!empty($exit_result['body']['wx_id']) || 2 == $exit_result['body']['user_type']) {
+				$this->error('该手机号码已被注册', 30205);
+			}  
+		}
 		
 		$this->request('\\App\\Service\\Sms::send', [ 0 => $phone, 'init' => 'bind'], $this::EXITALL);	
 	}

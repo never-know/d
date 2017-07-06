@@ -86,7 +86,8 @@ class WbaseController extends \Min\Controller
 		
 		if (!empty($user['wx_id'])) {
 			session_set('wx_id', $user['wx_id']);
-		} 
+		}
+		 
 		session_set('user', $user);	 
 	}
 }

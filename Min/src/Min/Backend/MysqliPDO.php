@@ -107,6 +107,7 @@ class MysqliPDO
 		$sql = preg_replace('/\{\{([a-z_]+)\}\}/', $this->conf[$this->active_db]['prefix'][$this->prefix_key] . '$1', $sql, 10);
 		
 		watchdog($sql);
+		if (is_array($param)) watchdog($param);
 		
 		$sql_splite = preg_split('/\s+/', $sql, 2);
 
@@ -281,19 +282,27 @@ class MysqliPDO
 	
 	public function commit($type = 'master') 
 	{	
-		if (1 === $this->intrans[$this->active_db]) {
+		if ($this->intrans[$this->active_db] > 0) {
+			$this->intrans[$this->active_db]--;
+		}
+		
+		if (0 === $this->intrans[$this->active_db]) {
 			return $this->connect($type)->commit(); 
 		} 
-		$this->intrans[$this->active_db]--;	 
+	
 		return true;
 	}
 		 
 	public function rollBack($type = 'master')
 	{ 
-		if ($this->intrans[$this->active_db] == 1 ) {
+		if ($this->intrans[$this->active_db] > 0) {
+			$this->intrans[$this->active_db]--;
+		}
+		
+		if (0 === $this->intrans[$this->active_db]) {
 			return $this->connect($type)->rollBack();
-		} 
-		$this->intrans[$this->active_db]--;
+		}
+ 
 		return true;
 	}
 	
