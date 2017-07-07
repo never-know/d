@@ -60,7 +60,7 @@ class AccountService extends \Min\Service
 			 */
 			 
 			
-			$sql = 'SELECT * FROM {{user}} WHERE '. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
+			$sql = 'SELECT u.*, uw.wx_id, uw.open_id FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -96,9 +96,20 @@ class AccountService extends \Min\Service
 			watchdog($result);
 			
 			if ($result['id'] > 0) {
+				$balance_data = [
+					'user_id'		=> $result['id'],
+					'balance' 		=> 0, 
+					'share_paret' 	=> 0, 
+					'team_part' 	=> 0,
+					'drawing'		=> 0
+				];
+				
+				$balance_sql = 'INSERT IGNORE INTO {{user_balance}} ' . build_query_insert($balance_data);
+				
+				$db->query($balance_sql);
+			
 				$this->cache()->delete($this->getCacheKey('phone', $data['phone']));//清理 注册缓存
-				$this->initUser(['user_id' => $result['id']]);
-				return $this->success();
+				return $this->success(['user_id' => $result['id']]);
 			} else {
 				return $this->error('注册失败', 30204);
 			}
@@ -110,48 +121,80 @@ class AccountService extends \Min\Service
 	
 	public function addUserByWx($data) 
 	{
+		$wx_id = intval($data['wx_id']);
+		
+		if ($wx_id < 1 || empty($data['open_id'][24])) {
+			return $this->error('参数错误', 30205);
+		}
+		
 		$check = $this->checkAccount($data['phone']);
 		
 		if (0 == $check['statusCode']) {
-			return $this->error('该手机号码已被注册', 30205);
+			if (!empty($check['body']['open_id']) || 2 == $check['body']['user_type']) {
+				return $this->error('该手机号码已被绑定', 30205);
+			} 
 		} elseif ($check['statusCode'] != 30206) {
 			return $check;
 		}
 		
-		$wxid = intval($data['wx_id']);
-		if ($wxid < 1 || empty($data['open_id'][24])) {
-			return $this->error('参数错误', 30205);
-		}
+		$db = $this->DBManager();
+		
+		try {
+		
+			$db->begin();
+			
+			if (30206 == $check['statusCode']) {
+			
+				$processed_data = [
+					'user_type'		=> 2,
+					'phone' 		=> $data['phone'], 
+					'register_time' => intval($data['register_time']), 
+					'register_ip' 	=> intval($data['register_ip'])
+				];
+			 
+				$sql = 'INSERT INTO {{user}} ' . build_query_insert($processed_data);
 
-		$processed_data = [
-			'phone' 	=> $data['phone'], 
-			'register_time' 	=> intval($data['register_time']), 
-			'register_ip' 	=> intval($data['register_ip'])
-		];
-		
-		$sql = 'INSERT INTO {{user}} ' . build_query_insert($processed_data);
-
-		$this->DBManager()->transaction_start();
-		$ins = $this->query($sql);
-		
-		if (isset($ins['id']) && $ins['id'] > 0) {
-		
-			$open_id = safe_json_encode($data['open_id']); 
+				$ins = $db->query($sql);
+				
+				$balance_data = [
+					'user_id'		=> $ins['id'],
+					'balance' 		=> 0, 
+					'share_paret' 	=> 0, 
+					'team_part' 	=> 0,
+					'drawing'		=> 0
+				];
+				
+				$balance_sql = 'INSERT IGNORE INTO {{user_balance}} ' . build_query_insert($balance_data);
+				
+				$db->query($balance_sql);
+				
+				$check['body']['user_id'] = $ins['id'];	
+			}
 			
-			$sql2 = 'UPDATE {{user_wx}} SET user_id = ' .$ins['id'] . ' WHERE wx_id = ' . $wx_id . ' and open_id = ' . $open_id ;
+			if ($check['body']['user_id'] > 0) {
 			
-			$upd = $this->query($sql2);
+				$open_id = safe_json_encode($data['open_id']); 
+				
+				$sql2 = 'UPDATE {{user_wx}} SET user_id = ' . $check['body']['user_id'] . ' WHERE wx_id = ' . $wx_id . ' and open_id = ' . $open_id;
+				
+				$upd = $db->query($sql2);
+				
+				if ($upd['effect'] > 0) {
+					$db->commit();
+					$this->cache()->delete($this->getCacheKey('wx_id', 	$wx_id)); 	//清理 缓存
+					$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
+					return $this->success(['user_id' => $check['body']['user_id'], 'wx_id' => $wx_id, 'phone' => $data['phone']]);
+				} 
+			}
 			
-			if (isset($upd['effect']) && $upd['effect'] > 0) {
-				$this->DBManager()->transaction_commit();
-				$this->cache()->delete($this->getCacheKey('wx_id', 	$wx_id)); 	//清理 缓存
-				$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
-				return $this->success(['user_id' => $ins['id'], 'wx_id' => $wx_id, 'phone' => $data['phone']]);
-			} 
+			$db->rollBack();
+			return $this->error('失败', 1);
+			
+		} catch (\Throwable $t) {
+		
+			$db->rollBack();
+			return $this->error('失败', 1);
 		}
-		
-		$this->DBManager()->transaction_rollback();
-		return $this->error('失败', 1);
 	}
 	
 	public function login($params) 
@@ -163,8 +206,7 @@ class AccountService extends \Min\Service
 		}
 		
 		if (password_verify($params['password'], $result['body']['password'])) {					 
-			$this->initUser($result['body']);
-			return $this->success();
+			return $this->success($result['body']);
 		} else {
 			return $this->error('帐号密码错误', 30201);
 		}		

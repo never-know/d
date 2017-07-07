@@ -39,6 +39,16 @@ class TestController extends \Min\Controller
 			exit;
 	
 	}
+	
+	public function bulidt_get()
+	{
+	
+		$user = $this->request('\\App\\Service\\Admin::bulid_table');
+		exit;
+		
+	
+	
+	}
 	 
 
 }

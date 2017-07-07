@@ -49,49 +49,69 @@ class DrawService extends \Min\Service
 			if ($value < 1)  return $this->error('参数错误', 20107); 
 		}
 		
-		$sql = 'SELECT * FROM {{balance}} WHERE user_id = ' . $param['user_id'] . ' LIMIT 1';
-		$balance = $this->query($sql);
-		
-		if (empty($balance)) {
-			return $this->error('error', 20107); 
-		}
-		
-		if ($balance['balance'] < $param['draw_money']) {
-			return $this->error('余额不足或已有提现', 20107); 
-		}
-		
-		$update = 'UPDATE {{balance}} SET balance = balance - ' . $param['draw_money'] .' WHERE user_id = ' . $param['user_id'] . ' AND balance = ' . $balance['balance'];
-		
-		$result = $this->query($update);
-		
-		if (empty($result) || $result['effect'] < 1) {
-			return $this->error('操作失败', 20100);
-		}
-	
-		$param['draw_status'] 	= 2;
-		$param['update_time'] 	= 0;
- 
-		$sql = 'INSERT INTO {{draw}} ' . query_build_insert($param);
-		
-		$result = $this->query($sql);
-		
-		
+		$db = $this->DBManager();
 
-		if ($result['id'] > 0) {
+		try {
 		
+			$db->begin();
+			
+			$sql = 'SELECT * FROM {{user_balance}} WHERE user_id = ' . $param['user_id'] . ' LIMIT 1 FOR UPDATE';
+			$balance = $db->query($sql);
+			
+			if (!isset($balance['balance'])) {
+				 throw new \Exception('操作失败', 20102);
+			}
+			
+			if ($balance['balance'] < $param['draw_money']) {
+				$db->rollBack();
+				return $this->error('余额不足或已有提现', 20107); 
+			}
+
+			$update = 'UPDATE {{user_balance}} SET balance = balance -' . $param['draw_money'] . ' WHERE user_id = ' . $param['user_id'] ;
+ 
+			$update_result = $db->query($update);
+			
+			if (empty($update_result)) {
+				throw new \Exception('操作失败', 20102);
+			}
+			
+			$param['draw_status'] 	= 2;
+			$param['update_time'] 	= 0;
+	 
+			$draw_sql = 'INSERT INTO {{draw}} ' . query_build_insert($param);
+			
+			$draw_result = $db->query($draw_sql);
+			
 			$balance_log = [];
-			$balance_log['user_id'] 		= $param['user_id'];
-			$balance_log['balance_type'] 	= 11;
-			$balance_log['relation_id'] 	= $result['id'];
-			$balance_log['money'] 			= 0 - $param['draw_money'];
-			$balance_log['balance'] 		= $balance['balance'] + $balance_log['money']; 
-			$balance_log['post_time'] 		= $param['draw_time'];
-		
-		
+			$balance_log['user_id'] 			= $param['user_id'];
+			$balance_log['user_money'] 			= 0 - $param['draw_money'];
+			$balance_log['balance_type'] 		= 11;
+			$balance_log['adv_id'] 				= 0;	//缺省值
+			$balance_log['adv_cost'] 			= 0;	//缺省值
+			$balance_log['relation_id'] 		= $draw_result['id'];
+			$balance_log['user_current_balance']	= $balance['balance'] - $param['draw_money'];
+			$balance_log['adv_current_balance'] 	= 0;
+			 
+			list($balance_log['post_day'], $balance_log['post_hour']) = explode(' ', date('ymd His', $param['draw_time']), 2);
+
+			$log_sql = 'INSERT INTO {{balance_log}} ' . query_build_insert($balance_log);
+				
+			$log_result = $db->query($log_sql);
+
+			$db->commit();
+			
 			return $this->success();
-		} else {
-			return $this->error('fail', 30204);
+
+		} catch (\Throwable $t) {
+			 
+			watchdog($t);
+			
+			$db->rollBack();
+			
+			return $this->error('操作失败', 20102);
 		}
+		
+		 
 	}
 	
 	/*   
@@ -118,21 +138,68 @@ class DrawService extends \Min\Service
 			return $this->error('参数错误', 20107);
 		}
 		
-		$sql = 'UPDATE {{draw}} SET ' . query_build_common(', ', $update) . ' WHERE ' . query_build_common(' AND ', $param);
+		$db = $this->DBManager();
 		
-		$result = $this->query($sql);
+		$sql = 'SELECT * FROM {{draw}}  WHERE '. query_build_common(' AND ', $param) . ' LIMIT 1';
 		
-		if (3 == $update['draw_status']) {
+		$draw = $db->query($sql);
 		
-			
-	
+		if (empty($draw)) {
+			return $this->error('参数错误', 2001);
 		}
-		
-		if ($result['effect'] > 0) {
-			return $this->success();
-		} else {
+ 
+		try {
+			if (4 == $update['draw_status'] || 5 == $update['draw_status']) {
+				$db->begin();
+			}
+			
+			$sql = 'UPDATE {{draw}} SET ' . query_build_common(', ', $update) . ' WHERE ' . query_build_common(' AND ', $param);
+			
+			$result = $db->query($sql);
+			
+			if (4 == $update['draw_status'] || 5 == $update['draw_status']) {
+			
+				$sql = 'SELECT * FROM {{user_balance}} WHERE user_id = ' . $param['user_id'] . ' LIMIT 1 FOR UPDATE';
+				$balance = $db->query($sql);
+				
+				if (!isset($balance['balance'])) {
+					 throw new \Exception('操作失败', 20102);
+				}
+			 
+				$sql = 'UPDATE {{user_balance}} SET balance = balance + ' . $draw['draw_money'] . ' WHERE user_id = ' . $param['user_id'];
+			
+				$result = $this->query($sql);
+				
+				$balance_log = [];
+				$balance_log['user_id'] 		= $param['user_id'];
+				$balance_log['user_money'] 		= $draw['draw_money'];
+				$balance_log['balance_type'] 	= 11 + $update['draw_status'];
+				$balance_log['adv_id'] 			= 0;	//缺省值
+				$balance_log['adv_cost'] 		= 0;	//缺省值
+				$balance_log['relation_id'] 	= $draw['draw_id'];
+				$balance_log['user_current_balance'] 	= $draw['draw_money'] + $balance['balance'];
+				$balance_log['adv_current_balance'] 	= 0;
+	 
+				list($balance_log['post_day'], $balance_log['post_hour']) = explode(' ', date('ymd His', $param['draw_time']), 2);
+
+				$log_sql = 'INSERT INTO {{balance_log}} ' . query_build_insert($balance_log);
+					
+				$log_result = $db->query($log_sql);
+				
+				$db->commit();
+				return $this->success();
+			}
+			
+		} catch (\Throwable $t) {
+			
+			watchdog($t);
+			if (4 == $update['draw_status'] || 5 == $update['draw_status']) {
+				$db->rollBack();
+			}
+
 			return $this->error('fail', 30204);
-		}	
+		}
+	 
 	}
  
 }

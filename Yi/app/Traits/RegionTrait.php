@@ -1,7 +1,7 @@
 <?php
 namespace App\Traits;
 
-trait RegionTrait
+trait RegionControllerTrait
 {
 	/*
 	 * 获取region_id 同级元素和所有父级元素的同级元素
