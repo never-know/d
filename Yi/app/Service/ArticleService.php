@@ -35,7 +35,7 @@ class ArticleService extends \Min\Service
 		$db = $this->DBManager();
 		
 		try {
-			$db->start();
+			$db->begin();
 			//$db->inTransaction();
 			$id = $db->query($sql, $bind);
 			 

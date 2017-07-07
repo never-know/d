@@ -53,7 +53,7 @@ class ShareService extends \Min\Service
 		}
 				
 		$db = $this->DBManager();
-
+		
 		try {
 
 			$params 				= [];
@@ -61,14 +61,31 @@ class ShareService extends \Min\Service
 			$params['content_id'] 	= intval($data['id']);
 			$params['share_user'] 	= intval($check['body']['user_id']);
 			
-			if ($check['body']['adv_cost'] > 0 ) {
+			if ($check['body']['adv_cost'] > 0) {
+
+				$parent_sql = 'SELECT ' . $check['body']['adv_id'] .'  AS u, u1.user_id as u1, IFNULL(u2.user_id, 0) AS u2, IFNULL(u3.user_id, 0) AS u3 FROM {{user}} as u1 INNER JOIN {{user}} as u2 ON u1.parent_id > 0 and u1.parent_id = u2.user_id LEFT JOIN {{user}} as u3 ON u2.parent_id > 0 and u2.parent_id = u3.user_id  WHERE u1.user_id = ' . $params['share_user'] . ' LIMIT 1';
+				
+				$parent = $db->query($parent_sql);
+				
+				foreach ($parent as $key => $value) {
+					if (empty($value)) unset($parent[$key]);
+				}
+				
+				$ids = implode(',', $parent);
+
+				$db->begin();
 				// 加锁
-				$db->start();
-				$sql = 'SELECT * FROM {{user_balance}} WHERE user_id = ' . $params['share_user'] . ' LIMIT 1 FOR UPDATE';
+				$sql = 'SELECT * FROM {{user_balance}} WHERE user_id in (' . $ids . ') FOR UPDATE';
+				
 				$balance = $db->query($sql);
 				
-				if (!isset($balance['balance'])) {
+				if (empty($balance)) {
 					throw new \Exception('操作失败', 20102);
+				}
+				
+				foreach ($balance as $key => $value) {
+					unset($balance[$key]);
+					$balance[$value['user_id']] = $value;	
 				}
 				
 				$sql_count = 'SELECT count(1) as count FROM {share_view} WHERE '. build_query_common(' AND ', $params). ' LIMIT 1';
@@ -97,9 +114,6 @@ class ShareService extends \Min\Service
 				return $this->success();
 			}
 
-			$balance_left 	= $check['body']['share_salary'] + $balance['balance'];
-			$share_left 	= $check['body']['share_salary'] + $balance['share_part'];
-
 			$balance_log = [];
 			$balance_log['user_id'] 		= $params['share_user'];
 			$balance_log['user_money'] 		= $params['share_salary'];
@@ -107,6 +121,8 @@ class ShareService extends \Min\Service
 			$balance_log['adv_id'] 			= $params['adv_id'];	//缺省值
 			$balance_log['adv_cost'] 		= $params['adv_cost'];	//缺省值
 			$balance_log['relation_id'] 	= $view_result['id'];
+			$balance_log['user_current_balance'] 	= $params['share_salary'] + $balance[$params['share_user']]['balance'];;
+			$balance_log['adv_current_balance'] 	= $balance[$params['adv_id']]['balance'] - $params['adv_cost'];
 			
 			list($balance_log['post_day'], $balance_log['post_hour']) = explode(' ', date('ymd His', $params['draw_time']), 2);
 			
@@ -116,31 +132,29 @@ class ShareService extends \Min\Service
 			
 			$balance_log_insert_data[0] 	= $balance_log;
 			
-			$fa = config_get('fa') * 100;
+			$fa = config_get('fa', 100) * 100;
 			
 			// parent user balance log
 			
-			if (intval($share_left/$fa) == (intval($balance['share_part']/$fa) + 1)) {
-			
-				$parent_sql = 'SELECT u1.user_id as u1, IFNULL(u2.user_id, 0) AS u2, IFNULL(u3.user_id, 0) AS u3 FROM {{user}} as u1 INNER JOIN {{user}} as u2 ON u1.parent_id > 0 and u1.parent_id = u2.user_id LEFT JOIN {{user}} as u3 ON u2.parent_id > 0 and u2.parent_id = u3.user_id  WHERE u1.user_id = ' . $params['share_user'] . ' LIMIT 1';
-				
-				$parent = $db->query($parent_sql);
-				
+			if (intval($share_left/$fa) == (intval($balance[$params['share_user']]['share_part']/$fa) + 1)) {
+
 				if (!empty($parent['u2'])) {
 					$balance_log_insert_data[1] = $balance_log;
 					$balance_log_insert_data[1]['user_id'] 			= $parent['u2'];
 					$balance_log_insert_data[1]['balance_type'] 	= 3;
-					$balance_log_insert_data[1]['user_money'] 		= config_get('level_one_salary');	
+					$balance_log_insert_data[1]['user_money'] 		= config_get('level_one_salary', 0);	
 					$balance_log_insert_data[1]['adv_id'] 			= 0;	
-					$balance_log_insert_data[1]['adv_cost'] 		= 0;	
-					
+					$balance_log_insert_data[1]['adv_cost'] 		= 0;
+					$balance_log_insert_data[1]['adv_current_balance'] 		= 0;
+					$balance_log_insert_data[1]['user_current_balance'] 	= $balance_log_insert_data[1]['user_money'] + $balance[$parent['u2']]['balance'];	
 				}
 				
 				if (!empty($parent['u3'])) {
 					$balance_log_insert_data[2] = $balance_log_insert_data[1];
 					$balance_log_insert_data[2]['user_id'] 			= $parent['u3'];
 					$balance_log_insert_data[2]['balance_type'] 	= 4;
-					$balance_log_insert_data[2]['money'] 			= config_get('level_two_salary');	
+					$balance_log_insert_data[2]['user_money'] 		= config_get('level_two_salary', 0);	
+					$balance_log_insert_data[2]['user_current_balance'] 	= $balance_log_insert_data[2]['user_money'] + $balance[$parent['u3']]['balance'];
 				}
 			}
 			
@@ -148,45 +162,28 @@ class ShareService extends \Min\Service
 			
 			$db->query($balance_log_sql);
 			
-			if (empty($parent)) {
-				$parent = [$params['share_user'], $params['adv_id']];
-			} else {
-				foreach ($parent as $key => $value) {
-					if (empty($value)) unset($parent[$key]);
-				}
-				$parent[] = $params['adv_id'];
-			}
-
 			$update = 'UPDATE user_balance 
 				SET balance = CASE user_id 
-					WHEN ' .  $params['share_user'] . ' THEN '. $balance_left . 
-					' WHEN ' .  $params['adv_id'] . ' THEN balance -'. $params['adv_cost'] .  
-					(empty($parent['u2']) ? '': (' WHEN ' . $parent['u2'] . ' THEN balance + ' . $balance_log_insert_data[1]['money'])) .
-					(empty($parent['u3']) ? '': (' WHEN ' . $parent['u3'] . ' THEN balance + ' . $balance_log_insert_data[2]['money'])) .
-					
-				' 	ELSE balance 
+					  WHEN ' .  $parent['u']  . ' THEN  balance - ' . $params['adv_cost'] .
+					' WHEN ' .  $parent['u1'] . ' THEN  balance + ' . $params['share_salary'] . 
+					(empty($parent['u2']) ? '': ('  WHEN ' . $parent['u2'] . ' THEN balance + ' . $balance_log_insert_data[1]['user_money'])) .
+					(empty($parent['u3']) ? '': ('  WHEN ' . $parent['u3'] . ' THEN balance + ' . $balance_log_insert_data[2]['user_money'])) .				
+					' ELSE balance 
 				END, 
 				share_part = CASE user_id 
-					WHEN ' .  $params['share_user'] . ' THEN '. $share_left . 
+					WHEN ' .  $parent['u1'] . ' THEN share_part + '.  $params['share_salary'] . 
 					' ELSE share_part
-				END,
+				END' . 
+				(empty($parent['u2']) ? '': (',
 				team_part  = CASE user_id
-					WHEN ' .  $params['share_user'] . ' THEN team_part' . 
-					(empty($parent['u2']) ? '': ('WHEN ' . $parent['u2'] . ' THEN team_part + ' . $balance_log_insert_data[1]['money'])) .
-					(empty($parent['u3']) ? '': ('WHEN ' . $parent['u3'] . ' THEN team_part + ' . $balance_log_insert_data[2]['money'])) .
-					
-				'  ELSE team_part 
-				END	 
-			WHERE id IN (' .  implode(',', $parent) . ')';
+					WHEN ' . $parent['u2'] . ' THEN team_part + ' . $balance_log_insert_data[1]['user_money'] .
+					(empty($parent['u3']) ? '': (' WHEN ' . $parent['u3'] . ' THEN team_part + ' . $balance_log_insert_data[2]['user_money'])) .
+					' ELSE team_part 
+				END	' )) . 
+			' WHERE user_id IN (' . $ids . ')';
 
 			$result = $db->query($update);
 
-			// update adver balance
-			
-			//$adv_sql = 'UPDATE {{advertiser_balance}} SET balance =  balance - ' . $params['adv_cost']. ' WHERE adv_id = ' . $check['body']['adv_id']; 
-			
-			//$db->query($adv_sql);
- 
 			$db->commit();
 			 
 			return $this->success(['userid' => $params['share_user']]);

@@ -106,15 +106,22 @@ class MysqliPDO
 		//$sql = strtr($sql, ['{{' => $this->conf[$this->active_db]['prefix'][$this->prefix_key], '}}' => '']);
 		$sql = preg_replace('/\{\{([a-z_]+)\}\}/', $this->conf[$this->active_db]['prefix'][$this->prefix_key] . '$1', $sql, 10);
 		
+		if (strpos($sql, ';') !== false) {
+			throw new \PDOException('unsafe char ; fount  : '. $sql, -4);
+		}
+		
 		watchdog($sql);
+		
 		if (is_array($param)) watchdog($param);
 		
-		$sql_splite = preg_split('/\s+/', $sql, 2);
+		//$sql_splite = preg_split('/\s+/', $sql, 2);
+		
+		preg_match('/^(SELECT|INSERT IGNORE|INSERT|UPDATE|DELETE)/', $sql, $match);
 
 		//$action = strtolower($sql_splite[0]);
-		$action = $sql_splite[0];
+		$action = $match[1];
 
-		if (!in_array($action, ['SELECT', 'INSERT', 'UPDATE', 'DELETE'], true)) {
+		if (!in_array($action, ['SELECT', 'INSERT IGNORE', 'INSERT', 'UPDATE', 'DELETE'], true)) {
 			throw new \PDOException('Can not recognize action in sql: '. $sql, -4);
 		}
 		
@@ -162,10 +169,7 @@ class MysqliPDO
 	 
 				switch ($action) {
 					case 'INSERT' :
-						$result['id'] 		= $this->lastInsertId($type);
-						if ($result['id'] < 1) {
-							throw new \Exception('lastInsertId error', 12000);
-						}
+					case 'INSERT IGNORE' :
 					case 'UPDATE' :
 					case 'DELETE' :
 						$result['effect'] 	= $stmt->rowCount();
@@ -177,6 +181,13 @@ class MysqliPDO
 							$result		= $stmt->fetchAll(\PDO::FETCH_ASSOC);
 						}
 						break;
+				}
+				
+				if ($action == 'INSERT' ||  $action == 'INSERT IGNORE') {
+					$result['id'] =  $this->lastInsertId($type);
+					if ($action == 'INSERT' && $result['id'] < 1) {
+						throw new \Exception('lastInsertId error', 12000);
+					}
 				}
 				
 				return $result;	
@@ -213,6 +224,7 @@ class MysqliPDO
 					case 'UPDATE' :
 					case 'DELETE' :
 					case 'INSERT' :
+					case 'INSERT IGNORE' :
 						$result['effect']	= $this->connect($type)->exec($sql);
 						break;	
 					case 'SELECT' :	
@@ -225,9 +237,9 @@ class MysqliPDO
 						break;
 				}
 
-				if ($action === 'INSERT') {
+				if ($action == 'INSERT' ||  $action == 'INSERT IGNORE') {
 					$result['id'] =  $this->lastInsertId($type);
-					if ($result['id'] < 1) {
+					if ($action == 'INSERT' && $result['id'] < 1) {
 						throw new \Exception('lastInsertId error', 12000);
 					}
 				}
@@ -251,7 +263,7 @@ class MysqliPDO
 		}	
 	}
 	
-	public function start($type = 'master') 
+	public function begin($type = 'master') 
 	{
 		if(empty($this->intrans[$this->active_db])) {
 			$this->intrans[$this->active_db] = 1;

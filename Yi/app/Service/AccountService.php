@@ -96,9 +96,20 @@ class AccountService extends \Min\Service
 			watchdog($result);
 			
 			if ($result['id'] > 0) {
+				$balance_data = [
+					'user_id'		=> $result['id'],
+					'balance' 		=> 0, 
+					'share_paret' 	=> 0, 
+					'team_part' 	=> 0,
+					'drawing'		=> 0
+				];
+				
+				$balance_sql = 'INSERT IGNORE INTO {{user_balance}} ' . build_query_insert($balance_data);
+				
+				$db->query($balance_sql);
+			
 				$this->cache()->delete($this->getCacheKey('phone', $data['phone']));//清理 注册缓存
-				$this->initUser(['user_id' => $result['id']]);
-				return $this->success();
+				return $this->success(['user_id' => $result['id']]);
 			} else {
 				return $this->error('注册失败', 30204);
 			}
@@ -107,12 +118,6 @@ class AccountService extends \Min\Service
 			throw new \Min\MinException('password_hash failed', 20104);
 		}
 	}
-	
-	/*
-		
-	
-	*/
-	
 	
 	public function addUserByWx($data) 
 	{
@@ -136,7 +141,7 @@ class AccountService extends \Min\Service
 		
 		try {
 		
-			$db->start();
+			$db->begin();
 			
 			if (30206 == $check['statusCode']) {
 			
@@ -150,6 +155,18 @@ class AccountService extends \Min\Service
 				$sql = 'INSERT INTO {{user}} ' . build_query_insert($processed_data);
 
 				$ins = $db->query($sql);
+				
+				$balance_data = [
+					'user_id'		=> $ins['id'],
+					'balance' 		=> 0, 
+					'share_paret' 	=> 0, 
+					'team_part' 	=> 0,
+					'drawing'		=> 0
+				];
+				
+				$balance_sql = 'INSERT IGNORE INTO {{user_balance}} ' . build_query_insert($balance_data);
+				
+				$db->query($balance_sql);
 				
 				$check['body']['user_id'] = $ins['id'];	
 			}
@@ -189,8 +206,7 @@ class AccountService extends \Min\Service
 		}
 		
 		if (password_verify($params['password'], $result['body']['password'])) {					 
-			$this->initUser($result['body']);
-			return $this->success();
+			return $this->success($result['body']);
 		} else {
 			return $this->error('帐号密码错误', 30201);
 		}		
