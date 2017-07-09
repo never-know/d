@@ -33,11 +33,31 @@ class MenuController extends \Min\Controller
 		
 		$menu = [
      	    'button' => [
-					[
+				[
 					'type' 	=> 'view',
 					'name' 	=> '首页',
 					'url' 	=> 'https://m.anyitime.com'
-				]
+				],
+				[
+					'type' 	=> 'view',
+					'name' 	=> '帐号邦定',
+					'url' 	=> 'https://m.anyitime.com/bind.html'
+				],
+				[
+      	        'name' => '更多',
+      	        'sub_button' => [
+      	            [
+      	              'type' => 'click',
+      	              'name' => '推广二维码',
+      	              'key' => 'qrcode',
+      	            ],
+      	            [
+      	              'type' => 'view',
+      	              'name' => '租房助手',
+      	              'key' => 'https://m.anyitime.com/jump/zj.html',
+      	            ]
+      	        ]
+      	     ]
 			]
      	];
 		

@@ -34,11 +34,11 @@ class Controller
 		
 		$key = $action.'_'.(strtolower($_SERVER['REQUEST_METHOD'])?:'get');
 		
-		if (method_exists($this, $key)) {
+		if (method_exists($this, $key) || method_exists($this, '__call')) {
 			$this->{$key}();
 		} else {
 			$this->error('无效请求', 404);
-		}
+		} 
 		exit; 
 	}
 	

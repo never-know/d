@@ -108,7 +108,7 @@ class WuserService extends \Min\Service
 			}
 			
 			if ($check['body']['parent_id'] == 0 && $data['parent_id'] != 0) {
-				$sql .= ', parent_id = ' . $data['parent_id'], ' balance_type = ' . $data['balance_index']; 
+				$sql .= ', parent_id = ' . $data['parent_id'] ', balance_type = ' . $data['balance_index']; 
 			}
 			
 			$sql .= ' WHERE wx_id = ' .$check['body']['wx_id'];
