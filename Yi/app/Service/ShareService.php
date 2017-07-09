@@ -47,7 +47,7 @@ class ShareService extends \Min\Service
 			return $this->success();	//$data['salary'] = $data['sid'] = $check['body']['user_id'] = 0;
 		}
 		
-		if ($check['body']['share_user'] == $check['body']['adv_id']) {
+		if ($check['body']['user_id'] == $check['body']['adv_id']) {
 			$check['body']['share_salary'] 	= 0;
 			$check['body']['adv_cost'] 	= 0;
 		}
@@ -63,7 +63,7 @@ class ShareService extends \Min\Service
 			
 			if ($check['body']['adv_cost'] > 0) {
 
-				$parent_sql = 'SELECT ' . $check['body']['adv_id'] .'  AS u, u1.user_id as u1, IFNULL(u2.user_id, 0) AS u2, IFNULL(u3.user_id, 0) AS u3 FROM {{user}} as u1 INNER JOIN {{user}} as u2 ON u1.parent_id > 0 and u1.parent_id = u2.user_id LEFT JOIN {{user}} as u3 ON u2.parent_id > 0 and u2.parent_id = u3.user_id  WHERE u1.user_id = ' . $params['share_user'] . ' LIMIT 1';
+				$parent_sql = 'SELECT ' . $check['body']['adv_id'] .'  AS u, u1.user_id as u1, IFNULL(u2.user_id, 0) AS u2, IFNULL(u3.user_id, 0) AS u3 FROM {{user_wx}} as u1 INNER JOIN {{user_wx}} as u2 ON u1.parent_id > 0 and u1.parent_id = u2.wx_id LEFT JOIN {{user_wx}} as u3 ON u2.parent_id > 0 and u2.parent_id = u3.wx_id  WHERE u1.user_id = ' . $params['share_user'] . ' LIMIT 1';
 				
 				$parent = $db->query($parent_sql);
 				

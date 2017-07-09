@@ -26,7 +26,7 @@ class TestController extends \Min\Controller
 	public function a_get()
 	{
 	
-	
+	echo '111111111';exit;
 		 	//echo '100000: ',base_convert('100000',  36, 10), '<br>';
 		 	//echo 'zzzzzz: ',base_convert('zzzzzz',  36, 10), '<br>';
 		$a =$u = []; 

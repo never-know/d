@@ -35,7 +35,7 @@ class WuserService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-			$sql = 'SELECT w.wx_id, w.parent_id, w.open_id, w.subscribe_status, u.user_id, u.phone, u.register_time  FROM {user_wx} AS w left join {user} AS u ON u.user_id = w.user_id WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
+			$sql = 'SELECT w.wx_id, w.parent_id, w.balance_type, w.open_id, w.subscribe_status, u.user_id, u.phone, u.register_time  FROM {user_wx} AS w left join {user} AS u ON u.user_id = w.user_id WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
 			 
 			$result	= $this->query($sql);
  			  
@@ -73,6 +73,7 @@ class WuserService extends \Min\Service
 		}
 		 
 		$data['parent_id']	= max(intval($data['parent_id']), 0);
+		$data['balance_index']	= 1;
 		
 		if ( $data['parent_id'] > 0) {
 		
@@ -80,20 +81,23 @@ class WuserService extends \Min\Service
 			
 			if (empty($parent['body']['user_id']) || $parent['body']['open_id'] == $data['open_id']) {
 				$data['parent_id'] = 0;
+			} else {
+				$data['balance_index']	= $parent['balance_index'];
 			}
 		}
 		
 		if (30206 == $check['statusCode']) {
 		
 			$inserts =  [
-				$data['wx_ip'], 
-				$data['parent_id'], 
-				$data['subscribe_status'], 
-				$data['subscribe_time'], 
-				json_encode($data['open_id'])
+				'wx_ip'	 			=> $data['wx_ip'], 
+				'parent_id' 		=> $data['parent_id'],
+				'balance_index'		=> $data['balance_index'],
+				'subscribe_status' 	=> $data['subscribe_status'], 
+				'subscribe_time' 	=> $data['subscribe_time'], 
+				'open_id'			=>json_encode($data['open_id'])
 			];
 			
-			$sql = 'INSERT INTO {user_wx} (wx_ip, parent_id, subscribe_status, subscribe_time, open_id) VALUES ( '. implode(',', $inserts) .') ON DUPLICATE KEY UPDATE wx_id = LAST_INSERT_ID(wx_id)';
+			$sql = 'INSERT INTO {{user_wx}} ' . build_query_insert($inserts) .' ON DUPLICATE KEY UPDATE wx_id = LAST_INSERT_ID(wx_id)';
 			
 		} else {
 		
@@ -104,8 +108,9 @@ class WuserService extends \Min\Service
 			}
 			
 			if ($check['body']['parent_id'] == 0 && $data['parent_id'] != 0) {
-				$sql .= ', parent_id = '. $data['parent_id']; 
+				$sql .= ', parent_id = ' . $data['parent_id'], ' balance_type = ' . $data['balance_index']; 
 			}
+			
 			$sql .= ' WHERE wx_id = ' .$check['body']['wx_id'];
 		}
 		
@@ -123,8 +128,7 @@ class WuserService extends \Min\Service
 		} else {
 			$code = (($check['subscribe_status'] == 2 ) ? 30208 : (empty($check['phone']) ? 30205 : 30207));
 			return $this->error('帐号已存在', $code);
-		}
-		 
+		}	 
 	}
 
 	public function login($openid) 

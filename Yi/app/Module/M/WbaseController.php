@@ -46,7 +46,7 @@ class WbaseController extends \Min\Controller
 	final public function getWX()
 	{
 		require VENDOR_PATH. '/Wx/WxBase.php';
-		return new \WeBase();
+		return new \WeBase('anyitime');
 	}
 	
 	final public function login($redirect = true)

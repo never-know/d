@@ -47,9 +47,9 @@ class WeBase
 	private $access_token;
 	private $user_token;
 	
-	public function __construct()
+	public function __construct($type)
 	{
-		$conf 				= config_get('anyitime');
+		$conf 				= config_get($type);
 		$this->token 		= $conf['token'];
 		$this->appid 		= $conf['appid'];
 		$this->appsecret 	= $conf['appsecret'];

@@ -74,7 +74,11 @@ class AccountService extends \Min\Service
 			return $this->error('账号不存在', 30206);
 		}
 	}
-
+	
+	/*
+		shop account
+	*/
+	
 	public function addUserByPhone($data) 
 	{
 		$check = $this->checkAccount($data['phone']);
@@ -85,11 +89,17 @@ class AccountService extends \Min\Service
 			return $check;
 		}
 		
-		if ($data['password'] = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 9])) {	
+		if ($data['passwordhash'] = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 9])) {	
 		
-			$sql = 'INSERT IGNORE INTO {{user}} (phone, register_time, register_ip, password) VALUES ('. 
-			
-			implode(',', [intval($data['phone']), intval($data['register_time']), intval($data['register_ip']), '"'. $data['password']. '")']);
+			$ins_data = [
+				'phone' 		=> intval($data['phone']),
+				'user_type' 	=> config_get('adv_balance_index', 1),
+				'register_time' => intval($data['register_time']),
+				'register_ip' 	=> intval($data['register_ip']),
+				'password' 		=> "'" . $data['passwordhash']) . "'"
+			];
+		
+			$sql = 'INSERT INTO {{user}} ' . build_query_insert($ins_data);
 			
 			$result =  $this->query($sql);
 			
@@ -104,7 +114,7 @@ class AccountService extends \Min\Service
 					'drawing'		=> 0
 				];
 				
-				$balance_sql = 'INSERT IGNORE INTO {{user_balance}} ' . build_query_insert($balance_data);
+				$balance_sql = 'INSERT IGNORE INTO {{advertiser_balance' . $ins_data['user_type'] . '}} ' . build_query_insert($balance_data);
 				
 				$db->query($balance_sql);
 			
@@ -118,6 +128,9 @@ class AccountService extends \Min\Service
 			throw new \Min\MinException('password_hash failed', 20104);
 		}
 	}
+	
+	
+	
 	
 	public function addUserByWx($data) 
 	{
@@ -137,6 +150,12 @@ class AccountService extends \Min\Service
 			return $check;
 		}
 		
+		$balance_index = intval($data['balance_index']);
+		
+		if ($balance_index < 1) {
+			return $this->error('参数错误', 30205);
+		}
+		
 		$db = $this->DBManager();
 		
 		try {
@@ -146,7 +165,7 @@ class AccountService extends \Min\Service
 			if (30206 == $check['statusCode']) {
 			
 				$processed_data = [
-					'user_type'		=> 2,
+					'user_type'		=> 0,
 					'phone' 		=> $data['phone'], 
 					'register_time' => intval($data['register_time']), 
 					'register_ip' 	=> intval($data['register_ip'])
@@ -155,31 +174,35 @@ class AccountService extends \Min\Service
 				$sql = 'INSERT INTO {{user}} ' . build_query_insert($processed_data);
 
 				$ins = $db->query($sql);
-				
-				$balance_data = [
-					'user_id'		=> $ins['id'],
-					'balance' 		=> 0, 
-					'share_paret' 	=> 0, 
-					'team_part' 	=> 0,
-					'drawing'		=> 0
-				];
-				
-				$balance_sql = 'INSERT IGNORE INTO {{user_balance}} ' . build_query_insert($balance_data);
-				
-				$db->query($balance_sql);
-				
+ 
 				$check['body']['user_id'] = $ins['id'];	
 			}
 			
 			if ($check['body']['user_id'] > 0) {
 			
-				$open_id = safe_json_encode($data['open_id']); 
+				$open_id = safe_json_encode($data['open_id']);
+
+				//$wx_sql = 'SELECT * FROM {{user_wx}} WHERE wx_id = '
 				
 				$sql2 = 'UPDATE {{user_wx}} SET user_id = ' . $check['body']['user_id'] . ' WHERE wx_id = ' . $wx_id . ' and open_id = ' . $open_id;
 				
 				$upd = $db->query($sql2);
 				
 				if ($upd['effect'] > 0) {
+				
+					$balance_data = [
+						'user_id'		=> $check['body']['user_id'],
+						'balance' 		=> 0, 
+						'share_paret' 	=> 0, 
+						'team_part' 	=> 0,
+						'drawing'		=> 0
+					];
+					
+					$balance_sql = 'INSERT IGNORE INTO {{user_balance_' . $balance_index . '}} ' . build_query_insert($balance_data);
+					
+					$db->query($balance_sql);
+				
+				
 					$db->commit();
 					$this->cache()->delete($this->getCacheKey('wx_id', 	$wx_id)); 	//清理 缓存
 					$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
