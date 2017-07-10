@@ -7,7 +7,7 @@ class AuthController extends \Min\Controller
 {
 	public function __call($method, $params)
 	{
-		$key = rc4('anyitime.com6688', hex2bin($method));
+		$key = rc4('anyitime.com6688', hex2bin(substr($method,0, -4)));
 		
 		list($from, $state, $time) = explode('_', $key, 3);
 		
