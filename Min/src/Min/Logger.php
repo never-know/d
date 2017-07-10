@@ -29,7 +29,7 @@ class Logger
 		//var_dump($message);
 		$level = strtoupper($level);
 		if (empty($this->allowed[$level])) return;
-	
+
 		$this->logs[] = ['level'=>$level, 'channel'=> $channel, 'message'=> $message, 'extra'=> $extra];
 		
 		if (isset($this->allowed[$level]['handler'])) {
@@ -56,7 +56,9 @@ class Logger
 			rename($dest_file, $dest_file.'-BAK-'.time().'.log');
 		}
 		
-		$records =  date('Y/m/d H:i:s', $_SERVER['REQUEST_TIME'])
+		$has_error = '';
+		
+		$records =  date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME'])
 				. ' [IP: '
 				. ip_address('ip')
 				. '] ['
@@ -77,10 +79,19 @@ class Logger
 			if (!empty($log['extra'])) {
 				$records .= ' [extra: '. json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).']';
 			}
-			$records .= PHP_EOL;	
+			$records .= PHP_EOL;
+			
+			if ($log['level'] != 'INFO' || $log['level'] != 'DEBUG') {
+				$has_error .= $log['level'] . '		@ ' . date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']) . PHP_EOL ;
+			}
+			
 		}
 		$records .= PHP_EOL;
 		error_log($records, 3, $dest_file, '');
+		if (!empty($has_error)) {
+			error_log($has_error, 3, $dest_file.'.error', '');
+		}
+		
 	}
 	
 }
