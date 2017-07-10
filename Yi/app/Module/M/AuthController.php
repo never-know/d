@@ -35,7 +35,7 @@ class AuthController extends \Min\Controller
 			exit('error');
 		}
 		
-		$new_key = bin2hex(rc4($pairs[$from][0],  implode('_', [$from, $open_id, $state, $current])));
+		$new_key = bin2hex(rc4($pairs[$from][0],  implode('_', [$from, $state, $current, $open_id])));
 		 
 		redirect($pairs[$from][1] . $new_key.'.html');
 		
