@@ -7,7 +7,7 @@ class AuthController extends \Min\Controller
 {
 	public function __call($method, $params)
 	{
-		$key = rc4('anyitime.com6688', hex2bin(base_convert($method, 36, 16)));
+		$key = rc4('anyitime.com6688', hex2bin($method));
 		
 		list($from, $state, $time) = explode('_', $key, 3);
 		
@@ -35,7 +35,7 @@ class AuthController extends \Min\Controller
 			exit('error');
 		}
 		
-		$new_key = base_convert(bin2hex(rc4($pairs[$from][0],  implode('_', [$from, $open_id, $state, $current])), 16, 36));
+		$new_key = bin2hex(rc4($pairs[$from][0],  implode('_', [$from, $open_id, $state, $current])));
 		 
 		redirect($pairs[$from][1] . $new_key.'.html');
 		
