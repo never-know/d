@@ -5,13 +5,11 @@ use Min\App;
 
 class QrcodeController extends \App\Module\M\WbaseController
 {
-	public function onConstruct()
-	{
-	}
+	public function onConstruct($redirect = true) {}
  
 	public function index()
 	{
-		$user_id 		= session_get('USER_ID');
+		$user_id 	= session_get('USER_ID');
 		$wx_id 		= session_get('wx_id');
 		
 		$shared_userid	= 0;
