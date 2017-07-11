@@ -44,7 +44,9 @@ class AuthController extends \Min\Controller
 	
 	public function getOpenid($state)
 	{
-		$wx = $this->getWX();
+		require VENDOR_PATH. '/Wx/WxBase.php';
+		
+		$wx = new \WeBase('anyitime');
 	
 		if (!empty($_GET['state']) && $_GET['state'] == $state) {
 			$r = $wx->getOauthAccessToken();
@@ -56,12 +58,5 @@ class AuthController extends \Min\Controller
 		if (!empty($open_id)) session_set('open_id', $open_id);
 		return $open_id;	 
 	}
- 
-	public function getWX()
-	{
-		require VENDOR_PATH. '/Wx/WxBase.php';
-		return new \WeBase('anyitime');
-	}
-	
-
+  
 }

@@ -35,7 +35,7 @@ class WuserService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-			$sql = 'SELECT w.wx_id, w.parent_id, w.balance_type, w.open_id, w.subscribe_status, u.user_id, u.phone, u.register_time  FROM {user_wx} AS w left join {user} AS u ON u.user_id = w.user_id WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
+			$sql = 'SELECT w.wx_id, w.parent_id, w.balance_index, w.open_id, w.subscribe_status, u.user_id, u.phone, u.register_time  FROM {{user_wx}} AS w LEFT JOIN {{user}} AS u ON u.user_id = w.user_id WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
 			 
 			$result	= $this->query($sql);
  			  
@@ -52,6 +52,20 @@ class WuserService extends \Min\Service
 	/*
 		when subscribe 	subscribe  => 3
 		when view 		subscribe  => 2
+		
+		params :
+			wx_ip		
+			open_id
+			parent_id
+			subscribe_time
+			subscribe_status
+		
+		return
+			code 30208 first
+				 30205 not first no phone
+				 30207 not first has phone
+			
+		
 	*/
 	public function addUserByOpenid($data) 
 	{
@@ -68,7 +82,7 @@ class WuserService extends \Min\Service
 			return $check;	
 		}
 		 
-		if (0 === $check['statusCode'] && 2 == $data['subscribe']) {
+		if (0 === $check['statusCode'] && 2 == $data['subscribe_status']) {
 			return $check;	
 		}
 		 
@@ -94,7 +108,8 @@ class WuserService extends \Min\Service
 				'balance_index'		=> $data['balance_index'],
 				'subscribe_status' 	=> $data['subscribe_status'], 
 				'subscribe_time' 	=> $data['subscribe_time'], 
-				'open_id'			=>json_encode($data['open_id'])
+				'open_id'			=>json_encode($data['open_id']),
+				'user_id'			=> null
 			];
 			
 			$sql = 'INSERT INTO {{user_wx}} ' . build_query_insert($inserts) .' ON DUPLICATE KEY UPDATE wx_id = LAST_INSERT_ID(wx_id)';
@@ -107,7 +122,11 @@ class WuserService extends \Min\Service
 				$sql .= ' , wx_ip = '. $data['wx_ip'];
 			}
 			
-			if ($check['body']['parent_id'] == 0 && $data['parent_id'] != 0) {
+			if ($check['body']['subscribe_time'] < 2) {
+				$sql .= ' , subscribe_time = '. $data['subscribe_time'];
+			}
+			
+			if (empty($check['body']['user_id'])  && empty($check['body']['parent_id']) && $data['parent_id'] != 0) {
 				$sql .= ', parent_id = ' . $data['parent_id'] . ', balance_type = ' . $data['balance_index']; 
 			}
 			
@@ -122,11 +141,13 @@ class WuserService extends \Min\Service
 			return $this->error('注册失败', 30204);
 		}
 		
+		/* account not exist*/
+		
 		if ($check['statusCode'] == 30206) {
-			if (2 == $data['subscribe_status'])  $result['wx_id'] = $result['id'];
+			//if (2 == $data['subscribe_status'])  $result['wx_id'] = $result['id'];
 			return $this->success($result);
 		} else {
-			$code = (($check['subscribe_status'] == 2 ) ? 30208 : (empty($check['phone']) ? 30205 : 30207));
+			$code = (($check['body']['subscribe_status'] == 2 ) ? 30208 : (empty($check['body']['phone']) ? 30205 : 30207));
 			return $this->error('帐号已存在', $code);
 		}	 
 	}

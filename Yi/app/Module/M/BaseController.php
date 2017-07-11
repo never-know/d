@@ -3,9 +3,9 @@ namespace App\Module\M;
 
 use Min\App;
 
-class WbaseController extends \Min\Controller
+class BaseController extends \Min\Controller
 {
-	public function onConstruct($redirect = true)
+	public function onConstruct($redirect = 1)
 	{ 
 		$open_id = session_get('open_id');
 		
@@ -14,7 +14,8 @@ class WbaseController extends \Min\Controller
 		}
 		
 		if (empty($open_id)) {
-			exit('can not get open_id');
+			wacthdog('can not get opend id ', 'wx_openid_error', 'ERROR');			
+			exit('');
 		}
 		
 		return $this->login($redirect);  
@@ -49,7 +50,14 @@ class WbaseController extends \Min\Controller
 		return new \WeBase('anyitime');
 	}
 	
-	final public function login($redirect = true)
+	/*
+		params: 
+		
+		2 true false
+	
+	*/
+	
+	final public function login($redirect = 1)
 	{
 		$open_id 	= session_get('open_id');
 		$logged 	= session_get('logged');
@@ -62,19 +70,38 @@ class WbaseController extends \Min\Controller
 				session_set('logged', 1);
 				$user = $result['body'];
 				$this->initUser($user);
-			}  
+				
+			} elseif (30206 === $result['statusCode']) {
+				$user						= [];
+				$user['wx_ip']				= ip_address();
+				$user['parent_id']			= 0;
+				$user['open_id']			= $open_id;
+				$user['subscribe_time'] 	= 1;
+				$user['subscribe_status']	= 2;
+
+				$result = $this->request('\\App\\Service\\Wuser::addUserByOpenid', $user);
+				if (empty($result['body']['id'])) {
+					unset($user);
+				} else {
+					$this->initUser(['wx_id' => $result['body']['id']]);
+				}
+			}
+		}
+		
+		if (2 == $redirect) {
+			return true;
 		}
 		
 		if (empty($user) || 3 != $user['subscribe_status']) {
-			$url = HOME_PAGE. '/qrcode/subscribe.html';	 
-		} elseif ($user['user_id'] > 0) {
+			$url = HOME_PAGE. '/subscribe.html';	 
+		} elseif (!empty($user['user_id'])) {
 			return true;
-		} elseif (!$redirect) {
+		} elseif (empty($redirect)) {
 			return false;
 		} else {
 			$url = HOME_PAGE. '/bind.html';	
 		}
-		
+
 		$this->response(['statusCode' => '307' , 'redirect' => $url]);
 	}
  

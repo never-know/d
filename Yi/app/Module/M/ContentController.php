@@ -3,18 +3,34 @@ namespace App\Module\M;
 
 use Min\App;
 
-class QrcodeController extends \App\Module\M\BaseController
-{
-	public function onConstruct($redirect = 2) 
+class ContentController extends \App\Module\M\BaseController
+{	
+	public function onConstruct($redirect = 2)
 	{
 		parent::onConstruct(2);
 	}
- 
+
+	public function __call($method, $param)
+	{
+		$id = \str2int(substr($method, 0, -4));
+		
+		if(!$id) {
+			$this->error('参数错误', 1);
+		}
+		
+		$result = $this->request('\\App\\Service\\Article::detail', $id);
+		
+		if ()
+		$result['body']['meta'] = ['menu_active' => 'article_list', 'title' => $result['body']['title'], 'description' => $result['body']['desc']];
+		 
+		$this->response($result);
+	}
+	
 	/*
 		generate qrcode in bottom of content and record view log;
 	
 	*/
-	public function index()
+	public function qrcode_get()
 	{
 		$shared_userid	= 0;
 		
@@ -26,7 +42,7 @@ class QrcodeController extends \App\Module\M\BaseController
 				if (!empty($match[1]) && isset($params['sid']) && validate('words', $params['sid'])) {
 					$params['view_time'] 	= $_SERVER['REQUEST_TIME'];
 					$params['viewer_id'] 	= session_get('wx_id');
-					$params['current_user'] = session_get('USER_ID');
+					$params['current_user'] = intval(session_get('USER_ID'));
 					$params['content_id']   = $match[1];
 					$result = $this->request('\\App\\Service\\Share::view', $params);
 					$shared_userid = ($result['body']['user_id']??0);	// 分享者 用户ID
@@ -62,4 +78,5 @@ class QrcodeController extends \App\Module\M\BaseController
 		}
 		return $result['url']?:$default;
 	}
+	
 }

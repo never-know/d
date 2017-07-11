@@ -38,11 +38,22 @@ class ShareService extends \Min\Service
 		}
 	}
 
+	/*
+		params: 
+				sid  // share_id
+				content_id
+				current_user
+				viewer_id
+				view_time
+	
+	
+	*/
+	
 	public function view($data) 
 	{
-		$check = $this->check($data['share_id']);
+		$check = $this->check($data['sid']);
 		
-		if (0 !== $check['statusCode'] || $check['body']['content_id'] != $data['id'] || $data['current_user'] == $check['body']['user_id']) {	
+		if (0 !== $check['statusCode'] || $check['body']['content_id'] != $data['content_id'] || $data['current_user'] == $check['body']['user_id']) {	
 		
 			return $this->success();	//$data['salary'] = $data['sid'] = $check['body']['user_id'] = 0;
 		}
@@ -58,7 +69,7 @@ class ShareService extends \Min\Service
 
 			$params 				= [];
 			$params['viewer_id'] 	= intval($data['viewer_id']);
-			$params['content_id'] 	= intval($data['id']);
+			$params['content_id'] 	= intval($data['content_id']);
 			$params['share_user'] 	= intval($check['body']['user_id']);
 			
 			if ($check['body']['adv_cost'] > 0) {
@@ -186,7 +197,7 @@ class ShareService extends \Min\Service
 
 			$db->commit();
 			 
-			return $this->success(['userid' => $params['share_user']]);
+			return $this->success(['user_id' => $params['share_user']]);
 		
 		} catch (\Throwable $t) {
 		

@@ -3,11 +3,11 @@ namespace App\Module\M;
 
 use Min\App;
 
-class BindController extends \App\Module\M\WbaseController
+class BindController extends \App\Module\M\BaseController
 {
-	public function onConstruct($redirect = true)
+	public function onConstruct($redirect = 0)
 	{
-		$binded = parent::onConstruct(false);
+		$binded = parent::onConstruct(0);
 		
 		if ($binded) {
 			$result['statusCode'] 		= 30200;

@@ -36,7 +36,7 @@ class WxController extends \Min\Controller
 		
 		$mt 	= strtolower($this->_receive['MsgType']);
 		
-		$func = ('event' == $mt)? ('process_event_'.strtolower($this->_receive['Event'])) : ('process_'. $mt); 
+		$func = (('event' == $mt) ? ('process_event_'.strtolower($this->_receive['Event'])) : ('process_'. $mt)); 
 		 
 		$this->{$func}();
 		
@@ -61,25 +61,30 @@ class WxController extends \Min\Controller
 	
 	private function process_event_subscribe() 
 	{
-		$sceneid = $this->getRevSceneId();
-		watchdog($sceneid, 'wx_sceneid');
+		$scene_id = $this->getRevSceneId();
+		
+		watchdog($scene_id, 'wx_sceneid', 'INFO');
 		
 		// 添加  yi_user_wx 
-		$param				= [];
-		$param['wx_ip']		= ip_address();
-		$param['parent_id']	 	= ($sceneid ? base_convert($sceneid, 36, 10) : 0);
-		$param['subscribe_time']	 	= $_SERVER['REQUEST_TIME'];
-		$param['open_id']	= $this->getRevFrom();
+		
+		$param						= [];
+		$param['wx_ip']				= ip_address();
+		$param['parent_id']			= (empty($scene_id) ? 0 : base_convert($scene_id, 36, 10));
+		$param['open_id']			= $this->getRevFrom();
+		$param['subscribe_time'] 	= $_SERVER['REQUEST_TIME'];
 		$param['subscribe_status']	= 3;
 
 		$add =  $this->request('\\App\\Service\\Wuser::addUserByOpenid', $param);
 		
 		if ($add['statusCode'] == 30205) {
-			$this->text('谢谢您再次关注，<a href="https://www.baidu.com" > 你可以先绑定手机号码 </a>, 祝您生活愉快');
+			$this->text('谢谢您再次关注，您可以先<a href="https://m.anyitime.com/bind.html" > 绑定手机号码 </a>, 祝您生活愉快');
 		} elseif ($add['statusCode'] == 30207) {
-			$this->text('<a href="https://www.baidu.com" >谢谢您再次关注</a>, 祝您生活愉快');
+			$this->text('谢谢您再次关注, 祝您生活愉快');
+		} else ($add['statusCode'] == 30208 || ($add['statusCode'] === 0) ) {
+			$this->text('谢谢关注，您可以先<a href="https://m.anyitime.com/bind.html" >绑定手机号码</a>,祝您生活愉快');
 		} else {
-			$this->text('谢谢关注，<a href="https://www.baidu.com" >你可以先绑定手机号码</a>,祝您生活愉快');
+			watchdog($param, 'wx_subscribe_error', 'ERROR', $add);
+			$this->text('谢谢关注,祝您生活愉快');
 		}
 	}
 	

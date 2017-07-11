@@ -3,7 +3,7 @@ namespace App\Module\M;
 
 use Min\App;
 
-class BalanceController extends \App\Module\M\WbaseController
+class BalanceController extends \App\Module\M\BaseController
 {
 	public function index_get()
 	{

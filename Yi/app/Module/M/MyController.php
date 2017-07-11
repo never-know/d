@@ -3,7 +3,7 @@ namespace App\Module\M;
 
 use Min\App;
 
-class MyController extends \App\Module\M\WbaseController
+class MyController extends \App\Module\M\BaseController
 {
 	public function team_get()
 	{

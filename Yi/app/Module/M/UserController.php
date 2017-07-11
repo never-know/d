@@ -3,7 +3,7 @@ namespace App\Module\M;
 
 use Min\App;
 
-class UserController extends \App\Module\M\WbaseController
+class UserController extends \App\Module\M\BaseController
 {
 	public function index_get()
 	{
