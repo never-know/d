@@ -199,9 +199,10 @@ function ip_address($type = 'iplong')
 		}
 		
 		$iplong = ip2long($ip_address);
+		
 		if (false == $iplong){
 			watchdog('invalid ip address : '.$ip_address, 'USER_ABNORMAL_IP', 'NOTICE');
-		}else {
+		} else {
 			$ip = ['ip' => $ip_address, 'iplong' => $iplong];
 		}
 	}
@@ -566,7 +567,7 @@ function app_tails()
 		.	' error code/type: '
 		.	$error['type'];
 		
-		watchdog($message, 'Fatal_Error', 'CRITICAL', debug_backtrace());
+		watchdog($message, 'Fatal_Error', 'ERROR', debug_backtrace());
 	}
 	
 	App::getService('logger')->record();
@@ -612,13 +613,13 @@ function app_exception($e, $channel = 'unexpected_expection')
 		$channel = 'catched_exception';
 	}  
 	
-	watchdog(error_message_format($e), $channel, 'CRITICAL', $e->getTrace());
+	watchdog(error_message_format($e), $channel, 'ERROR', $e->getTrace());
 	request_error_found(500);
 }
 
 function min_error($t)
 {
-	$dest_file = LOG_PATH.'/FatalError'.date('/Y-m-d').'.log';
+	$dest_file = LOG_PATH.'/FatalError/'.date('Y-m-d').'.log';
 		
 	$records =  date('Y/m/d H:i:s', $_SERVER['REQUEST_TIME'])
 			. ' [IP: '
@@ -731,7 +732,7 @@ function param_hash(array $param)
 function shareid_encode($id, $type = null)
 {
 	if (isset($type) && $type != 1 && $type != 2 ) {
-		watchdog('shareid_encode type 目前只支持 1和2', 'code', 'NOTICE');
+		watchdog('shareid_encode type 目前只支持 1和2', 'type_error', 'NOTICE');
 		return '';
 	}
 	

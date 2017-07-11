@@ -82,7 +82,7 @@ class Logger
 			$records .= PHP_EOL;
 			
 			if ($log['level'] != 'INFO' && $log['level'] != 'DEBUG') {
-				$has_error .= $log['level'] . '		@ ' . date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']) . PHP_EOL ;
+				$has_error .= $log['level'] . "     \t@ " . date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']) . PHP_EOL ;
 			}
 			
 		}
