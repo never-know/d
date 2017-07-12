@@ -85,30 +85,56 @@ class WuserService extends \Min\Service
 		if (0 === $check['statusCode'] && 2 == $data['subscribe_status']) {
 			return $check;	
 		}
-		 
-		$data['parent_id']	= max(intval($data['parent_id']), 0);
+		/*
+		if (0 === $check['statusCode'] && 3 == $check['body']['subscribe_status']) {
+			return $check;	
+		}
+		*/
+		$data['parent_id']		= max(intval($data['parent_id']), 0);
 		$data['balance_index']	= 1;
 		
-		if ( $data['parent_id'] > 0) {
+		if ($data['parent_id'] > 0) {
 		
 			$parent = $this->checkAccount($data['parent_id'], 'wx_id');
 			
 			if (empty($parent['body']['user_id']) || $parent['body']['open_id'] == $data['open_id']) {
 				$data['parent_id'] = 0;
 			} else {
-				$data['balance_index']	= $parent['balance_index'];
+				$data['balance_index']	= intval($parent['body']['balance_index']);
 			}
 		}
 		
-		if (30206 == $check['statusCode']) {
+		// 1000 分割 , no parent and not exsit
 		
+		if (3 == $data['subscribe_status'] && 0 == $data['parent_id']) {
+			$sql_count = 'SELECT count(1) AS count FROM {{user_wx}} WHERE parent_id = 0 LIMIT 1';
+			$count = $this->query($sql_count);
+			if ($count['count'] > 0) {
+				$data['balance_index'] = intval($count['count']/1000) + 1;
+				if ($data['balance_index'] > 1 && config_get('max_user_balance_index', 1) < $data['balance_index']) {
+				
+					$tables = [
+						'user_balance' 		=> $data['balance_index'],
+						'user_balance_log' 	=> $data['balance_index'],
+						'user_share' 		=> $data['balance_index'],
+						'user_share_view' 	=> $data['balance_index'],
+					];
+				
+					$this->query($tables);
+					watchdog('user balance index out', 'WARNING');
+				}
+			}
+		}
+
+		if (30206 == $check['statusCode']) {
+
 			$inserts =  [
 				'wx_ip'	 			=> $data['wx_ip'], 
 				'parent_id' 		=> $data['parent_id'],
 				'balance_index'		=> $data['balance_index'],
 				'subscribe_status' 	=> $data['subscribe_status'], 
 				'subscribe_time' 	=> $data['subscribe_time'], 
-				'open_id'			=>json_encode($data['open_id']),
+				'open_id'			=> json_encode($data['open_id']),
 				'user_id'			=> null
 			];
 			
@@ -126,8 +152,10 @@ class WuserService extends \Min\Service
 				$sql .= ' , subscribe_time = '. $data['subscribe_time'];
 			}
 			
-			if (empty($check['body']['user_id'])  && empty($check['body']['parent_id']) && $data['parent_id'] != 0) {
-				$sql .= ', parent_id = ' . $data['parent_id'] . ', balance_type = ' . $data['balance_index']; 
+			// subscribe relationship first
+			
+			if (empty($check['body']['user_id'])) {
+				$sql .= ', parent_id = ' . $data['parent_id'] . ', balance_index = ' . $data['balance_index']; 
 			}
 			
 			$sql .= ' WHERE wx_id = ' .$check['body']['wx_id'];
@@ -147,7 +175,7 @@ class WuserService extends \Min\Service
 			//if (2 == $data['subscribe_status'])  $result['wx_id'] = $result['id'];
 			return $this->success($result);
 		} else {
-			$code = (($check['body']['subscribe_status'] == 2 ) ? 30208 : (empty($check['body']['phone']) ? 30205 : 30207));
+			$code = (($check['body']['subscribe_status'] == 2 ) ? 30208 : (empty($check['body']['user_id']) ? 30205 : 30207));
 			return $this->error('帐号已存在', $code);
 		}	 
 	}

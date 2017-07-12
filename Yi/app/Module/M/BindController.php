@@ -33,7 +33,7 @@ class BindController extends \App\Module\M\BaseController
 		
 		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'smscode' => $smscode], 'bind');
 		
-		$register_data	= ['phone' => $phone, 'register_time' => $_SERVER['REQUEST_TIME'], 'register_ip'=> ip_address(), 'wx_id' => session_get('wx_id'), 'open_id' => session_get('open_id')];
+		$register_data	= ['phone' => $phone, 'register_time' => $_SERVER['REQUEST_TIME'], 'register_ip'=> ip_address(), 'wx_id' => session_get('wx_id'), 'open_id' => session_get('open_id'), 'balance_index' => intval(session_get('user')['balance_index'])];
 		
 		$user = $this->request('\\App\\Service\\Account::addUserByWx', $regist_data);
 		

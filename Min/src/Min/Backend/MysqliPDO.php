@@ -104,8 +104,11 @@ class MysqliPDO
 	public function query($sql, $param)
 	{
 		//$sql = strtr($sql, ['{{' => $this->conf[$this->active_db]['prefix'][$this->prefix_key], '}}' => '']);
-		$sql = preg_replace('/\{\{([a-z_]+)\}\}/', $this->conf[$this->active_db]['prefix'][$this->prefix_key] . '$1', $sql, 10);
-		
+		if (is_array($sql)) {
+			return $this->createTable($sql)
+		} else {
+			$sql = preg_replace('/\{\{([a-z_]+)\}\}/', $this->conf[$this->active_db]['prefix'][$this->prefix_key] . '$1', $sql, 10);
+		}
 		if (strpos($sql, ';') !== false) {
 			throw new \PDOException('unsafe char ; fount  : '. $sql, -4);
 		}
@@ -132,6 +135,21 @@ class MysqliPDO
 		} else {
 			return $this->nonPrepareQuery($type, $sql, $action);
 		}
+	}
+	
+	private function createTable($table) {
+	
+		foreach($table as $key => $value) {
+			$sql_table[] = 'CREATE TABLE IF NOT EXISTS {{'. $key . '_' . $value . '}} LIKE {{' . $key . '}}';
+		}
+ 
+		$sql = preg_replace('/\{\{([a-z_]+)\}\}/', $this->conf[$this->active_db]['prefix'][$this->prefix_key] . '$1', implode(';', $sql_table));
+		
+		watchdog($sql);
+		
+		return $this->nonPrepareQuery('master', $sql, 'UPDATE');
+		
+	
 	}
 	
 	private function realQuery($type, $sql, $action, $param)

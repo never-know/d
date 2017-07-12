@@ -53,7 +53,7 @@ class BaseController extends \Min\Controller
 	/*
 		params: 
 		
-		2 true false
+		2 1 0
 	
 	*/
 	
@@ -62,16 +62,15 @@ class BaseController extends \Min\Controller
 		$open_id 	= session_get('open_id');
 		$logged 	= session_get('logged');
 		
-		if (!empty($logged)) {
-			$user 	= session_get('user');
-		} else {
+		if (empty($logged)) {
+			
 			$result = $this->request('\\App\\Service\\Wuser::login', $open_id);	// 登陆
 			if (0 === $result['statusCode']) {
 				session_set('logged', 1);
 				$user = $result['body'];
 				$this->initUser($user);
 				
-			} elseif (30206 === $result['statusCode']) {
+			} elseif (30206 === $result['statusCode'] && 2 === $redirect ) {
 				$user						= [];
 				$user['wx_ip']				= ip_address();
 				$user['parent_id']			= 0;
@@ -86,9 +85,12 @@ class BaseController extends \Min\Controller
 					$this->initUser(['wx_id' => $result['body']['id']]);
 				}
 			}
+			
+		} else {
+			$user 	= session_get('user');
 		}
 		
-		if (2 == $redirect) {
+		if (2 === $redirect) {
 			return true;
 		}
 		

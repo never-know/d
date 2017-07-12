@@ -41,7 +41,6 @@ class AccountService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-		
 			/* 
 			$mark = ($arr['type'] == 'phone') ? 'd': 's';
 			$sql = 'SELECT * FROM {user}  WHERE '.$arr['type'].' = ? '; 	// mysqli prepare
@@ -60,7 +59,7 @@ class AccountService extends \Min\Service
 			 */
 			 
 			
-			$sql = 'SELECT u.*, uw.wx_id, uw.open_id FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
+			$sql = 'SELECT u.*, uw.wx_id, uw.open_id, uw.balance_index FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -128,34 +127,27 @@ class AccountService extends \Min\Service
 			throw new \Min\MinException('password_hash failed', 20104);
 		}
 	}
-	
-	
-	
-	
+ 
 	public function addUserByWx($data) 
 	{
-		$wx_id = intval($data['wx_id']);
+		$wx_id 			= intval($data['wx_id']);
+		$phone 			= intval($data['phone']);
+		$balance_index 	= intval($data['balance_index']);
 		
-		if ($wx_id < 1 || empty($data['open_id'][24])) {
+		if ($balance_index < 1 || $wx_id < 1 || !validate('open_id', $data['open_id'])) {
 			return $this->error('参数错误', 30205);
 		}
 		
-		$check = $this->checkAccount($data['phone']);
+		$check = $this->checkAccount($phone);
 		
-		if (0 == $check['statusCode']) {
-			if (!empty($check['body']['open_id']) || 2 == $check['body']['user_type']) {
+		if (0 === $check['statusCode']) {
+			if (!empty($check['body']['open_id']) || 2 === $check['body']['user_type']) {
 				return $this->error('该手机号码已被绑定', 30205);
 			} 
 		} elseif ($check['statusCode'] != 30206) {
 			return $check;
 		}
-		
-		$balance_index = intval($data['balance_index']);
-		
-		if ($balance_index < 1) {
-			return $this->error('参数错误', 30205);
-		}
-		
+ 
 		$db = $this->DBManager();
 		
 		try {
@@ -166,7 +158,7 @@ class AccountService extends \Min\Service
 			
 				$processed_data = [
 					'user_type'		=> 0,
-					'phone' 		=> $data['phone'], 
+					'phone' 		=> $phone, 
 					'register_time' => intval($data['register_time']), 
 					'register_ip' 	=> intval($data['register_ip'])
 				];
@@ -184,7 +176,7 @@ class AccountService extends \Min\Service
 
 				//$wx_sql = 'SELECT * FROM {{user_wx}} WHERE wx_id = '
 				
-				$sql2 = 'UPDATE {{user_wx}} SET user_id = ' . $check['body']['user_id'] . ' WHERE wx_id = ' . $wx_id . ' and open_id = ' . $open_id;
+				$sql2 = 'UPDATE {{user_wx}} SET user_id = ' . $check['body']['user_id'] . ' WHERE wx_id = ' . $wx_id . ' AND open_id = ' . $open_id . ' AND balance_index = ' . $balance_index . ' AND (user_id = 0 OR user_id is null) ';
 				
 				$upd = $db->query($sql2);
 				
@@ -197,16 +189,18 @@ class AccountService extends \Min\Service
 						'team_part' 	=> 0,
 						'drawing'		=> 0
 					];
-					
+				
 					$balance_sql = 'INSERT IGNORE INTO {{user_balance_' . $balance_index . '}} ' . build_query_insert($balance_data);
 					
 					$db->query($balance_sql);
-				
-				
+
 					$db->commit();
-					$this->cache()->delete($this->getCacheKey('wx_id', 	$wx_id)); 	//清理 缓存
+					
+					$this->cache()->delete($this->getCacheKey('wx_id', 	$wx_id)); 		//清理 缓存
 					$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
-					return $this->success(['user_id' => $check['body']['user_id'], 'wx_id' => $wx_id, 'phone' => $data['phone']]);
+					if (!empty($ins['id'])) $this->cache()->delete($this->getCacheKey('phone', $phone));	
+					
+					return $this->success(['user_id' => $check['body']['user_id'], 'wx_id' => $wx_id, 'phone' => $phone]);
 				} 
 			}
 			
@@ -214,7 +208,7 @@ class AccountService extends \Min\Service
 			return $this->error('失败', 1);
 			
 		} catch (\Throwable $t) {
-		
+			watchdog($t);
 			$db->rollBack();
 			return $this->error('失败', 1);
 		}
