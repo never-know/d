@@ -729,7 +729,7 @@ function param_hash(array $param)
  * param id : int;
  */
 
-function shareid_encode($id, $type = null)
+function shareid_encode_bak($id, $type = null)
 {
 	if (isset($type) && $type != 1 && $type != 2 ) {
 		watchdog('shareid_encode type 目前只支持 1和2', 'type_error', 'NOTICE');
@@ -778,65 +778,3 @@ function shareid_encode($id, $type = null)
 	}
 }
 
-/* 
- * id格式 ：{article_id}{6}{time}{6}{type}{1}{salt}{2}{md5}{6}{uid}{n}
- * 最小6位36进制对应的十进制 100000 => 60466176; 最大zzzzzz => 2176782335
- * article_id 61000000 到 2176782335  转化为 6位字符串
- * user_id  同上，n位字符串,  {id*n}{n}
- * share_time   时间戳减 （1487411575-61000000）= 1325000000
- * param id : int;
- */
- 
-// 6亿用户， 7亿数据 生成 24位字符串
-
-function shareid($id, $type, $uid)
-{ 
-	if (empty($uid)) {
-		return 'shareid';
-	}
-	
-	$time 		= $_SERVER['REQUEST_TIME'] - 1295672286;	//	197889303 
-	$uid		= session_get('UID') + 103656280;	
-	$aid		= $id  + 103656280;	
-	 
-	$salt	=   mt_rand(37, 1295);  // 108 ;109   // 129
-	if ($salt < 88) {
-		// $salt2 < $salt3	差值 12
-		$salt2 = 108 - $salt;		//	range:	71-21
-		$salt3 = 120 - $salt;		//	range:	83-33		
-	
-	} elseif ($salt < 130){
-		// $salt2 < $salt3 差值 13
-		$salt2 = 183 - $salt;	//	range:	95-54
-		$salt3 = 196 - $salt;	//	range:	108-67
-	} else {
-		//$salt2 > $salt3 差值 1-11			
-		$salt2  = ($salt%108)?:108;		// 	range: 	22-108
-		$salt3  = ($salt%109)?:109;	 	//	range:	21-107
-		
-		// special process
-		if ($salt2 < 21 ) {
-			$salt2 = 59 - $salt2;		//	range:	(58-39) +  (21-30)
-		}
-		
-		if ($salt3 < 21) {
-			$salt3 = 79 - $salt3;		//	range:	(109-99) + (78-59)
-		}	 
-	}
-
-	//zzzzzzz: 78364164095
-	//1000000: 2176782336
-	//echo ((($salt%60)?:60) + 10),'-';
-	$salt_36 	= base_convert($salt, 10, 36);
-	 
-	$parts 		= [];
-	$parts[]	= $type;
-	$parts[]	= $salt_36[0];
-	$parts[]	= base_convert(((($time % 286898) ?: 286898) * $salt2 + $uid) * $salt3, 10, 36);	//	579113185	7位
-	$parts[]	= base_convert($time * ((($salt%60)?:60) + 10), 10, 36);							//	2046年	7位
-	$parts[]	= base_convert(((($time % 183868) ?: 183868) * $salt3 + $aid) * $salt2, 10, 36);	//  695186871	7位
-	$parts[]	= $salt_36[1];		 
-	 
-	return strtr(implode('', $parts), 'comefu', 'fucome');
-	 
-}

@@ -67,9 +67,12 @@ class WuserService extends \Min\Service
 			
 		
 	*/
+	
 	public function addUserByOpenid($data) 
 	{
-		if (!validate('open_id', $data['open_id']) || !in_array($data['subscribe_status'],[2,3]) || !isset($data['wx_ip']) || empty($data['subscribe_time'])) {
+		$data['subscribe_status'] = intval($data['subscribe_status']);
+		
+		if (!validate('open_id', $data['open_id']) || !in_array($data['subscribe_status'], [2,3]) || !isset($data['wx_ip'])) {
 			return $this->error('参数错误', 30200);
 		}
 
@@ -90,42 +93,48 @@ class WuserService extends \Min\Service
 			return $check;	
 		}
 		*/
-		$data['parent_id']		= max(intval($data['parent_id']), 0);
-		$data['balance_index']	= 1;
 		
-		if ($data['parent_id'] > 0) {
+		if (empty($check['body']['user_id'])) {
 		
-			$parent = $this->checkAccount($data['parent_id'], 'wx_id');
+			$data['parent_id']		= max(intval($data['parent_id']), 0);
+			$data['balance_index']	= 1;
 			
-			if (empty($parent['body']['user_id']) || $parent['body']['open_id'] == $data['open_id']) {
-				$data['parent_id'] = 0;
-			} else {
-				$data['balance_index']	= intval($parent['body']['balance_index']);
+			if ($data['parent_id'] > 0) {
+			
+				$parent = $this->checkAccount($data['parent_id'], 'wx_id');
+				
+				if (empty($parent['body']['user_id']) || $parent['body']['open_id'] == $data['open_id']) {
+					$data['parent_id'] = 0;
+				} else {
+					$data['balance_index']	= intval($parent['body']['balance_index']);
+				}
 			}
-		}
-		
-		// 1000 分割 , no parent and not exsit
-		
-		if (3 == $data['subscribe_status'] && 0 == $data['parent_id']) {
-			$sql_count = 'SELECT count(1) AS count FROM {{user_wx}} WHERE parent_id = 0 LIMIT 1';
-			$count = $this->query($sql_count);
-			if ($count['count'] > 0) {
-				$data['balance_index'] = intval($count['count']/1000) + 1;
-				if ($data['balance_index'] > 1 && config_get('max_user_balance_index', 1) < $data['balance_index']) {
-				
-					$tables = [
-						'user_balance' 		=> $data['balance_index'],
-						'user_balance_log' 	=> $data['balance_index'],
-						'user_share' 		=> $data['balance_index'],
-						'user_share_view' 	=> $data['balance_index'],
-					];
-				
-					$this->query($tables);
-					watchdog('user balance index out', 'WARNING');
+			
+			// 1000 分割 , no parent and not exsit
+			
+			if (3 == $data['subscribe_status'] && 0 == $data['parent_id']) {
+				$sql_count = 'SELECT count(1) AS count FROM {{user_wx}} WHERE parent_id = 0 LIMIT 1';
+				$count = $this->query($sql_count);
+				if ($count['count'] > 0) {
+					$data['balance_index'] = intval($count['count']/1000) + 1;
+					/*
+					if ($data['balance_index'] > 1 && config_get('max_user_balance_index', 1) < $data['balance_index']) {
+					
+						$tables = [
+							'user_balance' 		=> $data['balance_index'],
+							'user_balance_log' 	=> $data['balance_index'],
+							'user_share' 		=> $data['balance_index'],
+							'user_share_view' 	=> $data['balance_index'],
+						];
+					
+						$this->query($tables);
+						watchdog('user balance index out', 'WARNING');
+					}
+					*/
 				}
 			}
 		}
-
+		
 		if (30206 == $check['statusCode']) {
 
 			$inserts =  [
@@ -179,10 +188,24 @@ class WuserService extends \Min\Service
 			return $this->error('帐号已存在', $code);
 		}	 
 	}
-
-	public function login($openid) 
+	
+	public function unsubscribe($open_id)
 	{
-		return $this->checkAccount($openid);
+		if (!validate('open_id', $data['open_id'])) {
+			return $this->error('参数错误', 30200);
+		}
+		$sql = 'UPDATE {{user_wx}} SET subscribe_status = 4 WHERE open_id = ' . safe_json_encode($open_id);
+		$result = $this->query($sql);
+		if ($result['effect'] == 1) {
+			return $this->success();
+		} else {
+			return $this->error('操作失败', 20000);
+		}
+	}
+
+	public function login($open_id) 
+	{
+		return $this->checkAccount($open_id);
 	}
 	
 	public function member($pid)

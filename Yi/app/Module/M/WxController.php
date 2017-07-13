@@ -90,16 +90,21 @@ class WxController extends \Min\Controller
 	
 	private function process_event_unsubscribe() 
 	{
-		$this->text('goodbye');
+		$open_id = $this->getRevFrom();
+		$add =  $this->request('\\App\\Service\\Wuser::unsubscribe', $open_id);
+		$this->text('see you later');
 	}
+	
 	private function process_event_location() 
 	{
 		$this->text('thank you');	
 	}
+	
 	private function process_event_scan() 
 	{
 		exit('');	
 	}
+	
 	private function process_event_click() 
 	{
 		exit('');

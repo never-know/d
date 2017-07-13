@@ -429,6 +429,15 @@ class ShareService extends \Min\Service
 		return $this->commonList($sql_count, $sql_list);
 	}
 	
+	/*
+		params:
+			content_id
+			share_time
+			user_id
+			type
+	
+	*/
+	
 	public function share()
 	{
 		$params['content_id'] 	= intval($data['content_id']);
@@ -436,6 +445,7 @@ class ShareService extends \Min\Service
 		if ($params['content_id'] < 1) {
 			return $this->error('参数错误', 20001);
 		}
+		
 		$content_sql = 'SELECT c.*, u.balance FROM {{content}} AS c INNER JOIN {{user_balance}} AS u ON c.author = u.user_id  WHERE c.content_id = ' . $params['content_id'] . ' LIMIT 1';
 		
 		$content = $this->query($content_sql);
@@ -453,9 +463,10 @@ class ShareService extends \Min\Service
 		$params['share_salary'] = intval($content['share_salary']);
 		$params['adv_cost'] 	= intval($content['adv_cost']);
 		
-		$params['share_id'] = \shareid($params['content_id'], $params['share_type'], $params['user_id']);
+		//$params['share_id'] = \shareid($params['content_id'], $params['share_type'], $params['user_id']);
+		$params['share_id'] 	= safe_json_encode($data['share_id']);
  
-		$ins_sql = 'INSERT INGORE INTO {{share}} ' . build_query_insert($params);
+		$ins_sql = 'INSERT INGORE INTO {{user_share}} ' . build_query_insert($params);
 	
 		$result = $this->query($ins_sql);
 	
@@ -466,6 +477,5 @@ class ShareService extends \Min\Service
 		return $this->success();
 		
 	}
-	
-	 
+  
 }
