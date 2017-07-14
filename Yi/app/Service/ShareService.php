@@ -9,8 +9,8 @@ class ShareService extends \Min\Service
 	
 	public function check($name) 
 	{	
-		if (validate('word', $name)) {
-			$type = 'share_id';
+		if (validate('words', $name)) {
+			$type = 'share_no';
 			$name = safe_json_encode($name);
 		} else {	 
 			return $this->error('账号格式错误', 30200);		
@@ -22,7 +22,7 @@ class ShareService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
  
-			$sql = 'SELECT * FROM {{share}}  WHERE '. $type. ' = '. $name .' LIMIT 1';
+			$sql = 'SELECT * FROM {{user_share}}  WHERE '. $type. ' = '. $name .' LIMIT 1';
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -113,7 +113,7 @@ class ShareService extends \Min\Service
 
 			$params['view_time'] 	= intval($data['view_time']);
 			$params['share_salary'] = $check['body']['share_salary'];
-			$params['share_id'] 	= json_encode($data['sid']);
+			$params['share_id'] 	= $check['body']['share_id']);
 			$params['adv_id'] 		= $check['body']['adv_id'];
 			$params['adv_cost'] 	= $check['body']['adv_cost'];
 			
@@ -126,6 +126,10 @@ class ShareService extends \Min\Service
 			if ($check['body']['adv_cost'] <= 0) {
 				return $this->success();
 			}
+			
+			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1 WHERE share_id = '. $check['body']['share_id']);
+			$db->query($sql);
+ 			  
 
 			$balance_log = [];
 			$balance_log['user_id'] 		= $params['share_user'];
@@ -303,7 +307,7 @@ class ShareService extends \Min\Service
 
 			$params['view_time'] 	= intval($data['view_time']);
 			$params['share_salary'] = $check['body']['share_salary'];
-			$params['share_id'] 	= json_encode($data['sid']);
+			$params['share_id'] 	= $check['body']['share_id']);
 			$params['adv_id'] 		= $check['body']['adv_id'];
 			$params['adv_cost'] 	= $check['body']['adv_cost'];
 			
@@ -321,6 +325,9 @@ class ShareService extends \Min\Service
 				return $this->success();
 			}
 
+			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1 WHERE share_id = '. $check['body']['share_id']);
+			$db->query($sql);
+			
 			$balance_log = [];
 			$balance_log['user_id'] 		= $params['share_user'];
 			$balance_log['user_money'] 		= $params['share_salary'];
@@ -423,14 +430,15 @@ class ShareService extends \Min\Service
 			return $this->error('参数错误', 30000);
 		}
  
-		$sql_count 	= 'SELECT count(1) AS count FROM {share_record} WHERE user_id = ' . $uid . ' LIMIT 1';
-		$sql_list 	= 'SELECT a.title,a.icon, s.*, count(v.share_id) AS views FROM {share_record} as s LEFT JOIN {article} AS a ON a.id = s.content_id LEFT JOIN {share_views} AS v on v.share_id = s.share_id WHERE s.user_id = ' . $uid . ' GROUP BY s.share_id ORDER BY s.share_id DESC';
+		$sql_count 	= 'SELECT count(1) AS count FROM {{user_share}} WHERE user_id = ' . $uid . ' LIMIT 1';
+		$sql_list 	= 'SELECT s.*, a.title, a.icon FROM {{user_share}} as s LEFT JOIN {{article}} AS a ON a.id = s.content_id WHERE s.user_id = ' . $uid . ' ORDER BY s.share_id DESC';
 		
 		return $this->commonList($sql_count, $sql_list);
 	}
 	
 	/*
 		params:
+			share_no
 			content_id
 			share_time
 			user_id
@@ -438,7 +446,7 @@ class ShareService extends \Min\Service
 	
 	*/
 	
-	public function share()
+	public function share($data)
 	{
 		$params['content_id'] 	= intval($data['content_id']);
 		
@@ -464,7 +472,7 @@ class ShareService extends \Min\Service
 		$params['adv_cost'] 	= intval($content['adv_cost']);
 		
 		//$params['share_id'] = \shareid($params['content_id'], $params['share_type'], $params['user_id']);
-		$params['share_id'] 	= safe_json_encode($data['share_id']);
+		$params['share_no'] 	= safe_json_encode($data['share_no']);
  
 		$ins_sql = 'INSERT INGORE INTO {{user_share}} ' . build_query_insert($params);
 	

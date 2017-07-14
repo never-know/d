@@ -5,6 +5,25 @@ use Min\App;
 
 class BalanceService extends \Min\Service
 {
+
+	public function account()
+	{
+		$user_id 		= intval($user_id);
+		 
+		if ($user_id < 1) {
+			return $this->error('参数错误', 30000);
+		}
+
+		$sql = 'SELECT * FROM {{user_balance}} WHERE user_id = ' . $user_id . 'LIMIT 1';
+		
+		$result = $this->query($sql);
+		if (!empty($result)) {
+			$this->success($result);
+		} else {
+			$this->error('操作失败', 21222);
+		}
+		
+	}
 	/*   
 		@param 
 		

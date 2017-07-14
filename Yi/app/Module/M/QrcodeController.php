@@ -33,6 +33,7 @@ class QrcodeController extends \App\Module\M\BaseController
 				}
 			}
 		} 
+		
 		$img = config_get('wx_qrcode');
 		
 		if ($shared_userid) {

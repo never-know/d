@@ -16,8 +16,8 @@
 	
 	try {
 		require MIN_PATH . '/Min/Common.php';
-	
 		min_init();
+		require APP_PATH . '/Common/function.php';
 	
 		$di = new \Min\Di;
  

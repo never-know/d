@@ -6,22 +6,22 @@ use Min\App;
 class MessageService extends \Min\Service
 {
 
-	public function list($p)
+	public function list($user_id)
 	{
-		$p = intval($p);
+		$user_id = intval($user_id);
 		
-		if ($p < 0) {
+		if ($user_id < 0) {
 			return $this->error('参数错误', 30000);
 		}
 
 		$sql_count = 'SELECT count(m.message_id) as count FROM {{message}} AS m 
 			LEFT JOIN {{message_read}} AS r 
-			ON m.user_id = 0 AND r.message_id = m.message_id AND r.user_id = '. $p . 
-			' WHERE (m.user_id = ' . $p . ' OR  m.user_id = 0) AND m.post_time > '. session_get('user')['register_time']. ' LIMIT 1';
+			ON m.user_id = 0 AND r.message_id = m.message_id AND r.user_id = '. $user_id . 
+			' WHERE (m.user_id = ' . $user_id . ' OR  m.user_id = 0) AND m.post_time > '. session_get('user')['register_time']. ' LIMIT 1';
 		$sql_list 	= 'SELECT m.message_id, m.user_id, m.read_time , m.message_type, m.title, r.read_time as readed FROM {{message}} AS m 
 			LEFT JOIN {{message_read}} AS r 
-			ON m.user_id = 0 AND r.message_id = m.message_id AND r.user_id = '. $p . 
-			' WHERE (m.user_id = ' . $p . ' OR  m.user_id = 0) AND m.post_time > '. session_get('user')['register_time'] .' ORDER BY m.message_id DESC';
+			ON m.user_id = 0 AND r.message_id = m.message_id AND r.user_id = '. $user_id . 
+			' WHERE (m.user_id = ' . $user_id . ' OR  m.user_id = 0) AND m.post_time > '. session_get('user')['register_time'] .' ORDER BY m.message_id DESC';
 			
 		return $this->commonList($sql_count, $sql_list);
 	  

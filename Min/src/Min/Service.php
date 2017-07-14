@@ -27,6 +27,8 @@ class Service
 		if ($code < 2) {
 			throw new \Exception('code should greater than 1', 12000);
 		}
+		
+		
 		return ['statusCode' => $code, 'message' => $message];
 	}
 	

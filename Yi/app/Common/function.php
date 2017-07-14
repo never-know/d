@@ -12,6 +12,11 @@ function article_order($key = null)
 	return $key ? $arr[$key] : $arr;
 }
 
+function message_icon($key = null)
+{
+	static $arr = [1 => '默认排序', 2 => '开始时间降序', 3 => '结束时间降序'];
+	return $key ? $arr[$key] : $arr;
+}
 
 function region_get($region_id)
 {
@@ -47,8 +52,7 @@ function region_get($region_id)
 			}
 			 
 			watchdog(microtime(true)*1000-$time*1000);
-			 
-			
+ 
 			$run = 1;
 		}
 		return '加载中...';
@@ -68,7 +72,7 @@ function region_get($region_id)
  
 // 6亿用户， 7亿数据 生成 24位字符串
 
-function shareid($content_id)
+function share_encode($content_id)
 { 
 	$user_id = session_get('USER_ID');
 	
@@ -116,25 +120,22 @@ function shareid($content_id)
 	//$parts[]	= ($rand%2 == $share_type)?chr($rand):chr($rand+1);
 	$parts[]	= $salt_36[0];
 	$parts[]	= base_convert(((($time % 286898) ?: 286898) * $salt2 + $user_id) * $salt3, 10, 36);	//	579113185	7位
-	$parts[]	= base_convert($time * ((($salt%60)?:60) + 10), 10, 36);							//	2046年	7位
+	$parts[]	= base_convert($time * ((($salt%60)?:60) + 10), 10, 36);								//	2046年	7位
 	$parts[]	= base_convert(((($time % 183868) ?: 183868) * $salt3 + $content_id) * $salt2, 10, 36);	//  695186871	7位
 	$parts[]	= $salt_36[1];		 
 	 
 	$str = strtr(implode('', $parts), 'g', '_');
 
-	$a 	= mt_rand(97, 121);
+	$a 	= mt_rand(97, 122);
 	$b 	= mt_rand(97, 121); 
 	$timeline 	= (($a%2 == 0)?chr($a):chr($a+1)).$str;
 	$friend 	= (($b%2 == 1)?chr($b):chr($b+1)).$str;
 	
-	return ['timeline' => $timeline, 'friend' => $friend];
-	
+	return ['timeline' => $timeline, 'friend' => $friend];	
 }
 
-function shareid_decode($shareid)
+function share_decode($shareid)
 {
-	
-	
 	$param['share_type']	= ord($shareid[0])%2;
 	
 	$shareid = strtr($shareid, '_', 'g');
@@ -147,7 +148,7 @@ function shareid_decode($shareid)
 		$salt2 = 108 - $salt;		//	range:	71-21
 		$salt3 = 120 - $salt;		//	range:	83-33		
 	
-	} elseif ($salt < 130){
+	} elseif ($salt < 130) {
 		// $salt2 < $salt3 差值 13
 		$salt2 = 183 - $salt;	//	range:	95-54
 		$salt3 = 196 - $salt;	//	range:	108-67
@@ -155,7 +156,7 @@ function shareid_decode($shareid)
 		//$salt2 > $salt3 差值 1-11			
 		$salt2  = ($salt%108)?:108;		// 	range: 	22-108
 		$salt3  = ($salt%109)?:109;	 	//	range:	21-107
-		
+
 		// special process
 		if ($salt2 < 21 ) {
 			$salt2 = 59 - $salt2;		//	range:	(58-39) +  (21-30)

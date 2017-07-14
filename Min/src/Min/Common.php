@@ -69,10 +69,10 @@ function t($string, array $args = [], array $options = [])
 
 function view(array $result = [])
 {
-	if (empty($result['template_path'])) {
-		$result['template_path'] =   implode('/', ['', App::getModule(), App::getController(), App::getAction()]);
+	if (empty($result['template'])) {
+		$result['template'] =   implode('/', ['', App::getModule(), App::getController(), App::getAction()]);
 	}
-	require VIEW_PATH. $result['template_path']. VIEW_EXT;
+	require VIEW_PATH. $result['template']. VIEW_EXT;
 }
 
 function autoload($class)
@@ -544,7 +544,7 @@ function final_response($result, $layout) {
 				if (!isset($layout[7])) $layout .= App::getModule(); 
 				require VIEW_PATH. '/layout/'. $layout. VIEW_EXT;
 			} else {
-				if (!empty($layout)) $result['template_path'] = $layout;
+				if (!empty($layout)) $result['template'] = $layout;
 				view($result);
 			} 
 			

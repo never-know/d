@@ -113,6 +113,9 @@ class Controller
 				
 				case self::EXITNONE :
 				default	:
+					if (20106 == $result['statusCode']) {
+						$result['body']['template'] = '/layout/reload';
+					}
 					return $result;
 			}
  

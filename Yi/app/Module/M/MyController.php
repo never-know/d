@@ -46,13 +46,15 @@ class MyController extends \App\Module\M\BaseController
 	
 	public function message_get()
 	{
-		$this->success([]);
+		$list = $this->request('\\App\\Service\\Message::list', session_get('USER_ID'));
+		$this->response($list);
 	
 	}
 	
 	public function share_get()
 	{
-		$this->success([]);
+		$list = $this->request('\\App\\Service\\Share::logs', session_get('USER_ID'));
+		$this->response($list);
 	
 	}
 	

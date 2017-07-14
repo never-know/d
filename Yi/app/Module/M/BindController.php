@@ -12,8 +12,8 @@ class BindController extends \App\Module\M\BaseController
 		if ($binded) {
 			$result['statusCode'] 		= 30200;
 			$result['message'] 			= '帐号已绑定手机号码';
-			$result['body']['template_path'] 	= '/bind/binded';
-			$result['body']['phone'] 			= session_get('user')['phone'];
+			$result['body']['template'] 	= '/bind/binded';
+			$result['body']['phone'] 		= session_get('user')['phone'];
 			$this->response($result);
 		}	
 	}
