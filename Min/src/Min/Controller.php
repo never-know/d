@@ -103,11 +103,11 @@ class Controller
 			switch ($exit_on_error) {
 				case self::EXITALL :
 				case self::EXITOK :
-					if (0 === $result['statusCode']) {
+					if (1 == $result['statusCode']) {
 						$this->success($result['message']);
 					}
 				case self::EXITERROR :
-					if (0 !== $result['statusCode']) {
+					if (1 != $result['statusCode']) {
 						$this->error($result['message'], $result['statusCode']);
 					}
 				
@@ -143,7 +143,7 @@ class Controller
 	
 	final public function success($body = [], $layout = 'layout_')
 	{	
-		$result = ['statusCode' => 0, 'message' => '操作成功'];
+		$result = ['statusCode' => 1, 'message' => '操作成功'];
  
 		if (!empty($body)) {
 			if (is_string($body)) {
@@ -158,6 +158,10 @@ class Controller
 
 	final public function error($message, $code, $layout = 'layout_')
 	{	
+		if ($code < 2) {
+			throw new \Exception('code should greater than 1', 12000);
+		}
+		
 		final_response(['statusCode' => $code, 'message' => $message], $layout);
 	}
 	

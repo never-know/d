@@ -10,7 +10,7 @@ class Service
 	
 	final public function success($body = [], $message = '操作成功')
 	{	
-		$result = ['statusCode' => 0, 'message' => '操作成功'];
+		$result = ['statusCode' => 1, 'message' => '操作成功'];
 		
 		if (!empty($body)) {
 			if (is_string($body)) {
@@ -24,6 +24,9 @@ class Service
 
 	final public function error($message, $code)
 	{	
+		if ($code < 2) {
+			throw new \Exception('code should greater than 1', 12000);
+		}
 		return ['statusCode' => $code, 'message' => $message];
 	}
 	

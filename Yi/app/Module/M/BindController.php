@@ -37,7 +37,7 @@ class BindController extends \App\Module\M\BaseController
 		
 		$user = $this->request('\\App\\Service\\Account::addUserByWx', $regist_data);
 		
-		if (0 === $user['statusCode']) {
+		if (1 == $user['statusCode']) {
 			$this->initUser($user['body']);
 			$this->success('绑定成功');
 		} else {
@@ -53,7 +53,7 @@ class BindController extends \App\Module\M\BaseController
 		 
 		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', $phone);
 
-		if (0 === $exit_result['statusCode']) {
+		if (1 == $exit_result['statusCode']) {
 			if (!empty($exit_result['body']['wx_id']) || 2 == $exit_result['body']['user_type']) {
 				$this->error('该手机号码已被注册', 30205);
 			}  

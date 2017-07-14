@@ -51,7 +51,7 @@ class ShareService extends \Min\Service
 	{
 		$check = $this->check($data['sid']);
 		
-		if (0 !== $check['statusCode'] || $check['body']['content_id'] != $data['content_id'] || $data['current_user'] == $check['body']['user_id']) {	
+		if ($check['statusCode'] != 1 || $check['body']['content_id'] != $data['content_id'] || $data['current_user'] == $check['body']['user_id']) {	
 		
 			return $this->success();	//$data['salary'] = $data['sid'] = $check['body']['user_id'] = 0;
 		}
@@ -219,7 +219,7 @@ class ShareService extends \Min\Service
 	{
 		$check = $this->check($data['sid']);
 		
-		if (0 !== $check['statusCode'] || $check['body']['content_id'] != $data['content_id'] || $data['current_user'] == $check['body']['user_id']) {	
+		if ($check['statusCode'] != 1 || $check['body']['content_id'] != $data['content_id'] || $data['current_user'] == $check['body']['user_id']) {	
 		
 			return $this->success();	//$data['salary'] = $data['sid'] = $check['body']['user_id'] = 0;
 		}

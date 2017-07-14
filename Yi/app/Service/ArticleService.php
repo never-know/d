@@ -198,7 +198,7 @@ class ArticleService extends \Min\Service
 		
 		$result = $this->commonList($sql_count, $sql_list);
 		
-		if ($result['statusCode'] !== 0) {
+		if ($result['statusCode'] != 1) {
 			return $result;
 		}
  	

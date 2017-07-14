@@ -499,7 +499,7 @@ Min.event.bind('buttons','click',{handler: function(e){
 					id:_$('article_id').value
 				},
 				success: function(data){
-					if(data.statusCode == 0) {
+					if(data.statusCode == 1) {
 						if (t.id == 'article_preview') {
 							easyDialog.open({
 							  container : 'iframe',

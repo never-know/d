@@ -81,15 +81,16 @@ class WuserService extends \Min\Service
 		
 		$check = $this->checkAccount($data['open_id']);
 		 
-		if (0 !== $check['statusCode'] && 30206 != $check['statusCode']) {
+		if (1 != $check['statusCode'] && 30206 != $check['statusCode']) {
 			return $check;	
 		}
 		 
-		if (0 === $check['statusCode'] && 2 == $data['subscribe_status']) {
+		if (1 == $check['statusCode'] && 2 == $data['subscribe_status']) {
 			return $check;	
 		}
+		
 		/*
-		if (0 === $check['statusCode'] && 3 == $check['body']['subscribe_status']) {
+		if (1 == $check['statusCode'] && 3 == $check['body']['subscribe_status']) {
 			return $check;	
 		}
 		*/
@@ -177,6 +178,13 @@ class WuserService extends \Min\Service
 		if (empty($result)) {
 			return $this->error('注册失败', 30204);
 		}
+		
+		$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
+		if (1 == $check['statusCode']) {
+			$this->cache()->delete($this->getCacheKey('wx_id', $check['body']['wx_id']));		//清理 缓存
+		}
+		
+		 
 		
 		/* account not exist*/
 		

@@ -21,7 +21,7 @@ class RegistController extends \Min\Controller
 		
 		$exit_result = $this->request('\\App\\Service\\Account::checkAccount', $phone);
 
-		if (0 === $exit_result['statusCode']) {
+		if (1 == $exit_result['statusCode']) {
 			$this->error('该手机号码已被注册', 30205);
 		} 
 		

@@ -308,7 +308,7 @@ height:80px;
 						},
 						success: function(data){
 							
-							if(data.statusCode == 0) {
+							if(data.statusCode == 1) {
 								//window.location.href = '/article/list.html'
 							}else{
 								_$('article_submit').setAttribute("sindex", 0);
@@ -358,7 +358,7 @@ diy_select.prototype={
 		Min.css.addClass('diy_select_list_loading', THAT.l[0]);
 		JSONP.get( 'http://www.' + site_domain + '/region/id/0.html', {}, function(data){
 			Min.css.removeClass('diy_select_list_loading', THAT.l[0]);
-			if(data.statusCode == 0 ){
+			if(data.statusCode == 1 ){
 				for(var i=0; i<data.body[0].length; i++) {
 				 var li = document.createElement("li");
 	   		 li.setAttribute("sid", data.body[0][i].id);
@@ -421,7 +421,7 @@ diy_select.prototype={
 				if(!region[key]){
 					Min.css.addClass('diy_select_list_loading', THAT.l[index+1]);
 					JSONP.get( 'http://www.' + site_domain + '/region/id/'+key+'.html', {}, function(data){
-						if(data.statusCode == 0 ){
+						if(data.statusCode == 1 ){
 							region[key]= data.body[key];
 							Min.css.removeClass('diy_select_list_loading', THAT.l[index+1]);
 							THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key)

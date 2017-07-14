@@ -378,7 +378,7 @@ function code_check(){
 		 
 	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {captcha:code,type:'reg'}, function(data){
 			if(_$('regcode').value != code) return;
-			 if( data.statusCode == 0 ) { 
+			 if( data.statusCode == 1 ) { 
 				code_tag(1);
 			 } else {
 				code_tag(2);
@@ -467,7 +467,7 @@ Min.event.bind('getcode','click',function(e){
 			csrf_token:this.getAttribute('token')
 		},
 		success: function(data){
-			if(data.statusCode == 0) {
+			if(data.statusCode == 1) {
 				setTimeout(countDown, 1000);
 			}else{
 			
@@ -576,7 +576,7 @@ var phone = _$('regphone').value, code = _$('regcode').value, mcode = _$('regmco
 			csrf_token:token
 		},
 		success: function(data){
-			if(data.statusCode == 0) {
+			if(data.statusCode == 1) {
 				window.location.href = 'http://www.' + site_domain;
 			}else{
 				_$('regsubmit').setAttribute("sindex", 0);

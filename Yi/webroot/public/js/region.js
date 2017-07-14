@@ -59,7 +59,7 @@ diy_select.prototype={
 				if(!region[key]){
 					Min.css.addClass('diy_select_list_loading', THAT.l[index+1]);
 					JSONP.get( 'http://www.' + site_domain + '/region/id/'+key+'.html', {}, function(data){
-						if(data.statusCode == 0 ){
+						if(data.statusCode == 1){
 							region[key]= data[key];
 							Min.css.removeClass('diy_select_list_loading', THAT.l[index+1]);
 							THAT.l[index+1].getElementsByTagName('li')[0].setAttribute('rid', key)

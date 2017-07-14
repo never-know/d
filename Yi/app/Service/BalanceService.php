@@ -115,7 +115,7 @@ class BalanceService extends \Min\Service
 		
 		$result = $this->commonList($count, $sql_list);
 		
-		if (0 === $result['statusCode']) {
+		if (1 == $result['statusCode']) {
 			$result['body']['summary'] = $money
 		}
 		

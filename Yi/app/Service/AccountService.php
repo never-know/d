@@ -82,7 +82,7 @@ class AccountService extends \Min\Service
 	{
 		$check = $this->checkAccount($data['phone']);
 		
-		if (0 == $check['statusCode']) {
+		if (1 == $check['statusCode']) {
 			return $this->error('该手机号码已被注册', 30205);
 		} elseif ($check['statusCode'] != 30206) {
 			return $check;
@@ -98,7 +98,7 @@ class AccountService extends \Min\Service
 				'password' 		=> "'" . $data['passwordhash']) . "'"
 			];
 		
-			$sql = 'INSERT INTO {{user}} ' . build_query_insert($ins_data);
+			$sql = 'INSERT IGNORE INTO {{user}} ' . build_query_insert($ins_data);
 			
 			$result =  $this->query($sql);
 			
@@ -113,7 +113,8 @@ class AccountService extends \Min\Service
 					'drawing'		=> 0
 				];
 				
-				$balance_sql = 'INSERT IGNORE INTO {{advertiser_balance' . $ins_data['user_type'] . '}} ' . build_query_insert($balance_data);
+				//$balance_sql = 'INSERT IGNORE INTO {{advertiser_balance' . $ins_data['user_type'] . '}} ' . build_query_insert($balance_data);
+				$balance_sql = 'INSERT IGNORE INTO {{user_balance}} ' . build_query_insert($balance_data);
 				
 				$db->query($balance_sql);
 			
@@ -140,7 +141,7 @@ class AccountService extends \Min\Service
 		
 		$check = $this->checkAccount($phone);
 		
-		if (0 === $check['statusCode']) {
+		if (1 == $check['statusCode']) {
 			if (!empty($check['body']['open_id']) || 2 === $check['body']['user_type']) {
 				return $this->error('该手机号码已被绑定', 30205);
 			} 
@@ -218,7 +219,7 @@ class AccountService extends \Min\Service
 	{
 		$result = $this->checkAccount($params['name']);
 		
-		if ($result['statusCode'] !== 0) {
+		if ($result['statusCode'] != 1) {
 			return $result;
 		}
 		
@@ -233,7 +234,7 @@ class AccountService extends \Min\Service
 	{
 		$result = $this->checkAccount($params['user_id'], 'uid');
 		
-		if ($result['statusCode'] !== 0) {
+		if ($result['statusCode'] != 1) {
 			return $result;
 		}
 		

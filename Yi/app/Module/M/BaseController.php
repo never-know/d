@@ -65,12 +65,12 @@ class BaseController extends \Min\Controller
 		if (empty($logged)) {
 			
 			$result = $this->request('\\App\\Service\\Wuser::login', $open_id);	// 登陆
-			if (0 === $result['statusCode']) {
+			if (1 == $result['statusCode']) {
 				session_set('logged', 1);
 				$user = $result['body'];
 				$this->initUser($user);
 				
-			} elseif (30206 === $result['statusCode'] && 2 === $redirect ) {
+			} elseif (30206 == $result['statusCode'] && 2 === $redirect ) {
 				$user						= [];
 				$user['wx_ip']				= ip_address();
 				$user['parent_id']			= 0;

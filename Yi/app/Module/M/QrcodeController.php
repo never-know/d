@@ -45,8 +45,6 @@ class QrcodeController extends \App\Module\M\BaseController
 		exit;
 	}
 	 
-	 
-
 	public function getQRCode($scene_id, $default = null)
 	{
 		$cache 	= $this->cache('qrcode');

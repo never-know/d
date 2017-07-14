@@ -77,7 +77,7 @@ Min.event.bind('loginsubmit','click', function(){
 				csrf_token : _$('csrf_token').value
 			},
 			success: function(data){
-				if(data.statusCode == 0 ){
+				if(data.statusCode == 1){
 					/* 
 					var ReturnUrl = Min.util.getQueryString('ReturnUrl');
 					var location = 'http://www.' + site_domain;
@@ -169,7 +169,7 @@ function code_check(){
 	current_code = code;
 	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {captcha:code,type:'login'}, function(data){
 			if(_$('logincode').value != code) return;
-			 code_tag((data.statusCode==0?1:2))
+			 code_tag(((data.statusCode==1)?1:2))
 		 }
 	); 
 }

@@ -80,7 +80,7 @@ class WxController extends \Min\Controller
 			$this->text('谢谢您再次关注，您可以先<a href="https://m.anyitime.com/bind.html" > 绑定手机号码 </a>, 祝您生活愉快');
 		} elseif ($add['statusCode'] == 30207) {
 			$this->text('谢谢您再次关注, 祝您生活愉快');
-		} else ($add['statusCode'] == 30208 || ($add['statusCode'] === 0) ) {
+		} else ($add['statusCode'] == 30208 || $add['statusCode'] == 1 ) {
 			$this->text('谢谢关注，您可以先<a href="https://m.anyitime.com/bind.html" >绑定手机号码</a>,祝您生活愉快');
 		} else {
 			watchdog($param, 'wx_subscribe_error', 'ERROR', $add);

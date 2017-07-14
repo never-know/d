@@ -72,7 +72,7 @@ class TestService extends \Min\Service
 	{
 		if (!empty($data['pid'])) {
 			$parent = $this->checkAccount($data['pid']);
-			if (0 != $parent['statusCode'] || empty($parent['phone']) || $parent['openid'] == $data['openid']) {
+			if ($parent['statusCode'] != 1 || empty($parent['phone']) || $parent['openid'] == $data['openid']) {
 				$data['pid'] = 0;
 			}
 		} else {
@@ -81,7 +81,7 @@ class TestService extends \Min\Service
 		/*
 		$check = $this->checkAccount($data['openid']);
 		
-		if (0 == $check['statusCode']) {
+		if (1 == $check['statusCode']) {
 			$code = (empty($check['phone']) ? 30205 : 30207);
 			return $this->error('该微信帐号已注册', $code);
 		} elseif ($check['statusCode'] != 30206) {
@@ -109,7 +109,7 @@ class TestService extends \Min\Service
 	{
 		$result = $this->checkAccount($params, true);
 		
-		if ($result['statusCode'] !== 0) {
+		if ($result['statusCode'] != 1) {
 			return $result;
 		} else {
 			$this->initUser($result['body']);

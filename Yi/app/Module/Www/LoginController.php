@@ -40,7 +40,7 @@ class LoginController extends \Min\Controller
 
 		$login =  $this->request('\\App\\Service\\Account::login', ['phone' => $phone, 'pwd' => $pwd]);
 		 
-		if (0 === $login['statusCode']) {	
+		if (1 == $login['statusCode']) {	
 			session_set('loginerror', null);
 			$this->success('登陆成功');
 			
