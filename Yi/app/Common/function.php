@@ -34,6 +34,9 @@ function withdraw_account_info($value)
 		if ($email === false ) {
 			$start = 3;
 			$length = 4;
+		} elseif($email < 4) { // abc@qq.com
+			$start = 1;
+			$length = $email-1;
 		} else {
 			$start = 3;
 			$length = $email-3;
