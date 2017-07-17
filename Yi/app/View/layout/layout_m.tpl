@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0,user-scalable=0">
-		<title><?=$result['meta']['title'];?></title>
+		<title><?=($result['meta']['title']?:'安逸时光 美丽分享');?></title>
 		<?php if(!empty($result['meta']['description'])) : ?>
 		<meta name="description" content="<?=$result['meta']['description'];?>">
 		<?php endif;?>

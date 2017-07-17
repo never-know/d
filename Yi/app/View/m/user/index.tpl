@@ -4,11 +4,11 @@
       <div class="weui_panel_bd">
         <a href="/user/profile.html" class="weui_media_box weui_media_appmsg" style="padding: 12px 15px 12px 22px;">
           <div class="weui_media_hd">
-            <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
+            <img class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>" alt="">
           </div>
           <div class="weui_media_bd" style="margin-left:.5em;margin-top:4px;letter-spacing: 0px;">
-            <h4 class="weui_media_title">Noota</h4>
-            <p class="weui_media_desc" style="font-size:15px;">18357193201</p>
+            <h4 class="weui_media_title"><?=$result['nickname'];?></h4>
+            <p class="weui_media_desc" style="font-size:15px;"><?=session_get('user')['phone'];?></p>
           </div>
 		   <div class="weui_media_hd" id="qrcode" style="text-align: right;margin-right: 0;">
             <img class="weui_media_appmsg_thumb" src="/public/images/abc.png"  style="width:36px;vertical-align: middle;" alt="">
@@ -24,14 +24,14 @@
 	<div class="weui-row weui-no-gutter" style="position:relative;background:#fff;">
       <a class="weui-col-50 col-50-first" href="/balance/detail/today.html">
 		<div>
-			<p>50.25</p>
+			<p><?=$result['today_salary']/100;?></p>
 			<span>今日收益(元)</span>
 		</div>
 		</a>
 		
-      <a class="weui-col-50" href="/balance/income.html">
+      <a class="weui-col-50" href="/balance.html">
 	  <div>
-		<p>1000.75</p>
+		<p><?=$result['account_balance']/100;?></p>
 		<span>帐户余额(元)</span>
 	</div>
 	  </a>
@@ -77,7 +77,7 @@
           <div class="weui_cell_bd weui_cell_primary">
             <p>我的收益</p>
           </div>
-          <div class="weui_cell_ft">3000</div>
+          <div class="weui_cell_ft"><?php if($result['today_salary']>0){echo ($result['today_salary']/100);} ?></div>
         </a>
 		<a class="weui_cell" href="/balance.html">
           <div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>
@@ -146,7 +146,7 @@
 			
 			    $.modal({
 				  title: '扫描二维码<p>关注 <span style="color:red;">安逸时光网</span> 微信公众号',
-				  text: '<img src="http://m.anyitime.com/public/images/avater.png" style="position:relative;width:100%;" />',
+				  text: '<img src="https://m.anyitime.com/public/images/qrcode.png" style="position:relative;width:100%;" />',
 				  buttons: [
 					{ text: "关闭", className: "primary"},
 				  ]

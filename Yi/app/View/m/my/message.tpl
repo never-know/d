@@ -36,7 +36,7 @@
 			-->
 			
 		<?php else :?>
-		<h3 style="text-align:center;margin-top:30px;">暂无消息</h3>
+		<h3 calss="no-date">暂无消息</h3>
 		
 		<?php endif;?>
 	</div>

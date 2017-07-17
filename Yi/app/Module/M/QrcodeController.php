@@ -41,8 +41,10 @@ class QrcodeController extends \App\Module\M\BaseController
 			$img = $this->getQRCode($scene_id, $img);
 		} 
 		
-		redirect($img);
-		
+		//redirect($img);
+		header("Content-Type:image/jpg"); 
+		echo file_get_contents($img); 
+
 		exit;
 	}
 	 
@@ -53,12 +55,19 @@ class QrcodeController extends \App\Module\M\BaseController
 		
 		if (empty($result) || $cache->getDisc() === $result) { 
 		
-			$result = $this->getWX()->getQRCode($scene_id);
+			$wx 	= $this->getWX();
+			$result = $wx->getQRCode($scene_id);
+			if (!empty($result['ticket'])) {
 			
-			if (!empty($result)) {
-				$cache->set('qrcode_'. $scene_id, $result, $result['expire_seconds']);
-			}	
+				$img = http_get($wx->getQRUrl($result['ticket']));
+				if (!empty($img)) {
+					$result['img_path'] = PUBLIC_PATH . '/qrcode/' . $scene_id . '.jpg';
+					file_put_contents($result['img_path'], $img);
+					$cache->set('qrcode_'. $scene_id, $result, $result['expire_seconds']);
+				}
+			}
 		}
-		return $result['url']?:$default;
+		
+		return $result['img_path']?:$default;
 	}
 }
