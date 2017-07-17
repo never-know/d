@@ -113,7 +113,7 @@ class ShareService extends \Min\Service
 
 			$params['view_time'] 	= intval($data['view_time']);
 			$params['share_salary'] = $check['body']['share_salary'];
-			$params['share_id'] 	= $check['body']['share_id']);
+			$params['share_id'] 	= $check['body']['share_id'];
 			$params['adv_id'] 		= $check['body']['adv_id'];
 			$params['adv_cost'] 	= $check['body']['adv_cost'];
 			
@@ -127,7 +127,7 @@ class ShareService extends \Min\Service
 				return $this->success();
 			}
 			
-			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1 WHERE share_id = '. $check['body']['share_id']);
+			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1 WHERE share_id = '. $check['body']['share_id'];
 			$db->query($sql);
  			  
 
@@ -307,7 +307,7 @@ class ShareService extends \Min\Service
 
 			$params['view_time'] 	= intval($data['view_time']);
 			$params['share_salary'] = $check['body']['share_salary'];
-			$params['share_id'] 	= $check['body']['share_id']);
+			$params['share_id'] 	= $check['body']['share_id'];
 			$params['adv_id'] 		= $check['body']['adv_id'];
 			$params['adv_cost'] 	= $check['body']['adv_cost'];
 			
@@ -325,7 +325,7 @@ class ShareService extends \Min\Service
 				return $this->success();
 			}
 
-			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1 WHERE share_id = '. $check['body']['share_id']);
+			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1 WHERE share_id = '. $check['body']['share_id'];
 			$db->query($sql);
 			
 			$balance_log = [];

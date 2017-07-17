@@ -49,7 +49,7 @@ class Service
 			if ($param === true || $throwable === true) {
 				throw $t;
 			} else {
-				watchdog($t);
+				watchdog($t, 'query_error', 'ERROR');
 				$result =  false;			
 			}
 		}

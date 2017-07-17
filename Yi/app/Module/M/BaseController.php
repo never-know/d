@@ -14,7 +14,7 @@ class BaseController extends \Min\Controller
 		}
 		
 		if (empty($open_id)) {
-			wacthdog('can not get opend id ', 'wx_openid_error', 'ERROR');			
+			watchdog('can not get opend id ', 'wx_openid_error', 'ERROR');			
 			exit('');
 		}
 		

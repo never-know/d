@@ -105,7 +105,7 @@ class MysqliPDO
 	{
 		//$sql = strtr($sql, ['{{' => $this->conf[$this->active_db]['prefix'][$this->prefix_key], '}}' => '']);
 		if (is_array($sql)) {
-			return $this->createTable($sql)
+			return $this->createTable($sql);
 		} else {
 			$sql = preg_replace('/\{\{([a-z_]+)\}\}/', $this->conf[$this->active_db]['prefix'][$this->prefix_key] . '$1', $sql, 10);
 		}
