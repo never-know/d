@@ -45,13 +45,16 @@ padding-top: 4px;
             console.log("close");
           },
           actions: [
+		  <?php foreach ($result['body'] as $value) : ?>
             {
-              text: "支付宝",
+              text: "<?=withdraw_account_info($value);?>",
               className: "color-primary",
               onClick: function() {
-                $('#account').value(1);
+                $('#account').value(<?=$value['account_type'];?>);
               }
             },
+			<?php endforeach;?>
+			 /*
             {
               text: "微信",
               className: "color-warning",
@@ -66,11 +69,12 @@ padding-top: 4px;
                 $.alert("你选择了“删除”");
               }
             },
+			*/
 			{
               text: "添加新帐号",
               className: 'color-danger',
               onClick: function() {
-                $.alert("你选择了“删除”");
+                $.alert("添加新帐号");
               }
             },
 			

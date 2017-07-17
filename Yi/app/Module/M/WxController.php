@@ -146,8 +146,7 @@ class WxController extends \Min\Controller
 			return (array)simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
 		} else {
 			exit('');
-		}
-		 
+		}	 
 	}
 
 	/**
@@ -427,8 +426,4 @@ class WxController extends \Min\Controller
 	{
 		exit('error');
     }
-	
-	
-
-
 }

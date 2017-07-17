@@ -16,7 +16,7 @@
 		     </div>
 		  　
 		   <div class="weui_panel_ft" style="padding:0;">
-		    <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="" style="width:50px;">
+		    <img class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>" alt="" style="width:50px;">
 		   </div>
         </a>
      
@@ -31,31 +31,31 @@
           <div class="weui_cell_bd weui_cell_primary">
             <p>昵称</p>
           </div>
-          <div class="weui_cell_ft weui_cell_ft_fix" id="nick">Noota</div>
+          <div class="weui_cell_ft weui_cell_ft_fix" id="nick"><?=$result['nickname'];?></div>
         </div>
         <div class="weui_cell" href="javascript:;">
           <div class="weui_cell_bd weui_cell_primary">
             <p>手机号码</p>
           </div>
-          <div class="weui_cell_ft weui_cell_ft_fix">18357193201</div>
+          <div class="weui_cell_ft weui_cell_ft_fix"><?=session_get('user')['phone'];?></div>
         </div>
     </div>
 	
 	<div class="weui_cells">
-		<div class="weui_cell" href="javascript:;">
+		<div class="weui_cell" href="javascript:;" id="qrcode">
 		
           <div class="weui_cell_bd weui_cell_primary">
             <p>二维码名片</p>
           </div>
           <div class="weui_cell_ft" style="height: 24px;">
-		  <img src="/public/images/icon_nav_button.png" alt="" width="24">
+		  <img src="/public/images/abc.png" alt="" width="24">
           </div>
         </div>
     </div>
 	
 	<div class="weui_cells weui_cells_access">
 
-        <div class="weui_cell" href="javascript:;" >
+        <div class="weui_cell hide" href="javascript:;" >
           <div class="weui_cell_bd weui_cell_primary">
             <p>常用搜索地址</p>
           </div>
@@ -94,4 +94,18 @@
         },  $('#nick').html());
       });
 	</script>
+	 <script>
+		 $(document).on("click", "#qrcode", function() {
+			$.modal({
+			  title: '扫描二维码<p>关注 <span style="color:red;">安逸时光网</span> 微信公众号',
+			  text: '<img src="https://m.anyitime.com/public/images/qrcode.png" style="position:relative;width:100%;" />',
+			  buttons: [
+				{ text: "关闭", className: "primary"},
+			  ]
+			});
+		
+		
+		return false;
+	  });
+	 </script>
 

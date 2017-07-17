@@ -44,10 +44,10 @@ class BaseController extends \Min\Controller
 		}
 	}
  
-	final public function getWX()
+	final public function getWX($type= 'anyitime')
 	{
 		require VENDOR_PATH. '/Wx/WxBase.php';
-		return new \WeBase('anyitime');
+		return new \WeBase($type);
 	}
 	
 	/*

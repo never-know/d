@@ -18,6 +18,34 @@ function message_icon($key = null)
 	return $key ? $arr[$key] : $arr;
 }
 
+function withdraw_account_info($value)
+{
+
+	static $arr = [1 => '支付宝', 2 => '微信'];
+	
+	
+	$result = $value['real_name'] . '<br>';
+	$result .=  (($value['account_type'] == 3) ? $value['extra'] : $arr[$value['account_type']]);
+	$result .= '&nbsp;&nbsp;' 
+	if ($value['account_type'] == 3) {
+		$info = '尾号&nbsp;&nbsp;' . substr($value['account_name'], -4);
+	} else {
+		$email = strpos($value['account_name'], '@');
+		if ($email === false ) {
+			$start = 3;
+			$length = 4;
+		} else {
+			$start = 3;
+			$length = $email-3;
+		}
+		
+		//$info = substr($value['account_name'], 0 ,3) . '****' . substr($value['account_name'], $email);
+		$info = substr_replace($value['account_name'], '****', $start, $length);
+	}	
+	
+	return $result.$info;
+}
+
 function region_get($region_id)
 {
 	static $region;

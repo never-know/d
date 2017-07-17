@@ -34,14 +34,16 @@
 	
 	<div class="page-hd ">
         <h1 class="page-hd-title" style="margin-bottom:0;padding-bottom:0;">
-            <strong style="font-size: 24px;padding-top:-2px;">￥</strong>1999.62
+            <strong style="font-size: 24px;padding-top:-2px;">￥</strong><?=($result['summary'][0]/100);?>
         </h1>
-         <p class="page-hd-desc">2017-3-6</p>
+         <p class="page-hd-desc"><?=($result['date']);?></p>
     </div>
 	
  
 <div class="weui_cells balance-detail">
 	<ul>
+		<?php if (!empty($result['list'])) : ?>
+		<?php foreach ($result as $value) : ?>
         <li class="weui_cell" href="/share/log.html">
 			<div class="share_clock"> 12:30 </div>
 			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
@@ -51,6 +53,11 @@
           </div>
           <div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">+ 0.2</div>
         </li>
+		<?php endforeach; ?>
+		<?php else : ?>
+			<h3 class="no-data">暂无记录</h3>
+		<?php endif; ?>
+		<!--
 		<li class="weui_cell" href="/share/log.html">
 			<div class="share_clock"> 12:30 </div>
 			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
@@ -87,5 +94,6 @@
           </div>
           <div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">+ 0.2</div>
         </li>
+		-->
 		</ul>
 	</div>	

@@ -5,7 +5,8 @@
 	</div>
  
 	<div class="weui_cells weui_cells_access">
-
+		<?php if (!empty($result['list'])) : ?>
+		<?php foreach ($result['list'] as $value) :?>
         <a class="weui_cell" href="/balance/items.html">
           <div class="weui_cell_hd"><img src="/public/images/credit.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
@@ -13,6 +14,13 @@
           </div>
           <div class="weui_cell_ft"></div>
         </a>
+		<?php endforeach; ?>
+		
+		<?php else :?>
+				<h3 calss="no-date">暂无记录</h3>
+		<?php endif;?>
+		
+		<!--
 		<a class="weui_cell" href="/balance/income.html">
           <div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
@@ -27,6 +35,7 @@
           </div>
           <div class="weui_cell_ft">&nbsp;</div>
         </a>
+		->
 	</div>
 	 
  

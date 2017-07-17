@@ -20,8 +20,8 @@ class DrawService extends \Min\Service
 			return $this->error('参数错误', 30000);
 		}
 
-		$sql_count 	= 'SELECT count(1) as count FROM {{draw}} WHERE user_id = ' .$user_id . '  LIMIT 1';
-		$sql_list 	= 'SELECT * FROM {{draw}} WHERE user_id = ' .$user_id . ' ORDER BY draw_id DESC';
+		$sql_count 	= 'SELECT count(1) as count FROM {{user_draw}} WHERE user_id = ' .$user_id . '  LIMIT 1';
+		$sql_list 	= 'SELECT * FROM {{user_draw}} WHERE user_id = ' .$user_id . ' ORDER BY draw_id DESC';
 		
 		return $this->commonList($sql_count, $sql_list);
 	} 
@@ -78,7 +78,7 @@ class DrawService extends \Min\Service
 			$param['draw_status'] 	= 2;
 			$param['update_time'] 	= 0;
 	 
-			$draw_sql = 'INSERT INTO {{draw}} ' . query_build_insert($param);
+			$draw_sql = 'INSERT INTO {{user_draw}} ' . query_build_insert($param);
 			
 			$draw_result = $db->query($draw_sql);
 			
@@ -94,7 +94,7 @@ class DrawService extends \Min\Service
 			 
 			list($balance_log['post_day'], $balance_log['post_hour']) = explode(' ', date('ymd His', $param['draw_time']), 2);
 
-			$log_sql = 'INSERT INTO {{balance_log}} ' . query_build_insert($balance_log);
+			$log_sql = 'INSERT INTO {{user_balance_log}} ' . query_build_insert($balance_log);
 				
 			$log_result = $db->query($log_sql);
 
@@ -199,7 +199,72 @@ class DrawService extends \Min\Service
 
 			return $this->error('fail', 30204);
 		}
-	 
 	}
+	
+	
+	/* 提现帐户  */
+	
+	public function account($user_id)
+	{
+		$user_id = intval($user_id);
+		
+		if ($user_id < 1) {
+			return $this->error('参数错误', 30000);
+		}
+		
+		$sql = 'SELECT * FROM {{user_balance_account}} WHERE status = 1 and user_id = ' . $user_id;
+		$result = $this->query($sql);
+		if (false === $result) {
+			return $this->error('操作失败', 20106);
+		} else {
+			return $this->success($result);
+		}
+	}
+	
+	
+	public function accountAdd($data)
+	{
+		$params = [];
+		$params['user_id'] 		= intval($data['user_id']);
+		$params['account_type'] = intval($data['account_type']);
+		
+		if ($params['user_id']  < 1 || !in_array($params['account_type'], [1, 2, 3], true)) {
+			return $this->error('参数错误', 30000);
+		}
+		
+		$params['account_id'] 	= trim($data['account_id']);
+		$params['account_name'] = trim($data['account_name']);
+		$params['extra'] 		= trim($data['extra']);
+		
+		if (!validate('account_id', $params['account_id']) || !validate('text', $params['account_name'], 20, 2) || !validate('text', $params['extra'], 20, 0)) {
+			return $this->error('参数错误', 30000);
+		}
+		
+		$sql = 'INSERT INTO {{user_balance_account}} ' . bulid_query_insert($params);
+		$result = $this->query($sql);
+		if ($result['id'] > 0) {
+			return $this->success();
+		} else {
+			return $this->error('操作失败', 10000);
+		}
+	}
+	
+	public function accountDel($data)
+	{
+		$params = [];
+		$params['account_id'] 	= intval($data['account_id']);
+		$params['user_id'] 		= intval($data['user_id']);
+		
+		$sql = 'UPDATE {{user_balance_account}} SET status = 0  WHERE ' .  build_query_common(' AND ', $params); 
+		
+		$result = $this->query($sql);
+		if ($result['effect'] > 0) {
+			return $this->success();
+		} else {
+			return $this->error('操作失败', 10000);
+		}
+	
+	}
+	
  
 }
