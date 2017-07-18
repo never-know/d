@@ -34,9 +34,24 @@
 	
 	<div class="page-hd ">
         <h1 class="page-hd-title" style="margin-bottom:0;padding-bottom:0;">
-            <strong style="font-size: 24px;padding-top:-2px;">￥</strong><?=($result['summary'][0]/100);?>
+            <strong style="font-size: 24px;padding-top:-2px;">￥</strong><?=($result['summary']['total']/100);?>
         </h1>
          <p class="page-hd-desc"><?=($result['date']);?></p>
+		  <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
+			<a class="weui-col-50 col-50-first" href="javascript:;">
+				<div>
+					<p><?=($result['summary']['share_part']/100);?></p>
+					<span>分享收益 (元)</span>
+				</div>
+			</a>
+		
+			<a class="weui-col-50" href="javascript:;">
+				<div>
+					<p><?=($result['summary']['team_part']/100);?></p>
+					<span>团队收益 (元)</span>
+				</div>
+			</a>
+		</div>
     </div>
 	
  

@@ -37,6 +37,7 @@ class UserController extends \App\Module\M\BaseController
 		
 		$today 		= $this->request('\\App\\Service\\Balance::today', $user_id);
 		$balance 	= $this->request('\\App\\Service\\Balance::account', $user_id);
+		session_set('user_balance', $balance);
 		
 		$result['today_balace'] 	= $today['body']['total'];
 		$result['account_balace'] 	= $balance['body']['balance'];
@@ -81,6 +82,16 @@ class UserController extends \App\Module\M\BaseController
 	{
 		$result['meta'] = ['title' =>' '];
 		$this->success($result);
+	}
+	
+	public function account_get()
+	{
+	
+	}
+	
+	public function account_post()
+	{
+	
 	}
 		
 }

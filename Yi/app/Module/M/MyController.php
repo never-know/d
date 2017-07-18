@@ -53,7 +53,9 @@ class MyController extends \App\Module\M\BaseController
 	
 	public function share_get()
 	{
-		$list = $this->request('\\App\\Service\\Share::logs', session_get('USER_ID'));
+		$list 	= $this->request('\\App\\Service\\Share::logs', session_get('USER_ID'));
+		$readed = $this->request('\\App\\Service\\Share::readed', session_get('USER_ID'));
+		$list['body']['readed'] = $readed['body']['count'];
 		$this->response($list);
 	
 	}

@@ -26,14 +26,25 @@ class BindController extends \App\Module\M\BaseController
 	
 	public function index_post()
 	{
-		$phone 		= trim($_POST['phone']);
-		$smscode 	= trim($_POST['smscode']);
+		$params 			= [];
+		$params['init'] 	= 'bind';
+		$params['phone'] 	= trim($_POST['phone']);
+		$params['smscode'] 	= trim($_POST['smscode']);
 		
-		$this->check($phone);
+		$this->check($params['phone']);
 		
-		$this->request('\\App\\Service\\Sms::check', ['phone' => $phone, 'smscode' => $smscode], 'bind');
+		$this->request('\\App\\Service\\Sms::check', $params);
 		
-		$register_data	= ['phone' => $phone, 'register_time' => $_SERVER['REQUEST_TIME'], 'register_ip'=> ip_address(), 'wx_id' => session_get('wx_id'), 'open_id' => session_get('open_id'), 'balance_index' => intval(session_get('user')['balance_index'])];
+		$user = session_get('user');
+		
+		$register_data	= [
+			'phone' => $params['phone'], 
+			'register_time' => $_SERVER['REQUEST_TIME'], 
+			'register_ip'	=> ip_address(), 
+			'wx_id' 		=> $user['wx_id'], 
+			'open_id' 		=> $user['open_id'], 
+			'balance_index' => $user['balance_index'])
+		];
 		
 		$user = $this->request('\\App\\Service\\Account::addUserByWx', $regist_data);
 		

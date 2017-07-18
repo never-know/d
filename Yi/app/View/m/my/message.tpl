@@ -16,9 +16,12 @@
 			  <div class="weui_cell_ft"></div>
 			</a>
 			<?php endforeach;?>
-			
+		<?php else :?>
+			<h3 calss="no-date">暂无消息</h3>
+		
+		<?php endif;?>
 			 
-			<!--
+			<!-- template
 			<a class="weui_cell" href="/balance/income.html">
 			  <div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>
 			  <div class="weui_cell_bd weui_cell_primary">
@@ -35,10 +38,7 @@
 			</a>
 			-->
 			
-		<?php else :?>
-		<h3 calss="no-date">暂无消息</h3>
-		
-		<?php endif;?>
+	
 	</div>
 	 
  

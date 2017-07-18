@@ -10,8 +10,8 @@ class Upload
 		//'ext' => ['gif', 'jpg', 'jpeg', 'bmp', 'png'],
 		'ext' 		=> ['jpg', 'jpeg', 'png', 'gif'],
 		'size' 		=> 1048576,
-		'base_path' => \PUBLIC_PATH,
-		'host' 		=> '//'. \ASSETS_URL,
+		'base_path' => PUBLIC_PATH,
+		'host' 		=> ASSETS_URL,
 		'repalce' 	=> true
 	];
 

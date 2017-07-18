@@ -7,7 +7,7 @@
 	
 	date_default_timezone_set('Asia/Shanghai');
 
-	define('SERVER_NAME', $_SERVER['SERVER_NAME']);	
+	define('SERVER_NAME', $_SERVER['HTTP_HOST']);	
 	define('COOKIE_DOMAIN', SERVER_NAME);
 
 	define('APP_PATH', __DIR__);

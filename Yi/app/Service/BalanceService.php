@@ -5,7 +5,7 @@ use Min\App;
 
 class BalanceService extends \Min\Service
 {
-
+	/* 帐户余额 */
 	public function account()
 	{
 		$user_id 		= intval($user_id);
@@ -26,6 +26,8 @@ class BalanceService extends \Min\Service
 		
 	}
 	
+	/* 今日收益 */
+	
 	public function today($user_id)
 	{
 		$user_id 		= intval($user_id);
@@ -34,7 +36,7 @@ class BalanceService extends \Min\Service
 			return $this->error('参数错误', 30000);
 		}
 
-		$sql = 'SELECT sum(user_money) as total FROM {{user_balance_log}} WHERE user_id = ' . $user_id . ' and post_day = ' . date('ymd') . ' and (balance_type = 1 OR balance_type = 2) LIMIT 1';
+		$sql = 'SELECT sum(user_money) as total FROM {{user_balance_log}} WHERE user_id = ' . $user_id . ' AND post_day = ' . date('ymd') . ' AND ( balance_type = 1 OR balance_type = 2) LIMIT 1';
 		
 		$result = $this->query($sql);
 		if (!empty($result)) {
@@ -150,14 +152,14 @@ class BalanceService extends \Min\Service
 	public function dailyList($p)
 	{
 		$param				= [];
-		$param['user_id'] 	= intval($p['user_id']);
-		$param['post_day'] 	= intval($p['date']);
+		$param['l.user_id'] 	= intval($p['user_id']);
+		$param['l.post_day'] 	= intval($p['date']);
 		
-		if ($param['user_id'] < 1 || $param['post_day'] < 170803 || $param['post_day'] > 991230) {
+		if ($param['l.user_id'] < 1 || $param['l.post_day'] < 170803 || $param['l.post_day'] > 991230) {
 			return $this->error('参数错误', 30000);
 		}
 
-		$sql_count 	= 'SELECT count(1) as count, sum(money) as money, balance_type FROM {{user_balance_log}} WHERE ' . build_query_common(' AND ', $param) . ' AND (balance_type = 1 OR balance_type =2) GROUP BY balance_type';
+		$sql_count 	= 'SELECT count(1) as count, sum(l.money) as money, l.balance_type FROM {{user_balance_log}} AS l WHERE ' . build_query_common(' AND ', $param) . ' AND   l.balance_type in (2,3,4) GROUP BY l.balance_type';
 		
 		$summary = $this->query($sql_count);
 		
@@ -167,18 +169,22 @@ class BalanceService extends \Min\Service
 		
 		$count 	= 0;
 		
-		$money	= [0, 0, 0];
+		$money	= ['total' => 0, 'share_part' => 0, 'team_part' => 0];
 		
 		if (!empty($summary)) {
 		
 			foreach ($summary as $value) {
 				$count 		+= $value['count'];
-				$money[0] 	+= $value['money'];
-				$money[$value['balance_type']] = $value['money'];
+				$money['total'] 	+= $value['money'];
+				if (2 == $value['balance_type']) {
+					$money['share_part'] = $value['money'];
+				} else {
+					$money['team_part']  += $value['money'];
+				}
 			}
 		}
 		
-		$sql_list 	= 'SELECT * FROM {{user_balance_log}} WHERE ' . build_query_common(' AND ', $param) . ' ORDER BY log_id DESC';
+		$sql_list 	= 'SELECT l.*, s.content_icon, s.content_title, s.share_time, s.share_type FROM {{user_balance_log}} AS l LEFT JOIN {{user_share}} AS s ON l.balance_type = 2 AND l.second_relation = s.share_id WHERE ' . build_query_common(' AND ', $param) . ' AND l.balance_type in (2,3,4) ORDER BY l.log_id DESC';
 		
 		$result = $this->commonList($count, $sql_list);
 		

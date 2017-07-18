@@ -20,10 +20,8 @@ function message_icon($key = null)
 
 function withdraw_account_info($value)
 {
-
 	static $arr = [1 => '支付宝', 2 => '微信'];
-	
-	
+
 	$result = $value['real_name'] . '<br>';
 	$result .=  (($value['account_type'] == 3) ? $value['extra'] : $arr[$value['account_type']]);
 	$result .= '&nbsp;&nbsp;' 
@@ -31,14 +29,14 @@ function withdraw_account_info($value)
 		$info = '尾号&nbsp;&nbsp;' . substr($value['account_name'], -4);
 	} else {
 		$email = strpos($value['account_name'], '@');
-		if ($email === false ) {
-			$start = 3;
+		if (empty($email)) {		// phone
+			$start 	= 3;
 			$length = 4;
-		} elseif($email < 4) { // abc@qq.com
-			$start = 1;
-			$length = $email-1;
-		} else {
-			$start = 3;
+		} elseif ($email < 4) { 	// abc@qq.com a@b.com ab@b.com  
+			$start 	= max($email-1, 1);
+			$length = 1;
+		} else {					// abcd@qq.com
+			$start 	= 3;
 			$length = $email-3;
 		}
 		
@@ -82,7 +80,7 @@ function region_get($region_id)
 				fclose($fp);
 			}
 			 
-			watchdog(microtime(true)*1000-$time*1000);
+			watchdog(microtime(true)*10000-$time*10000);
  
 			$run = 1;
 		}
@@ -108,55 +106,46 @@ function share_encode($content_id)
 	$user_id = session_get('USER_ID');
 	
 	if (empty($user_id)) {
-		return '0';
+		return ['', ''];
 	}
 	
+	//zzzzzzz: 78364164095  1000000: 2176782336
 	$time 			= $_SERVER['REQUEST_TIME'] - 1295672286;	//	197889303 
 	$user_id		= $user_id + 103656280;	
 	$content_id		= $content_id  + 103656280;	
 	 
 	$salt	=   mt_rand(37, 1295);  // 108 ;109   // 129
-	if ($salt < 88) {
-		// $salt2 < $salt3	差值 12
+	if ($salt < 88) {				// $salt2 < $salt3	差值 12
 		$salt2 = 108 - $salt;		//	range:	71-21
 		$salt3 = 120 - $salt;		//	range:	83-33		
 	
-	} elseif ($salt < 130){
-		// $salt2 < $salt3 差值 13
-		$salt2 = 183 - $salt;	//	range:	95-54
-		$salt3 = 196 - $salt;	//	range:	108-67
-	} else {
-		//$salt2 > $salt3 差值 1-11			
+	} elseif ($salt < 130){			// $salt2 < $salt3 差值 13
+		$salt2 = 183 - $salt;		//	range:	95-54
+		$salt3 = 196 - $salt;		//	range:	108-67
+	} else {						//$salt2 > $salt3 差值 1-11			
 		$salt2  = ($salt%108)?:108;		// 	range: 	22-108
 		$salt3  = ($salt%109)?:109;	 	//	range:	21-107
-		
 		// special process
 		if ($salt2 < 21 ) {
 			$salt2 = 59 - $salt2;		//	range:	(58-39) +  (21-30)
 		}
-		
 		if ($salt3 < 21) {
 			$salt3 = 79 - $salt3;		//	range:	(109-99) + (78-59)
 		}	 
 	}
 
-	//zzzzzzz: 78364164095
-	//1000000: 2176782336
-	//echo ((($salt%60)?:60) + 10),'-';
 	$salt_36 	= base_convert($salt, 10, 36);
-	
-	$rand = mt_rand(97, 121);
+	$rand 		= mt_rand(97, 121);
 	 
 	$parts 		= [];
-	//$parts[]	= ($rand%2 == $share_type)?chr($rand):chr($rand+1);
 	$parts[]	= $salt_36[0];
 	$parts[]	= base_convert(((($time % 286898) ?: 286898) * $salt2 + $user_id) * $salt3, 10, 36);	//	579113185	7位
 	$parts[]	= base_convert($time * ((($salt%60)?:60) + 10), 10, 36);								//	2046年	7位
 	$parts[]	= base_convert(((($time % 183868) ?: 183868) * $salt3 + $content_id) * $salt2, 10, 36);	//  695186871	7位
-	$parts[]	= $salt_36[1];		 
-	 
+	$parts[]	= $salt_36[1];	
+	
 	$str = strtr(implode('', $parts), 'g', '_');
-
+	
 	$a 	= mt_rand(97, 122);
 	$b 	= mt_rand(97, 121); 
 	$timeline 	= (($a%2 == 0)?chr($a):chr($a+1)).$str;
@@ -174,17 +163,14 @@ function share_decode($shareid)
 	$salt_36 		= $shareid[1].$shareid[23];
 	$salt			= base_convert($salt_36, 36, 10);
 	
-	if ($salt < 88) {
-		// $salt2 < $salt3	差值 12
-		$salt2 = 108 - $salt;		//	range:	71-21
-		$salt3 = 120 - $salt;		//	range:	83-33		
+	if ($salt < 88) {					// $salt2 < $salt3	差值 12
+		$salt2 = 108 - $salt;			//	range:	71-21
+		$salt3 = 120 - $salt;			//	range:	83-33		
 	
-	} elseif ($salt < 130) {
-		// $salt2 < $salt3 差值 13
-		$salt2 = 183 - $salt;	//	range:	95-54
-		$salt3 = 196 - $salt;	//	range:	108-67
-	} else {
-		//$salt2 > $salt3 差值 1-11			
+	} elseif ($salt < 130) {			// $salt2 < $salt3 差值 13
+		$salt2 = 183 - $salt;			//	range:	95-54
+		$salt3 = 196 - $salt;			//	range:	108-67
+	} else {							//	$salt2 > $salt3 差值 1-11			
 		$salt2  = ($salt%108)?:108;		// 	range: 	22-108
 		$salt3  = ($salt%109)?:109;	 	//	range:	21-107
 

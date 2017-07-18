@@ -57,19 +57,19 @@
 	
 	<div class="page-hd">
         <h1 class="page-hd-title">
-            累计分享 1999 次
+            累计分享 <?=$result['page']['total_data']?> 次
         </h1>
         <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
 			<a class="weui-col-50 col-50-first" href="/balance/income.html">
 				<div>
-					<p>2000</p>
+					<p><?=($result['readed']?:0)?></p>
 					<span>阅读 (次)</span>
 				</div>
 			</a>
 		
 			<a class="weui-col-50" href="/balance/items.html">
 				<div>
-					<p>1000.75</p>
+					<p><?=session_get('user_balance')['share_part']?></p>
 					<span>分享收益 (元)</span>
 				</div>
 			</a>
@@ -80,16 +80,29 @@
   
 <div class="weui_cells balance-detail">
 	<ul>
-		<li class="weui_panel_hd"  >2017.6.5</li>
-        <li class="weui_cell" href="javascript:;">
+	<?php if(!empty($result['list'])) : ?>
+		<?php foreach ($result['list'] as $value) :  
+			$this_date = date('Y.m.d', $value['share_time']);
+			if (empty($current_date) || $current_date != $this_date) :
+				$current_date = $this_date ;?>
+		<li class="weui_panel_hd"  ><?=$this_date?></li>
+			<?php endif; ?>
+        <li class="weui_cell" href="/share/views/<?=$value['share_id']?>.html">
 			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
+			<div class="weui_cell_hd"><img src="<?=$value['icon']?>" alt="" ></div>
 			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
+            <p class="share_title"><?=$value['title']?></p>
+            <p class="share_detail"><?=(date('H:i', $value['share_time'])?> · <?=($value['share_type']?'朋友圈':'好友')?> &nbsp;&nbsp;&nbsp;阅读 <?=$value['view_times']?>&nbsp;&nbsp;&nbsp;收益 ￥<?=$value['total_salary']?></p>
           </div>
            
         </li>
+		<?php endforeach; ?>
+		<script> var current_date = '<?=$current_date?>'; </script>
+	<?php else :?>
+			<h3 calss="no-date">暂无记录</h3>
+	<?php endif;?>
+	
+	<!-- template
 		 <li class="weui_cell" href="javascript:;">
 			
 			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
@@ -99,93 +112,8 @@
           </div>
            
         </li>
-		<li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
-		   <li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
+	 -->
            
-        </li>
-		<li class="weui_panel_hd"  >2017.6.5</li>
-        <li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
-           
-        </li>
-		 <li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
-           
-        </li>
-		<li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
-		   <li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
-           
-        </li>
-		<li class="weui_panel_hd"  >2017.6.5</li>
-        <li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
-           
-        </li>
-		 <li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
-           
-        </li>
-		<li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
-		   <li class="weui_cell" href="javascript:;">
-			
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">12:30 · 朋友圈 &nbsp;&nbsp;&nbsp;阅读 300&nbsp;&nbsp;&nbsp;收益 ￥122.20</p>
-          </div>
-           
-        </li>
-           
-        </li>		
+     		
 	</ul>
 </div>	

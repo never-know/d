@@ -27,17 +27,15 @@ padding-top: 4px;
 		<div class="weui_cell_hd"><label class="weui_label">转出账户</label></div>
          <div class="weui_cell_bd weui_cell_primary">
           <input type="hidden"  id="account" name="account" value="" >
-          <input class="weui_input" type="text" id ="account_name" placeholder="选择账户">
+          <input class="weui_input" type="text" id ="account_name" placeholder="选择账户" disabled="disabled">
         </div>
       </div>
     </div>
-    <div class="weui_btn_area" id="abc">
-        <a id="formSubmitBtn" href="javascript:" class="weui_btn weui_btn_primary">提交</a>
+    <div class="weui_btn_area" id="abc" rel="0">
+        <a id="formSubmitBtn" href="javascript:" class="weui_btn weui_btn_primary" >提交</a>
     </div>
 </form>
 <script> 
-
-
       $(document).on("click", "#account_select", function() {
         $.actions({
           title: "选择账号",
@@ -74,7 +72,7 @@ padding-top: 4px;
               text: "添加新帐号",
               className: 'color-danger',
               onClick: function() {
-                $.alert("添加新帐号");
+                window.location.href = "https://m.anyitime.com/user/account.html?return=1";
               }
             },
 			
@@ -82,5 +80,17 @@ padding-top: 4px;
         });
       });
  
+	  </script>
+	  
+	  <script>
+			 $(document).on("click", "#abc", function() {
+			 
+				var rel = $(this).attr("rel");
+				if (ref == 1) return;
+				$(this).attr("rel", 1);
+				
+			 
+			 
+			 }
 	  </script>
   
