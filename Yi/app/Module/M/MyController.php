@@ -15,18 +15,19 @@ class MyController extends \App\Module\M\BaseController
 
 			$phones 	= array_column($result['body']['list'], 'phone');
 			$benefit 	= $this->request('\\App\\Service\\Balance::benefit', ['phone' =>$phones, 'type' => 3]);
+			
 			foreach ($benefit['body'] as $b) {
-				$a[$value['phone']] = $b['benfit'];
+				$a[$b['phone']] = $b['benefit'];
 			}
 			
 			foreach ($result['body']['list'] as &$value) {
-				$value['benfit'] 	= $a[$value['phone']]??0;
+				$value['benefit'] 	= $a[$value['phone']]??0;
 				$value['phone'] 	= substr_replace($value['phone'], '****', 3, 4);
 				$result['body']['level2'] += $value['children'];
 			}
 			
 		}
-		
+		$result['body']['meta'] = ['title' =>'一级成员列表'];
 		$this->response($result);
 	}
 	
@@ -58,7 +59,7 @@ class MyController extends \App\Module\M\BaseController
 			}
 			
 			$result['body']['phone'] = substr_replace($user_info['body']['phone'], '****', 3, 4);
-			
+			$result['body']['meta'] = ['title' =>'二级成员列表'];
 			$this->response($result);	
 			
 		} else {
@@ -70,15 +71,18 @@ class MyController extends \App\Module\M\BaseController
 	public function message_get()
 	{
 		$list = $this->request('\\App\\Service\\Message::list', session_get('USER_ID'));
+		$list['body']['meta'] = ['title' =>'消息列表'];
 		$this->response($list);
 	
 	}
 	
 	public function share_get()
 	{
-		$list 	= $this->request('\\App\\Service\\Share::logs', session_get('USER_ID'));
+		$list 	= $this->request('\\App\\Service\\Share::logs', session_get('USER_ID'), self::EXITNONE, true);
 		$readed = $this->request('\\App\\Service\\Share::readed', session_get('USER_ID'));
+		
 		$list['body']['readed'] = $readed['body']['count'];
+		$list['body']['meta'] = ['title' =>'分享记录'];
 		$this->response($list);
 	
 	}

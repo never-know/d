@@ -60,14 +60,14 @@
             累计分享 <?=$result['page']['total_data']?> 次
         </h1>
         <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
-			<a class="weui-col-50 col-50-first" href="/balance/income.html">
+			<a class="weui-col-50 col-50-first" href="javascript:;">
 				<div>
 					<p><?=($result['readed']?:0)?></p>
 					<span>阅读 (次)</span>
 				</div>
 			</a>
 		
-			<a class="weui-col-50" href="/balance/items.html">
+			<a class="weui-col-50" href="javascript:;">
 				<div>
 					<p><?=session_get('user_balance')['share_part']?></p>
 					<span>分享收益 (元)</span>
@@ -92,7 +92,7 @@
 			<div class="weui_cell_hd"><img src="<?=$value['icon']?>" alt="" ></div>
 			<div class="weui_cell_bd weui_cell_primary">
             <p class="share_title"><?=$value['title']?></p>
-            <p class="share_detail"><?=(date('H:i', $value['share_time'])?> · <?=($value['share_type']?'朋友圈':'好友')?> &nbsp;&nbsp;&nbsp;阅读 <?=$value['view_times']?>&nbsp;&nbsp;&nbsp;收益 ￥<?=$value['total_salary']?></p>
+            <p class="share_detail"><?=(date('H:i', $value['share_time']))?> · <?=($value['share_type']?'朋友圈':'好友')?> &nbsp;&nbsp;&nbsp;阅读 <?=$value['view_times']?>&nbsp;&nbsp;&nbsp;收益 ￥<?=$value['total_salary']?></p>
           </div>
            
         </li>

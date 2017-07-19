@@ -33,7 +33,7 @@
 			<?php foreach ($result['list'] as $value ) : ?>
 			<li>
                 <a href="/balance/daily/<?=$value['post_day'];?>.html">
-                    <p><?=('20' . implode('-', str_split($value['post_day'], 2));?></p>
+                    <p><?=('20' . implode('-', str_split($value['post_day'], 2)))?></p>
 					<div class="weui_cell_ft">+<?=($value['money']/100);?></div>
                 </a>
             </li>

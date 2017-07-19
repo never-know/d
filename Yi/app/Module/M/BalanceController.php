@@ -87,8 +87,8 @@ class BalanceController extends \App\Module\M\BaseController
 		
 		$params['user_id']	= session_get('USER_ID');
 		
-		$result 	= $this->request('\\App\\Service\\Balance::dailyList', $user_id);
-		
+		$result 	= $this->request('\\App\\Service\\Balance::dailyList', $params);
+
 		$result['body']['date'] = $date;
  
 		$result['body']['meta'] = ['title' => $date.'收益纪录'];

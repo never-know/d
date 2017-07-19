@@ -703,11 +703,15 @@ function build_query_insert($params)
 	return '(`'. implode('`,`', array_keys($params)) .'`) values ('. implode('),', $values). ')';
 }
 
-function build_query_common($separator, $params)
+function build_query_common($separator, $params, $sep = true)
 {
 	$joined = [];
 	foreach($params as $key => $value) {
-	   $joined[] = "`$key`={$value}";
+	  if($sep) {
+			$joined[] = "`$key`={$value}";
+		} else {
+			$joined[] = "$key={$value}";
+		}
 	}
 	return implode($separator, $joined);
 }

@@ -14,14 +14,14 @@ class UserController extends \App\Module\M\BaseController
 		// 用户基本信息
 		
 		$result = $this->userinfo();
- 
-		$today 		= $this->request('\\App\\Service\\Balance::today', $user_id);
+
+		$today 		= $this->request('\\App\\Service\\Balance::today', $user_id, self::EXITNONE, true);
 		$balance 	= $this->request('\\App\\Service\\Balance::account', $user_id);
 		
-		session_set('user_balance', $balance);
+		if (1 == $balance['statusCode']) session_set('user_balance', $balance['body']);
 		
-		$result['today_balace'] 	= $today['body']['total'];
-		$result['account_balace'] 	= $balance['body']['balance'];
+		$result['today_salary'] 	= $today['body']['total'];
+		$result['account_balance'] 	= $balance['body']['balance'];
 		$result['show_bottom'] = 1;
 		$result['meta'] = ['title' =>'用户主页'];
 		$this->success($result);

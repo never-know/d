@@ -32,7 +32,7 @@
 	
 	<div class="page-hd">
         <h1 class="page-hd-title">
-			共计 <?=($result['page']['total_data']+)?> 名
+			共计 <?=($result['page']['total_data']+$result['level2'])?> 名
         </h1>
         <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
 			<a class="weui-col-50 col-50-first" href="javascript:;">
@@ -58,9 +58,9 @@
 			<?php if(!empty($result['list'])) : ?>
 		
 			<?php foreach($result['list'] as $value)   : ?>
-				<a href="/my/subteam/<?=base_convent($value['wx_id'], 10, 36)?>.html" class="weui_media_box weui_media_appmsg">
+				<a href="/my/subteam/<?=base_convert($value['wx_id'], 10, 36)?>.html" class="weui_media_box weui_media_appmsg">
                    <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="<?=ASSETS_URL?>/avater/<?=(implode('/', str_split($base_convert($value['wx_id'], 10, 36), 2)))?>.jpg"  onerror="imgnotfound()" alt="">
+                        <img class="weui_media_appmsg_thumb" src="<?=ASSETS_URL?>/avater/<?=(implode('/', str_split(base_convert($value['wx_id'], 10, 36), 2)))?>.jpg"  onerror="imgnotfound()" alt="">
                     </div>
                     <div class="weui_media_bd">
                         <p class="weui_media_desc"><?=$value['phone']?></p>

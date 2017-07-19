@@ -313,12 +313,12 @@ class ShareService extends \Min\Service
 			return $this->error('参数错误', 30000);
 		}
 		
-		$sql = 'SELECT count(1) as count FROM {{user_share_view}} WHERE share_user = ' . $user_id . ' AND status = 1';
+		$sql = 'SELECT count(1) as count FROM {{user_share_view}} WHERE share_user = ' . $user_id . ' AND status = 1 LIMIT 1';
 		$result = $this->query($sql);
 		if (isset($result['count'])) {
 			return $this->success($result);
 		} else {
-			$this->error('操作失败', 20106);
+			return $this->error('操作失败', 20106);
 		}
 	
 	}

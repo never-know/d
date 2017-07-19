@@ -65,7 +65,7 @@
 				<div class="weui_cell_hd"><img src="<?=strtr($value['content_icon'],['m://' => ASSETS_URL])?>" alt="" ></div>
 				<div class="weui_cell_bd weui_cell_primary">
 				<p class="share_title"><?=$value['content_title']?></p>
-				<p class="share_detail"><?=date('m-d H:i', $value['share_time'])?>分享于<?=($value['share_type']?'朋友圈':'好友')?></p>
+				<p class="share_detail"><?=date('m-d H:i', $value['share_time'])?> 分享<?=($value['share_type']?'于朋友圈':'给好友')?></p>
 				
 			<?php else : ?>
 			

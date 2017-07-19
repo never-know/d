@@ -134,7 +134,7 @@ class DrawService extends \Min\Service
 		$update['update_time']		= intval($data['update_time']);		
 		$update['transaction_id'] 	= trim($data['transaction_id']);
 		
-		if ($param['draw_id'] < 1 || $param['user_id'] < 1 || !in_array($update['draw_status'], [3, 4]) || !is_numeric($update['transaction_id'] || $update['update_time'] < 1) {
+		if ($param['draw_id'] < 1 || $param['user_id'] < 1 || !in_array($update['draw_status'], [3, 4]) || !is_numeric($update['transaction_id']) || $update['update_time'] < 1) {
 			return $this->error('参数错误', 20107);
 		}
 		

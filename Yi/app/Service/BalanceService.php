@@ -7,7 +7,7 @@ class BalanceService extends \Min\Service
 {
 	/* 帐户余额 */
 	
-	public function account()
+	public function account($user_id)
 	{
 		$user_id 		= intval($user_id);
 		 
@@ -15,14 +15,14 @@ class BalanceService extends \Min\Service
 			return $this->error('参数错误', 30000);
 		}
 
-		$sql = 'SELECT * FROM {{user_balance}} WHERE user_id = ' . $user_id . 'LIMIT 1';
+		$sql = 'SELECT * FROM {{user_balance}} WHERE user_id = ' . $user_id . ' LIMIT 1';
 		
 		$result = $this->query($sql);
 		
 		if (!empty($result)) {
-			$this->success($result);
+			return $this->success($result);
 		} else {
-			$this->error('操作失败', 20107);
+			return $this->error('操作失败', 20107);
 		}
 		
 	}
@@ -37,13 +37,13 @@ class BalanceService extends \Min\Service
 			return $this->error('参数错误', 30000);
 		}
 
-		$sql = 'SELECT sum(user_money) as total FROM {{user_balance_log}} WHERE user_id = ' . $user_id . ' AND post_day = ' . date('ymd') . ' AND ( balance_type = 1 OR balance_type = 2) LIMIT 1';
+		$sql = 'SELECT IFNULL(sum(user_money), 0) as total FROM {{user_balance_log}} WHERE user_id = ' . $user_id . ' AND post_day = ' . date('ymd') . ' AND   balance_type IN (2, 3, 4) LIMIT 1';
 		
 		$result = $this->query($sql);
 		if (!empty($result)) {
-			$this->success($result);
+			return $this->success($result);
 		} else {
-			$this->error('操作失败', 20107);
+			return $this->error('操作失败', 20107);
 		}
 		
 	}
@@ -134,7 +134,7 @@ class BalanceService extends \Min\Service
 		
 		$sql_count 	= 'SELECT count(t.post_day) as count FROM (SELECT post_day FROM {{user_balance_log}} WHERE user_id = ' . $user_id . ' AND balance_type in (2,3,4) GROUP BY post_day ) t LIMIT 1';
 		
-		$sql_list 	= 'SELECT log_id , sum(money) AS money, post_day FROM {{user_balance_log}} WHERE user_id = '.$user_id . ' AND  balance_type in (2,3,4) GROUP BY post_day ORDER BY log_id DESC ';
+		$sql_list 	= 'SELECT log_id , sum(user_money) AS money, post_day FROM {{user_balance_log}} WHERE user_id = '.$user_id . ' AND  balance_type in (2,3,4) GROUP BY post_day ORDER BY log_id DESC ';
 		
 		return $this->commonList($sql_count, $sql_list);
 
@@ -155,12 +155,12 @@ class BalanceService extends \Min\Service
 		$param				= [];
 		$param['l.user_id'] 	= intval($p['user_id']);
 		$param['l.post_day'] 	= intval($p['date']);
-		
-		if ($param['l.user_id'] < 1 || $param['l.post_day'] < 170803 || $param['l.post_day'] > 991230) {
+		 
+		if ($param['l.user_id'] < 1 || $param['l.post_day'] < 170703 || $param['l.post_day'] > 991230) {
 			return $this->error('参数错误', 30000);
 		}
 
-		$sql_count 	= 'SELECT count(1) as count, sum(l.money) as money, l.balance_type FROM {{user_balance_log}} AS l WHERE ' . build_query_common(' AND ', $param) . ' AND   l.balance_type in (2,3,4) GROUP BY l.balance_type';
+		$sql_count 	= 'SELECT count(1) as count, sum(l.user_money) as money, l.balance_type FROM {{user_balance_log}} AS l WHERE ' . build_query_common(' AND ', $param, false) . ' AND   l.balance_type in (2,3,4) GROUP BY l.balance_type';
 		
 		$summary = $this->query($sql_count);
 		
@@ -185,7 +185,7 @@ class BalanceService extends \Min\Service
 			}
 		}
 		
-		$sql_list 	= 'SELECT l.*, s.content_icon, s.content_title, s.share_time, s.share_type FROM {{user_balance_log}} AS l LEFT JOIN {{user_share}} AS s ON l.balance_type = 2 AND l.second_relation = s.share_id WHERE ' . build_query_common(' AND ', $param) . ' AND l.balance_type in (2,3,4) ORDER BY l.log_id DESC';
+		$sql_list 	= 'SELECT l.*, s.content_icon, s.content_title, s.share_time, s.share_type FROM {{user_balance_log}} AS l LEFT JOIN {{user_share}} AS s ON l.balance_type = 2 AND l.second_relation = s.share_id WHERE ' . build_query_common(' AND ', $param, false) . ' AND l.balance_type in (2,3,4) ORDER BY l.log_id DESC';
 		
 		$result = $this->commonList($count, $sql_list);
 		
@@ -220,7 +220,7 @@ class BalanceService extends \Min\Service
 		$param['relation_id'] 	= intval($data['relation_id']);
 		
 		if (!in_array($param['balance_type'], config_get('balance_type')) || $param['user_id'] < 1 || $param['relation_id'] < 1) {
-			$this->error('参数错误', 20107);
+			return $this->error('参数错误', 20107);
 		}
 
 		$param['balance'] 		= intval($data['balance']);
@@ -229,7 +229,7 @@ class BalanceService extends \Min\Service
 		$param['post_day']		= date('ymd His', $param['post_time']);
 		
 		if (!isset($data['balance']) || $param['balance'] < 0 || $data['post_time'] < 0 || $param['money'] == 0) {
-			$this->error('参数错误', 20107);
+			return $this->error('参数错误', 20107);
 		}			
 
 		$sql = 'INSERT INTO {{user_balance_log}} ' . query_build_insert($param);
@@ -283,11 +283,13 @@ class BalanceService extends \Min\Service
 			return $this->error('参数错误', 2000);
 		}
 		
-		$sql = 'SELECT sum(user_money) as befefit, second_relation as phone from {{user_balance_log}} WHERE second_relation in ( ' . implode(',', $phone) .' ) and balance_type = ' . $params['type'];
+		$phones = array_map('intval', $params['phone']);
+		
+		$sql = 'SELECT ifnull(sum(user_money), 0) as benefit, second_relation as phone from {{user_balance_log}} WHERE second_relation in ( ' . implode(',', $phones) .' ) and balance_type = ' . $params['type'];
 		
 		$result = $this->query($sql);
 		
-		if (false === $result)) {
+		if (false === $result) {
 			return $this->error('操作失败', 20107);
 		} else {
 			return $this->success($result);

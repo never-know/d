@@ -37,6 +37,7 @@ class Controller
 		if (method_exists($this, $key) || method_exists($this, '__call')) {
 			$this->{$key}();
 		} else {
+			watchdog('error');
 			$this->error('无效请求', 404);
 		} 
 		exit; 
@@ -73,7 +74,7 @@ class Controller
 			}
 		}
 		
-		if (isset($params['init'])) {
+		if (is_array($params) && isset($params['init'])) {
 			$obj->init($params['init']);	
 			unset($params['init']);
 			if (empty($params)) {

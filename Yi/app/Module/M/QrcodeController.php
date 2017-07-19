@@ -14,9 +14,9 @@ class QrcodeController extends \App\Module\M\BaseController
 		generate qrcode in bottom of content and record view log;
 	
 	*/
-	public function index()
+	public function index_get()
 	{
-		$shared_user_wx_id	= 0;
+		$shared_user_wx_id	=6;
 		
 		if (!empty($_SERVER['HTTP_REFERER'])) {
 			$url = parse_url($_SERVER['HTTP_REFERER']);

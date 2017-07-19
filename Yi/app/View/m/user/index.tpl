@@ -22,7 +22,7 @@
        
     </div>
 	<div class="weui-row weui-no-gutter" style="position:relative;background:#fff;">
-      <a class="weui-col-50 col-50-first" href="/balance/detail/today.html">
+      <a class="weui-col-50 col-50-first" href="/balance/daily/today.html">
 		<div>
 			<p><?=$result['today_salary']/100;?></p>
 			<span>今日收益(元)</span>

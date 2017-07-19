@@ -49,7 +49,7 @@
          
           <div class="weui_cell_bd weui_cell_primary" style="font-size:13px;">
             <p><?=(balance_type($value['balance_type']))?></p>
-            <p><?=date('m-d H:i:s', $value['post_time']?></p>
+            <p><?=date('m-d H:i:s', $value['post_time'])?></p>
           </div>
 		   <div class="weui_cell_ft">
             <p>+ <?=($value['user_money']/100)?></p>
@@ -57,6 +57,7 @@
           </div>
           
         </div>
+		<?php endforeach;?>
 	<?php endif;?>
 	<script> var current_date = '<?=$current_date?>'; </script>
 	  <!-- template
