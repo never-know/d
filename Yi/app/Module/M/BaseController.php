@@ -123,10 +123,10 @@ class BaseController extends \Min\Controller
 		session_set('user', $user);	 
 	}
 	
-	final public userinfo($user_id)
+	final public function userinfo()
 	{
 		$cache 		= $this->cache('user');
-		$key 		= $this->getCacheKey('userinfo', $user_id);
+		$key 		= $this->getCacheKey('userinfo', session_get('USER_ID'));
 		$result 	= $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
@@ -156,7 +156,6 @@ class BaseController extends \Min\Controller
 		}
 		
 		return $result;
-	
 	}
 	
 }
