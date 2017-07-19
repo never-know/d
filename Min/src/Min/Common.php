@@ -91,7 +91,7 @@ function autoload($class)
 			$file	= MIN_PATH . '/' . $path . PHP_EXT;
 			break;
 		case 'Vendor' :
-			$file	= Vendor_PATH . '/' . $path_info[1] . PHP_EXT;
+			$file	= VENDOR_PATH . '/' . $path_info[1] . PHP_EXT;
 			break;
 		default :
 			return;
