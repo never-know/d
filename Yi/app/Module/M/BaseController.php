@@ -46,7 +46,7 @@ class BaseController extends \Min\Controller
  
 	final public function getWX($type= 'anyitime')
 	{
-		return new \Vendor\Wx\WeBase($type);
+		return new \Vendor\Wx\WxBase($type);
 	}
 	
 	/*

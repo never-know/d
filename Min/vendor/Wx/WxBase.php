@@ -3,7 +3,7 @@ namespace Vendor\Wx;
 
 use Min\App;
 
-class WeBase
+class WxBase
 {
 	const API_URL_PREFIX = 'https://api.weixin.qq.com/cgi-bin';
 	const AUTH_URL = '/token?grant_type=client_credential&';

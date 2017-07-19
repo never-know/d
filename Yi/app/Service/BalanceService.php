@@ -164,7 +164,7 @@ class BalanceService extends \Min\Service
 		
 		$summary = $this->query($sql_count);
 		
-		if (false === $summary)) {
+		if (false === $summary) {
 			return $this->error('加载失败', 20106);
 		}
 		
