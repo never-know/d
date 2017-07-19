@@ -2,8 +2,8 @@
 
 	declare(strict_types=1);
 	
-	error_reporting(0);
-	ini_set('display_error','off');
+	error_reporting(E_ALL);
+	ini_set('display_error','on');
 	
 	date_default_timezone_set('Asia/Shanghai');
 
@@ -18,7 +18,7 @@
 		require MIN_PATH . '/Min/Common.php';
 		min_init();
 		require APP_PATH . '/Common/function.php';
-	
+		
 		$di = new \Min\Di;
  
 		// server name as xxx_xxx

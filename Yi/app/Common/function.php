@@ -24,7 +24,7 @@ function withdraw_account_info($value)
 
 	$result = $value['real_name'] . '<br>';
 	$result .=  (($value['account_type'] == 3) ? $value['extra'] : $arr[$value['account_type']]);
-	$result .= '&nbsp;&nbsp;' 
+	$result .= '&nbsp;&nbsp;' ;
 	if ($value['account_type'] == 3) {
 		$info = '尾号&nbsp;&nbsp;' . substr($value['account_name'], -4);
 	} else {
@@ -45,6 +45,24 @@ function withdraw_account_info($value)
 	}	
 	
 	return $result.$info;
+}
+
+function balance_type($type) 
+{
+	switch ($type) {
+		case 2:
+			return '分享收益';
+		case 3:
+			return '一级团队收益';
+		case 4:
+			return '二级团队收益';
+		case 11:
+			return '提现';
+		default:
+			return '';
+	
+	}
+
 }
 
 function region_get($region_id)

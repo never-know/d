@@ -1,4 +1,6 @@
 <?php
+namespace Vendor\Wx;
+
 use Min\App;
 
 class WeBase

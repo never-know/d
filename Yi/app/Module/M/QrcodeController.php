@@ -16,7 +16,7 @@ class QrcodeController extends \App\Module\M\BaseController
 	*/
 	public function index()
 	{
-		$shared_userid	= 0;
+		$shared_user_wx_id	= 0;
 		
 		if (!empty($_SERVER['HTTP_REFERER'])) {
 			$url = parse_url($_SERVER['HTTP_REFERER']);
@@ -29,15 +29,15 @@ class QrcodeController extends \App\Module\M\BaseController
 					$params['current_user'] = session_get('USER_ID');
 					$params['content_id']   = $match[1];
 					$result = $this->request('\\App\\Service\\Share::view', $params);
-					$shared_userid = ($result['body']['user_id']??0);	// 分享者 用户ID
+					$shared_user_wx_id = ($result['body']['wx_id']??0);	// 分享者 用户ID
 				}
 			}
 		} 
 		
 		$img = config_get('wx_qrcode');
 		
-		if ($shared_userid) {
-			$scene_id = base_convert($shared_userid, 10, 36);
+		if ($shared_user_wx_id) {
+			$scene_id = base_convert($shared_user_wx_id, 10, 36);
 			$img = $this->getQRCode($scene_id, $img);
 		} 
 		
@@ -61,9 +61,9 @@ class QrcodeController extends \App\Module\M\BaseController
 			
 				$img = http_get($wx->getQRUrl($result['ticket']));
 				if (!empty($img)) {
-					$result['img_path'] = PUBLIC_PATH . '/qrcode/' . $scene_id . '.jpg';
+					$result['img_path'] = PUBLIC_PATH . '/qrcode/' . implode('/', str_split($scene_id, 2)) . '.jpg';
 					file_put_contents($result['img_path'], $img);
-					$cache->set('qrcode_'. $scene_id, $result, $result['expire_seconds']);
+					$cache->set('qrcode_'. $scene_id, $result, $result['expire_seconds']-100);
 				}
 			}
 		}

@@ -58,21 +58,33 @@
 <div class="weui_cells balance-detail">
 	<ul>
 		<?php if (!empty($result['list'])) : ?>
-		<?php foreach ($result as $value) : ?>
-        <li class="weui_cell" href="/share/log.html">
-			<div class="share_clock"> 12:30 </div>
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">分享于12-02 12:30@朋友圈 </p>
+		<?php foreach ($result['list'] as $value) : ?>
+        <li class="weui_cell" href="javascript:;">
+			<?php if ($value['balance_type'] == 2) : ?>
+			
+				<div class="weui_cell_hd"><img src="<?=strtr($value['content_icon'],['m://' => ASSETS_URL])?>" alt="" ></div>
+				<div class="weui_cell_bd weui_cell_primary">
+				<p class="share_title"><?=$value['content_title']?></p>
+				<p class="share_detail"><?=date('m-d H:i', $value['share_time'])?>分享于<?=($value['share_type']?'朋友圈':'好友')?></p>
+				
+			<?php else : ?>
+			
+				<div class="weui_cell_hd"><img src="/public/images/my.png" alt="" ></div>
+				<div class="weui_cell_bd weui_cell_primary">
+				<p class="share_title">TEAM SHALARY</p>
+				<p class="share_detail">来自用户 <?=substr_replace($value['second_relation'], '****', 3, 4)?></p>
+
+			<?php endif; ?>
           </div>
-          <div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">+ 0.2</div>
+          <div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">
+		  <p>+<?=($value['user_money']/100)?></p>
+		  <p><?=date('H:i', $value['post_time'])?></p></div>
         </li>
 		<?php endforeach; ?>
 		<?php else : ?>
 			<h3 class="no-data">暂无记录</h3>
 		<?php endif; ?>
-		<!--
+		<!-- template
 		<li class="weui_cell" href="/share/log.html">
 			<div class="share_clock"> 12:30 </div>
 			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
@@ -82,33 +94,7 @@
           </div>
           <div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">+ 0.2</div>
         </li>
-		<li class="weui_cell" href="/share/log.html">
-			<div class="share_clock"> 12:30 </div>
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">分享于09-12 12:30@朋友圈 </p>
-          </div>
-          <div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">+ 0.2</div>
-        </li>
-		<li class="weui_cell" href="/share/log.html">
-			<div class="share_clock"> 12:30 </div>
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">分享于12-12 12:30@朋友圈 </p>
-          </div>
-          <div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">+ 0.2</div>
-        </li>
-		<li class="weui_cell" href="/share/log.html">
-			<div class="share_clock"> 12:30 </div>
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
-			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title">永辉超市转塘店6.1大促</p>
-            <p class="share_detail">分享于12-12 12:30@朋友圈 </p>
-          </div>
-          <div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">+ 0.2</div>
-        </li>
+		 
 		-->
 		</ul>
 	</div>	

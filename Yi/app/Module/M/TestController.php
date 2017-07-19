@@ -10,7 +10,7 @@ class TestController extends \Min\Controller
 	{
 	 
 		
-		require CONF_PATH .'/keypairs.php';
+	 
 		
 		
 $j = 0;
@@ -18,7 +18,7 @@ $error = [];
 
 $time= time();
 
-for($i=0;$i<10000000;$i++) {
+for($i=0;$i<1000;$i++) {
 
 $user_id  = mt_rand(1, 100000000);
 session_set('USER_ID', $user_id);
@@ -26,7 +26,7 @@ $content_id = mt_rand(1, 100000000);
 $share_type = mt_rand(0,1);
 $_SERVER['REQUEST_TIME'] = mt_rand(1499929697,2099929697) ;
 
-$id = shareid($content_id);
+$id = shareid_encode($content_id);
  
 
 $result1 = shareid_decode($id['timeline']);
@@ -51,7 +51,8 @@ var_dump($j);
 	
 	public function index_get()
 	{
-		$this->success([], null);
+		var_dump(http_get('https://m.anyitime.com/public/images/abc1.png'));
+		exit;
 		
 	}
 	public function popup_get()

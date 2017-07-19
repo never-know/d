@@ -1,5 +1,5 @@
 <?php
-
+ 
 	define('SITE_DOMAIN', 'anyitime.com');
 	define('HOME_PAGE', 'https://' . $_SERVER['HTTP_HOST']);		
 	define('ASSETS_URL', '//www.anyitime.com/public');	// 图片上传后的URL基址

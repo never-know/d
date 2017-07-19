@@ -6,6 +6,7 @@ use Min\App;
 class BalanceService extends \Min\Service
 {
 	/* 帐户余额 */
+	
 	public function account()
 	{
 		$user_id 		= intval($user_id);
@@ -50,7 +51,7 @@ class BalanceService extends \Min\Service
 	/*   
 		@param 
 		
-		user_id
+			user_id
 		
 	 */	
 	 
@@ -71,9 +72,9 @@ class BalanceService extends \Min\Service
 	/*   
 		@param 
 		
-		user_id
-		register_time
-		每一天
+			user_id
+			register_time
+			每一天
 		
 	 */	  
 	
@@ -101,7 +102,7 @@ class BalanceService extends \Min\Service
 			$begin 	= date('ymd', $today - (($page['current_page'] - 1) * $page['page_size']));
 			$end 	= date('ymd', $begin - $page['page_size']);
 		
-			$sql = 'SELECT sum(money) AS money, post_day FROM {{user_balance_log}} WHERE user_id = '.$user_id . ' AND post_day <= ' . $begin . ' AND post_day > ' . $end . ' AND ( balance_type = 1 OR balance_type = 2) GROUY BY post_day ORDER BY log_id DESC';
+			$sql = 'SELECT sum(money) AS money, post_day FROM {{user_balance_log}} WHERE user_id = '.$user_id . ' AND post_day <= ' . $begin . ' AND post_day > ' . $end . ' AND balance_type in (2,3,4) GROUY BY post_day ORDER BY log_id DESC';
 	  
 			$list = $this->query($sql);
 			
@@ -116,9 +117,9 @@ class BalanceService extends \Min\Service
 	/*   
 		@param 
 		
-		user_id
-		register_time
-		有数据的一天
+			user_id
+			register_time
+			有数据的一天
 		
 	 */	  
 	
@@ -131,9 +132,9 @@ class BalanceService extends \Min\Service
 			return $this->error('参数错误', 30000);
 		}
 		
-		$sql_count 	= 'SELECT count(t.post_day) as count FROM (SELECT post_day FROM {{balance_log}} WHERE user_id = ' . $user_id . ' AND ( balance_type = 1 OR balance_type = 2) GROUP BY post_day ) t LIMIT 1';
+		$sql_count 	= 'SELECT count(t.post_day) as count FROM (SELECT post_day FROM {{user_balance_log}} WHERE user_id = ' . $user_id . ' AND balance_type in (2,3,4) GROUP BY post_day ) t LIMIT 1';
 		
-		$sql_list 	= 'SELECT log_id , sum(money) AS money, post_day FROM {{user_balance_log}} WHERE user_id = '.$user_id . ' AND ( balance_type = 1 OR balance_type = 2) GROUP BY post_day ORDER BY log_id DESC ';
+		$sql_list 	= 'SELECT log_id , sum(money) AS money, post_day FROM {{user_balance_log}} WHERE user_id = '.$user_id . ' AND  balance_type in (2,3,4) GROUP BY post_day ORDER BY log_id DESC ';
 		
 		return $this->commonList($sql_count, $sql_list);
 
@@ -143,8 +144,8 @@ class BalanceService extends \Min\Service
 	/*   
 		@param 
 		
-		user_id
-		start		ymd, between(170803, 991230)
+			user_id
+			start		ymd, between(170803, 991230)
 		
 		@result
 	 */	  
@@ -206,8 +207,7 @@ class BalanceService extends \Min\Service
 		balance
 		money
 		post_time		UNIX时间戳
-		
-		
+
 		弃用
 	 */	 
 	 
@@ -222,17 +222,15 @@ class BalanceService extends \Min\Service
 		if (!in_array($param['balance_type'], config_get('balance_type')) || $param['user_id'] < 1 || $param['relation_id'] < 1) {
 			$this->error('参数错误', 20107);
 		}
- 
-	
+
 		$param['balance'] 		= intval($data['balance']);
 		$param['money'] 		= intval($data['money']);
-		$data['post_time'] 		= intval($data['post_time']);
+		$param['post_time'] 	= intval($data['post_time']);
+		$param['post_day']		= date('ymd His', $param['post_time']);
 		
 		if (!isset($data['balance']) || $param['balance'] < 0 || $data['post_time'] < 0 || $param['money'] == 0) {
 			$this->error('参数错误', 20107);
 		}			
-	
-		list($param['post_day'], $param['post_hour'])	= explode(' ', date('ymd His', $data['post_time']), 2);
 
 		$sql = 'INSERT INTO {{user_balance_log}} ' . query_build_insert($param);
 		
@@ -247,10 +245,8 @@ class BalanceService extends \Min\Service
 	
 	/*   
 		@param
-		
-		log_id
-		user_id
-		
+			log_id
+			user_id
 	 */	
 	
 	public function info($data)
@@ -278,6 +274,24 @@ class BalanceService extends \Min\Service
 		}
 
 		return $this->success($info);
+	
+	}
+	
+	public function benefit($params)
+	{
+		if (empty($params['phone']) || !is_array($params['phone']) || !in_array($params['type'], [3,4], true)) {
+			return $this->error('参数错误', 2000);
+		}
+		
+		$sql = 'SELECT sum(user_money) as befefit, second_relation as phone from {{user_balance_log}} WHERE second_relation in ( ' . implode(',', $phone) .' ) and balance_type = ' . $params['type'];
+		
+		$result = $this->query($sql);
+		
+		if (false === $result)) {
+			return $this->error('操作失败', 20107);
+		} else {
+			return $this->success($result);
+		}
 	
 	}
 	

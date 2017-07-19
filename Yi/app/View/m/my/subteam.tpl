@@ -41,59 +41,41 @@
 	<div class="weui_panel weui_panel_access weui_panel_team">
 			 
 			<div class="weui_panel_bd" id="content_load">
-	 
-				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">183****8890</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥3200</li>
-							
-					  </ul>
-                    </div>
-					
-                </a>
-				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">183****8890</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥3200</li>
-							
-					  </ul>
-                    </div>
-					
-                </a>
-				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">183****8890</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥3200</li>
-							
-					  </ul>
-                    </div>
-					
-                </a>
-				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">183****8890</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥3200</li>
-							
-					  </ul>
-                    </div>
-					
-                </a>
+			<?php if(!empty($result['list'])) : ?>
 	
+			<?php foreach($result['list'] as $value)   : ?>
+				<a href="javascript:;" class="weui_media_box weui_media_appmsg">
+                   <div class="weui_media_hd">
+                        <img class="weui_media_appmsg_thumb" src="<?=ASSETS_URL?>/avater/<?=(implode('/', str_split($base_convert($value['wx_id'], 10, 36), 2)))?>.jpg"  onerror="<?=config_get('noavater')?>" alt="">
+                    </div>
+                    <div class="weui_media_bd">
+                        <p class="weui_media_desc"><?=$value['phone']?></p>
+						<ul class="weui_media_info">
+							<li class="weui_media_info_meta">贡献收益 ￥<?=$value['benefit']?></li>
+							
+					  </ul>
+                    </div>
+					
+                </a>
+			<?php endforeach;?>
+			<?php else : ?>
+				<h3 calss="no-date">暂无成员</h3>
+			<?php endif;?>
+			
+			<!-- template
+				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
+                   <div class="weui_media_hd">
+                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
+                    </div>
+                    <div class="weui_media_bd">
+                        <p class="weui_media_desc">183****8890</p>
+						<ul class="weui_media_info">
+							<li class="weui_media_info_meta">贡献收益 ￥3200</li>
+							
+					  </ul>
+                    </div>
+					
+                </a>
+				--> 
 			</div>
 	</div>

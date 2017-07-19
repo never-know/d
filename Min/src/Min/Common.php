@@ -79,6 +79,7 @@ function autoload($class)
 {
 	// new \min\service\login;
 	// new \min\module\passport\login;
+	//	new \vendor\Wx\WxBase.php
 	$path 	= strtr($class, '\\', '/');
 	$path_info 	= explode('/', $path, 2);
 
@@ -88,6 +89,9 @@ function autoload($class)
 			break;
 		case 'Min' :
 			$file	= MIN_PATH . '/' . $path . PHP_EXT;
+			break;
+		case 'Vendor' :
+			$file	= Vendor_PATH . '/' . $path_info[1] . PHP_EXT;
 			break;
 		default :
 			return;

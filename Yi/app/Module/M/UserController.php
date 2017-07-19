@@ -12,6 +12,7 @@ class UserController extends \App\Module\M\BaseController
 		$user_id 	= session_get('USER_ID');
 		
 		// 用户基本信息
+		
 		$cache 		= $this->cache();
 		$key 		= $this->getCacheKey('userinfo', $user_id);
 		$result 	= $cache->get($key, true);
@@ -37,6 +38,7 @@ class UserController extends \App\Module\M\BaseController
 		
 		$today 		= $this->request('\\App\\Service\\Balance::today', $user_id);
 		$balance 	= $this->request('\\App\\Service\\Balance::account', $user_id);
+		
 		session_set('user_balance', $balance);
 		
 		$result['today_balace'] 	= $today['body']['total'];

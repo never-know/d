@@ -46,8 +46,7 @@ class BaseController extends \Min\Controller
  
 	final public function getWX($type= 'anyitime')
 	{
-		require VENDOR_PATH. '/Wx/WxBase.php';
-		return new \WeBase($type);
+		return new \Vendor\Wx\WeBase($type);
 	}
 	
 	/*
@@ -116,7 +115,48 @@ class BaseController extends \Min\Controller
 		if (!empty($user['wx_id'])) {
 			session_set('wx_id', $user['wx_id']);
 		}
+		
+		if (!empty($user['phone'])) {
+			session_set('user_phone', $user['phone']);
+		}
 		 
 		session_set('user', $user);	 
 	}
+	
+	final public userinfo($user_id)
+	{
+		$cache 		= $this->cache('user');
+		$key 		= $this->getCacheKey('userinfo', $user_id);
+		$result 	= $cache->get($key, true);
+		
+		if (empty($result) || $cache->getDisc() === $result) {
+			$open_id 	= session_get('open_id');
+			$wx 		= $this->getWX();
+			$result 	= $wx->getUserInfo($open_id);
+			if (!empty($result['openid'])) {
+				$cache->set($key, $result, 86400);
+			} else {
+				$result = [];
+			}
+		}
+		
+		if (empty($result['headimgurl'])) {
+			$result['headimgurl'] = '/public/images/avater.jpg';
+		} else {
+			$img = file_get_content($result['headimgurl']);
+			if (!empty($img)) {
+			
+				$path = PUBLIC_PATH . '/avater/' . implode('/', str_split($base_convert(session_get('wx_id'), 10, 36), 2)) . '.jpg';
+				file_put_contents($path, $img);
+			}
+		}
+		
+		if (empty($result['nickname'])) {
+			$result['nickname'] = '用户' .  substr(session_get('user_phone'), -4);
+		}
+		
+		return $result;
+	
+	}
+	
 }

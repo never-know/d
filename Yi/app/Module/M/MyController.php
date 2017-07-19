@@ -9,10 +9,22 @@ class MyController extends \App\Module\M\BaseController
 	{
 		$result = $this->request('\\App\\Service\\Wuser::member', session_get('wx_id'));
 		
-		if (isset($result['body']['list'])) {
-			foreach ($result['body']['list'] as &$value) {
-				$value['phone'] = substr_replace($value['phone'], '****', 3, 4);
+		$result['body']['level2'] = 0;
+		
+		if (!empty($result['body']['list'])) {
+
+			$phones 	= array_column($result['body']['list'], 'phone');
+			$benefit 	= $this->request('\\App\\Service\\Balance::benefit', ['phone' =>$phones, 'type' => 3]);
+			foreach ($benefit['body'] as $b) {
+				$a[$value['phone']] = $b['benfit'];
 			}
+			
+			foreach ($result['body']['list'] as &$value) {
+				$value['benfit'] 	= $a[$value['phone']]??0;
+				$value['phone'] 	= substr_replace($value['phone'], '****', 3, 4);
+				$result['body']['level2'] += $value['children'];
+			}
+			
 		}
 		
 		$this->response($result);
@@ -27,17 +39,28 @@ class MyController extends \App\Module\M\BaseController
 		
 		$wuser = $this->request('\\App\\Service\\Wuser');
  
-		$result = $wuser->checkAccount($id, 'wx_id');
+		$user_info = $wuser->checkAccount($id, 'wx_id');
 		
-		if (isset($result['body']['parent_id']) && $result['body']['parent_id'] == session_get('wx_id')) {
+		if (isset($user_info['body']['parent_id']) && $user_info['body']['parent_id'] == session_get('wx_id')) {
 			$result = $wuser->member($id);
-			if (isset($result['body']['list'])) {
+			if (!empty($result['body']['list'])) {
+				
+				$phones 	= array_column($result['body']['list'], 'phone');
+				$benefit 	= $this->request('\\App\\Service\\Balance::benefit', ['phone' =>$phones, 'type' => 4]);
+				foreach ($benefit['body'] as $b) {
+					$a[$value['phone']] = $b['benfit'];
+				}
+			
 				foreach ($result['body']['list'] as &$value) {
+					$value['benfit'] 	= $a[$value['phone']]??0;
 					$value['phone'] = substr_replace($value['phone'], '****', 3, 4);
 				}
 			}
-			$result['body']['phone'] = substr_replace($wuser['body']['phone'], '****', 3, 4);
+			
+			$result['body']['phone'] = substr_replace($user_info['body']['phone'], '****', 3, 4);
+			
 			$this->response($result);	
+			
 		} else {
 			$this->error('用户不存在或您无权查阅该用户信息', 401);
 		}

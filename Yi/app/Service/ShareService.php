@@ -77,13 +77,17 @@ class ShareService extends \Min\Service
 			
 			if ($check['body']['adv_cost'] > 0) {
 
-				$parent_sql = 'SELECT ' . $check['body']['adv_id'] .'  AS u, u1.user_id as u1, IFNULL(u2.user_id, 0) AS u2, IFNULL(u3.user_id, 0) AS u3 FROM {{user_wx}} as u1 INNER JOIN {{user_wx}} as u2 ON u1.parent_id > 0 and u1.parent_id = u2.wx_id LEFT JOIN {{user_wx}} as u3 ON u2.parent_id > 0 and u2.parent_id = u3.wx_id  WHERE u1.user_id = ' . $params['share_user'] . ' LIMIT 1';
+				$parent_sql = 'SELECT ' . $check['body']['adv_id'] .'  AS u, u1.user_id as u1, u1.wx_id, IFNULL(u2.user_id, 0) AS u2, IFNULL(u3.user_id, 0) AS u3 FROM {{user_wx}} as u1 INNER JOIN {{user_wx}} as u2 ON u1.parent_id > 0 and u1.parent_id = u2.wx_id LEFT JOIN {{user_wx}} as u3 ON u2.parent_id > 0 and u2.parent_id = u3.wx_id  WHERE u1.user_id = ' . $params['share_user'] . ' LIMIT 1';
 				
 				$parent = $db->query($parent_sql);
 				
 				if (empty($parent['u1'])) {
 					return $this->error('用户不存在', 10000);
 				}
+				
+				$wx_id = $parent['wx_id'];
+				
+				unset($parent['wx_id']);
 				
 				foreach ($parent as $key => $value) {
 					if (empty($value)) unset($parent[$key]);
@@ -216,7 +220,7 @@ class ShareService extends \Min\Service
 
 			$db->commit();
 			 
-			return $this->success(['user_id' => $params['share_user']]);
+			return $this->success(['wx_id' => $wx_id]);
 		
 		} catch (\Throwable $t) {
 		
@@ -289,11 +293,15 @@ class ShareService extends \Min\Service
 		$result = $this->query($ins_sql);
 	
 		if ($result['effect'] != 1) {
-			watchdog('error insert share log');
+			watchdog('error insert share log SHARE_NO = ' . $params['share_no'] , 'share_id error', 'ERROR');
+		} else {
+			// 跳过手机号码范围
+			if ($result['id'] > 9999999999 && $result['id'] < 10000900000) {
+				$this->query('ALERT TABLE {{user_share}} auto_increment =  ' . (30000000000 + 1000 * ($result['id'] - 10000000000)));
+			}
 		}
-		
-		return $this->success();
-		
+
+		return $this->success();		
 	}
 	
 	/* 用户分享总 浏览次数 */
