@@ -182,16 +182,14 @@ class WuserService extends \Min\Service
 		if (1 == $check['statusCode']) {
 			$this->cache()->delete($this->getCacheKey('wx_id', $check['body']['wx_id']));		//清理 缓存
 		}
-		
-		 
-		
+
 		/* account not exist*/
 		
-		if ($check['statusCode'] == 30206) {
+		if ($check['statusCode'] == 30206 || $check['body']['subscribe_status'] == 2) {
 			//if (2 == $data['subscribe_status'])  $result['wx_id'] = $result['id'];
 			return $this->success($result);
 		} else {
-			$code = (($check['body']['subscribe_status'] == 2 ) ? 30208 : (empty($check['body']['user_id']) ? 30205 : 30207));
+			$code = (empty($check['body']['user_id']) ? 30205 : 30207);
 			return $this->error('帐号已存在', $code);
 		}	 
 	}

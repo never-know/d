@@ -41,7 +41,7 @@ class WxController extends \Min\Controller
 		$this->{$func}();
 		
 		$this->reply();
-		
+ 
 		exit;	 
 	}
 	
@@ -80,8 +80,11 @@ class WxController extends \Min\Controller
 			$this->text('谢谢您再次关注，您可以先<a href="https://m.anyitime.com/bind.html" > 绑定手机号码 </a>, 祝您生活愉快');
 		} elseif ($add['statusCode'] == 30207) {
 			$this->text('谢谢您再次关注, 祝您生活愉快');
-		} elseif ($add['statusCode'] == 30208 || $add['statusCode'] == 1 ) {
+		} elseif ($add['statusCode'] == 1 ) {
 			$this->text('谢谢关注，您可以先<a href="https://m.anyitime.com/bind.html" >绑定手机号码</a>,祝您生活愉快');
+			$this->reply();
+			$this->userinfo($add['body']);
+			exit;
 		} else {
 			watchdog($param, 'wx_subscribe_error', 'ERROR', $add);
 			$this->text('谢谢关注,祝您生活愉快');
@@ -420,6 +423,31 @@ class WxController extends \Min\Controller
 			return $xmldata;
 		else
 			echo $xmldata;
+	}
+	
+	public function userinfo($user)
+	{
+		$result 	= $cache->get($key, true);
+		
+		if (empty($result) || $cache->getDisc() === $result) {
+			$open_id 	= $this->getRevFrom();
+			$wx 		= new \Vendor\Wx\WxBase('anyitime');
+			$result 	= $wx->getUserInfo($open_id);
+			if (!empty($result['openid'])) {
+				$cache 		= $this->cache('user');
+				$key 		= $this->getCacheKey('userinfo', $user['id']);
+				$cache->set($key, $result);
+			}
+		}
+		
+		if (!empty($result['headimgurl'])) {
+		
+			$img = file_get_content($result['headimgurl']);
+			if (!empty($img)) {
+				$path = PUBLIC_PATH . '/avater/' . implode('/', str_split($base_convert($user['id'], 10, 36), 2)) . '.jpg';
+				file_put_contents($path, $img);
+			}
+		}
 	}
  
 	function __call($name, $args)
