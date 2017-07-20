@@ -30,7 +30,7 @@ class MyController extends \App\Module\M\BaseController
 		
 		$wuser = $this->request('\\App\\Service\\Wuser');
  
-		$user_info = $wuser->checkAccount($id, 'wx_id');
+		$user_info = $wuser->checkAccount(base_convert($id, 36, 10), 'wx_id');
 		
 		if (isset($user_info['body']['parent_id']) && $user_info['body']['parent_id'] == session_get('wx_id')) {
 			$result = $wuser->member($id);

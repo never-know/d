@@ -57,9 +57,12 @@
           </div>
           
         </div>
-		<?php endforeach;?>
+		<?php endforeach; ?>
+		<script> var current_date = '<?=$current_date?>'; </script>
+	<?php else :?>
+			<h3 calss="no-date">暂无记录</h3>
 	<?php endif;?>
-	<script> var current_date = '<?=$current_date?>'; </script>
+	
 	  <!-- template
 		<div class="weui_panel_hd">2017-09</div>
 		  <div class="weui_cell"  >
