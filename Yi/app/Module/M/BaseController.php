@@ -126,7 +126,7 @@ class BaseController extends \Min\Controller
 	final public function userinfo()
 	{
 		$cache 		= $this->cache('user');
-		$key 		= $this->getCacheKey('userinfo', session_get('USER_ID'));
+		$key 		= $this->getCacheKey('userinfo', session_get('wx_id'));
 		$result 	= $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
