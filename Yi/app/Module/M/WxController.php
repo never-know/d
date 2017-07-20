@@ -427,19 +427,15 @@ class WxController extends \Min\Controller
 	
 	public function userinfo($user)
 	{
-		$result 	= $cache->get($key, true);
-		
-		if (empty($result) || $cache->getDisc() === $result) {
-			$open_id 	= $this->getRevFrom();
-			$wx 		= new \Vendor\Wx\WxBase('anyitime');
-			$result 	= $wx->getUserInfo($open_id);
-			if (!empty($result['openid'])) {
-				$cache 		= $this->cache('user');
-				$key 		= $this->getCacheKey('userinfo', $user['id']);
-				$cache->set($key, $result);
-			}
+		$open_id 	= $this->getRevFrom();
+		$wx 		= new \Vendor\Wx\WxBase('anyitime');
+		$result 	= $wx->getUserInfo($open_id);
+		if (!empty($result['openid'])) {
+			$cache 		= $this->cache('user');
+			$key 		= $this->getCacheKey('userinfo', $user['id']);
+			$cache->set($key, $result);
 		}
-		
+
 		if (!empty($result['headimgurl'])) {
 		
 			$img = file_get_content($result['headimgurl']);
