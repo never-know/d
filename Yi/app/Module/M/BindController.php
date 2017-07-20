@@ -43,7 +43,7 @@ class BindController extends \App\Module\M\BaseController
 			'register_ip'	=> ip_address(), 
 			'wx_id' 		=> $user['wx_id'], 
 			'open_id' 		=> $user['open_id'], 
-			'balance_index' => $user['balance_index'])
+			'balance_index' => $user['balance_index']
 		];
 		
 		$user = $this->request('\\App\\Service\\Account::addUserByWx', $regist_data);

@@ -178,7 +178,7 @@ class WuserService extends \Min\Service
 			return $this->error('注册失败', 30204);
 		}
 		
-		$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
+		$this->cache()->delete($this->getCacheKey('open_id', $data['open_id']));		//清理 缓存
 		if (1 == $check['statusCode']) {
 			$this->cache()->delete($this->getCacheKey('wx_id', $check['body']['wx_id']));		//清理 缓存
 		}
