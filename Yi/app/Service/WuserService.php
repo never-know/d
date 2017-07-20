@@ -145,7 +145,6 @@ class WuserService extends \Min\Service
 				'subscribe_status' 	=> $data['subscribe_status'], 
 				'subscribe_time' 	=> $data['subscribe_time'], 
 				'open_id'			=> json_encode($data['open_id']),
-				'user_id'			=> null
 			];
 			
 			$sql = 'INSERT INTO {{user_wx}} ' . build_query_insert($inserts) .' ON DUPLICATE KEY UPDATE wx_id = LAST_INSERT_ID(wx_id)';
@@ -199,7 +198,7 @@ class WuserService extends \Min\Service
 	
 	public function unsubscribe($open_id)
 	{
-		if (!validate('open_id', $data['open_id'])) {
+		if (!validate('open_id', $open_id)) {
 			return $this->error('参数错误', 30200);
 		}
 		$sql = 'UPDATE {{user_wx}} SET subscribe_status = 4 WHERE open_id = ' . safe_json_encode($open_id);
