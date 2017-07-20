@@ -65,7 +65,7 @@
                     <div class="weui_media_bd">
                         <p class="weui_media_desc"><?=$value['phone']?></p>
 						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥ <?=$value['benefit']?></li>
+							<li class="weui_media_info_meta">贡献收益 ￥ <?=$value['benefit_1']?></li>
 							<li class="weui_media_info_meta">下级 <?=$value['children'];?>人</li> 
 					  </ul>
                     </div>

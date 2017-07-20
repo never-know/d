@@ -213,7 +213,15 @@ class ShareService extends \Min\Service
 					WHEN ' . $parent['u2'] . ' THEN team_part + ' . $balance_log_insert_data[1]['user_money'] .
 					(empty($parent['u3']) ? '': (' WHEN ' . $parent['u3'] . ' THEN team_part + ' . $balance_log_insert_data[2]['user_money'])) .
 					' ELSE team_part 
-				END	' )) . 
+				END,
+				benefit_1 = case user_id
+					WHEN ' . $parent['u1'] . ' THEN benefit_1 + ' . $balance_log_insert_data[1]['user_money'] .
+					' ELSE benefit_1
+				END,
+				benefit_2 = case user_id
+					WHEN ' . $parent['u1'] . ' THEN benefit_2 + ' . $balance_log_insert_data[2]['user_money'] .
+					' ELSE benefit_2
+				END ' )) . 
 			' WHERE user_id IN (' . $ids . ')';
 
 			$result = $db->query($update);
