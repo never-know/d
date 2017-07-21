@@ -78,16 +78,7 @@ function region_get($region_id)
 		if (0 == $run) {
 		 
 			$time = microtime(true);
-			/*
-			$context = stream_context_create(array(
-				'http' => array(
-					'timeout' => 1
-				) 
-			));  
-
-			file_get_contents(HOME_PAGE.'/region/cache.html', 0, $context);
-			*/
-			 
+ 
 			$fp = fsockopen('www.'. SITE_DOMAIN, 80);
 			if ($fp) { 
 				$out = "GET /region/cache.html HTTP/1.1\r\n";

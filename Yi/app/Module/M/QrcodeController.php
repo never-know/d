@@ -41,9 +41,9 @@ class QrcodeController extends \App\Module\M\BaseController
 			$img = $this->getQRCode($scene_id, $img);
 		} 
 		
-		redirect($img);
-		//header("Content-Type:image/jpg"); 
-		//echo file_get_contents($img); 
+		//redirect($img);
+		header("Content-Type:image/jpg"); 
+		echo http_get($img); 
 
 		exit;
 	}

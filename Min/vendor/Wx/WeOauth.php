@@ -28,7 +28,7 @@ class WeOauth
 	
 		$code = isset($_GET['code'])?$_GET['code']:'';
 		if (!$code) return false;
-		$result = file_get_contents('https://api.weixin.qq.com/sns/oauth2/access_token?appid='.$this->appid.'&secret='.$this->appsecret.'&code='.$code.'&grant_type=authorization_code');
+		$result = http_get('https://api.weixin.qq.com/sns/oauth2/access_token?appid='.$this->appid.'&secret='.$this->appsecret.'&code='.$code.'&grant_type=authorization_code');
 		if ($result) {
 			$json = json_decode($result, true);
 			if (!$json || !empty($json['errcode'])) { 
