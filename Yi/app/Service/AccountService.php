@@ -251,6 +251,41 @@ class AccountService extends \Min\Service
 		}		
 	}
 	
+	public function nickname($data)
+	{
+
+		$user_id 	= intval($data['user_id']);
+		$nickname 	= trim($data['nickname']);
+		
+		if ($user_id < 1 || !validate('nickname', $nickname)) {
+			return $this->error('参数错误', 30201);
+		}
+		
+		$sql = 'UPDATE {{user}} SET nickname = '. safe_json_encode($nickname) . ' WHERE user_id = ' .$user_id;
+		
+		$this->query($sql);
+		
+		return $this->success('修改成功');
+	}
+	
+	
+	public function avater($data)
+	{
+
+		$user_id 	= intval($data['user_id']);
+		$avater 	= intval($data['avater']);
+		
+		if ($user_id < 1 || $avater < 1 || $avater > 16777215) {
+			return $this->error('参数错误', 30201);
+		}
+		
+		$sql = 'UPDATE {{user}} SET avater = '. $avater . ' WHERE user_id = ' .$user_id;
+		
+		$this->query($sql);
+		
+		return $this->success('修改成功');
+	}
+	
 	private function initUser($user)
 	{ 
 		if($user['user_id'] > 0) {

@@ -87,21 +87,12 @@ class FileCache
     protected function getFileName($id)
     {
 		if (!empty($this->option[$this->active]['level'])) {
-			$hash = md5($id);
-			$dirs = [
-				$this->option[$this->active]['cache_dir'],
-				substr($hash, 0, 2),
-				substr($hash, 2, 2),
-				substr($hash, 4, 2),
-				$hash
-			];
+			$id = hash_path($id);
 		} else {
-			$dirs = [
-				$this->option[$this->active]['cache_dir'],
-				$id
-			];
+			$id = DIRECTORY_SEPARATOR . id;
 		}
-        return implode(DIRECTORY_SEPARATOR, $dirs);
+		
+        return $this->option[$this->active]['cache_dir'] . $hash; 	//implode(DIRECTORY_SEPARATOR, $dirs);
     }
 	
 	/**

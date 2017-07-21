@@ -170,6 +170,12 @@ function current_path()
 {
   return $_SERVER['PATH_INFO_ORIGIN'].'.html?'.http_build_query($_GET);
 }
+
+function hash_path($id)
+{	
+	$hash 	= md5($id);
+	return	implode(DIRECTORY_SEPARATOR, ['', substr($hash, 0, 2), substr($hash, 2, 2), substr($hash, 4, 2), substr($hash, 6)]);
+}
  
 function ip_address($type = 'iplong') 
 {

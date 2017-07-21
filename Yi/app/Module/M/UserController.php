@@ -42,6 +42,35 @@ class UserController extends \App\Module\M\BaseController
 		$this->success($result);
 	}
 	
+	public function nickname_post()
+	{
+		$params				= [];
+		
+		$params['nickname'] = trim($_POST['nickname']);
+		if (!validate('nickname', $params['nickname'])) {
+			$this->error('格式错误', 20000);
+		}
+		
+		$params['user_id']	= session_get('USER_ID');
+		
+		$result = $this->request('\\App\\Service\\Account::nickname', $params);
+		$result['redirect'] = '/user/profile.html';
+		$this->success($result);
+	}
+	
+	public function avater_post()
+	{
+		$params				= [];
+		
+		$avater = mt_rand(1, 1677720) . ['jpg' => 0, 'jpeg' => 1, 'png' => 2][$file['ext']];
+		
+		$params['user_id']	= session_get('USER_ID');
+		
+		$result = $this->request('\\App\\Service\\Account::avater', $params);
+		$result['redirect'] = '/user/profile.html';
+		$this->success($result);
+	}
+	
 	public function account_get()
 	{
 	
@@ -50,6 +79,52 @@ class UserController extends \App\Module\M\BaseController
 	public function account_post()
 	{
 	
+	}
+	
+	public function userinfo()
+	{	
+		/*
+		$wx_id		= session_get('wx_id');
+		$cache 		= $this->cache('user');
+		$key 		= $this->getCacheKey('userinfo', $wx_id);
+		$result 	= $cache->get($key, true);
+		
+		if (empty($result) || $cache->getDisc() === $result) {
+			$open_id 	= session_get('open_id');
+			$wx 		= $this->getWX();
+			$result 	= $wx->getUserInfo($open_id);
+			
+			if (!empty($result['openid'])) {
+				 
+				if (!empty($result['headimgurl'])) {
+					$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
+					if (!empty($img)) {
+						$path = '/avater/' . implode('/', str_split(base_convert($wx_id, 10, 36), 2)) . '.jpg';
+						$result['img_path'] = ASSETS_URL . $path;
+						file_put_contents(PUBLIC_PATH . $path, $img);
+					}
+				}
+				 
+				$cache->set($key, $result);
+
+			} else {
+				$result = [];
+			}
+		}
+		*/
+		
+		$result = [];
+		$user = session_get('user');
+		if (!empty($user['avater'])) {
+			$key = ($user['user_id'] + $user['avater']) . 'anyitime' . $user['avater'] . '6688';
+			$result['headimgurl'] = (ASSETS_URL . '/avater' . hash_path($key) . ['.jpg', '.jpeg', '.png'][substr($user['avater'], -1)]);
+		} else {
+			$result['headimgurl'] = '/public/images/avater.jpg';
+		}
+		if (empty($user['nickname'])) {
+			$result['nickname'] = 'Anbaby' .  substr(session_get('user_phone'), -4);
+		}
+		return $result;
 	}
 		
 }

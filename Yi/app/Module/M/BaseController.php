@@ -122,46 +122,5 @@ class BaseController extends \Min\Controller
 		 
 		session_set('user', $user);	 
 	}
-	
-	final public function userinfo()
-	{	
-		/*
-		$wx_id		= session_get('wx_id');
-		$cache 		= $this->cache('user');
-		$key 		= $this->getCacheKey('userinfo', $wx_id);
-		$result 	= $cache->get($key, true);
-		
-		if (empty($result) || $cache->getDisc() === $result) {
-			$open_id 	= session_get('open_id');
-			$wx 		= $this->getWX();
-			$result 	= $wx->getUserInfo($open_id);
-			
-			if (!empty($result['openid'])) {
-				 
-				if (!empty($result['headimgurl'])) {
-					$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
-					if (!empty($img)) {
-						$path = '/avater/' . implode('/', str_split(base_convert($wx_id, 10, 36), 2)) . '.jpg';
-						$result['img_path'] = ASSETS_URL . $path;
-						file_put_contents(PUBLIC_PATH . $path, $img);
-					}
-				}
-				 
-				$cache->set($key, $result);
 
-			} else {
-				$result = [];
-			}
-		}
-		*/
-		
-		$result = [];
- 
-		$result['headimgurl'] = '/public/images/avater.jpg';
-
-		$result['nickname'] = 'Anbaby_' .  substr(session_get('user_phone'), -4);
-
-		return $result;
-	}
-	
 }

@@ -42,7 +42,7 @@ class QrcodeController extends \App\Module\M\BaseController
 		} 
 		
 		//redirect($img);
-		header("Content-Type:image/jpg"); 
+		header("Content-Type:image/jpeg"); 
 		echo file_get_contents(PUBLIC_PATH . $img); 
 
 		exit;
