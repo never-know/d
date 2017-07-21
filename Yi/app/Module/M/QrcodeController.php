@@ -51,7 +51,7 @@ class QrcodeController extends \App\Module\M\BaseController
 	public function getQRCode($scene_id, $default = null)
 	{
 		$cache 	= $this->cache('qrcode');
-		$key	= 'qrcode_'. $scene_id;
+		$key	= '{qrcode}:'. $scene_id;
 		$result = $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) { 
