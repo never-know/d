@@ -438,7 +438,7 @@ class WxController extends \Min\Controller
 
 		if (!empty($result['headimgurl'])) {
 		
-			$img = file_get_content($result['headimgurl']);
+			$img = file_get_contents($result['headimgurl']);
 			if (!empty($img)) {
 				$path = PUBLIC_PATH . '/avater/' . implode('/', str_split($base_convert($user['id'], 10, 36), 2)) . '.jpg';
 				file_put_contents($path, $img);
