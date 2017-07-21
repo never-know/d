@@ -133,8 +133,18 @@ class BaseController extends \Min\Controller
 			$open_id 	= session_get('open_id');
 			$wx 		= $this->getWX();
 			$result 	= $wx->getUserInfo($open_id);
+			
 			if (!empty($result['openid'])) {
-				$cache->set($key, $result, 86400);
+				if (!empty($result['headimgurl'])) {
+					$img = file_get_contents(substr_replace($result['headimgurl'], '64', -1, 1));
+					if (!empty($img)) {
+						$result['img_path'] = PUBLIC_PATH . '/avater/' . implode('/', str_split(base_convert($user['id'], 10, 36), 2)) . '.jpg';
+						file_put_contents($result['img_path'], $img);
+					}
+				}
+
+				$cache->set($key, $result);
+
 			} else {
 				$result = [];
 			}
@@ -142,14 +152,7 @@ class BaseController extends \Min\Controller
 		
 		if (empty($result['headimgurl'])) {
 			$result['headimgurl'] = '/public/images/avater.jpg';
-		} else {
-			$img = file_get_contents($result['headimgurl']);
-			if (!empty($img)) {
-			
-				$path = PUBLIC_PATH . '/avater/' . implode('/', str_split(base_convert(session_get('wx_id'), 10, 36), 2)) . '.jpg';
-				file_put_contents($path, $img);
-			}
-		}
+		} 
 		
 		if (empty($result['nickname'])) {
 			$result['nickname'] = '用户' .  substr(session_get('user_phone'), -4);
