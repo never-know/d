@@ -43,7 +43,7 @@ class QrcodeController extends \App\Module\M\BaseController
 		
 		//redirect($img);
 		header("Content-Type:image/jpg"); 
-		echo http_get($img); 
+		echo file_get_contents(PUBLIC_PATH . $img); 
 
 		exit;
 	}
@@ -51,7 +51,8 @@ class QrcodeController extends \App\Module\M\BaseController
 	public function getQRCode($scene_id, $default = null)
 	{
 		$cache 	= $this->cache('qrcode');
-		$result = $cache->get('qrcode_'. $scene_id, true);
+		$key	= 'qrcode_'. $scene_id;
+		$result = $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) { 
 		
@@ -61,9 +62,9 @@ class QrcodeController extends \App\Module\M\BaseController
 			
 				$img = http_get($wx->getQRUrl($result['ticket']));
 				if (!empty($img)) {
-					$result['img_path'] = PUBLIC_PATH . '/qrcode/' . implode('/', str_split($scene_id, 2)) . '.jpg';
-					file_put_contents($result['img_path'], $img);
-					$cache->set('qrcode_'. $scene_id, $result, $result['expire_seconds']-100);
+					$result['img_path'] = '/qrcode/' . implode('/', str_split($scene_id, 2)) . '.jpg';
+					file_put_contents(PUBLIC_PATH . $result['img_path'], $img);
+					$cache->set($key, $result, $result['expire_seconds']-100);
 				}
 			}
 		}

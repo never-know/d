@@ -124,7 +124,8 @@ class BaseController extends \Min\Controller
 	}
 	
 	final public function userinfo()
-	{
+	{	
+		/*
 		$wx_id		= session_get('wx_id');
 		$cache 		= $this->cache('user');
 		$key 		= $this->getCacheKey('userinfo', $wx_id);
@@ -136,29 +137,30 @@ class BaseController extends \Min\Controller
 			$result 	= $wx->getUserInfo($open_id);
 			
 			if (!empty($result['openid'])) {
+				 
 				if (!empty($result['headimgurl'])) {
 					$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
 					if (!empty($img)) {
-						$result['img_path'] = PUBLIC_PATH . '/avater/' . implode('/', str_split(base_convert($wx_id, 10, 36), 2)) . '.jpg';
-						file_put_contents($result['img_path'], $img);
+						$path = '/avater/' . implode('/', str_split(base_convert($wx_id, 10, 36), 2)) . '.jpg';
+						$result['img_path'] = ASSETS_URL . $path;
+						file_put_contents(PUBLIC_PATH . $path, $img);
 					}
 				}
-
+				 
 				$cache->set($key, $result);
 
 			} else {
 				$result = [];
 			}
 		}
+		*/
 		
-		if (empty($result['headimgurl'])) {
-			$result['headimgurl'] = '/public/images/avater.jpg';
-		} 
-		
-		if (empty($result['nickname'])) {
-			$result['nickname'] = '用户' .  substr(session_get('user_phone'), -4);
-		}
-		
+		$result = [];
+ 
+		$result['headimgurl'] = '/public/images/avater.jpg';
+
+		$result['nickname'] = 'Anbaby_' .  substr(session_get('user_phone'), -4);
+
 		return $result;
 	}
 	

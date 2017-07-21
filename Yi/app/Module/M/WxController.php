@@ -432,21 +432,20 @@ class WxController extends \Min\Controller
 		$result 	= $wx->getUserInfo($open_id);
 		
 		if (!empty($result['openid'])) {
-			$cache 		= $this->cache('user');
+			$cache 		= $this->cache('wx_user_info');
 			$key 		= $this->getCacheKey('userinfo', $user['id']);
-			
+			/*
 			if (!empty($result['headimgurl'])) {
 				$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
 				if (!empty($img)) {
-					$result['img_path'] = PUBLIC_PATH . '/avater/' . implode('/', str_split(base_convert($user['id'], 10, 36), 2)) . '.jpg';
-					file_put_contents($path, $img);
+					$path 	= '/avater/' . implode('/', str_split(base_convert($user['id'], 10, 36), 2)) . '.jpg';
+					$result['img_path'] = ASSETS_URL . $path;
+					file_put_contents(PUBLIC_PATH.$path, $img);
 				}
 			}
-
+			*/
 			$cache->set($key, $result);
-		}
-
-		
+		}	
 	}
  
 	function __call($name, $args)
