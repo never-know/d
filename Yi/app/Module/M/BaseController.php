@@ -125,8 +125,9 @@ class BaseController extends \Min\Controller
 	
 	final public function userinfo()
 	{
+		$wx_id		= session_get('wx_id');
 		$cache 		= $this->cache('user');
-		$key 		= $this->getCacheKey('userinfo', session_get('wx_id'));
+		$key 		= $this->getCacheKey('userinfo', $wx_id);
 		$result 	= $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
@@ -136,9 +137,9 @@ class BaseController extends \Min\Controller
 			
 			if (!empty($result['openid'])) {
 				if (!empty($result['headimgurl'])) {
-					$img = file_get_contents(substr_replace($result['headimgurl'], '64', -1, 1));
+					$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
 					if (!empty($img)) {
-						$result['img_path'] = PUBLIC_PATH . '/avater/' . implode('/', str_split(base_convert($user['id'], 10, 36), 2)) . '.jpg';
+						$result['img_path'] = PUBLIC_PATH . '/avater/' . implode('/', str_split(base_convert($wx_id, 10, 36), 2)) . '.jpg';
 						file_put_contents($result['img_path'], $img);
 					}
 				}
