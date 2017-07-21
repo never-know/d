@@ -146,7 +146,7 @@ class BaseController extends \Min\Controller
 			$img = file_get_contents($result['headimgurl']);
 			if (!empty($img)) {
 			
-				$path = PUBLIC_PATH . '/avater/' . implode('/', str_split($base_convert(session_get('wx_id'), 10, 36), 2)) . '.jpg';
+				$path = PUBLIC_PATH . '/avater/' . implode('/', str_split(base_convert(session_get('wx_id'), 10, 36), 2)) . '.jpg';
 				file_put_contents($path, $img);
 			}
 		}
