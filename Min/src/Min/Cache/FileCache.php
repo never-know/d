@@ -63,6 +63,7 @@ class FileCache
     public function set($id, $data, $expiration = 0)
     {
         $file_name = $this->getFileName($id);
+		watchdog($file_name);
 		$dir = dirname($file_name);
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
@@ -89,10 +90,10 @@ class FileCache
 		if (!empty($this->option[$this->active]['level'])) {
 			$id = hash_path($id);
 		} else {
-			$id = DIRECTORY_SEPARATOR . id;
+			$id = DIRECTORY_SEPARATOR . $id;
 		}
 		
-        return $this->option[$this->active]['cache_dir'] . $hash; 	//implode(DIRECTORY_SEPARATOR, $dirs);
+        return $this->option[$this->active]['cache_dir'] . $id; 	//implode(DIRECTORY_SEPARATOR, $dirs);
     }
 	
 	/**

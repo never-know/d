@@ -22,11 +22,7 @@ class AuthController extends \Min\Controller
 		if (!isset($open_id)) {
 			$open_id = $this->getOpenid($state);
 		}
-		
-		if (empty($open_id)) {
-			exit('open_id error');
-		}
-		
+
 		$pairs = [
 			'annyi' => ['wx.zj.annyi.cn6688', 'http://wx.zj.annyi.cn/auth/']
 		];
@@ -35,7 +31,7 @@ class AuthController extends \Min\Controller
 			exit('error');
 		}
 		
-		$new_key = bin2hex(rc4($pairs[$from][0],  implode('_', [$from, $state, $current, $open_id])));
+		$new_key = bin2hex(rc4($pairs[$from][0],  implode('_', [$state, $current, $open_id])));
 		 
 		redirect($pairs[$from][1] . $new_key.'.html');
 		
@@ -44,9 +40,7 @@ class AuthController extends \Min\Controller
 	
 	public function getOpenid($state)
 	{
-		require VENDOR_PATH. '/Wx/WxBase.php';
-		
-		$wx = new \WeBase('anyitime');
+		$wx = new \Vendor\Wx\WxBase('anyitime');
 	
 		if (!empty($_GET['state']) && $_GET['state'] == $state) {
 			$r = $wx->getOauthAccessToken();

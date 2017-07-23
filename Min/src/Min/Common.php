@@ -171,9 +171,9 @@ function current_path()
   return $_SERVER['PATH_INFO_ORIGIN'].'.html?'.http_build_query($_GET);
 }
 
-function hash_path($id)
+function hash_path($key, $salt = '')
 {	
-	$hash 	= md5($id);
+	$hash 	= md5($key.$salt);
 	return	implode(DIRECTORY_SEPARATOR, ['', substr($hash, 0, 2), substr($hash, 2, 2), substr($hash, 4, 2), substr($hash, 6)]);
 }
  

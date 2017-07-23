@@ -61,9 +61,7 @@ class UserController extends \App\Module\M\BaseController
 	public function avater_post()
 	{
 		$params				= [];
-		
-		$avater = mt_rand(1, 1677720) . ['jpg' => 0, 'jpeg' => 1, 'png' => 2][$file['ext']];
-		
+
 		$params['user_id']	= session_get('USER_ID');
 		
 		$result = $this->request('\\App\\Service\\Account::avater', $params);
@@ -71,15 +69,15 @@ class UserController extends \App\Module\M\BaseController
 		$this->success($result);
 	}
 	
-	public function account_get()
+	public function binded_get()
 	{
+		$result						= [];
+		$result['statusCode'] 		= 30200;
+		$result['message'] 			= '帐号已绑定手机号码';
+		$result['body']['phone'] 	= session_get('user')['phone'];
+		$this->response($result);
 	
-	}
-	
-	public function account_post()
-	{
-	
-	}
+	} 
 	
 	public function userinfo()
 	{	
@@ -91,7 +89,7 @@ class UserController extends \App\Module\M\BaseController
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 			$open_id 	= session_get('open_id');
-			$wx 		= $this->getWX();
+			$wx 		= $this->getWx();
 			$result 	= $wx->getUserInfo($open_id);
 			
 			if (!empty($result['openid'])) {
@@ -116,8 +114,8 @@ class UserController extends \App\Module\M\BaseController
 		$result = [];
 		$user = session_get('user');
 		if (!empty($user['avater'])) {
-			$key = ($user['user_id'] + $user['avater']) . 'anyitime' . $user['avater'] . '6688';
-			$result['headimgurl'] = (ASSETS_URL . '/avater' . hash_path($key) . ['.jpg', '.jpeg', '.png'][substr($user['avater'], -1)]);
+			$key = $user['user_id'] . 'anyitime6688';
+			$result['headimgurl'] = (ASSETS_URL . '/avater' . hash_path(md5($key), 'fucome6688') . ['', '.png', '.jpg', '.jpeg'][$user['avater']]);
 		} else {
 			$result['headimgurl'] = '/public/images/avater.jpg';
 		}

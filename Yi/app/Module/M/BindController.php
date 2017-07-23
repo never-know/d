@@ -8,12 +8,12 @@ class BindController extends \App\Module\M\BaseController
 	public function onConstruct($redirect = 0)
 	{
 		$binded = parent::onConstruct(0);
-		
+	
 		if ($binded) {
 			$result['statusCode'] 		= 30200;
 			$result['message'] 			= '帐号已绑定手机号码';
-			$result['body']['template'] 	= '/bind/binded';
-			$result['body']['phone'] 		= session_get('user')['phone'];
+			$result['redirect'] 		= '/user/binded.html';
+			$result['body']['phone'] 	= session_get('user_phone');
 			$this->response($result);
 		}	
 	}
@@ -72,14 +72,7 @@ class BindController extends \App\Module\M\BaseController
 		
 		$this->request('\\App\\Service\\Sms::send', [ 0 => $phone, 'init' => 'bind'], $this::EXITALL);	
 	}
-	
-	public function binded_get()
-	{
-		$this->error('微信号已绑定手机', 309);
-	
-	}
-	
-	
+
 	private function check($phone)
 	{	
 		if (!validate('phone', $phone)) {

@@ -10,6 +10,8 @@
 		<link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/0.4.3/weui.min.css"/>
 		<link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/0.8.3/css/jquery-weui.min.css"/>
 		<link rel="stylesheet" href="/public/css/myi.css?v=9"/>
+		
+		<script src="https://res.wx.qq.com/open/libs/weuijs/1.1.1/weui.min.js"></script>		
 		<script src="/public/js/m/zepto_fx.min.js"></script>		
 	</head>
 

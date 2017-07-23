@@ -74,7 +74,14 @@
 	.weui_panel:before, .weui_panel:after {
 		border: none;  
 	}
+	.weui_dialog, .weui_toast{
+		top:10%;
+	}
+	.weui_dialog_bd{
+		font-size:0;
+	}
 	</style>
+	 	
 	<script>
 	 $(document).on("click", "#show-nickname", function() {
         $.prompt("", "设置昵称", function(text) {

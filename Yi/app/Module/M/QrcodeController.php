@@ -34,7 +34,7 @@ class QrcodeController extends \App\Module\M\BaseController
 			}
 		} 
 		
-		$img = config_get('wx_qrcode');
+		$img = PUBLIC_PATH . config_get('wx_qrcode');
 		
 		if ($shared_user_wx_id) {
 			$scene_id = base_convert($shared_user_wx_id, 10, 36);
@@ -43,7 +43,7 @@ class QrcodeController extends \App\Module\M\BaseController
 		
 		//redirect($img);
 		header("Content-Type:image/jpeg"); 
-		echo file_get_contents(PUBLIC_PATH . $img); 
+		echo file_get_contents($img); 
 
 		exit;
 	}
@@ -56,14 +56,22 @@ class QrcodeController extends \App\Module\M\BaseController
 		
 		if (empty($result) || $cache->getDisc() === $result) { 
 		
-			$wx 	= $this->getWX();
+			$wx 	= $this->getWx();
 			$result = $wx->getQRCode($scene_id);
 			if (!empty($result['ticket'])) {
 			
 				$img = http_get($wx->getQRUrl($result['ticket']));
 				if (!empty($img)) {
-					$result['img_path'] = '/qrcode/' . implode('/', str_split($scene_id, 2)) . '.jpg';
-					file_put_contents(PUBLIC_PATH . $result['img_path'], $img);
+					$result['img_path'] = PUBLIC_PATH . '/qrcode/' . implode('/', str_split($scene_id, 2)) . '.jpg';
+					
+					$dir = dirname($result['img_path']);
+					if (!is_dir($dir)) {
+						if (!mkdir($dir, 0755, true)) {
+							return $default;
+						}
+					}
+					
+					file_put_contents($result['img_path'], $img);
 					$cache->set($key, $result, $result['expire_seconds']-100);
 				}
 			}

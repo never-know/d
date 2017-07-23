@@ -23,7 +23,7 @@ class BaseController extends \Min\Controller
 	
 	final public function getOpenid()
 	{
-		$wx = $this->getWX();
+		$wx = $this->getWx();
 		
 		if (empty($_GET['code'])) {
 			$url = 'https://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
@@ -44,7 +44,7 @@ class BaseController extends \Min\Controller
 		}
 	}
  
-	final public function getWX($type= 'anyitime')
+	final public function getWx($type= 'anyitime')
 	{
 		return new \Vendor\Wx\WxBase($type);
 	}
