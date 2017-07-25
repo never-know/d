@@ -3,7 +3,7 @@ namespace App\Service;
 
 use Min\App;
 
-class ArticleService extends \Min\Service
+class NeedsService extends \Min\Service
 {
 	public function add($param)
 	{

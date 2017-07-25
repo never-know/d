@@ -3,7 +3,7 @@
 		<span style="margin-left:28px;">需求＞</span><label class="subtitle">需求列表</label>
 	</div>
  
-	<ul id="needs_list">
+	<ul id="article_list">
 		<li style="background:#eaeaea">	
 			<span class="number"> 编号 </span>
 		 

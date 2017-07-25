@@ -65,7 +65,7 @@ Min.event.bind('buttons','click',{handler: function(e){
 			 
 			t.setAttribute("sindex", 1);
 			minAjax({
-				url:'http://www.' + site_domain + '/article/'+ t.getAttribute('tot')+'.html', 
+				url:'http://www.anyitime.com/needs/'+ t.getAttribute('tot')+'.html', 
 				type:'POST', 
 				data:{
 					title:title,
