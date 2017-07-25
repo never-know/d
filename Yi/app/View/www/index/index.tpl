@@ -1,6 +1,6 @@
 <div class="summary-card">
 				<ul>
-					<li class="dashboard-stat green-haze"> 
+					<li class="dashboard-stat green-haze "> 
 					<div class="details">
 							<div class="number">
 								 ￥ 1349
@@ -10,7 +10,7 @@
 							</div>
 						</div>
 					</li>
-					<li class="dashboard-stat blue-madison">
+					<li class="dashboard-stat blue-madison hide">
 					<div class="details">
 							<div class="number">
 								   1349
@@ -20,7 +20,7 @@
 							</div>
 						</div>
 					</li>
-					<li class="dashboard-stat red-intense">
+					<li class="dashboard-stat red-intense hide">
 					<div class="details">
 							<div class="number">
 								 1349
@@ -31,7 +31,7 @@
 						</div>
 					</li>
 					
-					<li class="dashboard-stat purple-plum">
+					<li class="dashboard-stat purple-plum hide">
 					<div class="details">
 							<div class="number">
 								  ￥ 1349

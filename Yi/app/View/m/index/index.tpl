@@ -173,7 +173,7 @@
 	<div class="weui_navbar_item" id="show-actions">
 		全部分类
 	</div>
-	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;max-width:60%;    overflow: hidden;" id="d3">
+	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;max-width:60%;    overflow: hidden;" id="region">
 		西湖区转塘街道西湖区转塘街道转塘街道转塘街道
 	</div>
 	</div>
@@ -219,28 +219,6 @@
         });
       });
 
-      $(document).on("click", "#show-actions-bg", function() {
-        $.actions({
-          actions: [
-            {
-              text: "发布",
-              className: "bg-primary",
-            },
-            {
-              text: "编辑",
-              className: "bg-warning",
-            },
-            {
-              text: "删除",
-              className: 'bg-danger',
-            }
-          ]
-        });
-      });
-   
- 
-    
- 
 $(document).on("click", "#d3", function() {
 		  
 		 
@@ -274,39 +252,7 @@ $(document).on("click", "#d3", function() {
           ]
         });
       });
-$(document).on("click", "#d2", function() {
-		  
-		 
-        $.actions({
-          
-          onClose: function() {
-            console.log("close");
-          },
-          actions: [
-            {
-              text: "发布",
-              className: "color-primary",
-              onClick: function() {
-                $.alert("发布成功");
-              }
-            },
-            {
-              text: "编辑",
-              className: "color-warning",
-              onClick: function() {
-                $.alert("你选择了“编辑”");
-              }
-            },
-            {
-              text: "删除",
-              className: 'color-danger',
-              onClick: function() {
-                $.alert("你选择了“删除”");
-              }
-            }
-          ]
-        });
-      }); 	  
+	  
 	  </script>
 	  
 	   <script>
