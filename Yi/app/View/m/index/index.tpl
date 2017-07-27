@@ -218,41 +218,8 @@
           ]
         });
       });
-
-$(document).on("click", "#d3", function() {
-		  
-		 
-        $.actions({
-          
-          onClose: function() {
-            console.log("close");
-          },
-          actions: [
-            {
-              text: "发布",
-              className: "color-primary",
-              onClick: function() {
-                $.alert("发布成功");
-              }
-            },
-            {
-              text: "编辑",
-              className: "color-warning",
-              onClick: function() {
-                $.alert("你选择了“编辑”");
-              }
-            },
-            {
-              text: "删除",
-              className: 'color-danger',
-              onClick: function() {
-                $.alert("你选择了“删除”");
-              }
-            }
-          ]
-        });
-      });
 	  
+
 	  </script>
 	  
 	   <script>
@@ -270,8 +237,8 @@ $(document).on("click", "#d3", function() {
 	<script src="/public/js/m/picker.js"></script>
 	<script src="/public/js/m/city-picker.js"></script>
 	<script>
-	   $("#start").cityPicker({
-        title: "选择出发地",
+	   $("#region").cityPicker({
+        title: "选择广告投放区域",
         onChange: function (picker, values, displayValues) {
           console.log(values, displayValues);
         }

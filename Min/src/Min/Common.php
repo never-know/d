@@ -211,7 +211,7 @@ function ip_address($type = 'iplong')
 		$iplong = ip2long($ip_address);
 		
 		if (false == $iplong){
-			watchdog('invalid ip address : '.$ip_address, 'USER_ABNORMAL_IP', 'NOTICE');
+			watchdog('invalid ip address : '.$ip_address, 'invalid_ip', 'NOTICE');
 		} else {
 			$ip = ['ip' => $ip_address, 'iplong' => $iplong];
 		}
@@ -609,7 +609,7 @@ function app_error($errno, $errstr, $errfile, $errline)
 		.	' error code/type: '
 		.	$errno;
 	
-	watchdog($message, 'unexpected_error', $type);
+	//watchdog($message, 'unexpected_error', $type);
 	
 	if ($type == 'ERROR') {
 		request_error_found(500);
@@ -674,7 +674,7 @@ function  record_time($tag)
 	static $last_time;
 	if (empty($last_time)) $last_time = $_SERVER['REQUEST_TIME_FLOAT']*10000;
 	$now = microtime(true)*10000;
-	watchdog($tag. ' total:'. ($now - $_SERVER['REQUEST_TIME_FLOAT']*10000) . ';#this:'. ($now - $last_time) , 'timelog');
+	watchdog($tag. ' total:'. ($now - $_SERVER['REQUEST_TIME_FLOAT']*10000) . ';#this:'. ($now - $last_time) , 'timer');
 	$last_time = $now;
 }
 

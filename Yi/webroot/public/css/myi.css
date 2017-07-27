@@ -143,6 +143,14 @@ padding: 13px 15px 9px 15px;
  
 .weui_cell_ft {
 font-size:14px;
+ 
+    width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 .weui_cell_hd img {
 margin-right: 16px;

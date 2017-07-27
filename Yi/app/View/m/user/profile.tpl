@@ -28,10 +28,10 @@
 	<div class="weui_cells">
 
         <div class="weui_cell" href="javascript:;" id="show-nickname">
-          <div class="weui_cell_bd weui_cell_primary">
+          <div class="weui_cell_bd weui_cell_primary" style="min-width: 100px;">
             <p>昵称</p>
           </div>
-          <div class="weui_cell_ft weui_cell_ft_fix" id="nick"><?=$result['nickname'];?></div>
+          <div class="weui_cell_ft weui_cell_ft_fix" id="nick" >西湖区转塘街道西湖区转塘街道转塘街道转塘街道</div>
         </div>
         <div class="weui_cell" href="javascript:;">
           <div class="weui_cell_bd weui_cell_primary">

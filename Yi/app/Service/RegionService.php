@@ -16,7 +16,7 @@ class RegionService extends \Min\Service
 	public function childrenNode($id)
 	{
 		$id = intval($id);
-		$sql = 'SELECT id, short_name as name FROM {region} WHERE parent_id  = '. $id. ' ORDER BY id ASC';
+		$sql = 'SELECT id, short_name as name FROM {{region}} WHERE parent_id  = '. $id. ' ORDER BY id ASC';
 		$region	= $this->query($sql);
 		return $this->success([$id =>$region]);
 	}	
@@ -29,7 +29,7 @@ class RegionService extends \Min\Service
 	 */
 	public function allNode()
 	{
-		$sql = 'SELECT id, short_name, parent_id FROM {region} ORDER BY parent_id ASC, id ASC';
+		$sql = 'SELECT id, short_name, parent_id FROM {{region}} ORDER BY parent_id ASC, id ASC';
 		$result	= $this->query($sql);
 		
 		$region = [];
@@ -51,10 +51,10 @@ class RegionService extends \Min\Service
 	{
 		$id = intval($id);	
 		if ( $id > 1) {
-			$sql = 'SELECT d.id as id1, c.id as id2, b.id as id3, a.id  FROM {region} a
-				LEFT JOIN {region} b ON a.parent_id = b.id
-				LEFT JOIN {region} c ON b.parent_id = c.id
-				LEFT JOIN {region} d ON c.parent_id = d.id
+			$sql = 'SELECT d.id as id1, c.id as id2, b.id as id3, a.id  FROM {{region}} a
+				LEFT JOIN {{region}} b ON a.parent_id = b.id
+				LEFT JOIN {{region}} c ON b.parent_id = c.id
+				LEFT JOIN {{region}} d ON c.parent_id = d.id
 				WHERE a.id = ' . $id .' LIMIT 1';
 				
 			$result	= $this->query($sql);
@@ -76,9 +76,11 @@ class RegionService extends \Min\Service
 			$filter = ' parent_id = 0 ';
 		}
 		
-		$sql2 = 'SELECT id, short_name, parent_id FROM {region} WHERE '. $filter .' ORDER BY parent_id ASC, id ASC';
+		$sql2 = 'SELECT id, short_name, parent_id FROM {{region}} WHERE '. $filter .' ORDER BY parent_id ASC, id ASC';
 		$result	= $this->query($sql2);
 		return $this->success($result);
 	}
+	
+ 
 	
 }
