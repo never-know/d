@@ -58,35 +58,39 @@ class Logger
 		
 		$has_error = '';
 		
-		$records =  date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME'])
-				. ' [IP: '
+		$records = '<A> '  
+				. date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME'])
+				. ' | '
 				. ip_address('ip')
-				. '] ['
-				. $_SERVER['REQUEST_URI']
-				. '] ['
-				. ($_SERVER['HTTP_REFERER']??'')
-				. '] [pid '
-				. getmypid()
-				. '] ['
+				. ' | '
 				. session_id()
-				. '] ['
-				. (session_get('UID') ?: 0)
-				. ']'
+				. ' | '
+				. (session_get('USER_ID') ?: 0)
+				. ' | '
+				. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+				. ' | '
+				. ($_SERVER['HTTP_REFERER']??'')
+				. ' | '
+				. getmypid()
 				. PHP_EOL;
 				
 		foreach ($this->logs as $log) {
-			$records .= '[channel:' . $log['channel'] . '] [' . $log['level'] . '] [info:' . $log['message'] . ']';
+		
+			$records .= str_pad($log['channel'], 10) . ' | ' . str_pad($log['level'], 10) . ' | ' . $log['message'] . ' | ';
+			
 			if (!empty($log['extra'])) {
-				$records .= ' [extra: '. json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).']';
+				$records .= ' more: '. json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 			}
+			
 			$records .= PHP_EOL;
 			
 			if ($log['level'] != 'INFO' && $log['level'] != 'DEBUG' && empty($has_error)) {
-				$has_error = $log['level'] . "     \t@ " . date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']) . PHP_EOL ;
+				$has_error = str_pad($log['level'], 10) . " @ " . date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']) . ' | ' . session_id() . PHP_EOL ;
 			}
-			
 		}
-		$records .= PHP_EOL;
+		
+		$records .= '</A>' . PHP_EOL;
+		
 		error_log($records, 3, $dest_file, '');
 		if (!empty($has_error)) {
 			error_log($has_error, 3, $dest_file.'.error', '');

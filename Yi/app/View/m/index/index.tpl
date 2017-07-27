@@ -171,7 +171,7 @@
 		</div>
 	<div class="weui_navbar">
 	<div class="weui_navbar_item" id="show-actions">
-		全部分类
+		排序
 	</div>
 	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;max-width:60%;    overflow: hidden;" id="region">
 		西湖区转塘街道西湖区转塘街道转塘街道转塘街道
@@ -267,5 +267,13 @@ $(document).on("click", "#d3", function() {
       });
     </script>
   
-	
-	
+	<script src="/public/js/m/picker.js"></script>
+	<script src="/public/js/m/city-picker.js"></script>
+	<script>
+	   $("#start").cityPicker({
+        title: "选择出发地",
+        onChange: function (picker, values, displayValues) {
+          console.log(values, displayValues);
+        }
+      });
+	</script>
