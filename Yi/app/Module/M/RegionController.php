@@ -66,43 +66,30 @@ class RegionController extends \Min\Controller
 	
 	public function citypicker_get()
 	{ 
-		//$cache 	= $this->cache('region');
-		$nodes = $this->request('\\App\\Service\\Region::allNode');
-	 
-		$region = [];
+		$cache 	= $this->cache('region');
 		
-		foreach ($nodes['body'] as $key => $value) {
-			if ($value['parent_id'] == 0) {	// 省
-				$region[$key]['n'] = $value['short_name'];
-			} elseif (!empty($region[$value['parent_id']])) {		// 市
-				$region[$value['parent_id']]['c'][$value['id']]['n'] = $value['short_name'];
-			}elseif (!empty($region[$nodes[$value['parent_id']]['parent_id']]['c'][$value['parent_id']])) {		// 区
-				 $region[$nodes[$value['parent_id']]['parent_id']]['c'][$value['parent_id']]['c'][$value['id']]['n'] = $value['short_name'];
-			}
-		}
+		$region = $cache->get('citypicker', true);
 		
-		print_r($region);
-		exit;
-
-		$cache->set('regionChain_0', [ 0 => $region[0]]);
-		$cache->set('regionAll', $regionAll);
+		if (empty($region)) {
+		
+			$nodes = $this->request('\\App\\Service\\Region::allNode');
 		 
-		foreach ($nodes['body'] as $key => $value) {
-			if ($key < 100000000) {
-				$data = [ 0 => $region[0]];
-				$id = $key;
-				do {
-					if (empty($region[$id])) $result[] = $id . '=>' . $nodes['body'][$id]['short_name'];
-					$data[$id] = $region[$id]??[];
-					$id 	   = $nodes['body'][$id]['parent_id'];	
-				} while ($id > 0);
-				
-				ksort($data);
-				$cacheKey = 'regionChain_' . $key;
-				$cache->set($cacheKey, $data);
-			}	
+			$region = [];
+			
+			foreach ($nodes['body'] as $key => $value) {
+				if ($value['parent_id'] == 0) {	// 省
+					$region[$key]['n'] = $value['short_name'];
+				} elseif (!empty($region[$value['parent_id']])) {		// 市
+					$region[$value['parent_id']]['c'][$value['id']]['n'] = $value['short_name'];
+				} elseif (!empty($nodes['body'][$value['parent_id']]['parent_id']) && !empty($region[$nodes['body'][$value['parent_id']]['parent_id']]['c'][$value['parent_id']])) {		// 区
+					 $region[$nodes['body'][$value['parent_id']]['parent_id']]['c'][$value['parent_id']]['c'][$value['id']]['n'] = $value['short_name'];
+				}
+			}
+			
+			$cache->set('citypicker', $region);
 		}
-		$this->success($result);
+		
+		$this->success([],'JSON');
 	}
  
 }

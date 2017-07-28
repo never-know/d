@@ -58,7 +58,7 @@ class Logger
 		
 		$has_error = '';
 		
-		$records = '<A> '  
+		$records = '<a> '  
 				. date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME'])
 				. ' | '
 				. ip_address('ip')
@@ -76,10 +76,10 @@ class Logger
 				
 		foreach ($this->logs as $log) {
 		
-			$records .= str_pad($log['channel'], 6) . ' | ' . str_pad($log['level'], 7) . ' | ' . $log['message'] . ' | ';
+			$records .= '| '. str_pad($log['channel'], 6) . ' | ' . str_pad($log['level'], 7) . ' | ' . $log['message'] ;
 			
 			if (!empty($log['extra'])) {
-				$records .= ' more: '. json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+				$records .= ' | more: '. json_encode($log['extra'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 			}
 			
 			$records .= PHP_EOL;
@@ -89,7 +89,7 @@ class Logger
 			}
 		}
 		
-		$records .= '</A>' . PHP_EOL;
+		$records .= '</a>' . PHP_EOL;
 		
 		error_log($records, 3, $dest_file, '');
 		if (!empty($has_error)) {

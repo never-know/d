@@ -29,13 +29,14 @@ class RegionService extends \Min\Service
 	 */
 	public function allNode()
 	{
-		$sql = 'SELECT id, short_name, parent_id FROM {{region}} ORDER BY parent_id ASC, id ASC';
-		$result	= $this->query($sql);
+		$sql = 'SELECT id, short_name, parent_id FROM {{region}} where id < 100000000 ORDER BY parent_id ASC, id ASC';
+		$result	= $this->query($sql, null);
 		
 		$region = [];
 		foreach ($result as $key => $value) {
 			$region[$value['id']] = $value;	
 		}
+
 		return $this->success($region);
 	}
 	

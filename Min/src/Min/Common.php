@@ -609,7 +609,7 @@ function app_error($errno, $errstr, $errfile, $errline)
 		.	' error code/type: '
 		.	$errno;
 	
-	//watchdog($message, 'unexpected_error', $type);
+	watchdog($message, 'unexpected_error', $type);
 	
 	if ($type == 'ERROR') {
 		request_error_found(500);

@@ -40,21 +40,37 @@ class Service
 		return $result;
 	}
 	
+	/*
+		param and throwable
+		
+		not throw but record result			if  one of them  === false
+		throw and will not record result	if  one of them  === true
+		not throw and  not record result	if  one of them  === null
+	
+	*/
+	
 	final public function query($sql, $param = false, $throwable = false)
 	{	
 		record_time('query start');
+		
 		try {	
+		
 			$result = $this->DBManager()->query($sql, $param);
-		} catch (\Throwable $t) {		
-			if ($param === true || $throwable === true) {
+			
+		} catch (\Throwable $t) {	
+	
+			if (true === $param || true === $throwable) {
 				throw $t;
 			} else {
 				watchdog($t, 'query_error', 'ERROR');
 				$result =  false;			
 			}
 		}
-		watchdog($result);
+		
+		if ( !is_null($param) && !is_null($throwable)) watchdog($result);
+		
 		record_time('query end');
+		
 		return $result;
 	}
 	

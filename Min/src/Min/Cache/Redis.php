@@ -61,7 +61,7 @@ class Redis{
 			watchdog($retRes, 'redis', 'DEBUG', 'set key:'. $key. '@'. $value);
 			return $retRes;
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 	}
@@ -82,7 +82,7 @@ class Redis{
 			}
 			return ($d ?? $result);
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 	}
@@ -94,7 +94,7 @@ class Redis{
 			watchdog($result, 'redis', 'DEBUG', 'set Timeout:'. $key. '@'. $ttl );
 			return $result;
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 		
@@ -111,7 +111,7 @@ class Redis{
 			watchdog($result, 'redis', 'DEBUG', 'delete key:'. $key);
 			return $result;
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 	}
@@ -124,7 +124,7 @@ class Redis{
 		try { 
 			return $this->connect()->flushAll();
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 	}
@@ -140,7 +140,7 @@ class Redis{
 		try { 
 			return $right ? $this->connect()->rPush($key, $value) : $this->connect()->lPush($key, $value);
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 	}
@@ -156,7 +156,7 @@ class Redis{
 			$val = $left ? $this->connect()->lPop($key) : $this->connect()->rPop($key);
 			return $val;
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 	}
@@ -172,7 +172,7 @@ class Redis{
 			watchdog($result, 'redis', 'DEBUG', 'incr key:'. $key);
 			return $result;
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 	}
@@ -188,7 +188,7 @@ class Redis{
 			watchdog($result, 'redis', 'DEBUG', 'decr key:'. $key);
 			return $result;
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 	}
@@ -202,7 +202,7 @@ class Redis{
 		try { 
 			return $this->connect()->exists($key);
 		} catch (\Throwable $t) {
-			watchdog($t, 'redis', 'CRITICAL');
+			watchdog($t, 'redis_error', 'CRITICAL');
 			return self::DISCONNECT;
 		} 
 	}
