@@ -88,9 +88,7 @@ function region_get($region_id)
 				fwrite($fp, $out);
 				fclose($fp);
 			}
-			 
-			watchdog(microtime(true)*10000-$time*10000);
- 
+
 			$run = 1;
 		}
 		return '加载中...';
