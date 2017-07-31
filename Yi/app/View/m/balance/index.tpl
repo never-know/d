@@ -7,7 +7,7 @@
        
       <div class="weui_text_area" style="background: white;padding: 20px;">
 		<p class="weui_msg_desc">帐户余额</p>
-        <h1  style="color:red;padding-top:4px;"><strong >￥</strong><?=($result['balance']/100);?></h1>
+        <h1  style="color:red;padding-top:4px;"><strong >￥</strong><?=($result['balance']/100)?></h1>
       </div>
       <div class="weui_opr_area">
         <p class="weui_btn_area">

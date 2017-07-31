@@ -39,7 +39,7 @@
             </li>
 			<?php endforeach; ?>
 			<?php else :?>
-				<h3 calss="no-date">暂无收益</h3>
+				<h3 class="no-data">暂无收益</h3>
 			<?php endif;?>
 			<!--
 			<li>

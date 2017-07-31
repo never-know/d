@@ -74,7 +74,7 @@
                 </a>
 			<?php endforeach;?>
 			<?php else : ?>
-				<h3 calss="no-date">暂无成员</h3>
+				<h3 class="no-data">暂无成员</h3>
 		<?php endif;?>
 			
 			<!-- template

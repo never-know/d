@@ -8,12 +8,6 @@
   var defaults;
   var raw = $.cityidata.data;
 
-  var format = function(data) {
-	 if(data) return data;
-    return [];
-	
-  };
-
   var sub = function(data, key) {
 	 if(!data.c) {
 		var a = {};
@@ -31,16 +25,14 @@
   };
 
   var getDistricts = function(p, q) {
-	 console.log(p);
-	 console.log(q);
 	if(raw[p]['c'][q]) return sub(raw[p]['c'][q], q);
     return [];
 	
   };
   
  var getObjFirst =function (obj){
-	  for(let i in obj) return i;
-	}
+	  for(var i in obj) return i;
+	};
 
   $.fn.cityPicker = function(params) {
     params = $.extend({}, defaults, params);
@@ -63,13 +55,14 @@
       var initDistricts = sub(raw[provincesCode[0]].c[initCitiesCode[0]]);
 
       var initDistrictsName = $.map(initDistricts,function (c) {
-        return c.name;
+        return c.n;
       });
       var initDistrictsCode = $.map(initDistricts,function (c, id) {
         return id;
       });
 
       var currentProvince = provincesCode[0];
+	  
       var currentCity = initCitiesCode[0];
       var currentDistrict = initDistrictsCode[0];
 
@@ -151,24 +144,27 @@
         cols: cols
       };
 
-      if(!this) return;
+       if(!this) return;
       var p = $.extend({}, params, config);
       //计算value
-      var val = $(this).val();
-	  console.log(val);
-      if (!val) val = [130000,130600,130683];
+      var val = $(this).attr('data-value').split(',');
+
+      if (!val) val = [110000,110100,110101];
       currentProvince = val[0];
       currentCity = val[1];
       currentDistrict= val[2];
+	    
       if(val) {
+	
         p.value = val;
         if(p.value[0]) {
           var cities = getCities(p.value[0]);
           p.cols[1].values = $.map(cities, function (c, id) {
             return id;
           });
+		 
           p.cols[1].displayValues = $.map(cities, function (c) {
-            return c.name;
+            return c.n;
           });
         }
 
@@ -179,7 +175,7 @@
               return id;
             });
             p.cols[2].displayValues = $.map(dis, function (d) {
-              return d.name;
+              return d.n;
             });
           }
         } else {
@@ -189,11 +185,12 @@
               return id;
             });
             p.cols[2].displayValues = $.map(dis,function (d) {
-              return d.name;
+              return d.n;
             });
           }
         }
       }
+	  
       $(this).picker(p);
     });
   };

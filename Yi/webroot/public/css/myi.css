@@ -7,6 +7,12 @@ margin:0;
 .hide{
 display:none;
 }
+h3.no-data {
+    font-size: 16px;
+    font-weight: normal;
+    text-align: center;
+    padding: 50px 0px;
+}
 .weui_navbar+.weui_tab_bd{ 
     padding-bottom: 50px;
 }

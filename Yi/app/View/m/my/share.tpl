@@ -99,7 +99,7 @@
 		<?php endforeach; ?>
 		<script> var current_date = '<?=$current_date?>'; </script>
 	<?php else :?>
-			<h3 calss="no-date">暂无记录</h3>
+			<h3 class="no-data">暂无记录</h3>
 	<?php endif;?>
 	
 	<!-- template

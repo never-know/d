@@ -34,7 +34,7 @@
 	<div class="weui_msg" style="padding-top:12px;"> 
       <div class="weui_text_area" style="background: white;padding: 20px;">
 		<p class="weui_msg_desc">帐户余额</p>
-        <h1  style="color:red;padding-top:4px;"><strong >￥</strong><?=session_get('user_balance')['balance']?></h1>
+        <h1  style="color:red;padding-top:4px;"><strong >￥</strong><?=session_get('user_balance')['balance']/100?></h1>
       </div>
      
     </div>
@@ -60,7 +60,7 @@
 		<?php endforeach; ?>
 		<script> var current_date = '<?=$current_date?>'; </script>
 	<?php else :?>
-			<h3 calss="no-date">暂无记录</h3>
+			<h3 class="no-data">暂无记录</h3>
 	<?php endif;?>
 	
 	  <!-- template

@@ -170,11 +170,15 @@
 			</div>
 		</div>
 	<div class="weui_navbar">
-	<div class="weui_navbar_item" id="show-actions">
-		排序
-	</div>
-	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;max-width:60%;    overflow: hidden;" id="region">
+	
+	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;overflow: hidden;    -webkit-box-flex: 2;
+    -webkit-flex: 2;
+    flex: 2;" id="region" data-value="110000,110100,110101">
 		西湖区转塘街道西湖区转塘街道转塘街道转塘街道
+	</div>
+	
+	<div class="weui_navbar_item" id="show-actions">
+		更多选择
 	</div>
 	</div>
  
@@ -235,7 +239,8 @@
     </script>
   
 	<script src="/public/js/m/picker.js"></script>
-	<script src="/public/js/m/city-picker.js"></script>
+	<script src="/public/js/m/citypicker.js"></script>
+	<script src="/public/js/m/city-picker.min.js"></script>
 	<script>
 	   $("#region").cityPicker({
         title: "选择广告投放区域",
