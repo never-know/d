@@ -18,35 +18,42 @@
 		<div class="weui_panel weui_panel_access_new">
 			<div class="weui_panel_hd">图文组合列表</div>
 			<div class="weui_panel_bd" id="content_load">
-				 
-				 
-				
-			<div class="weui_media_box weui_media_text">
-			  <h4 class="weui_media_title">标题一</h4>
-			  <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
+			<?php if (!empty($result['list'])) : ?>	 
+			<?php foreach ($result['list'] as $key => $value) : ?>	 
+				<?php if ($key%5 ==0) : ?>
+			<div class="weui_media_box weui_media_text" onclick="window.locathon.href='/content/<?=$value['id_name']?>.html'">
+			  <h4 class="weui_media_title"><?=$value['content_title']?></h4>
+			  <p class="weui_media_desc"><?=$value['content_description']?></p>
 			  <ul class="weui_media_info">
-				<li class="weui_media_info_meta">文字来源</li>
-				<li class="weui_media_info_meta">时间</li>
-				<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
+				<li class="weui_media_info_meta"><?=$value['region_name']?></li>
+				<li class="weui_media_info_meta"><?=date('m-d', $value['create_time'])?></li>
+				<li class="weui_media_info_meta weui_media_info_meta_extra"><?=($value['tag_name'])?></li>
 			  </ul>
 			</div>
-			   
+			   <?php else : ?>
 			  
-			  <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
+			  <a href="/content/<?=$value['id_name']?>.html" class="weui_media_box weui_media_appmsg">
                    
                     <div class="weui_media_bd">
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
+                        <p class="weui_media_desc"><?=$value['content_description']?></p>
 						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">文字来源</li>
-							<li class="weui_media_info_meta">时间</li>
-							<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
+							<li class="weui_media_info_meta"><?=$value['region_name']?></li>
+							<li class="weui_media_info_meta"><?=date('m-d', $value['create_time'])?></li>
+							<li class="weui_media_info_meta weui_media_info_meta_extra"><?=$value['tag_name']?></li>
 					  </ul>
                     </div>
 					 <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
+                        <img class="weui_media_appmsg_thumb" src="<?=$value['content_icon']?>" alt="">
                     </div>
                 </a>
+				<?php 
+				endif; 	
+				endforeach; 
+				else : ?>
+					<h3 class="no-data">暂无记录</h3>
+				<?php endif; ?>
 				
+				<!-- template 
 				 <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
                    
                     <div class="weui_media_bd">
@@ -61,112 +68,8 @@
                         <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
                     </div>
                 </a>
-				
-				 <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">文字来源</li>
-							<li class="weui_media_info_meta">时间</li>
-							<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
-					  </ul>
-                    </div>
-					 <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                </a>
-				
-				 <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">文字来源</li>
-							<li class="weui_media_info_meta">时间</li>
-							<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
-					  </ul>
-                    </div>
-					 <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                </a>
-				
-				 <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">文字来源</li>
-							<li class="weui_media_info_meta">时间</li>
-							<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
-					  </ul>
-                    </div>
-					 <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                </a>
-				
-				 <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">文字来源</li>
-							<li class="weui_media_info_meta">时间</li>
-							<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
-					  </ul>
-                    </div>
-					 <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                </a>
-				
-				 <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">文字来源</li>
-							<li class="weui_media_info_meta">时间</li>
-							<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
-					  </ul>
-                    </div>
-					 <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                </a>
-				
-				 <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">文字来源</li>
-							<li class="weui_media_info_meta">时间</li>
-							<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
-					  </ul>
-                    </div>
-					 <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                </a>
-				
-				 <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
-                   
-                    <div class="weui_media_bd">
-                        <p class="weui_media_desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
-						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">文字来源</li>
-							<li class="weui_media_info_meta">时间</li>
-							<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>
-					  </ul>
-                    </div>
-					 <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
-                    </div>
-                </a>
-				
+				-->
+				 
 			</div>
 		</div>
 	<div class="weui_navbar">

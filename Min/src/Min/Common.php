@@ -542,6 +542,8 @@ function final_response($result, $layout) {
 				if ($runed == true) {
 					$layout = '/'.strtr($layout, '_', '/');
 				}
+			}elseif (20106 == $result['statusCode']) { 
+				$layout = config_get('reload_template_' . strtolower(App::getModule()), 'layout_reload');
 			}
 			
 			$runed = true;

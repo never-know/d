@@ -146,8 +146,9 @@ class ArticleService extends \Min\Service
 		*/
 		
 		$param['filter']['region'] = 'region = 0';
+		$region = intval($p['region']??0);
 		
-		if (!empty($p['region']) && ($region = intval($p['region'])) && ($region > 1)) {
+		if ($region > 1) {
 			
 			if ($region < 100000000) $region *= 1000;
 			// 不限 and self 
@@ -165,6 +166,10 @@ class ArticleService extends \Min\Service
 				}
 			}
 			
+			if (!empty($p['sub_region']) && preg_match('^\d+(,\d)*$', $p['sub_region'])) {
+				$param['filter']['region'] = ' OR region = ' . implode(' OR region = ' . explode(',', $p['sub_region']));
+			}
+			
 			$param['filter']['region'] = '(' . $param['filter']['region']. ')';
 		}
 		
@@ -173,7 +178,9 @@ class ArticleService extends \Min\Service
 		}
 		
 		$param['order'] = ' ';
+		
 		$param_processed['order'] = 1;
+		
 		if (!empty($p['order'])) {	
 			switch (intval($p['order'])) {
 				case 1 :
