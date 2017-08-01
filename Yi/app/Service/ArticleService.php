@@ -145,29 +145,29 @@ class ArticleService extends \Min\Service
 		}
 		*/
 		
-		$param['filter']['region'] = 'region = 0';
+		$param['filter']['region'] = ' region_id = 0';
 		$region = intval($p['region']??0);
 		
 		if ($region > 1) {
 			
 			if ($region < 100000000) $region *= 1000;
 			// 不限 and self 
-			$param['filter']['region'] .= ' OR region = ' . $region;
+			$param['filter']['region'] .= ' OR region_id = ' . $region;
 			// 省级 
 			if ( 0 != $region%10000000) {
 				// 非省级的要加上省ID
-				$param['filter']['region'] .= ' OR region = '. (intval($region/10000000) * 10000000);
+				$param['filter']['region'] .= ' OR region_id = '. (intval($region/10000000) * 10000000);
 				if (0 != $region%100000) {	
 					// 非市级的要加上市ID
-					$param['filter']['region'] .= ' OR  region = '. (intval($region/100000) * 100000);
+					$param['filter']['region'] .= ' OR  region_id = '. (intval($region/100000) * 100000);
 					if (0 != $region%1000) {
-						$param['filter']['region'] .= ' OR  region = '. (intval($region/1000) * 1000);
+						$param['filter']['region'] .= ' OR  region_id = '. (intval($region/1000) * 1000);
 					}
 				}
 			}
 			
 			if (!empty($p['sub_region']) && preg_match('^\d+(,\d)*$', $p['sub_region'])) {
-				$param['filter']['region'] = ' OR region = ' . implode(' OR region = ' . explode(',', $p['sub_region']));
+				$param['filter']['region'] = ' OR region_id = ' . implode(' OR region_id = ' . explode(',', $p['sub_region']));
 			}
 			
 			$param['filter']['region'] = '(' . $param['filter']['region']. ')';
@@ -184,15 +184,15 @@ class ArticleService extends \Min\Service
 		if (!empty($p['order'])) {	
 			switch (intval($p['order'])) {
 				case 1 :
-					$param['order'] = ' ORDER BY id DESC ';
+					$param['order'] = ' ORDER BY content_id DESC ';
 					$param_processed['order'] = 1;
 					break;
 				case 2 :
-					$param['order'] = ' ORDER BY start DESC ';
+					$param['order'] = ' ORDER BY start_date DESC ';
 					$param_processed['order'] = 2;
 					break;
 				case 3 :
-					$param['order'] = ' ORDER BY end DESC ';
+					$param['order'] = ' ORDER BY end_date DESC ';
 					$param_processed['order'] = 3;
 					break;					 
 			}
@@ -200,7 +200,7 @@ class ArticleService extends \Min\Service
 
 		$filter = empty($param['filter']) ? '' : ' WHERE ' . implode(' AND ', $param['filter']);
 		
-		$sql_count 	= 'SELECT count(1) as count FROM {{article}} ' . $filter; 
+		$sql_count 	= 'SELECT count(1) as count FROM {{article}} ' . $filter . ' LIMIT 1'; 
 		$sql_list 	= 'SELECT * FROM {{article}} ' . $filter . $param['order'];
 		
 		$result = $this->commonList($sql_count, $sql_list);
@@ -210,9 +210,9 @@ class ArticleService extends \Min\Service
 		}
  	
 		foreach ($result['body']['list'] as &$value) {
-			$value['id_name'] 		= \int2str($value['id']);
-			$value['tag_name'] 		= \article_tags($value['tag']);
-			$value['region_name'] 	= \region_get($value['region']);				
+			$value['id_name'] 		= \int2str($value['content_id']);
+			$value['tag_name'] 		= \article_tags($value['content_tag']);
+			$value['region_name'] 	= \region_get($value['region_id']);				
 		}
  
 		$result['body']['params'] 	= $param_processed;

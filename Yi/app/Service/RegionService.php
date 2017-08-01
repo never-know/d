@@ -27,9 +27,15 @@ class RegionService extends \Min\Service
 	 * result : [id => short_name, ...]
 	 *
 	 */
-	public function allNode()
+	public function allNode($level = 4)
 	{
-		$sql = 'SELECT id, short_name, parent_id FROM {{region}} where id < 100000000 ORDER BY parent_id ASC, id ASC';
+		if ($level == 3) {
+			$level = ' where id < 100000000 ';
+		} else {
+			$level = '';
+		}
+		
+		$sql = 'SELECT id, short_name, parent_id FROM {{region}} ' . $level . ' ORDER BY parent_id ASC, id ASC';
 		$result	= $this->query($sql, null);
 		
 		$region = [];

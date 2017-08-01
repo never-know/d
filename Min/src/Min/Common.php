@@ -491,6 +491,37 @@ function http_post($url, $param, $post_file = false)
 	}
 }
 
+function min_socket($uri, $timeout = 1)
+{
+	$arr = parse_url($uri);
+	
+	if (!empty($arr)) {
+	
+		if (!empty($arr['scheme']) && strtolower($arr['scheme']) == 'https') {
+			$port = 443;
+			$scheme = 'ssl://';
+		} else {
+			$port = 80;
+			$scheme = '';
+		}
+		
+		$fp = fsockopen($scheme.$arr['host'], $port);
+		
+		if ($fp) { 
+			$out = "GET " . $arr['path'] . " HTTP/1.1\r\n";
+			$out .= "Host: " . $arr['host'] . "\r\n";
+			$out .= "Connection: Close\r\n\r\n";
+			stream_set_timeout($fp, 0, $timeout);
+			fwrite($fp, $out);
+			fclose($fp);
+		}
+	} else {
+		watchdog($uri . ' request fail', 'socket_request', 'ERROR');
+	}
+
+
+}
+
 function request_error_found($code, $message = '请求失败', $layout = null, $redirect = null) 
 {	
 	$result['statusCode'] = $code;
@@ -538,12 +569,13 @@ function final_response($result, $layout) {
 			}
 			
 			if (in_array($result['statusCode'], [500, 404])) {
-				$layout = config_get('error_template_' . strtolower(App::getModule()), 'layout_404');
+				$layout = 'layout_error_' . strtolower(App::getModule()) ;
 				if ($runed == true) {
-					$layout = '/'.strtr($layout, '_', '/');
+					$layout = '/layout/error_'.  strtolower(App::getModule()) ;
 				}
-			}elseif (20106 == $result['statusCode']) { 
-				$layout = config_get('reload_template_' . strtolower(App::getModule()), 'layout_reload');
+				
+			} elseif (20106 == $result['statusCode']) { 
+				$layout = 'layout_reload_' . strtolower(App::getModule());
 			}
 			
 			$runed = true;

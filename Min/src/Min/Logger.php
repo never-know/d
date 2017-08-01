@@ -69,7 +69,7 @@ class Logger
 				. ' | '
 				. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
 				. ' | '
-				. ($_SERVER['HTTP_REFERER']??'')
+				. ($_SERVER['HTTP_REFERER']??'_')
 				. ' | '
 				. getmypid()
 				. PHP_EOL;

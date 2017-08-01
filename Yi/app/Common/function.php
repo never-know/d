@@ -74,21 +74,10 @@ function region_get($region_id)
 		$value = $cache_setting['region'] ?? $cache_setting['default'];
 		$region = \Min\App::getService($value['bin'], $value['key'])->get('regionAll');;
 	}
+	
 	if (empty($region)) {
 		if (0 == $run) {
-		 
-			$time = microtime(true);
- 
-			$fp = fsockopen('www.'. SITE_DOMAIN, 80);
-			if ($fp) { 
-				$out = "GET /region/cache.html HTTP/1.1\r\n";
-				$out .= "Host: www.". SITE_DOMAIN."\r\n";
-				$out .= "Connection: Close\r\n\r\n";
-				stream_set_timeout($fp, 0, 1);
-				fwrite($fp, $out);
-				fclose($fp);
-			}
-
+			min_socket('https://m.anyitime.com/region/cache.html');
 			$run = 1;
 		}
 		return '加载中...';
@@ -129,7 +118,7 @@ function share_encode($content_id)
 	} elseif ($salt < 130){			// $salt2 < $salt3 差值 13
 		$salt2 = 183 - $salt;		//	range:	95-54
 		$salt3 = 196 - $salt;		//	range:	108-67
-	} else {						//$salt2 > $salt3 差值 1-11			
+	} else {						//	$salt2 > $salt3 差值 1-11			
 		$salt2  = ($salt%108)?:108;		// 	range: 	22-108
 		$salt3  = ($salt%109)?:109;	 	//	range:	21-107
 		// special process

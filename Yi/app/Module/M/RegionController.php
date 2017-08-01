@@ -61,7 +61,7 @@ class RegionController extends \Min\Controller
 				$cache->set($cacheKey, $data);
 			}	
 		}
-		$this->success($result);
+		$this->success($result, 'JSON');
 	}
 	
 	public function citypicker_get()
@@ -72,7 +72,7 @@ class RegionController extends \Min\Controller
 		
 		if (empty($region)) {
 		
-			$nodes = $this->request('\\App\\Service\\Region::allNode');
+			$nodes = $this->request('\\App\\Service\\Region::allNode', 3);
 		 
 			$region = [];
 			
