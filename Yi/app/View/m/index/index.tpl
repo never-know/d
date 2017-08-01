@@ -21,7 +21,7 @@
 			<?php if (!empty($result['list'])) : ?>	 
 			<?php foreach ($result['list'] as $key => $value) : ?>	 
 				<?php if ($key%5 ==0) : ?>
-			<div class="weui_media_box weui_media_text" onclick="window.locathon.href='/content/<?=$value['id_name']?>.html'">
+			<div class="weui_media_box weui_media_text" onclick="window.location.href='/content/<?=$value['id_name']?>.html'">
 			  <h4 class="weui_media_title"><?=$value['content_title']?></h4>
 			  <p class="weui_media_desc"><?=$value['content_description']?></p>
 			  <ul class="weui_media_info">

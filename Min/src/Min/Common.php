@@ -20,6 +20,7 @@ function min_init()
 	defined('VENDOR_PATH') 	or define('VENDOR_PATH', MIN_PATH. '/../vendor');
 	
 	
+	
 	defined('PAGE_SIZE') 	or define('PAGE_SIZE', 10);
 	
 	define('REQUEST_METHOD', strtoupper($_SERVER['REQUEST_METHOD']));
@@ -29,7 +30,16 @@ function min_init()
 	define('IS_DELETE', (REQUEST_METHOD === 'DELETE'));
 	define('IS_JSONP', 	isset($_GET['isJsonp']));
 	define('IS_AJAX', 	(isset($_REQUEST['isAjax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')));
-	define('IS_HTTPS', 	(isset($_SERVER['HTTPS']) && strtoupper($_SERVER['HTTPS']) == 'ON'));
+	
+	if (empty($_SERVER['HTTPS'])) {
+		define('SCHEMA', 'http://');
+		define('IS_HTTPS', 	false);
+	} else {
+		define('SCHEMA', 'https://');
+		define('IS_HTTPS', 	true);
+	}
+	
+	defined('HOME_PAGE') or define('HOME_PAGE',  SCHEMA . $_SERVER['HTTP_HOST']);
 	
 	if (!IS_GET && !IS_POST) {
 		parse_str(file_get_contents('php://input', $_POST));
@@ -747,7 +757,7 @@ function build_query_common($separator, $params, $sep = true)
 {
 	$joined = [];
 	foreach($params as $key => $value) {
-	  if($sep) {
+		if ($sep) {
 			$joined[] = "`$key`={$value}";
 		} else {
 			$joined[] = "$key={$value}";

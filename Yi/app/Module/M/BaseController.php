@@ -26,7 +26,7 @@ class BaseController extends \Min\Controller
 		$wx = $this->getWx();
 		
 		if (empty($_GET['code'])) {
-			$url = 'https://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+			$url = SCHEMA . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 			$state = mt_rand(10000, 99999);
 			session_set('state', $state);
 			redirect($wx->getOauthRedirect($url, $state, 'snsapi_base'));

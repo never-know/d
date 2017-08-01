@@ -41,6 +41,8 @@ class WxBase
 	const OAUTH_USERINFO_URL = '/sns/userinfo?';
 	const OAUTH_AUTH_URL = '/sns/auth?';
 	
+	const GET_TICKET_URL = '/ticket/getticket?';
+	
 	const MEDIA_UPLOAD_URL = '/media/upload?';
 	
 	private $token;
@@ -48,6 +50,7 @@ class WxBase
 	private $appsecret;
 	private $access_token;
 	private $user_token;
+	private $jsapi_ticket;
 	
 	public function __construct($type)
 	{
@@ -95,6 +98,105 @@ class WxBase
 		 
 		$this->access_token = $result['access_token'];
 		return true;
+	}
+	
+	/**
+	 * 获取JSAPI授权TICKET
+	 * @param string $appid 用于多个appid时使用,可空
+	 * @param string $jsapi_ticket 手动指定jsapi_ticket，非必要情况不建议用
+	 */
+	public function getJsTicket()
+	{
+		if (!$this->access_token && !$this->checkAuth()) return false;
+		
+		$appid = $this->appid;
+		
+		$cache 	= $this->cache('wx');
+		$key = 'wechat_jsapi_ticket_'.$appid;
+		$result = $cache->get($key, true);
+		
+		if (empty($result) || $cache->getDisc() === $result) {
+		 
+			$r = http_get(self::API_URL_PREFIX.self::GET_TICKET_URL.'access_token='.$this->access_token.'&type=jsapi');
+			if ($r) {
+				$result = json_decode($r,true);
+				
+				if (empty($result['ticket'])) {
+					watchdog($r, 'wx_result_error');
+					return false;
+				}
+				
+				$this->jsapi_ticket = $result['ticket'];
+				$expire = $result['expires_in'] ? intval($result['expires_in'])-100 : 7100;
+				$cache->set($key, $result, $expire);
+			 
+			}
+		} 
+		
+		return ($result['ticket']?? false); 
+	}
+
+
+	/**
+	 * 获取JsApi使用签名
+	 * @param string $url 网页的URL，自动处理#及其后面部分
+	 * @param string $timestamp 当前时间戳 (为空则自动生成)
+	 * @param string $noncestr 随机串 (为空则自动生成)
+	 * @param string $appid 用于多个appid时使用,可空
+	 * @return array|bool 返回签名字串
+	 */
+	public function getJsSign($url)
+	{
+	    if (!$this->jsapi_ticket && !$this->getJsTicket() || empty($url)) return false;
+
+	    $timestamp = time();
+		$noncestr = $this->generateNonceStr();
+	    $ret = strpos($url,'#');
+	    if ($ret)	$url = substr($url, 0, $ret);
+	    $url = trim($url);
+	    if (empty($url)) return false;
+		
+	    $arrdata = array('timestamp' => $timestamp, 'noncestr' => $noncestr, 'url' => $url, 'jsapi_ticket' => $this->jsapi_ticket);
+	    $sign = $this->getSignature($arrdata);
+	    if (!$sign) return false;
+	    $signPackage = array(
+	            'appId'     => $this->appid,
+	            'nonceStr'  => $noncestr,
+	            'timestamp' => $timestamp,
+	            'url'       => $url,
+	            'signature' => $sign
+	    );
+	    return $signPackage;
+	}
+
+	/**
+	 * 获取签名
+	 * @param array $arrdata 签名数组
+	 * @param string $method 签名方法
+	 * @return boolean|string 签名值
+	 */
+	public function getSignature($arrdata, $method='sha1') {
+		if (!function_exists($method)) return false;
+		ksort($arrdata);
+		$paramstring =  build_query_common('&', $arrdata, false);
+		$Sign = $method($paramstring);
+		return $Sign;
+	}
+	
+	/**
+	 * 生成随机字串
+	 * @param number $length 长度，默认为16，最长为32字节
+	 * @return string
+	 */
+	public function generateNonceStr($length=16){
+		// 密码字符集，可任意添加你需要的字符
+		$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+		$str = '';
+		for($i = 0; $i < $length; $i++)
+		{
+			$str .= $chars[mt_rand(0, strlen($chars) - 1)];
+		}
+		return $str;
 	}
 
 

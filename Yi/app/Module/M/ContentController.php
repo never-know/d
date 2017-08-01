@@ -21,11 +21,15 @@ class ContentController extends \App\Module\M\BaseController
 		$result = $this->request('\\App\\Service\\Article::detail', $id);
 		
 		if (1 == $result['statusCode']) {
-			$result['body']['meta'] = ['menu_active' => 'article_list', 'title' => $result['body']['title'], 'description' => $result['body']['desc']];
+			$result['body']['meta'] = ['title' => $result['body']['content_title'], 'description' => $result['body']['content_description']];
 			$result['body']['share'] =  \share_encode($id);
+			$wx = $this->getWx();
+			$url = SCHEMA . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+			$result['body']['js'] = $wx->getJsSign($url);
+			 
 		}
 		
-		$this->response($result);
+		$this->response($result, '/m/content/details');
 		
 	}
  

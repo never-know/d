@@ -223,12 +223,12 @@ class ArticleService extends \Min\Service
 	
 	public function detail($id)
 	{
-		$sql = 'SELECT a.*, ac.content FROM {{article}} AS a LEFT JOIN {{article_content}} AS ac on ac.id = a.id  WHERE a.id = '. intval($id) . '  LIMIT 1';
+		$sql = 'SELECT a.*, ac.content FROM {{article}} AS a LEFT JOIN {{article_content}} AS ac on ac.content_id = a.content_id  WHERE a.content_id = '. intval($id) . '  LIMIT 1';
 		$result = $this->query($sql);
 		if (empty($result)) {	
 			return $this->error('数据不存在', 1);	
 		} else { 
-			return $this->success(['detail' => $result]);	
+			return $this->success( $result);	
 		}
 	}
 	 
