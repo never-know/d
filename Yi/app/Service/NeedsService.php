@@ -23,7 +23,7 @@ class NeedsService extends \Min\Service
 			':desc'		=> $param['desc']
 		];
 		
-		$sql = 'INSERT INTO {{needs}} ' . query_build_insert($set);
+		$sql = 'INSERT INTO {{needs}} ' . build_query_insert($set);
 		 
 		$result = $this->query($sql, $bind);
 		
@@ -31,7 +31,7 @@ class NeedsService extends \Min\Service
 		
 			return $this->success();
 		} else {
-			return $this->error();
+			return $this->error('操作失败', 20109);
 		}
 			
 		 
@@ -43,8 +43,7 @@ class NeedsService extends \Min\Service
 		
 		
 		$set = [
-			'status'		=> 0,
-			'create_time'	=> time(),
+			 
 			'title' 		=> ':title', 
 			'desc' 			=> ':desc'
 		];
@@ -54,16 +53,14 @@ class NeedsService extends \Min\Service
 			':desc'		=> $param['desc']
 		];
  
-		$sql = 'UPDATE {{needs}} SET ' . \build_query_common(', ', $set) .' WHERE id = '. $param['id'];
+		$sql = 'UPDATE {{needs}} SET ' . \build_query_common(', ', $set) .' WHERE needs_id = '. $param['id'];
 
 		$result = $this->query($sql, $bind);
-		
-	 
-			 
-		if ($result['id']>0 ) {
+ 
+		if ($result['effect']>0 ) {
 			return $this->success();
 		} else {
-			return $this->error('更新失败', 1);
+			return $this->error('更新失败', 20109);
 		}		
 	}
 
@@ -84,7 +81,7 @@ class NeedsService extends \Min\Service
 		$sql = 'SELECT * FROM {{needs}}  WHERE needs_id = '. intval($id) . '  LIMIT 1';
 		$result = $this->query($sql);
 		if (empty($result)) {	
-			return $this->error('数据不存在', 1);	
+			return $this->error('数据不存在', 20109);	
 		} else { 
 			return $this->success($result);	
 		}

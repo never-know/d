@@ -2,16 +2,22 @@
 	<div class="breadcrumb">
 		<span style="margin-left:28px;">需求＞</span><label class="subtitle"><?=$result['meta']['title']?></label>
 	</div> 
-	<form name="needs_edit" id="needs_edit" style="width:700px;overflow:hidden;" onsubmit="return false;"    method="post">
+	<style>
+	#article_edit .ar_desc{
+	 height:200px;
+	}
+	</style>
+	<form name="article_edit" id="article_edit" style="width:700px;overflow:hidden;" onsubmit="return false;"    method="post">
 		<dl>
+		 
 			<dt>标题：</dt> 
-			<dd><input type="text" name="title" maxlength = "30" id="title" class="ar_text_input" 
-				value="<?=\check_plain($result['detail']['title']);?>">
-			<label>标题6-30个字符</label></dd>
+			<dd><input type="text" name="title" maxlength = "50" id="title" class="ar_text_input" 
+				value="<?=\check_plain($result['detail']['title']);?>"   >
+			<label>标题6-50个字符</label></dd>
 		</dl>
 		<dl>
 			<dt>描述：</dt> 
-			<dd><textarea  rows="2" name="desc" maxlength="60" id="desc" class="ar_text_input"><?= \check_plain($result['detail']['desc']);?></textarea>
+			<dd><textarea  rows="2" name="desc" maxlength="600" id="desc" class="ar_text_input ar_desc" style=""><?= \check_plain($result['detail']['desc']);?></textarea>
 			<label>描述10-600个字符</label></dd>
 		</dl>
 		 
@@ -65,7 +71,7 @@ Min.event.bind('buttons','click',{handler: function(e){
 			 
 			t.setAttribute("sindex", 1);
 			minAjax({
-				url:'http://www.anyitime.com/needs/'+ t.getAttribute('tot')+'.html', 
+				url:'https://www.anyitime.com/needs/'+ t.getAttribute('tot')+'.html', 
 				type:'POST', 
 				data:{
 					title:title,
@@ -75,12 +81,13 @@ Min.event.bind('buttons','click',{handler: function(e){
 				},
 				success: function(data){
 					if(data.statusCode == 1) {
+							alert('添加成功，请等待报价');
 							window.location.href = '/needs/list.html';
-						}
 					}else{
 						_$('needs_submit').setAttribute("sindex", 0);
 						alert(data.message);
 					}
+					
 				},
 				fail: function(){
 					_$('needs_submit').setAttribute("sindex", 0);

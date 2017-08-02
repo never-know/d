@@ -24,7 +24,7 @@ class NeedsController extends \Min\Controller
 		$id = \str2int(App::getArgs());
 		
 		if(!$id) {
-			$this->error('参数错误', 1);
+			$this->error('参数错误', 20108);
 		}
 		
 		$result = $this->request('\\App\\Service\\Needs::detail', $id, $this::EXITERROR);
@@ -41,8 +41,8 @@ class NeedsController extends \Min\Controller
 		$param['title'] 	= trim($_POST['title']);
 		$param['desc'] 		= trim($_POST['desc']);
  
-		if (!\validate('length', $param['title'], 32,1)) 	$this->error( '标题最多包含32个字符', 1000);
-		if (!\validate('length', $param['desc'], 600,1)) 	$this->error('简介最多包含600个字符', 1000);
+		if (!\validate('length', $param['title'], 50,1)) 	$this->error( '标题最多包含50个字符', 20108);
+		if (!\validate('length', $param['desc'], 600,1)) 	$this->error('简介最多包含600个字符', 20108);
 		return $param;
 	
 	}
@@ -63,10 +63,10 @@ class NeedsController extends \Min\Controller
 	
 	public function edit_get()
 	{
-		$id = \str2int(App::getArgs());
+		$id = App::getArgs();
 		
 		if(!$id) {
-			$this->error('参数错误', 1);
+			$this->error('参数错误', 20108);
 		}
 		
 		$article = $this->request('\\App\\Service\\Needs::detail', $id);
