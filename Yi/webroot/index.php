@@ -1,10 +1,5 @@
 <?php
- 
-	
-	
-	define('SITE_DOMAIN', 'anyitime.com');	
-	define('ASSETS_URL', '//www.anyitime.com/public');	// 图片上传后的URL基址
-	
+
 	require __DIR__ .'/../app/bootstrap.php';
 	
 	/*

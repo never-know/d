@@ -1,14 +1,29 @@
 <?php
-
 	declare(strict_types=1);
 	
 	error_reporting(E_ALL);
+	
 	ini_set('display_error','on');
 	
 	date_default_timezone_set('Asia/Shanghai');
 
-	define('SERVER_NAME', $_SERVER['HTTP_HOST']);	
+	define('SERVER_NAME', $_SERVER['HTTP_HOST']);
+	
 	define('COOKIE_DOMAIN', SERVER_NAME);
+	
+	if (empty($_SERVER['HTTPS'])) {
+		define('SCHEMA', 'http://');
+		define('IS_HTTPS', 	false);
+	} else {
+		define('SCHEMA', 'https://');
+		define('IS_HTTPS', 	true);
+	}
+	
+	define('SITE_DOMAIN', 'anyitime.com');	
+	define('ASSETS_URL', 'https://www.anyitime.com/public');	// 图片上传后的URL基址
+	
+	define('HOME_PAGE', SCHEMA . SERVER_NAME);
+	define('CURRENT_URL', SCHEMA . SERVER_NAME . $_SERVER['REQUEST_URI']);
 
 	define('APP_PATH', __DIR__);
 
@@ -16,7 +31,9 @@
 	
 	try {
 		require MIN_PATH . '/Min/Common.php';
+		
 		min_init();
+		
 		require APP_PATH . '/Common/function.php';
 		
 		$di = new \Min\Di;

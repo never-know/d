@@ -67,7 +67,7 @@ class Logger
 				. ' | '
 				. (session_get('USER_ID') ?: 0)
 				. ' | '
-				. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+				. CURRENT_URL
 				. ' | '
 				. ($_SERVER['HTTP_REFERER']??'_')
 				. ' | '

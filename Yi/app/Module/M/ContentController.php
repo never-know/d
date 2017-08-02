@@ -24,15 +24,14 @@ class ContentController extends \App\Module\M\BaseController
 		
 		if (1 == $result['statusCode']) {
 			$result['body']['meta'] = ['title' => $result['body']['content_title'], 'description' => $result['body']['content_description']];
-			if (empty($share_id)) {
+			if (empty($share_id) && session_get('USER_ID') > 0) {
 				$result['body']['share_nos']		=  \share_encode($id);
 				foreach ($result['body']['share_nos'] as $key => $value) {
 					$result['body']['share_url'][$key] 	=   SCHEMA . SERVER_NAME . '/content/' . $id36 . ($value?('/'.$value):'') . '.html';
 				}
 				
 				$wx = $this->getWx();
-				$url = SCHEMA . SERVER_NAME . $_SERVER['REQUEST_URI'];
-				$result['body']['js'] = $wx->getJsSign($url);
+				$result['body']['js'] = $wx->getJsSign(CURRENT_URL);
 			}
 			 
 		}

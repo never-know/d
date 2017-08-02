@@ -30,17 +30,7 @@ function min_init()
 	define('IS_DELETE', (REQUEST_METHOD === 'DELETE'));
 	define('IS_JSONP', 	isset($_GET['isJsonp']));
 	define('IS_AJAX', 	(isset($_REQUEST['isAjax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')));
-	
-	if (empty($_SERVER['HTTPS'])) {
-		define('SCHEMA', 'http://');
-		define('IS_HTTPS', 	false);
-	} else {
-		define('SCHEMA', 'https://');
-		define('IS_HTTPS', 	true);
-	}
-	
-	defined('HOME_PAGE') or define('HOME_PAGE',  SCHEMA . $_SERVER['HTTP_HOST']);
-	
+
 	if (!IS_GET && !IS_POST) {
 		parse_str(file_get_contents('php://input', $_POST));
 	}
@@ -176,10 +166,6 @@ function session_derc($name){
 	session_set($name, --$value);
 	return $value;
 }
-function current_path() 
-{
-  return $_SERVER['PATH_INFO_ORIGIN'].'.html?'.http_build_query($_GET);
-}
 
 function hash_path($key, $salt = '')
 {	
@@ -232,6 +218,7 @@ function ip_address($type = 'iplong')
 
 function redirect($url, $time = 0, $msg = '') 
 {
+	watchdog($url, 'redirect');
 	$url = str_replace(array('\n', '\r'), '', $url);
 	$msg = $msg ?: '系统跳转中！';
 	if (!headers_sent()) {
@@ -671,33 +658,6 @@ function app_exception($e, $channel = 'unexpected_expection')
 	
 	watchdog(error_message_format($e), $channel, 'ERROR', $e->getTrace());
 	request_error_found(500);
-}
-
-function min_error($t)
-{
-	$dest_file = LOG_PATH.'/FatalError/'.date('Y-m-d').'.log';
-		
-	$records =  date('Y/m/d H:i:s', $_SERVER['REQUEST_TIME'])
-			. ' [IP: '
-			. ip_address('ip')
-			. '] ['
-			. $_SERVER['REQUEST_URI']
-			. '] ['
-			. ($_SERVER['HTTP_REFERER']??'')
-			. '] [pid '
-			. getmypid()
-			. '] ['
-			. session_id()
-			. '] ['
-			. (session_get('UID') ?: 0)
-			. ']'
-			. PHP_EOL;
-		
-		$records   .= error_message_format($t);
-		$records   .= PHP_EOL;	
-		$records   .= safe_json_encode(debug_backtrace());
-		$records   .= PHP_EOL;
-		error_log($records, 3, $dest_file, '');
 }
 
 function error_message_format(\Throwable $e)

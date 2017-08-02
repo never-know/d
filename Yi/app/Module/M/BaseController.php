@@ -26,10 +26,9 @@ class BaseController extends \Min\Controller
 		$wx = $this->getWx();
 		
 		if (empty($_GET['code'])) {
-			$url = SCHEMA . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 			$state = mt_rand(10000, 99999);
 			session_set('state', $state);
-			redirect($wx->getOauthRedirect($url, $state, 'snsapi_base'));
+			redirect($wx->getOauthRedirect(CURRENT_URL, $state, 'snsapi_base'));
 			exit;
 		} else {
 			if (isset($_GET['state']) && $_GET['state'] == session_get('state')) {
