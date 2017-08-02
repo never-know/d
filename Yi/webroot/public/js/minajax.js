@@ -73,16 +73,17 @@ function minAjax(config) {
             }
         }
     }
-	sendString.push('isAjax=1');
     sendString = sendString.join('&');
 	 
     if (config.type == "GET") {
         xmlhttp.open("GET", config.url + "?" + sendString, config.method);
+		xmlhttp.setRequestHeader("X-REQUESTED-WITH","xmlhttprequest");
         xmlhttp.send();
     }
     if (config.type == "POST") {
         xmlhttp.open("POST", config.url, config.method);
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.setRequestHeader("X-REQUESTED-WITH","xmlhttprequest");
         xmlhttp.send(sendString);
     }
 

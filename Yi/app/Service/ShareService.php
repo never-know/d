@@ -43,7 +43,7 @@ class ShareService extends \Min\Service
 
 	/*
 		params: 
-				sid  // share_id
+				share_no  
 				content_id
 				current_user
 				viewer_id
@@ -54,11 +54,12 @@ class ShareService extends \Min\Service
 	
 	public function view($data) 
 	{
-		$check = $this->check($data['sid']);
+		 
+		$check = $this->check($data['share_no']);
 		
 		if ($check['statusCode'] != 1 || $check['body']['content_id'] != $data['content_id'] || $data['current_user'] == $check['body']['user_id']) {	
 		
-			return $this->success();	//$data['salary'] = $data['sid'] = $check['body']['user_id'] = 0;
+			return $this->success();	//$data['salary'] = $data['share_no'] = $check['body']['user_id'] = 0;
 		}
 		
 		if ($check['body']['user_id'] == $check['body']['adv_id']) {
@@ -275,18 +276,18 @@ class ShareService extends \Min\Service
 			return $this->error('参数错误', 20001);
 		}
 		
-		$content_sql = 'SELECT c.*, u.balance FROM {{content}} AS c INNER JOIN {{user_balance}} AS u ON c.author = u.user_id  WHERE c.content_id = ' . $params['content_id'] . ' LIMIT 1';
+		$content_sql = 'SELECT * FROM {{article}}   WHERE content_id = ' . $params['content_id'] . ' LIMIT 1';
 		
 		$content = $this->query($content_sql);
 		$params['share_time'] 	= intval($data['share_time']);
 		$current = date('ymd', $params['share_time']);
 	 
-		if (empty($content) || $content['content_status'] || $content['content_status'] < 1 || $current < $content['start_date'] || ($content['end_date'] > 0 && $current > $content['end_date'])) {
+		if (empty($content) || $content['content_status'] < 1 || $current < $content['start_date'] || ($content['end_date'] > 0 && $current > $content['end_date'])) {
 			return $this->error('操作失败', 20001);
 		}
 		
 		$params['user_id'] 			= intval($data['user_id']);
-		$params['share_type'] 		= intval($data['type']);
+		$params['share_type'] 		= intval($data['share_type']);
 		
 		$params['adv_id'] 			= intval($content['content_author']);
 		$params['share_salary'] 	= intval($content['share_salary']);
@@ -296,7 +297,7 @@ class ShareService extends \Min\Service
 		$params['content_icon'] 	= safe_json_encode($content['content_icon']);
 		$params['content_title'] 	= safe_json_encode($content['content_title']);
  
-		$ins_sql = 'INSERT INGORE INTO {{user_share}} ' . build_query_insert($params);
+		$ins_sql = 'INSERT IGNORE INTO {{user_share}} ' . build_query_insert($params);
 	
 		$result = $this->query($ins_sql);
 	

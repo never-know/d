@@ -16,18 +16,19 @@ class QrcodeController extends \App\Module\M\BaseController
 	*/
 	public function index_get()
 	{
-		$shared_user_wx_id	=6;
+		$shared_user_wx_id	= session_get('wx_id')??0;
 		
 		if (!empty($_SERVER['HTTP_REFERER'])) {
 			$url = parse_url($_SERVER['HTTP_REFERER']);
-			if ($url['host'] == $_SERVER['SERVER_NAME'] && preg_match('|^/content/([a-z0-9]+)\.html$|', $url['path'], $match) && !empty($url['query'])) {
+			if ($url['host'] == SERVER_NAME && preg_match('|^/content/([a-z0-9]+)/([a-z0-9_\-]+)\.html$|', $url['path'], $match)) {
 				$params = [];
-				parse_str($url['query'], $params);
-				if (!empty($match[1]) && isset($params['sid']) && validate('words', $params['sid'])) {
+			
+				if (!empty($match[1]) && !empty($match[2])   && validate('words', $match[2])) {
 					$params['view_time'] 	= $_SERVER['REQUEST_TIME'];
 					$params['viewer_id'] 	= session_get('wx_id');
 					$params['current_user'] = session_get('USER_ID');
 					$params['content_id']   = $match[1];
+					$params['share_no']   	= $match[2];
 					$result = $this->request('\\App\\Service\\Share::view', $params);
 					$shared_user_wx_id = ($result['body']['wx_id']??0);	// 分享者 用户ID
 				}

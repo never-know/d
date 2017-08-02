@@ -125,15 +125,21 @@ class WxBase
 					watchdog($r, 'wx_result_error');
 					return false;
 				}
-				
-				$this->jsapi_ticket = $result['ticket'];
+
 				$expire = $result['expires_in'] ? intval($result['expires_in'])-100 : 7100;
 				$cache->set($key, $result, $expire);
-			 
 			}
 		} 
 		
-		return ($result['ticket']?? false); 
+		
+		
+		if (!empty($result['ticket'])) {
+			$this->jsapi_ticket = $result['ticket'];
+			return true;
+		} else {
+			return false;
+		
+		}
 	}
 
 
@@ -147,7 +153,7 @@ class WxBase
 	 */
 	public function getJsSign($url)
 	{
-	    if (!$this->jsapi_ticket && !$this->getJsTicket() || empty($url)) return false;
+	    if ((empty($this->jsapi_ticket) && !$this->getJsTicket()) || empty($url)) return false;
 
 	    $timestamp = time();
 		$noncestr = $this->generateNonceStr();
@@ -179,7 +185,9 @@ class WxBase
 		if (!function_exists($method)) return false;
 		ksort($arrdata);
 		$paramstring =  build_query_common('&', $arrdata, false);
-		$Sign = $method($paramstring);
+		watchdog($paramstring);
+	
+		$Sign = $method($paramstring);	watchdog($Sign);
 		return $Sign;
 	}
 	

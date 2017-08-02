@@ -102,7 +102,7 @@ function share_encode($content_id)
 	$user_id = session_get('USER_ID');
 	
 	if (empty($user_id)) {
-		return ['', ''];
+		return ['timeline' => '', 'friend' => ''];
 	}
 	
 	//zzzzzzz: 78364164095  1000000: 2176782336
@@ -146,7 +146,7 @@ function share_encode($content_id)
 	$b 	= mt_rand(97, 121); 
 	$timeline 	= (($a%2 == 0)?chr($a):chr($a+1)).$str;
 	$friend 	= (($b%2 == 1)?chr($b):chr($b+1)).$str;
-	
+
 	return ['timeline' => $timeline, 'friend' => $friend];	
 }
 

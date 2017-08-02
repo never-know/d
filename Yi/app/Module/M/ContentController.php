@@ -12,9 +12,11 @@ class ContentController extends \App\Module\M\BaseController
 
 	public function __call($method, $param)
 	{
-		$id = \str2int(substr($method, 0, -4));
-		
-		if(!$id) {
+		$id36 		= substr($method, 0, -4);
+		$id 		= \str2int($id36);
+		$share_id 	= App::getArgs();
+
+		if(empty($id)) {
 			$this->error('参数错误', 1);
 		}
 		
@@ -22,10 +24,16 @@ class ContentController extends \App\Module\M\BaseController
 		
 		if (1 == $result['statusCode']) {
 			$result['body']['meta'] = ['title' => $result['body']['content_title'], 'description' => $result['body']['content_description']];
-			$result['body']['share'] =  \share_encode($id);
-			$wx = $this->getWx();
-			$url = SCHEMA . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-			$result['body']['js'] = $wx->getJsSign($url);
+			if (empty($share_id)) {
+				$result['body']['share_nos']		=  \share_encode($id);
+				foreach ($result['body']['share_nos'] as $key => $value) {
+					$result['body']['share_url'][$key] 	=   SCHEMA . SERVER_NAME . '/content/' . $id36 . ($value?('/'.$value):'') . '.html';
+				}
+				
+				$wx = $this->getWx();
+				$url = SCHEMA . SERVER_NAME . $_SERVER['REQUEST_URI'];
+				$result['body']['js'] = $wx->getJsSign($url);
+			}
 			 
 		}
 		
@@ -40,9 +48,9 @@ class ContentController extends \App\Module\M\BaseController
 		type
 	*/
 	
-	public function share_get()
+	public function share_post()
 	{
-		$share_no = $_POST['share_no'];
+		$share_no = $_POST['key'];
 		$params = share_decode($share_no);
 		
 		if ($params['user_id'] != session_get('USER_ID')) {

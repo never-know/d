@@ -61,11 +61,12 @@ class BaseController extends \Min\Controller
 		$open_id 	= session_get('open_id');
 		$logged 	= session_get('logged');
 		
-		if (empty($logged)) {
+		if (!empty($logged)) {
+			$user 	= session_get('user');
+		} else {
 			
 			$result = $this->request('\\App\\Service\\Wuser::login', $open_id);	// 登陆
 			if (1 == $result['statusCode']) {
-				session_set('logged', 1);
 				$user = $result['body'];
 				$this->initUser($user);
 				
@@ -78,16 +79,11 @@ class BaseController extends \Min\Controller
 				$user['subscribe_status']	= 2;
 
 				$result = $this->request('\\App\\Service\\Wuser::addUserByOpenid', $user);
-				if (empty($result['body']['id'])) {
-					unset($user);
-				} else {
+				if (!empty($result['body']['id'])) {
 					$this->initUser(['wx_id' => $result['body']['id']]);
 				}
-			}
-			
-		} else {
-			$user 	= session_get('user');
-		}
+			}	
+		}  
 		
 		if (2 === $redirect) {
 			return true;
@@ -110,6 +106,7 @@ class BaseController extends \Min\Controller
 	{ 
 		if (!empty($user['user_id'])) {
 			session_set('USER_ID', $user['user_id']);
+			session_set('logged', 1);
 		}
 		
 		if (!empty($user['wx_id'])) {
