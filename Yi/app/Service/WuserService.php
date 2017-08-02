@@ -151,16 +151,12 @@ class WuserService extends \Min\Service
 			
 		} else {
 		
-			$sql = 'UPDATE {user_wx} set subscribe_status = 3 ';
+			$sql = 'UPDATE {user_wx} set subscribe_status = 3 , subscribe_time = '. $data['subscribe_time'];
 			
 			if (empty($check['body']['wx_ip'])) {
 				$sql .= ' , wx_ip = '. $data['wx_ip'];
 			}
-			
-			if ($check['body']['subscribe_time'] < 2) {
-				$sql .= ' , subscribe_time = '. $data['subscribe_time'];
-			}
-			
+ 
 			// subscribe relationship first
 			
 			if (empty($check['body']['user_id'])) {

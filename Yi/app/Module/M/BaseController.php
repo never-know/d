@@ -74,7 +74,7 @@ class BaseController extends \Min\Controller
 				$user['wx_ip']				= ip_address();
 				$user['parent_id']			= 0;
 				$user['open_id']			= $open_id;
-				$user['subscribe_time'] 	= 1;
+				$user['subscribe_time'] 	= $_SERVER['REQUEST_TIME'];
 				$user['subscribe_status']	= 2;
 
 				$result = $this->request('\\App\\Service\\Wuser::addUserByOpenid', $user);
