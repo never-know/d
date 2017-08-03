@@ -37,7 +37,7 @@
         <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
 			<a class="weui-col-50 col-50-first" href="javascript:;">
 				<div>
-					<p><?=($result['page']['total_data']+$result['level2'])?></p>
+					<p><?=$result['page']['total_data']?></p>
 					<span>直属成员(名)</span>
 				</div>
 			</a>
@@ -65,8 +65,8 @@
                     <div class="weui_media_bd">
                         <p class="weui_media_desc"><?=$value['phone']?></p>
 						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥ <?=$value['benefit_1']?></li>
-							<li class="weui_media_info_meta">下级 <?=$value['children'];?>人</li> 
+							<li class="weui_media_info_meta">贡献收益 ￥ <?=($value['benefit_1']?:0)?></li>
+							<li class="weui_media_info_meta">下级 <?=($value['children']?:0);?>人</li> 
 					  </ul>
                     </div>
 					<div class="weui_panel_ft">&nbsp;</div>

@@ -43,6 +43,7 @@ padding-top: 4px;
             console.log("close");
           },
           actions: [
+		  <?php if (!empty($result['body'])) : ?>
 		  <?php foreach ($result['body'] as $value) : ?>
             {
               text: "<?=withdraw_account_info($value);?>",
@@ -51,7 +52,7 @@ padding-top: 4px;
                 $('#account').value(<?=$value['account_type'];?>);
               }
             },
-			<?php endforeach;?>
+			<?php endforeach; endif; ?>
 			 /*
             {
               text: "微信",
