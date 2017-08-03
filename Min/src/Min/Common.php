@@ -585,6 +585,7 @@ function final_response($result, $layout) {
 			
 			require VIEW_PATH . App::getModule() . $layout. VIEW_EXT;
 			
+			
 			/*
 			if (!empty($layout) && substr($layout, 0, 6) == 'layout') {
 				require VIEW_PATH . App::getModule() . $layout. VIEW_EXT;
