@@ -101,7 +101,7 @@ class MysqliPDO
 		return $connect;
 	}
 	 
-	public function query($sql, $param)
+	public function query($sql, $param = null)
 	{
 		//$sql = strtr($sql, ['{{' => $this->conf[$this->active_db]['prefix'][$this->prefix_key], '}}' => '']);
 		if (is_array($sql)) {

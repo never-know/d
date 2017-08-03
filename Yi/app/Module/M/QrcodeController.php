@@ -20,14 +20,14 @@ class QrcodeController extends \App\Module\M\BaseController
 		
 		if (!empty($_SERVER['HTTP_REFERER'])) {
 			$url = parse_url($_SERVER['HTTP_REFERER']);
-			if ($url['host'] == SERVER_NAME && preg_match('|^/content/([a-z0-9]+)/([a-z0-9_\-]+)\.html$|', $url['path'], $match)) {
+			if (preg_match('|^/content/([a-z0-9]+)/([a-z0-9_\-]+)\.html$|', $url['path'], $match)) {
 				$params = [];
 			
 				if (!empty($match[1]) && !empty($match[2])   && validate('words', $match[2])) {
 					$params['view_time'] 	= $_SERVER['REQUEST_TIME'];
 					$params['viewer_id'] 	= session_get('wx_id');
-					$params['current_user'] = session_get('USER_ID');
-					$params['content_id']   = $match[1];
+					$params['current_user'] = session_get('USER_ID')??0;
+					$params['content_id']   = \str2int($match[1]);
 					$params['share_no']   	= $match[2];
 					$result = $this->request('\\App\\Service\\Share::view', $params);
 					$shared_user_wx_id = ($result['body']['wx_id']??0);	// 分享者 用户ID
