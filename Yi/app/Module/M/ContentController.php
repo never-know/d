@@ -36,7 +36,7 @@ class ContentController extends \App\Module\M\BaseController
 			 
 		}
 		
-		$this->response($result, '/m/content/details');
+		$this->response($result, '/content/details');
 		
 	}
  

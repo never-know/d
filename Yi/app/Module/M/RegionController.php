@@ -89,7 +89,7 @@ class RegionController extends \Min\Controller
 			$cache->set('citypicker', $region);
 		}
 		
-		$this->success([],'JSON');
+		$this->success('','JSON');
 	}
  
 }

@@ -583,8 +583,11 @@ function final_response($result, $layout) {
 				$result = $result['body'];	
 			}
 			
-			require VIEW_PATH . App::getModule() . $layout. VIEW_EXT;
-			
+			if (!empty($layout)) {
+				require VIEW_PATH . '/' . App::getModule() . $layout. VIEW_EXT;
+			} else {
+				view($result);
+			}
 			
 			/*
 			if (!empty($layout) && substr($layout, 0, 6) == 'layout') {
