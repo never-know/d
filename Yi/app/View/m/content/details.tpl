@@ -71,7 +71,7 @@ p img{
 		<img src="https://api.leduika.com/assets/logo/20170620103512.png"  width="90px"/>
 		<?=$result['content']?>
 		</div>
-		 
+		<img src="https://m.anyitime.com/public/images/qrcode.png"  width="200px;"/>
 	</div>	
 	
  

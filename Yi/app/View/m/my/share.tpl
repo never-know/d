@@ -89,10 +89,10 @@
 			<?php endif; ?>
         <li class="weui_cell" href="/share/views/<?=$value['share_id']?>.html">
 			
-			<div class="weui_cell_hd"><img src="<?=$value['icon']?>" alt="" ></div>
+			<div class="weui_cell_hd"><img src="<?=$value['content_icon']?>" alt="" ></div>
 			<div class="weui_cell_bd weui_cell_primary">
-            <p class="share_title"><?=$value['title']?></p>
-            <p class="share_detail"><?=(date('H:i', $value['share_time']))?> · <?=($value['share_type']?'朋友圈':'好友')?> &nbsp;&nbsp;&nbsp;阅读 <?=$value['view_times']?>&nbsp;&nbsp;&nbsp;收益 ￥<?=$value['total_salary']?></p>
+            <p class="share_title"><?=$value['content_title']?></p>
+            <p class="share_detail"><?=(date('H:i', $value['share_time']))?> · <?=($value['share_type']?'好友':'朋友圈')?> &nbsp;&nbsp;&nbsp;阅读 <?=$value['view_times']?>&nbsp;&nbsp;&nbsp;收益 ￥<?=$value['total_salary']?></p>
           </div>
            
         </li>
