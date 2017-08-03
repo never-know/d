@@ -6,8 +6,11 @@
 /Yi/log/*
 !/Min
 /Yi/webroot/public/attached
+/Yi/webroot/public/qrcode
+/Yi/webroot/public/avater
 /Yi/cache
 /Yi/app/Conf/settings.php
+
 
 
 
