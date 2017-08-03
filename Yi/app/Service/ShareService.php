@@ -138,7 +138,7 @@ class ShareService extends \Min\Service
 				return $this->success(['wx_id' => $wx_id]);
 			}
 			
-			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1  AND total_salary = total_salary + '. $params['share_salary'] . ' WHERE share_id = '. $check['body']['share_id'];
+			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1, total_salary = total_salary + '. $params['share_salary'] . ' WHERE share_id = '. $check['body']['share_id'];
 			
 			$db->query($sql);
  			  
