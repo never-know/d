@@ -151,7 +151,7 @@ class WuserService extends \Min\Service
 			
 		} else {
 		
-			$sql = 'UPDATE {user_wx} set subscribe_status = 3 , subscribe_time = '. $data['subscribe_time'];
+			$sql = 'UPDATE {{user_wx}} set subscribe_status = 3 , subscribe_time = '. $data['subscribe_time'];
 			
 			if (empty($check['body']['wx_ip'])) {
 				$sql .= ' , wx_ip = '. $data['wx_ip'];
@@ -177,6 +177,8 @@ class WuserService extends \Min\Service
 		$this->cache()->delete($this->getCacheKey('open_id', $data['open_id']));		//清理 缓存
 		if (1 == $check['statusCode']) {
 			$this->cache()->delete($this->getCacheKey('wx_id', $check['body']['wx_id']));		//清理 缓存
+			if (!empty($check['body']['user_id'])) $this->cache()->delete($this->getCacheKey('user_id', $check['body']['user_id']));		//清理 缓存
+				if (!empty($check['body']['phone'])) $this->cache()->delete($this->getCacheKey('phone', $check['body']['phone']));		//清理 缓存
 		}
 
 		/* account not exist*/
@@ -195,12 +197,24 @@ class WuserService extends \Min\Service
 		if (!validate('open_id', $open_id)) {
 			return $this->error('参数错误', 30200);
 		}
-		$sql = 'UPDATE {{user_wx}} SET subscribe_status = 4 WHERE open_id = ' . safe_json_encode($open_id);
-		$result = $this->query($sql);
-		if ($result['effect'] == 1) {
-			return $this->success();
+		
+		$info = $this->checkAccount($open_id);
+		
+		if (!empty($info)) {
+			$sql = 'UPDATE {{user_wx}} SET subscribe_status = 4 WHERE open_id = ' . safe_json_encode($open_id);
+			$result = $this->query($sql);
+			if ($result['effect'] == 1) {
+				$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
+				$this->cache()->delete($this->getCacheKey('wx_id', $check['body']['wx_id']));		//清理 缓存
+				if (!empty($check['body']['user_id'])) $this->cache()->delete($this->getCacheKey('user_id', $check['body']['user_id']));		//清理 缓存
+				if (!empty($check['body']['phone'])) $this->cache()->delete($this->getCacheKey('phone', $check['body']['phone']));		//清理 缓存
+			
+				return $this->success();
+			} else {
+				return $this->error('操作失败', 20000);
+			}
 		} else {
-			return $this->error('操作失败', 20000);
+			return $this->error('参数错误', 20000);
 		}
 	}
 

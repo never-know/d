@@ -8,9 +8,8 @@ class MyController extends \App\Module\M\BaseController
 	public function team_get()
 	{
 		$result = $this->request('\\App\\Service\\Wuser::member', session_get('wx_id'));
-
+		$result['body']['level2'] = 0;
 		if (!empty($result['body']['list'])) {
-			$result['body']['level2'] = 0;
 			foreach ($result['body']['list'] as &$value) {
 				$value['phone'] 	= substr_replace($value['phone'], '****', 3, 4);
 				$result['body']['level2'] += $value['children'];

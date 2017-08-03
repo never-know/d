@@ -15,13 +15,13 @@ class ArticleService extends \Min\Service
 		if ($param['region'] < 100000000) $param['region'] *= 1000;
 		
 		$set = [
-			'tag' 		=> intval($param['tag']),
-			'start' 	=> intval($param['start']), 
-			'end' 		=> intval($param['end']), 
-			'region' 	=> intval($param['region']),
-			'title' 	=> ':title', 
-			'desc' 		=> ':desc',
-			'icon' 		=> ':icon'
+			'content_tag' 		=> intval($param['tag']),
+			'start_date' 		=> intval($param['start']), 
+			'end_date' 			=> intval($param['end']), 
+			'region_id' 		=> intval($param['region']),
+			'content_title' 	=> ':title', 
+			'content_description' 	=> ':desc',
+			'content_icon' 		=> ':icon'
 		];
 		
 		$bind = [
@@ -39,7 +39,7 @@ class ArticleService extends \Min\Service
 			//$db->inTransaction();
 			$id = $db->query($sql, $bind);
 			 
-			$sql2 = 'INSERT INTO {{article_content}} (id, content) values ('. $id['id']. ', :content )';
+			$sql2 = 'INSERT INTO {{article_content}} (content_id, content) values ('. $id['id']. ', :content )';
 			
 			$content = $db->query($sql2, [':content' => $param['content']]);
 			 
@@ -53,7 +53,7 @@ class ArticleService extends \Min\Service
 			
 			$db->rollBack();
 			
-			return $this->error('失败', 1);
+			return $this->error('失败', 1000);
 		}
 	}	
 	
@@ -90,7 +90,7 @@ class ArticleService extends \Min\Service
 		if (!empty($result) && !empty($result2)) {
 			return $this->success();
 		} else {
-			return $this->error('更新失败', 1);
+			return $this->error('更新失败', 1000);
 		}		
 	}
 
@@ -226,7 +226,7 @@ class ArticleService extends \Min\Service
 		$sql = 'SELECT a.*, ac.content FROM {{article}} AS a LEFT JOIN {{article_content}} AS ac on ac.content_id = a.content_id  WHERE a.content_id = '. intval($id) . '  LIMIT 1';
 		$result = $this->query($sql);
 		if (empty($result)) {	
-			return $this->error('数据不存在', 1);	
+			return $this->error('数据不存在', 1000);	
 		} else { 
 			return $this->success( $result);	
 		}

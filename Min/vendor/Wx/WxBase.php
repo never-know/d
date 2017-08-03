@@ -247,10 +247,16 @@ class WxBase
 		if (!isset($scene_id)) return false;
 		switch ($type) {
 			case '0':
-				if (!is_numeric($scene_id))
+				if (is_numeric($scene_id)) {
+					$action_name = 'QR_SCENE';
+					$action_info = array('scene'=>(array('scene_id'=>$scene_id)));
+				} elseif (is_string($scene_id)) {
+					$action_name = 'QR_STR_SCENE';
+					$action_info = array('scene'=>(array('scene_str'=>$scene_id)));
+				} else {
 					return false;
-				$action_name = 'QR_SCENE';
-				$action_info = array('scene'=>(array('scene_id'=>$scene_id)));
+				}
+
 				break;
 
 			case '1':

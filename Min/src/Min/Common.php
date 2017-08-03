@@ -218,7 +218,7 @@ function ip_address($type = 'iplong')
 
 function redirect($url, $time = 0, $msg = '') 
 {
-	watchdog($url, 'redirect');
+	watchdog($url, 'jump');
 	$url = str_replace(array('\n', '\r'), '', $url);
 	$msg = $msg ?: '系统跳转中！';
 	if (!headers_sent()) {
