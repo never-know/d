@@ -11,7 +11,11 @@ class MyController extends \App\Module\M\BaseController
 		$result['body']['level2'] = 0;
 		if (!empty($result['body']['list'])) {
 			foreach ($result['body']['list'] as &$value) {
-				$value['phone'] 	= substr_replace($value['phone'], '****', 3, 4);
+				if (empty($value['phone'])) {
+					$value['phone'] 	= '暂无';
+				} else {
+					$value['phone'] 	= substr_replace($value['phone'], '****', 3, 4);
+				}
 				$result['body']['level2'] += $value['children'];
 			}
 			
@@ -36,7 +40,11 @@ class MyController extends \App\Module\M\BaseController
 			if (!empty($result['body']['list'])) {
 
 				foreach ($result['body']['list'] as &$value) {
-					$value['phone'] = substr_replace($value['phone'], '****', 3, 4);
+					if (empty($value['phone'])) {
+						$value['phone'] 	= '暂无';
+					} else {
+						$value['phone'] = substr_replace($value['phone'], '****', 3, 4);
+					}
 				}
 			}
 			

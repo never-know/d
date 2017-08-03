@@ -46,12 +46,12 @@
 			<?php foreach($result['list'] as $value)   : ?>
 				<a href="javascript:;" class="weui_media_box weui_media_appmsg">
                    <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="<?=ASSETS_URL?>/avater/<?=(implode('/', str_split(base_convert($value['wx_id'], 10, 36), 2)))?>.jpg"  onerror="imgnotfound()" alt="">
+                        <img class="weui_media_appmsg_thumb" src="<?=get_avater($value['wx_id'], ASSETS_URL)?>"  onerror="imgnotfound()" alt="">
                     </div>
                     <div class="weui_media_bd">
                         <p class="weui_media_desc"><?=$value['phone']?></p>
 						<ul class="weui_media_info">
-							<li class="weui_media_info_meta">贡献收益 ￥<?=$value['benefit_2']?></li>
+							<li class="weui_media_info_meta">贡献收益 ￥<?=($value['benefit_2']?:0)?></li>
 							
 					  </ul>
                     </div>

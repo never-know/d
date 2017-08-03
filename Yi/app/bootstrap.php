@@ -20,7 +20,7 @@
 	}
 	
 	define('SITE_DOMAIN', 'anyitime.com');	
-	define('ASSETS_URL', 'https://www.anyitime.com/public');	// 图片上传后的URL基址
+	define('ASSETS_URL', 'https://m.anyitime.com/public');	// 图片上传后的URL基址
 	
 	define('HOME_PAGE', SCHEMA . SERVER_NAME);
 	define('CURRENT_URL', SCHEMA . SERVER_NAME . $_SERVER['REQUEST_URI']);

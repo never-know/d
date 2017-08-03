@@ -434,16 +434,16 @@ class WxController extends \Min\Controller
 		if (!empty($result['openid'])) {
 			$cache 		= $this->cache('wx_user_info');
 			$key 		= $this->getCacheKey('userinfo', $user['id']);
-			/*
+			 
 			if (!empty($result['headimgurl'])) {
 				$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
 				if (!empty($img)) {
-					$path 	= '/avater/' . implode('/', str_split(base_convert($user['id'], 10, 36), 2)) . '.jpg';
-					$result['img_path'] = ASSETS_URL . $path;
-					file_put_contents(PUBLIC_PATH.$path, $img);
+					$path 	= get_avater($user['id']);
+					$result['headimgurl'] = ASSETS_URL . $path;
+					file_put_contents(PUBLIC_PATH . $path, $img);
 				}
 			}
-			*/
+			 
 			$cache->set($key, $result);
 		}	
 	}

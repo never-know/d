@@ -59,6 +59,7 @@ p img{
  
   
 </script>
+<script>function qrcodenotfound(){var img=event.srcElement;img.src="/public/images/qrcode.jpg"; img.onerror=null;} </script>
 
 <?php endif;?>
 
@@ -71,7 +72,7 @@ p img{
 		<img src="https://api.leduika.com/assets/logo/20170620103512.png"  width="90px"/>
 		<?=$result['content']?>
 		</div>
-		<img src="https://m.anyitime.com/public/images/qrcode.png"  width="200px;"/>
+		<img src="https://m.anyitime.com/public/images/qrcode.png"  width="200px;" onerror="qrcodenotfound()"/>
 	</div>	
 	
  

@@ -113,9 +113,9 @@ class MysqliPDO
 			throw new \PDOException('unsafe char ; fount  : '. $sql, -4);
 		}
 		
-		watchdog($sql);
+		watchdog($sql, 'sql');
 		
-		if (is_array($param)) watchdog($param);
+		if (is_array($param)) watchdog($param, 'sqlp');
 		
 		//$sql_splite = preg_split('/\s+/', $sql, 2);
 		
@@ -145,7 +145,7 @@ class MysqliPDO
  
 		$sql = preg_replace('/\{\{([a-z_]+)\}\}/', $this->conf[$this->active_db]['prefix'][$this->prefix_key] . '$1', implode(';', $sql_table));
 		
-		watchdog($sql);
+		watchdog($sql, 'sqlt');
 		
 		return $this->nonPrepareQuery('master', $sql, 'UPDATE');
 		
@@ -216,7 +216,7 @@ class MysqliPDO
 				
 				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->errorInfo[1], [2006, 2013])) {
 				
-					watchdog($e);
+					watchdog($e, 'sqlaway');
 					$round -- ;
 					continue; 
 				} 
@@ -268,7 +268,7 @@ class MysqliPDO
 				
 				$on_error = true;
 				if (empty($this->intrans[$this->active_db]) && ($e instanceof \PDOException) && in_array($e->errorInfo[1], [2006, 2013])) {
-					watchdog($e);
+					watchdog($e, 'sqlaway');
 					$round -- ;
 					continue; 
 				} 
@@ -291,7 +291,7 @@ class MysqliPDO
 				$on_error = false;
 				try {
 					$this->connect($type)->beginTransaction();
-					watchdog($this->inTransaction());
+					watchdog($this->inTransaction(), 'Transan');
 					return true;
 				} catch (\Throwable $e) {
 					$on_error = true;

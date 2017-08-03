@@ -65,6 +65,12 @@ function balance_type($type)
 
 }
 
+function get_avater($wx_id, $prefix = '')
+{
+	return ( $prefix . '/avater/' . implode('/', str_split(base_convert($wx_id, 10, 36), 2)) . '.jpg');
+
+}
+
 function region_get($region_id)
 {
 	static $region;
