@@ -70,7 +70,7 @@ function t($string, array $args = [], array $options = [])
 function view(array $result = [])
 {
 	if (empty($result['template'])) {
-		$result['template'] =   implode('/', ['', App::getModule(), App::getController(), App::getAction()]);
+		$result['template'] =   implode('/', ['', App::getModule(), strtolower(App::getController()), strtolower(App::getAction())]);
 	}
 	require VIEW_PATH. $result['template']. VIEW_EXT;
 }
@@ -536,7 +536,7 @@ function min_header($headers)
 	}
 }	
 
-// $layout means layout if it starts with 'layout_', or  type like  json, xml otherwise
+// $layout means layout if it starts with 'layout', or  type like  json, xml otherwise
 
 function final_response($result, $layout) {
 
@@ -566,13 +566,13 @@ function final_response($result, $layout) {
 			}
 			
 			if (in_array($result['statusCode'], [500, 404])) {
-				$layout = 'layout_error_' . strtolower(App::getModule()) ;
+				$layout = '/layout/error';
 				if ($runed == true) {
-					$layout = '/layout/error_'.  strtolower(App::getModule()) ;
+					$layout = '/layout/error_inner' ;
 				}
 				
 			} elseif (20106 == $result['statusCode']) { 
-				$layout = 'layout_reload_' . strtolower(App::getModule());
+				$layout = '/layout/reload';
 			}
 			
 			$runed = true;
@@ -583,14 +583,16 @@ function final_response($result, $layout) {
 				$result = $result['body'];	
 			}
 			
-			if (!empty($layout) && substr($layout, 0, 7) == 'layout_') {
-				if (!isset($layout[7])) $layout .= App::getModule(); 
-				require VIEW_PATH. '/layout/'. $layout. VIEW_EXT;
+			require VIEW_PATH . App::getModule() . $layout. VIEW_EXT;
+			
+			/*
+			if (!empty($layout) && substr($layout, 0, 6) == 'layout') {
+				require VIEW_PATH . App::getModule() . $layout. VIEW_EXT;
 			} else {
 				if (!empty($layout)) $result['template'] = $layout;
 				view($result);
 			} 
-			
+			*/
 			exit;
 	} 
 }

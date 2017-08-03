@@ -121,28 +121,8 @@ class Controller
 			app_exception($t);
 		}
 	}
-	/*
-	final public function layout($result = [], $layout = '')
-	{	
-		if ( is_null($layout)) {
-			$layout = implode('/', ['', App::getModule(), App::getController(), App::getAction()]);
-		} elseif ('' === $layout) {
-			$layout = '/layout/layout_'. ;
-		} else {
-		
-		}
- 		require VIEW_PATH. $layout. VIEW_EXT;
-		exit;
-	}
 	
-	final public function view($result = [])
-	{	
-		view($result);
-		exit;
-	}
-	*/
-	
-	final public function success($body = [], $layout = 'layout_')
+	final public function success($body = [], $layout = '/layout/layout')
 	{	
 		$result = ['statusCode' => 1, 'message' => '操作成功'];
  
@@ -157,7 +137,7 @@ class Controller
 		final_response($result, $layout);
 	}
 
-	final public function error($message, $code, $layout = 'layout_')
+	final public function error($message, $code, $layout = '/layout/layout')
 	{	
 		if ($code < 2) {
 			throw new \Exception('code should greater than 1', 12000);
@@ -166,7 +146,7 @@ class Controller
 		final_response(['statusCode' => $code, 'message' => $message], $layout);
 	}
 	
-	final public function response($result = [], $layout = 'layout_')
+	final public function response($result = [], $layout = '/layout/layout')
 	{		
 		final_response($result, $layout);
 	}
