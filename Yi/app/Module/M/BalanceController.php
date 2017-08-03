@@ -40,7 +40,7 @@ class BalanceController extends \App\Module\M\BaseController
 	
 	public function wdlog_get()
 	{
-		$user_id = session_get('user_id');
+		$user_id = session_get('USER_ID');
 		
 		$result 	= $this->request('\\App\\Service\\Draw::allList', $user_id);
 		$result['body']['meta'] = ['title' =>'提现记录'];
@@ -49,7 +49,7 @@ class BalanceController extends \App\Module\M\BaseController
 	
 	public function records_get()
 	{
-		$user_id = session_get('user_id');
+		$user_id = session_get('USER_ID');
 		$result 	= $this->request('\\App\\Service\\Balance::allList', $user_id);
 		$result['body']['meta'] = ['title' =>'资金明细'];
 		$this->response($result);

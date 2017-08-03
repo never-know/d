@@ -700,6 +700,7 @@ function build_query_insert($params)
 {	
 	$param = reset($params);
 	$values = [];
+	
 	if (is_array($param)) {
 		$fields = array_keys($param);
 		foreach ($params as $value) {
@@ -710,7 +711,7 @@ function build_query_insert($params)
 		$values[] = implode(',', array_values($params));
 	}
 	
-	return '(`'. implode('`,`', array_keys($params)) .'`) values ('. implode('),', $values). ')';
+	return '(`'. implode('`,`', $fields) .'`) values ('. implode('),(', $values). ')';
 }
 
 function build_query_common($separator, $params, $sep = true)

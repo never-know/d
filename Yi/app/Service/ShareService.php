@@ -100,22 +100,21 @@ class ShareService extends \Min\Service
 				// 加锁
 				$sql = 'SELECT * FROM {{user_balance}} WHERE user_id in (' . $ids . ') FOR UPDATE';
 				
-				$balance = $db->query($sql);
+				$balance_raw = $db->query($sql);
 				
-				if (empty($balance)) {
+				if (empty($balance_raw)) {
 					throw new \Exception('操作失败', 20102);
 				}
-				
-				foreach ($balance as $key => $value) {
-					unset($balance[$key]);
+				$balance = [];
+				foreach ($balance_raw as $key => $value) {
 					$balance[$value['user_id']] = $value;	
 				}
-				
-				$sql_count = 'SELECT count(1) as count FROM {{share_view}} WHERE '. build_query_common(' AND ', $params). ' LIMIT 1';
+ 
+				$sql_count = 'SELECT view_id FROM {{user_share_view}} WHERE '. build_query_common(' AND ', $params). ' LIMIT 1';
 	
 				$count = $db->query($sql_count);
 				
-				if ($count['count'] > 2) {
+				if (!empty($count)) {
 					$check['body']['share_salary'] 	= 0;
 					$check['body']['adv_cost'] 		= 0;
 					
@@ -129,14 +128,14 @@ class ShareService extends \Min\Service
 			$params['adv_cost'] 	= $check['body']['adv_cost'];
 			$params['status'] 		= (($check['body']['adv_cost'] > 0) ? 1 : 0);
 
-			$view_sql = 'INSERT INTO {{share_view}} ' . build_query_insert($params);
+			$view_sql = 'INSERT INTO {{user_share_view}} ' . build_query_insert($params);
 			
 			$view_result =  $db->query($view_sql);
 			
 			// adv account finished when record view log;
 			
 			if ($params['status'] == 0) {
-				return $this->success();
+				return $this->success(['wx_id' => $wx_id]);
 			}
 			
 			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1  AND total_salary = total_salary + '. $params['share_salary'] . ' WHERE share_id = '. $check['body']['share_id'];
@@ -170,7 +169,7 @@ class ShareService extends \Min\Service
 			
 			// parent user balance log
 			
-			if (intval($share_left/$fa) == (intval($balance[$params['share_user']]['share_part']/$fa) + 1)) {
+			if (intval(($balance[$params['share_user']]['share_part'] + $params['share_salary']) /$fa) == (intval($balance[$params['share_user']]['share_part']/$fa) + 1)) {
 				$no_team_part = false;
 				if (!empty($parent['u2'])) {
 					$balance_log_insert_data[1] = $balance_log;
@@ -197,7 +196,7 @@ class ShareService extends \Min\Service
 			
 			$db->query($balance_log_sql);
 			
-			$update = 'UPDATE user_balance 
+			$update = 'UPDATE {{user_balance}} 
 				SET balance = CASE user_id 
 					  WHEN ' .  $parent['u']  . ' THEN  balance - ' . $params['adv_cost'] .
 					' WHEN ' .  $parent['u1'] . ' THEN  balance + ' . $params['share_salary'] . 
