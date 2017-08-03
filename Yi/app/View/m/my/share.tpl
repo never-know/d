@@ -69,7 +69,7 @@
 		
 			<a class="weui-col-50" href="javascript:;">
 				<div>
-					<p><?=(session_get('user_balance')['share_part']100)?></p>
+					<p><?=(session_get('user_balance')['share_part']/100)?></p>
 					<span>分享收益 (元)</span>
 				</div>
 			</a>

@@ -69,7 +69,9 @@
 							<li class="weui_media_info_meta">下级 <?=($value['children']?:0)?>人</li> 
 					  </ul>
                     </div>
+					<?php if (intval($value['children']) > 0) :?> 
 					<div class="weui_panel_ft">&nbsp;</div>
+					<?php endif; ?>
 					 
                 </a>
 			<?php endforeach;?>
