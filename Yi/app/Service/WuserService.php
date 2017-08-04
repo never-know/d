@@ -177,8 +177,8 @@ class WuserService extends \Min\Service
 		$this->cache()->delete($this->getCacheKey('open_id', $data['open_id']));		//清理 缓存
 		if (1 == $check['statusCode']) {
 			$this->cache()->delete($this->getCacheKey('wx_id', $check['body']['wx_id']));		//清理 缓存
-			if (!empty($check['body']['user_id'])) $this->cache()->delete($this->getCacheKey('user_id', $check['body']['user_id']));		//清理 缓存
-				if (!empty($check['body']['phone'])) $this->cache()->delete($this->getCacheKey('phone', $check['body']['phone']));		//清理 缓存
+			if (!empty($check['body']['user_id'])) $this->cache()->delete($this->getCacheKey('user_id', $check['body']['user_id'])); //清理 缓存
+			if (!empty($check['body']['phone'])) $this->cache()->delete($this->getCacheKey('phone', $check['body']['phone']));		 //清理 缓存
 		}
 
 		/* account not exist*/

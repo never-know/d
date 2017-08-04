@@ -135,7 +135,7 @@ class ShareService extends \Min\Service
 			// adv account finished when record view log;
 			
 			if ($params['status'] == 0) {
-				return $this->success(['wx_id' => $wx_id]);
+				return $this->success(['wx_id' => $wx_id??0]);
 			}
 			
 			$sql = 'UPDATE {{user_share}} SET view_times = view_times + 1, total_salary = total_salary + '. $params['share_salary'] . ' WHERE share_id = '. $check['body']['share_id'];

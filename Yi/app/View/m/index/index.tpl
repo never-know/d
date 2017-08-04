@@ -130,14 +130,90 @@
 	  </script>
 	  
 	   <script>
-      var loading = false;
+	   
+	   function   formatDate(d)   {     
+			 var   now=new   Date(d*1000);     
+              var   year=now.getYear();     
+              var   month=now.getMonth()+1;     
+              var   date=now.getDate();     
+              var   hour=now.getHours();     
+              var   minute=now.getMinutes();     
+              var   second=now.getSeconds();     
+              return  month+"-"+date;     
+              }     
+
+      var loading 		= false;
+	  var current_page 	= 1;
+	  var total_page 	= 2;
+	  var html = '';
+	  
       $('.weui_tab_bd').infinite(250).on("infinite", function() {
         if(loading) return;
+        if(total_page <= current_page ) return;
         loading = true;
-        setTimeout(function() {
-          $("#content_load").append("<p>《世界著名计算机教材精选·人工智能:一种现代的方法(第3版)》英文版有1100多页，教学内容非常丰富，不但涵盖了人工智能基础、问题求解、知识推理与规划等经典内容，而且还包括不确定知识与推理、机器学习、通讯感知与行动等专门知识的介绍。目前我们为本科生开设的学科基础必修课“人工智能导论”主要介绍其中的经典内容，而研究生必修的核心课程“人工智能原理”主要关注其中的专门知识。其实《世界著名计算机教材精选·人工智能:一种现代的方法(第3版)》也适合希望提高自身计算系统设计水平的广大应用计算技术的社会公众，对参加信息学奥林匹克竞赛和ACM程序设计竞赛的选手及其教练员也有一定的参考作用。</p>");
-          loading = false;
-        }, 1000);
+		$.ajax({
+			url:'/', 
+			type:'GET', 
+			data:{
+				region:0,	//$('#region').attr('data-value'),
+				sub_region:0,
+				page: current_page+1
+			},
+			success: function(data){
+				if (data.statusCode == 1 ) {
+					 
+					if (data.body.list.length > 0) {
+
+						$.each(data.body.list, function(i, value){
+
+							if (i%5 ==0) {
+								html += '<div class="weui_media_box weui_media_text" onclick="window.location.href=\'/content/' +value.id_name + 
+								'.html\'">  <h4 class="weui_media_title">' + value.content_title + 
+								'</h4> <p class="weui_media_desc">' + value.content_description + 
+								'</p> <ul class="weui_media_info">' +
+								'<li class="weui_media_info_meta">' + value.region_name + 
+								'</li> <li class="weui_media_info_meta">' + formatDate(value.create_time)+
+								'</li> <li class="weui_media_info_meta weui_media_info_meta_extra">'+value.tag_name+
+								'</li> </ul> </div>';
+							
+							} else {
+							
+								html += '<a href="/content/' + value.id_name + 
+								'.html" class="weui_media_box weui_media_appmsg">' +
+								'<div class="weui_media_bd"> <p class="weui_media_desc">' + value.content_description +
+								'</p><ul class="weui_media_info"> ' +
+										'<li class="weui_media_info_meta">'+value.region_name + 
+										'</li><li class="weui_media_info_meta">'+formatDate(value.create_time)+
+										'</li> <li class="weui_media_info_meta weui_media_info_meta_extra">'+value.tag_name+
+										'</li>  </ul></div> ' +
+										'<div class="weui_media_hd"> <img class="weui_media_appmsg_thumb" src="'+value.content_icon +
+										'" alt=""></div> </a>';
+							
+							}
+						});
+
+						 $("#content_load").append(html);
+					}
+					html = '';
+					current_page = data.body.page.current_page;
+					total_page = data.body.page.total_page;
+					 
+					if (total_page == current_page)　{
+						$(".weui-infinite-scroll").html('加载完成');
+						 return;
+					}
+				} else {
+					 $.toast(data.message, "cancel");
+				}
+				
+				loading = false;
+			},
+			error:function(){
+				 $.toast("网络连接失败", "cancel");
+				 loading = false;
+			}
+		});
+ 
       });
     </script>
   
