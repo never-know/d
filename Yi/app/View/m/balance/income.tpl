@@ -28,7 +28,7 @@
     </div>
 	
   <div class="page-bd">  
-        <ul>
+        <ul id="list_loaded">
 			<?php if (!empty($result['list'])) : ?>
 			<?php foreach ($result['list'] as $value ) : ?>
 			<li>
@@ -56,4 +56,40 @@
             </li>
 			-->
 		</ul>
-    </div>      
+    </div> 
+
+
+	<!-- page --->
+	
+	<div class="weui-infinite-scroll">
+
+	 <?php if ($result['page']['total_page'] < 2) : ?>
+	  ------ 加载完成 ------
+	</div>
+	<script>
+		if (document.body.clientWidth >=  document.body.scrollHeight) {
+			$('.weui-infinite-scroll').hide();
+		}
+	</script>	 
+	 <?php else : ?>
+	 
+	   <div class="infinite-preloader"></div>
+	  正在加载... 
+	</div>
+ 
+	<script>
+	    
+		var template = function(i, value){
+			return ('<li>'+
+                '<a href="/balance/daily/' +value.post_day +'.html">'+
+                   ' <p>' +value.post_day +' </p>'+
+					'<div class="weui_cell_ft">+'+ value.money + '</div>'+
+                '</a>'+
+            '</li>');
+		}
+		
+		page_load('/balance/income.html',   template);
+	  
+    </script>
+	<?php endif; ?>
+	

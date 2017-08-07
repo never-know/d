@@ -185,7 +185,7 @@ class BalanceService extends \Min\Service
 			}
 		}
 		
-		$sql_list 	= 'SELECT l.*, s.content_icon, s.content_title, s.share_time, s.share_type FROM {{user_balance_log}} AS l LEFT JOIN {{user_share}} AS s ON l.balance_type = 2 AND l.second_relation = s.share_id WHERE ' . build_query_common(' AND ', $param, false) . ' AND l.balance_type in (2,3,4) ORDER BY l.log_id DESC';
+		$sql_list 	= 'SELECT l.balance_type, l.user_money, l.second_relation, l.post_time, s.content_icon, s.content_title, s.share_time, s.share_type FROM {{user_balance_log}} AS l LEFT JOIN {{user_share}} AS s ON l.balance_type = 2 AND l.second_relation = s.share_id WHERE ' . build_query_common(' AND ', $param, false) . ' AND l.balance_type in (2,3,4) ORDER BY l.log_id DESC';
 		
 		$result = $this->commonList($count, $sql_list);
 		

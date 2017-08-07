@@ -18,8 +18,12 @@ class UserController extends \App\Module\M\BaseController
 		$today 		= $this->request('\\App\\Service\\Balance::today', $user_id, self::EXITNONE, true);
 		$balance 	= $this->request('\\App\\Service\\Balance::account', $user_id);
 		
-		if (1 == $balance['statusCode']) session_set('user_balance', $balance['body']);
-		
+		if (1 == $balance['statusCode']) {
+			foreach ($balance['body'] as &$value) {
+				$value = $value/100;
+			}
+			session_set('user_balance', $balance['body']);
+		}
 		$result['today_salary'] 	= $today['body']['total'];
 		$result['account_balance'] 	= $balance['body']['balance'];
 		$result['show_bottom'] = 1;

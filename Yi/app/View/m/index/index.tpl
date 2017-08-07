@@ -17,7 +17,7 @@
 -->		
 		<div class="weui_panel weui_panel_access_new">
 			<div class="weui_panel_hd">图文组合列表</div>
-			<div class="weui_panel_bd" id="content_load">
+			<div class="weui_panel_bd" id="list_loaded">
 			<?php if (!empty($result['list'])) : ?>	 
 			<?php foreach ($result['list'] as $key => $value) : ?>	 
 				<?php if ($key%5 ==0) : ?>
@@ -72,6 +72,7 @@
 				 
 			</div>
 		</div>
+		
 	<div class="weui_navbar">
 	
 	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;overflow: hidden;    -webkit-box-flex: 2;
@@ -84,16 +85,76 @@
 		更多选择
 	</div>
 	</div>
- 
 	
 	<div class="weui-infinite-scroll">
-	  <div class="infinite-preloader"></div>
+
+	 <?php if ($result['page']['total_page'] < 2) : ?>
+	  ------ 加载完成 ------
+	</div>
+	<script>
+		if (document.body.clientWidth >=  document.body.scrollHeight) {
+			$('.weui-infinite-scroll').hide();
+		}
+	</script>	 
+	 <?php else : ?>
+	   <div class="infinite-preloader"></div>
 	  正在加载... 
 	</div>
+	  
+		<form id="list_form" onsubmit="return false" style="visibility:hidden;font-size:0;">
+			<input type="hidden" name="region" value=""/>
+			<input type="hidden" name="sub_region" value=""/>
+			<input type="hidden" name="page" value="2" id="next_page"/>
+		</form>
+	  
+	<script>
+	    
+		var template = function(i, value){
+			var html = '';
+			if (i%5 ==0) {
+				html  = '<div class="weui_media_box weui_media_text" onclick="window.location.href=\'/content/' +value.id_name + 
+				'.html\'">  <h4 class="weui_media_title">' + value.content_title + 
+				'</h4> <p class="weui_media_desc">' + value.content_description + 
+				'</p> <ul class="weui_media_info">' +
+				'<li class="weui_media_info_meta">' + value.region_name + 
+				'</li> <li class="weui_media_info_meta">' + new Date(value.create_time*1000).Format("mm-dd") +
+				'</li> <li class="weui_media_info_meta weui_media_info_meta_extra">'+value.tag_name+
+				'</li> </ul> </div>';
+			
+			} else {
+			
+				html  = '<a href="/content/' + value.id_name + 
+				'.html" class="weui_media_box weui_media_appmsg">' +
+				'<div class="weui_media_bd"> <p class="weui_media_desc">' + value.content_description +
+				'</p><ul class="weui_media_info"> ' +
+						'<li class="weui_media_info_meta">'+value.region_name + 
+						'</li><li class="weui_media_info_meta">'+new Date(value.create_time*1000).Format("mm-dd")+
+						'</li> <li class="weui_media_info_meta weui_media_info_meta_extra">'+value.tag_name+
+						'</li>  </ul></div> ' +
+						'<div class="weui_media_hd"> <img class="weui_media_appmsg_thumb" src="'+value.content_icon +
+						'" alt=""></div> </a>';
+			
+			}
+			return html;
+		}
+		
+		page_load('/',   template);
+	  
+    </script>
+	
+	<?php endif; ?>
+  
+	<script src="/public/js/m/picker.js"></script>
+	<script src="/public/js/m/citypicker.js"></script>
+	<script src="/public/js/m/city-picker.min.js"></script>
+	<script>
+	   $("#region").cityPicker({
+        title: "选择广告投放区域",
+        onChange: function (picker, values, displayValues) {
+          console.log(values, displayValues);
+        }
+      });
  
-<script> 
-
-
       $(document).on("click", "#show-actions", function() {
         $.actions({
           title: "选择操作",
@@ -128,103 +189,3 @@
 	  
 
 	  </script>
-	  
-	   <script>
-	   
-	   function   formatDate(d)   {     
-			 var   now=new   Date(d*1000);     
-              var   year=now.getYear();     
-              var   month=now.getMonth()+1;     
-              var   date=now.getDate();     
-              var   hour=now.getHours();     
-              var   minute=now.getMinutes();     
-              var   second=now.getSeconds();     
-              return  month+"-"+date;     
-              }     
-
-      var loading 		= false;
-	  var current_page 	= 1;
-	  var total_page 	= 2;
-	  var html = '';
-	  
-      $('.weui_tab_bd').infinite(250).on("infinite", function() {
-        if(loading) return;
-        if(total_page <= current_page ) return;
-        loading = true;
-		$.ajax({
-			url:'/', 
-			type:'GET', 
-			data:{
-				region:0,	//$('#region').attr('data-value'),
-				sub_region:0,
-				page: current_page+1
-			},
-			success: function(data){
-				if (data.statusCode == 1 ) {
-					 
-					if (data.body.list.length > 0) {
-
-						$.each(data.body.list, function(i, value){
-
-							if (i%5 ==0) {
-								html += '<div class="weui_media_box weui_media_text" onclick="window.location.href=\'/content/' +value.id_name + 
-								'.html\'">  <h4 class="weui_media_title">' + value.content_title + 
-								'</h4> <p class="weui_media_desc">' + value.content_description + 
-								'</p> <ul class="weui_media_info">' +
-								'<li class="weui_media_info_meta">' + value.region_name + 
-								'</li> <li class="weui_media_info_meta">' + formatDate(value.create_time)+
-								'</li> <li class="weui_media_info_meta weui_media_info_meta_extra">'+value.tag_name+
-								'</li> </ul> </div>';
-							
-							} else {
-							
-								html += '<a href="/content/' + value.id_name + 
-								'.html" class="weui_media_box weui_media_appmsg">' +
-								'<div class="weui_media_bd"> <p class="weui_media_desc">' + value.content_description +
-								'</p><ul class="weui_media_info"> ' +
-										'<li class="weui_media_info_meta">'+value.region_name + 
-										'</li><li class="weui_media_info_meta">'+formatDate(value.create_time)+
-										'</li> <li class="weui_media_info_meta weui_media_info_meta_extra">'+value.tag_name+
-										'</li>  </ul></div> ' +
-										'<div class="weui_media_hd"> <img class="weui_media_appmsg_thumb" src="'+value.content_icon +
-										'" alt=""></div> </a>';
-							
-							}
-						});
-
-						 $("#content_load").append(html);
-					}
-					html = '';
-					current_page = data.body.page.current_page;
-					total_page = data.body.page.total_page;
-					 
-					if (total_page == current_page)　{
-						$(".weui-infinite-scroll").html('加载完成');
-						 return;
-					}
-				} else {
-					 $.toast(data.message, "cancel");
-				}
-				
-				loading = false;
-			},
-			error:function(){
-				 $.toast("网络连接失败", "cancel");
-				 loading = false;
-			}
-		});
- 
-      });
-    </script>
-  
-	<script src="/public/js/m/picker.js"></script>
-	<script src="/public/js/m/citypicker.js"></script>
-	<script src="/public/js/m/city-picker.min.js"></script>
-	<script>
-	   $("#region").cityPicker({
-        title: "选择广告投放区域",
-        onChange: function (picker, values, displayValues) {
-          console.log(values, displayValues);
-        }
-      });
-	</script>

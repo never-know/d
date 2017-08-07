@@ -74,8 +74,5 @@ p img{
 		</div>
 		<img src="https://m.anyitime.com/public/images/qrcode.png"  width="200px;" onerror="qrcodenotfound()"/>
 	</div>	
-	
- 
-	 
 </body>
 </html>

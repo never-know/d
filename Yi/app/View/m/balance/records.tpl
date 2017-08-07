@@ -39,7 +39,7 @@
      
     </div>
 
-	<div class="weui_cells balance_reocrds">
+	<div class="weui_cells balance_reocrds" id="list_loaded">
 	<?php if(!empty($result['list'])) : ?>
 	<?php foreach ($result['list'] as $value) :  $this_date = date('Y-m', $value['post_time']);
 		if (empty($current_date) || $current_date != $this_date) : $current_date = $this_date ;?>			
@@ -48,12 +48,12 @@
         <div class="weui_cell"  >
          
           <div class="weui_cell_bd weui_cell_primary" style="font-size:13px;">
-            <p><?=(balance_type($value['balance_type']))?></p>
+            <p><?=($value['balance_type'])?></p>
             <p><?=date('m-d H:i:s', $value['post_time'])?></p>
           </div>
 		   <div class="weui_cell_ft">
-            <p>+ <?=($value['user_money']/100)?></p>
-            <p><?=($value['user_current_balance']/100)?></p>
+            <p>+ <?=($value['user_money'])?></p>
+            <p><?=($value['user_current_balance'])?></p>
           </div>
           
         </div>
@@ -80,5 +80,87 @@
 		-->
 	</div>
 	 
+ <!-- page --->
+	
+	<div class="weui-infinite-scroll">
+	
+
+	 <?php if ($result['page']['total_page'] < 2) : ?>
+	  ------ 加载完成 ------
+	</div>
+	<script>
+	if (document.body.clientWidth >=  document.body.scrollHeight) {
+		$('.weui-infinite-scroll').hide();
+	}
+	</script>
+	 
+	 <?php else : ?>
+	 
+	   <div class="infinite-preloader"></div>
+	  正在加载... 
+	</div>
  
+  <script>
+      var loading = false, current_page = 1, total_page = 2, html = '', this_date = '';
+	  
+      $('.weui_tab_bd').infinite(250).on("infinite", function() {
+        if(loading) return;
+        if(total_page <= current_page ) return;
+        loading = true;
+		$.ajax({
+			url:'/balance/records.html', 
+			type:'GET', 
+			data: {page:current_page+1},
+			success: function(data){
+				if (data.statusCode == 1 ) {
+					 
+					if (data.body.list.length > 0) {
+
+						$.each(data.body.list, function(i, value){
+							this_date = new Date(value.post_time).Format('yyyy-mm'); 
+							if ( current_date !=  this_date) {
+								current_date =  this_date ; 
+								
+								html += ('<li class="weui_panel_hd"  >' + this_date +'</li>');
+							}
+							
+						    html += ('<div class="weui_cell">'+
+         
+							  '<div class="weui_cell_bd weui_cell_primary" style="font-size:13px;">'+
+								'<p>'+value.balance_type+'</p>'+
+								'<p>'+ new Date(value.post_time).Format('mm-dd HH:ii:ss') +  '</p>'+
+							 ' </div>'+
+							   '<div class="weui_cell_ft">'+
+								'<p>+ ' + value.user_money +'</p>'+
+								'<p>'+ value.user_current_balance+'</p>'+
+							 ' </div>'+
+							  
+							'</div>');
+						});
+
+						 $("#list_loaded").append(html);
+					}
+					
+					html = '';
+					current_page = data.body.page.current_page;
+					total_page = data.body.page.total_page;
+					
+					if (total_page == current_page)　{
+						$(".weui-infinite-scroll").html('加载完成');
+						 return;
+					}
+				} else {
+					 $.toast(data.message, "cancel");
+				}
+				
+				loading = false;
+			},
+			error:function(){
+				 $.toast("网络连接失败", "cancel");
+				 loading = false;
+			}
+		});
+ 
+      });	
+	<?php endif; ?>
 	 

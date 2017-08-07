@@ -56,13 +56,13 @@
 	
  
 <div class="weui_cells balance-detail">
-	<ul>
+	<ul id="list_loaded">
 		<?php if (!empty($result['list'])) : ?>
 		<?php foreach ($result['list'] as $value) : ?>
         <li class="weui_cell" href="javascript:;">
 			<?php if ($value['balance_type'] == 2) : ?>
 			
-				<div class="weui_cell_hd"><img src="<?=strtr($value['content_icon'],['m://' => ASSETS_URL])?>" alt="" ></div>
+				<div class="weui_cell_hd"><img src="<?=$value['content_icon']?>" alt="" ></div>
 				<div class="weui_cell_bd weui_cell_primary">
 				<p class="share_title"><?=$value['content_title']?></p>
 				<p class="share_detail"><?=date('m-d H:i', $value['share_time'])?> 分享<?=($value['share_type']?'于朋友圈':'给好友')?></p>
@@ -72,12 +72,12 @@
 				<div class="weui_cell_hd"><img src="/public/images/my.png" alt="" ></div>
 				<div class="weui_cell_bd weui_cell_primary">
 				<p class="share_title">TEAM SHALARY</p>
-				<p class="share_detail">来自用户 <?=substr_replace($value['second_relation'], '****', 3, 4)?></p>
+				<p class="share_detail">来自用户 <?=$value['phone']?></p>
 
 			<?php endif; ?>
           </div>
           <div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">
-		  <p>+<?=($value['user_money']/100)?></p>
+		  <p>+<?=$value['user_money']?></p>
 		  <p><?=date('H:i', $value['post_time'])?></p></div>
         </li>
 		<?php endforeach; ?>
@@ -96,5 +96,55 @@
         </li>
 		 
 		-->
-		</ul>
-	</div>	
+	</ul>
+</div>
+
+<!-- page --->
+	
+	<div class="weui-infinite-scroll">
+
+	 <?php if ($result['page']['total_page'] < 2) : ?>
+	  ------ 加载完成 ------
+	</div>
+	<script>
+		if (document.body.clientWidth >=  document.body.scrollHeight) {
+			$('.weui-infinite-scroll').hide();
+		}
+	</script>
+	 <?php else : ?>
+	 
+	   <div class="infinite-preloader"></div>
+	  正在加载... 
+	</div>
+ 
+	<script>
+	    
+		var template = function(i, value){
+			var html = "";
+		   html += '<li class="weui_cell" href="javascript:;">';
+			if (value.balance_type == 2) {
+				html += ('<div class="weui_cell_hd"><img src="' + value.content_icon +'" alt="" ></div>'+
+				'<div class="weui_cell_bd weui_cell_primary">'+
+				'<p class="share_title">' + value.content_title + '</p>'+
+				'<p class="share_detail">'+ new Date(value.share_time).Format('mm-dd HH:ii') + '分享' + ((value.share_type==1)?'于朋友圈':'给好友') + '</p>');
+				
+			} else {
+			
+				html += ('<div class="weui_cell_hd"><img src="/public/images/my.png" alt="" ></div>'+
+				'<div class="weui_cell_bd weui_cell_primary">' +
+				'<p class="share_title">TEAM SHALARY</p>' + 
+				'<p class="share_detail">来自用户 ' +  value.phone  +'</p>');
+
+			}
+			html += '</div>';
+			html += '<div class="weui_cell_ft" style="font-size:18px;padding-left: 10px;">';
+			html += '<p>+'+ value.user_money + '</p>';
+			html += '<p> '+ new Date(value.post_time).Format('HH:ii') + '</p></div>';
+			html += '</li>';
+			return html;
+		}
+		
+		page_load('/balance/daily.html',   template);
+	  
+    </script>
+	<?php endif; ?>

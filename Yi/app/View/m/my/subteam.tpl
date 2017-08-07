@@ -40,13 +40,13 @@
 	 
 	<div class="weui_panel weui_panel_access weui_panel_team">
 			 
-			<div class="weui_panel_bd" id="content_load">
+			<div class="weui_panel_bd" id="list_loaded">
 			<?php if(!empty($result['list'])) : ?>
 	
 			<?php foreach($result['list'] as $value)   : ?>
 				<a href="javascript:;" class="weui_media_box weui_media_appmsg">
                    <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="<?=get_avater($value['wx_id'], ASSETS_URL)?>"  onerror="imgnotfound()" alt="">
+                        <img class="weui_media_appmsg_thumb" src="<?=$value['avater']?>"  onerror="imgnotfound()" alt="">
                     </div>
                     <div class="weui_media_bd">
                         <p class="weui_media_desc"><?=$value['phone']?></p>
@@ -79,3 +79,43 @@
 				--> 
 			</div>
 	</div>
+	
+	<div class="weui-infinite-scroll">
+
+	 <?php if ($result['page']['total_page'] < 2) : ?>
+	  ------ 加载完成 ------
+	</div>
+	<script>
+		if (document.body.clientWidth >=  document.body.scrollHeight) {
+			$('.weui-infinite-scroll').hide();
+		}
+	</script>	 
+	 <?php else : ?>
+	 
+	   <div class="infinite-preloader"></div>
+	  正在加载... 
+	</div>
+
+	 
+	
+	<script>
+	    
+		var template = function(i, value){
+		
+			return  ('<a href="javascript:;" class="weui_media_box weui_media_appmsg">' +
+                   '<div class="weui_media_hd">' +
+                        '<img class="weui_media_appmsg_thumb" src="' +  value.avater + '"  onerror="imgnotfound()" alt="">'+
+                   ' </div>'+
+                    '<div class="weui_media_bd">' +
+                        '<p class="weui_media_desc">'+ value.phone + '</p>' +
+						'<ul class="weui_media_info">' +
+							'<li class="weui_media_info_meta">  ￥'+value.benefit_2 + '</li>' +	
+					 ' </ul>' +
+                   ' </div>' +
+               ' </a>');
+		}
+		
+		page_load('/balance/message.html',   template);
+	  
+    </script>
+	<?php endif; ?>

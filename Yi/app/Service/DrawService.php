@@ -21,7 +21,7 @@ class DrawService extends \Min\Service
 		}
 
 		$sql_count 	= 'SELECT count(1) as count FROM {{user_draw}} WHERE user_id = ' .$user_id . '  LIMIT 1';
-		$sql_list 	= 'SELECT * FROM {{user_draw}} WHERE user_id = ' .$user_id . ' ORDER BY draw_id DESC';
+		$sql_list 	= 'SELECT draw_id, draw_money, draw_time, update_time FROM {{user_draw}} WHERE user_id = ' .$user_id . ' ORDER BY draw_id DESC';
 		
 		return $this->commonList($sql_count, $sql_list);
 	} 

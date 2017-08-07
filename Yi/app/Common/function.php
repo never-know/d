@@ -71,6 +71,10 @@ function get_avater($wx_id, $prefix = '')
 
 }
 
+function img_url($img) {
+	return strtr($img,['m://' => ASSETS_URL])；
+}
+
 function region_get($region_id)
 {
 	static $region;
