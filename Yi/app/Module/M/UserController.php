@@ -27,6 +27,7 @@ class UserController extends \App\Module\M\BaseController
 		$result['today_salary'] 	= $today['body']['total']/100;
 		$result['account_balance'] 	= $balance['body']['balance'];
 		$result['show_bottom'] = 1;
+		$result['no_back'] = 1;
 		$result['meta'] = ['title' =>'用户主页'];
 		$this->success($result);
 	}

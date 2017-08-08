@@ -1,5 +1,26 @@
-	<style>
+ 
+	<div class="page-hd">
+        <h1 class="page-hd-title">
+            累计分享 <?=$result['page']['total_data']?> 次
+        </h1>
+        <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
+			<a class="weui-col-50 col-50-first" href="javascript:;">
+				<div>
+					<p><?=($result['readed']?:0)?></p>
+					<span>阅读 (次)</span>
+				</div>
+			</a>
+		
+			<a class="weui-col-50" href="javascript:;">
+				<div>
+					<p><?=(session_get('user_balance')['share_part'])?></p>
+					<span>分享收益 (元)</span>
+				</div>
+			</a>
+		</div>
 	 
+    </div>
+	<style>
 	.balance-detail .share_clock{
 		padding-right:8px;
 		font-size: 13px;
@@ -49,34 +70,6 @@
     font-weight: 600;
 	}
 	</style>
-	<div class="weui_cells weui_cells_access weui_return">
-		<a class="weui_cell" onclick="history.go(-1);">
-			<span class="weui_cell_ft" ></span>返回
-		</a>
-	</div>
-	
-	<div class="page-hd">
-        <h1 class="page-hd-title">
-            累计分享 <?=$result['page']['total_data']?> 次
-        </h1>
-        <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
-			<a class="weui-col-50 col-50-first" href="javascript:;">
-				<div>
-					<p><?=($result['readed']?:0)?></p>
-					<span>阅读 (次)</span>
-				</div>
-			</a>
-		
-			<a class="weui-col-50" href="javascript:;">
-				<div>
-					<p><?=(session_get('user_balance')['share_part'])?></p>
-					<span>分享收益 (元)</span>
-				</div>
-			</a>
-		</div>
-	 
-    </div>
-	
   
 <div class="weui_cells balance-detail">
 	<ul id="list_loaded">
@@ -122,7 +115,7 @@
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
-	  -------- 加载完成 --------
+	  - - - - - - - - 加载完成 - - - - - - - -
 	</div>
 	 
 	 <?php else : ?>
@@ -175,7 +168,7 @@
 					total_page = data.body.page.total_page;
 					 
 					if (total_page == current_page)　{
-						$(".weui-infinite-scroll").html('-------- 加载完成 --------');
+						$(".weui-infinite-scroll").html('- - - - - - - - 加载完成 - - - - - - - -');
 						 return;
 					}
 				} else {

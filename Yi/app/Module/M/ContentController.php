@@ -35,6 +35,7 @@ class ContentController extends \App\Module\M\BaseController
 			}
 			 
 		}
+		$result['body']['no_back'] = 1;
 		
 		$this->response($result, '/content/details');
 		

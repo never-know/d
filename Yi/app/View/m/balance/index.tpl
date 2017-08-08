@@ -1,9 +1,4 @@
-	<div class="weui_cells weui_cells_access weui_return">
-		<a class="weui_cell" onclick="history.go(-1);">
-			<span class="weui_cell_ft" ></span>返回
-		</a>
-	</div>
-	<div class="weui_msg" style="padding-top:12px;">
+	<div class="weui_msg" style="padding-top:0;">
        
       <div class="weui_text_area" style="background: white;padding: 20px;">
 		<p class="weui_msg_desc">帐户余额</p>

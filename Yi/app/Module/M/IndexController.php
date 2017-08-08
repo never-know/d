@@ -12,6 +12,7 @@ class IndexController extends \App\Module\M\BaseController
 		$result = $this->request('\\App\\Service\\Article::list', $param);
 		$result['body']['meta'] = ['menu_active' => 1, 'title' =>' '];
 		$result['body']['show_bottom'] = 1;
+		$result['body']['no_back'] = 1;
  
 		$this->response($result);
 	}

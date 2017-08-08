@@ -1,3 +1,24 @@
+ 
+	<div class="page-hd">
+        <h1 class="page-hd-title">
+			共计 <?=($result['page']['total_data']+$result['level2'])?> 名
+        </h1>
+        <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
+			<a class="weui-col-50 col-50-first" href="javascript:;">
+				<div>
+					<p><?=$result['page']['total_data']?></p>
+					<span>直属成员(名)</span>
+				</div>
+			</a>
+		
+			<a class="weui-col-50" href="javascript:;">
+				<div>
+					<p><?=$result['level2']?></p>
+					<span>二级成员(名)</span>
+				</div>
+			</a>
+		</div>
+    </div>
 	<style>
 	 
 	.balance-detail .share_clock{
@@ -24,33 +45,6 @@
 		width:50px;
 	}
 	</style>
-	<div class="weui_cells weui_cells_access weui_return">
-		<a class="weui_cell" onclick="history.go(-1);">
-			<span class="weui_cell_ft" ></span>返回
-		</a>
-	</div>
-	
-	<div class="page-hd">
-        <h1 class="page-hd-title">
-			共计 <?=($result['page']['total_data']+$result['level2'])?> 名
-        </h1>
-        <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
-			<a class="weui-col-50 col-50-first" href="javascript:;">
-				<div>
-					<p><?=$result['page']['total_data']?></p>
-					<span>直属成员(名)</span>
-				</div>
-			</a>
-		
-			<a class="weui-col-50" href="javascript:;">
-				<div>
-					<p><?=$result['level2']?></p>
-					<span>二级成员(名)</span>
-				</div>
-			</a>
-		</div>
-    </div>
-	
 	 
 	<div class="weui_panel weui_panel_access weui_panel_team">
 			 
@@ -102,7 +96,7 @@
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
-	  -------- 加载完成 --------
+	  - - - - - - - - 加载完成 - - - - - - - -
 	</div>
   
 	 <?php else : ?>

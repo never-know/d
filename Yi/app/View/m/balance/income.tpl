@@ -1,9 +1,3 @@
-
-	<div class="weui_cells weui_cells_access weui_return">
-		<a class="weui_cell" onclick="history.go(-1);">
-			<span class="weui_cell_ft" ></span>返回
-		</a>
-	</div>
 	
 	<div class="page-hd">
         <h1 class="page-hd-title">
@@ -27,7 +21,7 @@
 	 
     </div>
 	
-  <div class="page-bd">  
+	<div class="page-bd">  
         <ul id="list_loaded">
 			<?php if (!empty($result['list'])) : ?>
 			<?php foreach ($result['list'] as $value ) : ?>
@@ -64,7 +58,7 @@
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
-	  -------- 加载完成 --------
+	  - - - - - - - - 加载完成 - - - - - - - -
 	</div>
   
 	 <?php else : ?>

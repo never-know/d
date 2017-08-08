@@ -1,36 +1,3 @@
-	
-	<style>
-	.balance_reocrds .weui_panel_hd:before{
-		    content: " ";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 1px;
-    border-top: 1px solid #d9d9d9;
-    color: #d9d9d9;
-    -webkit-transform-origin: 0 0;
-    transform-origin: 0 0;
-    -webkit-transform: scaleY(.5);
-    transform: scaleY(.5);
-    left: 15px;
-	}
-	 
-	.balance_reocrds .weui_panel_hd:first-child:before{display:none}
-	.weui_msg .weui_text_area{
-	margin-bottom:0;
-	}
-	.balance_reocrds .weui_panel_hd{
-	font-size: 14px;
-    font-weight: 600;
-	}
-	</style>
-	<div class="weui_cells weui_cells_access weui_return">
-		<a class="weui_cell" onclick="history.go(-1);">
-			<span class="weui_cell_ft" ></span>返回
-		</a>
-	</div>
-  
 	<div class="weui_msg" style="padding-top:12px;"> 
       <div class="weui_text_area" style="background: white;padding: 20px;">
 		<p class="weui_msg_desc">帐户余额</p>
@@ -86,7 +53,7 @@
 	
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
-	  -------- 加载完成 --------
+	  - - - - - - - - 加载完成 - - - - - - - -
 	</div>
  
 	 <?php else : ?>
@@ -141,7 +108,7 @@
 					total_page = data.body.page.total_page;
 					
 					if (total_page == current_page)　{
-						$(".weui-infinite-scroll").html('-------- 加载完成 --------');
+						$(".weui-infinite-scroll").html('- - - - - - - - 加载完成 - - - - - - - -');
 						 return;
 					}
 				} else {

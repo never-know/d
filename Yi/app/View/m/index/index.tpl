@@ -89,7 +89,7 @@
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
-	  -------- 加载完成 --------
+	  - - - - - - - - 加载完成 - - - - - - - -
 	</div>
 	 
 	 <?php else : ?>

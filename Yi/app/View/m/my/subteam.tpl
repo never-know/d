@@ -1,3 +1,10 @@
+	 
+	<div class="page-hd">
+        <h1 class="page-hd-title">
+			用户 <?=$result['phone']?> 下级成员, 共计 <?=($result['page']['total_data']??0)?> 名
+        </h1>
+        
+    </div>
 	<style>
 	 
 	.balance-detail .share_clock{
@@ -24,19 +31,6 @@
 		width:50px;
 	}
 	</style>
-	<div class="weui_cells weui_cells_access weui_return">
-		<a class="weui_cell" onclick="history.go(-1);">
-			<span class="weui_cell_ft" ></span>返回
-		</a>
-	</div>
-	
-	<div class="page-hd">
-        <h1 class="page-hd-title">
-			用户 <?=$result['phone']?> 下级成员, 共计 <?=($result['page']['total_data']??0)?> 名
-        </h1>
-        
-    </div>
-	
 	 
 	<div class="weui_panel weui_panel_access weui_panel_team">
 			 
@@ -84,7 +78,7 @@
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
-	  -------- 加载完成 --------
+	  - - - - - - - - 加载完成 - - - - - - - -
 	</div>
 	 
 	 <?php else : ?>

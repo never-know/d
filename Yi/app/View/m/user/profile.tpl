@@ -1,11 +1,7 @@
 
 	
-	<div class="weui_cells weui_cells_access weui_return">
-	<a class="weui_cell" onclick="window.location.href='/user.html'">
-        <span class="weui_cell_ft" ></span>返回
-    </a>
-	</div>
-	<div class="weui_panel" style="margin-top: 14px;">
+
+	<div class="weui_panel" style="margin-top: 64px;">
    
       <div class="weui_panel_bd" style="background:#fff;">
         <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">

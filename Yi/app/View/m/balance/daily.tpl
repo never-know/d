@@ -1,37 +1,4 @@
-	<style>
-	.balance-detail .weui_cell_primary {
-		padding-left:5px;
-	}
-	.balance-detail .share_clock{
-		padding-right:8px;
-		font-size: 13px;
-	}
-	.balance-detail .share_title{
-		font-size:12px;
-		height:16px;
-		overflow:hidden; 
-	}
-	
-	.balance-detail .share_detail{
-		font-size: 12px;
-		margin-top:6px;
-		color: #9c9a9a;
-		height:16px; 
-		overflow:hidden;
-	}
-	.balance-detail li img {
-	
-		width:38px;
-		margin-right: 8px;
-		margin-left: 0;
-	}
-	</style>
-	<div class="weui_cells weui_cells_access weui_return">
-		<a class="weui_cell" onclick="history.go(-1);">
-			<span class="weui_cell_ft" ></span>返回
-		</a>
-	</div>
-	
+
 	<div class="page-hd ">
         <h1 class="page-hd-title" style="margin-bottom:0;padding-bottom:0;">
             <strong style="font-size: 24px;padding-top:-2px;">￥</strong><?=($result['summary']['total']/100);?>
@@ -104,7 +71,7 @@
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
-	  -------- 加载完成 --------
+	  - - - - - - - - 加载完成 - - - - - - - -
 	</div>
 	
 	 <?php else : ?>
