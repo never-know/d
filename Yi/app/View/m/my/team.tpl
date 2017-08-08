@@ -101,13 +101,9 @@
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
-	  ------ 加载完成 ------
+	  -------- 加载完成 --------
 	</div>
-	<script>
-		if (document.body.clientWidth >=  document.body.scrollHeight) {
-			$('.weui-infinite-scroll').hide();
-		}
-	</script>	 
+  
 	 <?php else : ?>
 	 
 	   <div class="infinite-preloader"></div>

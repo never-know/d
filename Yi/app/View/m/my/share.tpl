@@ -122,13 +122,8 @@
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
-	  ------ 加载完成 ------
+	  -------- 加载完成 --------
 	</div>
-	<script>
-	if (document.body.clientWidth >=  document.body.scrollHeight) {
-		$('.weui-infinite-scroll').hide();
-	}
-	</script>
 	 
 	 <?php else : ?>
 	 
@@ -180,7 +175,7 @@
 					total_page = data.body.page.total_page;
 					 
 					if (total_page == current_page)　{
-						$(".weui-infinite-scroll").html('加载完成');
+						$(".weui-infinite-scroll").html('-------- 加载完成 --------');
 						 return;
 					}
 				} else {
