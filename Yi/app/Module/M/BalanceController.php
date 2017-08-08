@@ -6,11 +6,9 @@ use Min\App;
 class BalanceController extends \App\Module\M\BaseController
 {
 	public function index_get()
-	{
-		$account = $this->request('\\App\\Service\\Balance::account', session_get('USER_ID'));
-		
+	{ 
 		$result['meta'] = ['title' =>'我的钱包'];
-		$result['balance'] = session_get('user_balance');
+		$result['balance'] = session_get('user_balance')['balance'];
  
 		$this->success($result);
 

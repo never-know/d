@@ -13,7 +13,7 @@
 	</head>
 
 <body ontouchstart style="background-color: #f8f8f8;background-color:#f1f1f1">
-    <?php require VIEW_PATH . '/layout/error_m.tpl';?>
+    <?php require VIEW_PATH . '/m/layout/error_inner.tpl';?>
 </body>
 <script>
 

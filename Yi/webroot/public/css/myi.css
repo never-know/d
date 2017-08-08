@@ -402,7 +402,7 @@ font-size: 13px;
 
 /**** select picker ****/
  
-	  .weui-picker-overlay, .weui-picker-container {
+ .weui-picker-overlay, .weui-picker-container {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -418,3 +418,8 @@ font-size: 13px;
     background: rgba(0,0,0,.6);
 }
  
+ 
+.weui-infinite-scroll{
+font-size:13px;
+color:#666666;
+}

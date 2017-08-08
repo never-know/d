@@ -97,11 +97,19 @@ class App
 
 	public static function bootstrap($di, $force = false)
 	{
+		if (self::$booted) return;
+		
 		if (!self::$booted) {		
 			self::$booted = true;						
-			self::setContainer($di);		
+					
 		}
 		
+		self::setContainer($di);
+ 
+		set_error_handler('app_error');
+		set_exception_handler('app_exception');
+		register_shutdown_function('app_tails');
+ 
 		self::initSession($force);	
 		self::dispatch();
 	}

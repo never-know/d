@@ -68,11 +68,11 @@ function balance_type($type)
 function get_avater($wx_id, $prefix = '')
 {
 	return ( $prefix . '/avater/' . implode('/', str_split(base_convert($wx_id, 10, 36), 2)) . '.jpg');
-
 }
 
-function img_url($img) {
-	return strtr($img,['m://' => ASSETS_URL])；
+function img_url($img)
+{
+	return strtr($img, ['m://' => ASSETS_URL]);
 }
 
 function region_get($region_id)

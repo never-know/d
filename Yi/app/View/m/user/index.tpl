@@ -24,14 +24,14 @@
 	<div class="weui-row weui-no-gutter" style="position:relative;background:#fff;">
       <a class="weui-col-50 col-50-first" href="/balance/daily/today.html">
 		<div>
-			<p><?=$result['today_salary']/100;?></p>
+			<p><?=$result['today_salary']?></p>
 			<span>今日收益(元)</span>
 		</div>
 		</a>
 		
       <a class="weui-col-50" href="/balance.html">
 	  <div>
-		<p><?=$result['account_balance']/100;?></p>
+		<p><?=$result['account_balance']?></p>
 		<span>帐户余额(元)</span>
 	</div>
 	  </a>
@@ -77,7 +77,7 @@
           <div class="weui_cell_bd weui_cell_primary">
             <p>我的收益</p>
           </div>
-          <div class="weui_cell_ft"><?php if($result['today_salary']>0){echo ($result['today_salary']/100);} ?></div>
+          <div class="weui_cell_ft"><?=($result['today_salary']?:'')?></div>
         </a>
 		<a class="weui_cell" href="/balance.html">
           <div class="weui_cell_hd"><img src="/public/images/message.png" alt="" width="24"></div>

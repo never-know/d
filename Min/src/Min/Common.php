@@ -2,7 +2,7 @@
 
 use Min\App;
 
-function min_init()
+function common_init()
 {
 	defined('APP_PATH')			or exit;
 	defined('VIEW_EXT') 		or define('VIEW_EXT', '.tpl');
@@ -18,9 +18,7 @@ function min_init()
 	defined('MODULE_PATH') 	or define('MODULE_PATH', APP_PATH. '/Module');	
 	defined('SERVICE_PATH') or define('SERVICE_PATH', APP_PATH. '/Service');	
 	defined('VENDOR_PATH') 	or define('VENDOR_PATH', MIN_PATH. '/../vendor');
-	
-	
-	
+ 
 	defined('PAGE_SIZE') 	or define('PAGE_SIZE', 10);
 	
 	define('REQUEST_METHOD', strtoupper($_SERVER['REQUEST_METHOD']));
@@ -34,12 +32,8 @@ function min_init()
 	if (!IS_GET && !IS_POST) {
 		parse_str(file_get_contents('php://input', $_POST));
 	}
-
+	
 	spl_autoload_register('autoload');
-
-	set_error_handler('app_error');
-	set_exception_handler('app_exception');
-	register_shutdown_function('app_tails');
 }
 	
 function t($string, array $args = [], array $options = []) 
