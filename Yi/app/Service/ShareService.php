@@ -251,7 +251,7 @@ class ShareService extends \Min\Service
 		}
  
 		$sql_count 	= 'SELECT count(1) AS count FROM {{user_share}} WHERE user_id = ' . $uid . ' LIMIT 1';
-		$sql_list 	= 'SELECT s.*, a.content_title, a.content_icon FROM {{user_share}} as s LEFT JOIN {{article}} AS a ON a.content_id = s.content_id WHERE s.user_id = ' . $uid . ' ORDER BY s.share_id DESC';
+		$sql_list 	= 'SELECT * FROM {{user_share}} WHERE user_id = ' . $uid . ' ORDER BY share_id DESC';
 		
 		return $this->commonList($sql_count, $sql_list);
 	}

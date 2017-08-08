@@ -153,7 +153,9 @@
 					if (data.body.list.length > 0) {
 
 						$.each(data.body.list, function(i, value){
-							this_date = new Date(value.share_time).Format('yy.mm.dd'); 
+							this_date = new Date(value.share_time*1000).Format('yyyy.mm.dd'); 
+							console.log(current_date);
+							console.log(this_date);
 							if ( current_date !=  this_date) {
 								current_date =  this_date ; 
 								
@@ -165,7 +167,7 @@
 								'<div class="weui_cell_hd"><img src="'+ value.content_icon + '" alt="" ></div>' +
 								'<div class="weui_cell_bd weui_cell_primary">'+
 								'<p class="share_title">'+value.content_title+'</p>'+
-								'<p class="share_detail">'+ new Date(value.share_time).Format('HH:ii') +' · ' + (value.share_type==0 ?"好友":"朋友圈") + ' &nbsp;&nbsp;&nbsp;阅读 '+ value.view_times + '&nbsp;&nbsp;&nbsp;收益 ￥' + value.total_salary+ '</p>'+
+								'<p class="share_detail">'+ new Date(value.share_time*1000).Format('HH:ii') +' · ' + (value.share_type==0 ?"好友":"朋友圈") + ' &nbsp;&nbsp;&nbsp;阅读 '+ value.view_times + '&nbsp;&nbsp;&nbsp;收益 ￥' + value.total_salary+ '</p>'+
 							  '</div>' +
 							'</li>');
 						});
@@ -194,4 +196,5 @@
 		});
  
       });	
+	 </script>
 	<?php endif; ?>
