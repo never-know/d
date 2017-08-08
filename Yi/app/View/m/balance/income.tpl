@@ -7,19 +7,19 @@
 	
 	<div class="page-hd">
         <h1 class="page-hd-title">
-            累计 <?=(($result['balance']['team_part']+$result['balance']['share_part'])/100);?>
+            累计 <?=(($result['balance']['team_part']+$result['balance']['share_part']));?>
         </h1>
         <div class="weui-row weui-no-gutter" style="position:relative;    border-top: 1px solid #f1f1f1;">
 			<a class="weui-col-50 col-50-first" href="javascript:;">
 				<div>
-					<p><?=($result['balance']['share_part']/100);?></p>
+					<p><?=($result['balance']['share_part']);?></p>
 					<span>分享收益 (元)</span>
 				</div>
 			</a>
 		
 			<a class="weui-col-50" href="javascript:;">
 				<div>
-					<p><?=($result['balance']['team_part']/100);?></p>
+					<p><?=($result['balance']['team_part']);?></p>
 					<span>团队收益 (元)</span>
 				</div>
 			</a>
@@ -33,8 +33,8 @@
 			<?php foreach ($result['list'] as $value ) : ?>
 			<li>
                 <a href="/balance/daily/<?=$value['post_day'];?>.html">
-                    <p><?=('20' . implode('-', str_split($value['post_day'], 2)))?></p>
-					<div class="weui_cell_ft">+<?=($value['money']/100);?></div>
+                    <p><?=$value['post_day']?></p>
+					<div class="weui_cell_ft">+ <?=($value['money']);?></div>
                 </a>
             </li>
 			<?php endforeach; ?>
@@ -60,7 +60,7 @@
 
 
 	<!-- page --->
-	
+	<?php if (!empty($result['list'])) : ?>	
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
@@ -79,7 +79,7 @@
 			return ('<li>'+
                 '<a href="/balance/daily/' +value.post_day +'.html">'+
                    ' <p>' +value.post_day +' </p>'+
-					'<div class="weui_cell_ft">+'+ value.money + '</div>'+
+					'<div class="weui_cell_ft">+ '+ value.money + '</div>'+
                 '</a>'+
             '</li>');
 		}
@@ -87,5 +87,6 @@
 		page_load('/balance/income.html',   template);
 	  
     </script>
+	<?php endif; ?>
 	<?php endif; ?>
 	

@@ -156,7 +156,7 @@ class BalanceService extends \Min\Service
 		$param['l.user_id'] 	= intval($p['user_id']);
 		$param['l.post_day'] 	= intval($p['date']);
 		 
-		if ($param['l.user_id'] < 1 || $param['l.post_day'] < 170703 || $param['l.post_day'] > 991230) {
+		if ($param['l.user_id'] < 1 || $param['l.post_day'] < 170701 || $param['l.post_day'] > 991230) {
 			return $this->error('参数错误', 30000);
 		}
 

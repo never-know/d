@@ -79,7 +79,8 @@
 				--> 
 			</div>
 	</div>
-	
+	<!-- page --->
+	<?php if(!empty($result['list'])) : ?>
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
@@ -114,4 +115,5 @@
 		page_load('/balance/message.html',   template);
 	  
     </script>
+	<?php endif; ?>
 	<?php endif; ?>

@@ -1,5 +1,7 @@
 	<style>
-	 
+	.balance-detail .weui_cell_primary {
+		padding-left:5px;
+	}
 	.balance-detail .share_clock{
 		padding-right:8px;
 		font-size: 13px;
@@ -7,14 +9,12 @@
 	.balance-detail .share_title{
 		font-size:12px;
 		height:16px;
-		overflow:hidden;
-		 
+		overflow:hidden; 
 	}
 	
 	.balance-detail .share_detail{
 		font-size: 12px;
-		margin-top:4px;
- 
+		margin-top:6px;
 		color: #9c9a9a;
 		height:16px; 
 		overflow:hidden;
@@ -100,7 +100,7 @@
 </div>
 
 <!-- page --->
-	
+	<?php if (!empty($result['list'])) : ?>
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
@@ -112,7 +112,7 @@
 	   <div class="infinite-preloader"></div>
 	  正在加载... 
 	</div>
- 
+	
 	<script>
 	    
 		var template = function(i, value){
@@ -122,7 +122,7 @@
 				html += ('<div class="weui_cell_hd"><img src="' + value.content_icon +'" alt="" ></div>'+
 				'<div class="weui_cell_bd weui_cell_primary">'+
 				'<p class="share_title">' + value.content_title + '</p>'+
-				'<p class="share_detail">'+ new Date(value.share_time).Format('mm-dd HH:ii') + '分享' + ((value.share_type==1)?'于朋友圈':'给好友') + '</p>');
+				'<p class="share_detail">'+ new Date(value.share_time).Format('mm-dd HH:ii') + ' &nbsp;分享' + ((value.share_type==1)?'于朋友圈':'给好友') + '</p>');
 				
 			} else {
 			
@@ -140,7 +140,8 @@
 			return html;
 		}
 		
-		page_load('/balance/daily.html',   template);
+		page_load('/balance/daily/<?=$result['param']?>.html',   template);
 	  
     </script>
+	<?php endif; ?>
 	<?php endif; ?>

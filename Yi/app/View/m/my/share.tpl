@@ -118,7 +118,7 @@
 	</ul>
 </div>
 	<!-- page --->
-	
+	<?php if (!empty($result['list'])) : ?>	
 	<div class="weui-infinite-scroll">
 
 	 <?php if ($result['page']['total_page'] < 2) : ?>
@@ -192,4 +192,5 @@
  
       });	
 	 </script>
+	<?php endif; ?>
 	<?php endif; ?>

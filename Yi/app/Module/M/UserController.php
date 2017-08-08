@@ -24,7 +24,7 @@ class UserController extends \App\Module\M\BaseController
 			}
 			session_set('user_balance', $balance['body']);
 		}
-		$result['today_salary'] 	= $today['body']['total'];
+		$result['today_salary'] 	= $today['body']['total']/100;
 		$result['account_balance'] 	= $balance['body']['balance'];
 		$result['show_bottom'] = 1;
 		$result['meta'] = ['title' =>'用户主页'];

@@ -34,7 +34,7 @@
 	<div class="weui_msg" style="padding-top:12px;"> 
       <div class="weui_text_area" style="background: white;padding: 20px;">
 		<p class="weui_msg_desc">帐户余额</p>
-        <h1  style="color:red;padding-top:4px;"><strong >￥</strong><?=session_get('user_balance')['balance']/100?></h1>
+        <h1  style="color:red;padding-top:4px;"><strong >￥</strong><?=session_get('user_balance')['balance']?></h1>
       </div>
      
     </div>
@@ -81,7 +81,7 @@
 	</div>
 	 
  <!-- page --->
-	
+	<?php if (!empty($result['list'])) : ?>
 	<div class="weui-infinite-scroll">
 	
 
@@ -112,18 +112,18 @@
 					if (data.body.list.length > 0) {
 
 						$.each(data.body.list, function(i, value){
-							this_date = new Date(value.post_time).Format('yyyy-mm'); 
+							this_date = new Date(value.post_time*1000).Format('yyyy-mm'); 
 							if ( current_date !=  this_date) {
 								current_date =  this_date ; 
 								
-								html += ('<li class="weui_panel_hd"  >' + this_date +'</li>');
+								html += ('<div class="weui_panel_hd"  >' + this_date +'</div>');
 							}
 							
 						    html += ('<div class="weui_cell">'+
          
 							  '<div class="weui_cell_bd weui_cell_primary" style="font-size:13px;">'+
 								'<p>'+value.balance_type+'</p>'+
-								'<p>'+ new Date(value.post_time).Format('mm-dd HH:ii:ss') +  '</p>'+
+								'<p>'+ new Date(value.post_time*1000).Format('mm-dd HH:ii:ss') +  '</p>'+
 							 ' </div>'+
 							   '<div class="weui_cell_ft">'+
 								'<p>+ ' + value.user_money +'</p>'+
@@ -141,7 +141,7 @@
 					total_page = data.body.page.total_page;
 					
 					if (total_page == current_page)　{
-						$(".weui-infinite-scroll").html('加载完成');
+						$(".weui-infinite-scroll").html('-------- 加载完成 --------');
 						 return;
 					}
 				} else {
@@ -158,5 +158,6 @@
  
       });
 	</script>	  
+	<?php endif; ?>
 	<?php endif; ?>
 	 
