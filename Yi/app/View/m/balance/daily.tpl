@@ -20,7 +20,34 @@
 			</a>
 		</div>
     </div>
+	<style>
 	
+	.balance-detail .weui_cell_primary {
+		padding-left:5px;
+	}
+	.balance-detail .share_clock{
+		padding-right:8px;
+		font-size: 13px;
+	}
+	.balance-detail .share_title{
+		font-size:12px;
+		height:16px;
+		overflow:hidden; 
+	}
+	
+	.balance-detail .share_detail{
+		font-size: 12px;
+		margin-top:6px;
+		color: #9c9a9a;
+		height:16px; 
+		overflow:hidden;
+	}
+	.balance-detail li img {
+		width:38px;
+		margin-right: 8px;
+		margin-left: 0;
+	}
+	</style>
  
 <div class="weui_cells balance-detail">
 	<ul id="list_loaded">

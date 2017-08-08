@@ -5,7 +5,34 @@
       </div>
      
     </div>
+	<style>
+		
+	.balance_reocrds .weui_panel_hd:before{
+		content: " ";
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 1px;
+		border-top: 1px solid #d9d9d9;
+		color: #d9d9d9;
+		-webkit-transform-origin: 0 0;
+		transform-origin: 0 0;
+		-webkit-transform: scaleY(.5);
+		transform: scaleY(.5);
+		left: 15px;
+	}
+	 
+	.balance_reocrds .weui_panel_hd:first-child:before{display:none}
+	.weui_msg .weui_text_area{
+		margin-bottom:0;
+	}
+	.balance_reocrds .weui_panel_hd{
+		font-size: 14px;
+		font-weight: 600;
+	}
 
+	</style>
 	<div class="weui_cells balance_reocrds" id="list_loaded">
 	<?php if(!empty($result['list'])) : ?>
 	<?php foreach ($result['list'] as $value) :  $this_date = date('Y-m', $value['post_time']);
