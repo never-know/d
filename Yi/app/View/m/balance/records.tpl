@@ -49,7 +49,7 @@
          
           <div class="weui_cell_bd weui_cell_primary" style="font-size:13px;">
             <p><?=($value['balance_type'])?></p>
-            <p><?=date('m-d H:i:s', $value['post_time'])?></p>
+            <p><?=date('m-d H:i', $value['post_time'])?></p>
           </div>
 		   <div class="weui_cell_ft">
             <p>+ <?=($value['user_money'])?></p>
@@ -123,7 +123,7 @@
          
 							  '<div class="weui_cell_bd weui_cell_primary" style="font-size:13px;">'+
 								'<p>'+value.balance_type+'</p>'+
-								'<p>'+ new Date(value.post_time*1000).Format('mm-dd HH:ii:ss') +  '</p>'+
+								'<p>'+ new Date(value.post_time*1000).Format('mm-dd HH:ii') +  '</p>'+
 							 ' </div>'+
 							   '<div class="weui_cell_ft">'+
 								'<p>+ ' + value.user_money +'</p>'+
