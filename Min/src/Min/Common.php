@@ -164,7 +164,7 @@ function session_derc($name){
 function hash_path($key, $salt = '')
 {	
 	$hash 	= md5($key.$salt);
-	return	implode(DIRECTORY_SEPARATOR, ['', substr($hash, 0, 2), substr($hash, 2, 2), substr($hash, 4, 2), substr($hash, 6)]);
+	return	'/' . implode(DIRECTORY_SEPARATOR, str_split($hase, 2));
 }
  
 function ip_address($type = 'iplong') 

@@ -10,57 +10,37 @@ class ContentController extends \App\Module\M\BaseController
 		parent::onConstruct(2);
 	}
 
-	public function __call($method, $param)
+	public function details()
 	{
-		$id36 		= substr($method, 0, -4);
-		$id 		= \str2int($id36);
-		$share_id 	= App::getArgs();
-
-		if(empty($id)) {
+		$params = explode('/', App::getArgs(), 2); // id36/share_no
+		
+		if(empty($params[0])) {
 			$this->error('参数错误', 1);
 		}
+ 
+		$id 		= \str2int($params[0]);
 		
+		$share_id 	= App::getArgs();
+
 		$result = $this->request('\\App\\Service\\Article::detail', $id);
-		
+		$result['body']['id'] = $params[0];
+			/*
 		if (1 == $result['statusCode']) {
 			$result['body']['meta'] = ['title' => $result['body']['content_title'], 'description' => $result['body']['content_description']];
-			if (empty($share_id) && session_get('USER_ID') > 0) {
+		
+			if (empty($params[1]) && session_get('USER_ID') > 0) {
 				$result['body']['share_nos']		=  \share_encode($id);
 				foreach ($result['body']['share_nos'] as $key => $value) {
-					$result['body']['share_url'][$key] 	=   SCHEMA . SERVER_NAME . '/content/' . $id36 . ($value?('/'.$value):'') . '.html';
+					$result['body']['share_url'][$key] 	=   SCHEMA . SERVER_NAME . '/content/' . $params[0] . ($value?('/'.$value):'') . '.html';
 				}
 				
 				$wx = $this->getWx();
 				$result['body']['js'] = $wx->getJsSign(CURRENT_URL);
 			}
-			 
+			
 		}
-		$result['body']['no_back'] = 1;
+		*/ 
 		
-		$this->response($result, '/content/details');
-		
+		$this->response($result, '/content/details');	
 	}
- 
-	/*
-		content_id
-		share_time
-		user_id
-		type
-	*/
-	
-	public function share_post()
-	{
-		$share_no = $_POST['key'];
-		$params = share_decode($share_no);
-		
-		if ($params['user_id'] != session_get('USER_ID')) {
-			$this->error('参数错误', 111111);
-		}
-
-		$params['share_no']		= $share_no;
-		$params['share_time']	= $_SERVER['REQUEST_TIME'];
-		
-		$this->request('\\App\\Service\\Share::share', $params, self::EXITALL);
-	}
-
 }
