@@ -95,7 +95,7 @@ class AccountService extends \Min\Service
 				'user_type' 	=> config_get('adv_balance_index', 1),
 				'register_time' => intval($data['register_time']),
 				'register_ip' 	=> intval($data['register_ip']),
-				'password' 		=> "'" . $data['passwordhash']) . "'"
+				'password' 		=> "'" . $data['passwordhash'] . "'"
 			];
 		
 			$sql = 'INSERT IGNORE INTO {{user}} ' . build_query_insert($ins_data);

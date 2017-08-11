@@ -46,9 +46,12 @@ function loadScript(url, callback) {
   document.body.appendChild(script);
 }
 var content_title = <?=safe_json_encode($result['content_title'])?>, content_description=<?=safe_json_encode($result['content_description'])?>, content_icon=<?=safe_json_encode($result['content_icon'])?>;
-var location = window.location.pathname;
-if (/^/[a-zA-Z0-9_\-]+\.html$/.test(location)) {
+var l = window.location.pathname;
+alert(l);
+alert(/^\/content\/[a-zA-Z0-9_\-]+\.html$/.test(l));
+if (/^\/content\/[a-zA-Z0-9_\-]+\.html$/.test(l)) {
 loadScript("//res.wx.qq.com/open/js/jweixin-1.2.0.js", function(){
+alert('loaded');
 loadScript("/share/js.html");
 });
 }
@@ -60,5 +63,11 @@ loadScript("/share/js.html");
  ob_end_flush();//关闭缓存并清空
  /***缓存结束***/
  $filename = CACHE_PATH .'/content/' . implode('/', str_split($result['id'], 2)) . '.html';
+ $dir = dirname($filename);
+ if (!is_dir($dir)) {
+	if (!mkdir($dir, 0755, true)) {
+		return false;
+	}
+ }
 file_put_contents($filename, $content);
 ?>

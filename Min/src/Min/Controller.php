@@ -33,7 +33,7 @@ class Controller
         }
 		
 		$key = $action.'_'.(strtolower($_SERVER['REQUEST_METHOD'])?:'get');
-		
+		watchdog($key);
 		if (method_exists($this, $key) || method_exists($this, '__call')) {
 			$this->{$key}();
 		} else {

@@ -51,8 +51,10 @@ class SmsService extends \Min\Service
 		if (empty($sc) || $this->timeout < ($_SERVER['REQUEST_TIME'] - $sc['send_time'])) {
 			
 			$code = mt_rand(111111, 999999);
-			
-			if ($this->realSend($phone, $code) && $this->set($phone, $code)) {
+			$result = $this->realSend($phone, $code);
+			watchdog($result);
+			if ($result->Code == 'OK') {
+				$this->set($phone, $code);
 				return $this->success();				
 			} else {
 				return $this->error('服务受限', 30112);
@@ -75,7 +77,7 @@ class SmsService extends \Min\Service
 				return $this->error('短信验证码已过期，请重新发送', 30111);
 			} elseif ($sc['code'] == $arr['code']) {
 			
-				$sql = 'UPDATE {sms} set used = 1 where id = '. $sc['id'];
+				$sql = 'UPDATE {{sms}} set used = 1 where id = '. $sc['id'];
 				$this->query($sql);
 				
 				$cache = $this->cache('sms');
@@ -105,8 +107,8 @@ class SmsService extends \Min\Service
 	
 	private function realSend($phone, $code)
 	{
-		if (empty($code) || 1 !== validate('phone', $phone)) {
-			throw new \Min\MinException('smsService realSend parameter error', 20102);
+		if (empty($code) || !validate('phone', $phone)) {
+			throw new \Min\MinException('SmsService realSend parameter error', 20102);
 		} else {
 		
 			$style = (($this->type == 'notice') ? '_notice' : '_yzm');
@@ -123,7 +125,7 @@ class SmsService extends \Min\Service
 		
 		if (empty($result)) {
 		
-			$sql = 'SELECT * FROM {sms} WHERE phone = '.$phone .' and type = '. $this->pairs[$this->type]. ' AND used = 0 ORDER BY send_time DESC LIMIT 1';
+			$sql = 'SELECT * FROM {{sms}} WHERE phone = '.$phone .' and type = '. $this->pairs[$this->type]. ' AND used = 0 ORDER BY send_time DESC LIMIT 1';
 			$result	= $this->query($sql);
 		}
 		
@@ -135,7 +137,7 @@ class SmsService extends \Min\Service
 		$hash = md5($_SERVER['HTTP_USER_AGENT']);
 		$ip = ip_address();
 		
-		$sql = 'INSERT INTO  {sms}  (phone, type, ip, used,  send_time ,code, hash) values ('
+		$sql = 'INSERT INTO  {{sms}}  (phone, type, ip, used,  send_time ,code, hash) values ('
 				. implode(',', [$phone, $this->pairs[$this->type], $ip, 0, $_SERVER['REQUEST_TIME'], "'". $code. "'", "'". $hash. "')"]);
 		
 		$result	= $this->query($sql);
@@ -163,57 +165,12 @@ class SmsService extends \Min\Service
 	
 	private function aliyun_yzm($phone, $code)
 	{
-		return true;
-		include VENDOR_PATH. '/aliyun-php-sdk/aliyun-php-sdk-core/Config.php';
-		
-		$params = $this->conf;  
-		$iClientProfile = \DefaultProfile::getProfile($params['profile'], $params['appkey'], $params['secretkey']);        
-		$client = new \DefaultAcsClient($iClientProfile);    
-		$request = new \Sms\Request\V20160927\SingleSendSmsRequest();
-		
-		$params = $params[$this->type];
-		$request->setSignName($params['signname']);					//签名名称
-		$request->setTemplateCode($params['templateCode']);			//模板code
-		$request->setRecNum($phone);								//目标手机号
-		$request->setParamString('{"code":"'.$code.'"}');			//模板变量，数字一定要转换为字符串
-		try {
-			$response = $client->getAcsResponse($request);
-			$response['code'] = $code;
-			$response['phone'] = $phone;
-			$this->watchdog($response);
-			return true;
-		} catch (\Throwable  $t) {
-			$this->watchdog($t);  
-			return false;
-		}
+		$templateCode = $this->conf[$this->type];
+		$sms = new \Vendor\Ali\AliSms($this->conf['AccessKeyId'], $this->conf['AccessKeySecret']);
+		return $sms->sendSms($this->conf['signname'], $templateCode, $phone, ['code' => $code]); 
 	}
 	
-	private function alidayuSms()
-	{	
-		include VENDOR_PATH . '/Alidayu/TopSdk.php';
-
-		$c = new \TopClient($this->appkey, $this->secretkey);
-		
-		$req = new \AlibabaAliqinFcSmsNumSendRequest;
-		$req->setSmsType('normal');
-		$req->setSmsFreeSignName('注册验证');
-		$p = json_encode(['code'=> (string) $arr['code'],'product'=>'【张三测试】']);
-		$req->setSmsParam($p);
-		$req->setRecNum($arr['phone']);
-		$req->setSmsTemplateCode('SMS_5059050');
-		
-		return $c->execute($req);
-		 
-		if (isset($result->code)) {
-			// $result->code = 15  ==> 每个号码每小时最多发送7次 
-			return $this->error('发送失败', 30112);
-		} else {
-			$this->set($phone, ['code' => $code, 'send_time' => $_SERVER['REQUEST_TIME']]);
-			return $this->success();
-		}
-
-	}
-	
+	 
 	private function firewall($phone)
 	{
 		if ($this->type == 'notice') {
@@ -240,7 +197,7 @@ class SmsService extends \Min\Service
 		$result = $cache->get($key);
 		 
 		if ($cache->getDisc() === $result) {	// 注意 字符串和0和布尔值比较
-			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  phone =  '.$phone .' AND type = '. $this->pairs[$this->type]. ' AND used = 0 AND send_time > '. ($_SERVER['REQUEST_TIME'] - 7200);
+			$sql = 'SELECT COUNT(1) as no FROM {{sms}}  WHERE  phone =  '.$phone .' AND type = '. $this->pairs[$this->type]. ' AND used = 0 AND send_time > '. ($_SERVER['REQUEST_TIME'] - 7200);
 		
 			$result = $this->query($sql);
 			$result = intval($result[0]['no']);
@@ -261,7 +218,7 @@ class SmsService extends \Min\Service
 		$result = $cache->get($key);
 		
 		if ($cache->getDisc() === $result) {
-			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. $ip. ' AND used = 0 AND send_time > '. ($_SERVER['REQUEST_TIME'] - 7200) ;
+			$sql = 'SELECT COUNT(1) as no FROM {{sms}}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. $ip. ' AND used = 0 AND send_time > '. ($_SERVER['REQUEST_TIME'] - 7200) ;
 		
 			$result = $this->query($sql);
 			$result = intval($result[0]['no']);
@@ -286,7 +243,7 @@ class SmsService extends \Min\Service
 
 		if ($cache->getDisc() === $result) {
 		
-			$sql = 'SELECT COUNT(1) as no FROM {sms}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. ip_address(). ' AND used = 0 AND send_time > '. ($_SERVER['REQUEST_TIME'] - 7200) .' AND hash = \''. $hash .'\'';
+			$sql = 'SELECT COUNT(1) as no FROM {{sms}}  WHERE  type = '. $this->pairs[$this->type]. ' AND ip = '. ip_address(). ' AND used = 0 AND send_time > '. ($_SERVER['REQUEST_TIME'] - 7200) .' AND hash = \''. $hash .'\'';
 		
 			$result = $this->query($sql);
 			$result = intval($result[0]['no']);

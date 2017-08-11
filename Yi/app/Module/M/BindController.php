@@ -20,6 +20,7 @@ class BindController extends \App\Module\M\BaseController
 	
 	public function index_get()
 	{
+		$result['no_back'] = 1;
 		$result['meta'] = ['title' =>'绑定手机号码'];
 		$this->success($result);
 	}

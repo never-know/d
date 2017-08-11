@@ -10,7 +10,7 @@ class ContentController extends \App\Module\M\BaseController
 		parent::onConstruct(2);
 	}
 
-	public function details()
+	public function details_get()
 	{
 		$params = explode('/', App::getArgs(), 2); // id36/share_no
 		

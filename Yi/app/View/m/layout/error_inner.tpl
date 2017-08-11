@@ -69,13 +69,13 @@ a {
 
 </style>
     <div class="page">
-      <div class="error">
+      <div class="error"><!--
         <h1 class="header">
           <a href="/" class="logo">
             <img src="/public/images/logo16.png" srcset="/public/images/logo16.png" alt="" style="width: 100%;">
           </a>
           <div class="statuscode">- 404</div>
-        </h1>
+        </h1>-->
         <div class="content">
          <?=$result['message'];?>
 		 <hr style="margin-bottom:4px;">

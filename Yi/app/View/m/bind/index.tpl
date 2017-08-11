@@ -1,6 +1,4 @@
- 	
-	
-	<style>
+<style>
 .weui-vcode-btn {
     border-left: 1px solid #e5e5e5;
     color: #3cc51f;
@@ -81,7 +79,7 @@ padding-top: 4px;
 		<div class="weui_cell weui_vcode2">
                 <div class="weui_cell_hd"><label class="weui_label">+86</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" type="tel" required pattern="[0-9]{11}" maxlength="11"  emptytips="请输入手机号" notmatchtips="请输入正确的手机号" placeholder="请输入手机号码">
+                    <input class="weui_input" type="tel" required pattern="[0-9]{11}" maxlength="11"  emptytips="请输入手机号" notmatchtips="请输入正确的手机号" placeholder="请输入手机号码" id="phone">
                 </div>
             </div>
         <div class="weui_cell weui_vcode2">
@@ -89,9 +87,9 @@ padding-top: 4px;
             <div class="weui_cell_bd weui_cell_primary">
                 <input class="weui_input" type="text" required  placeholder="请输入验证码" tips="请输入验证码">
             </div>
-            <div class="weui_cell_ft">
+            <div class="weui_cell_ft" id="smscode">
                 <i class="weui_icon_warn"></i>
-                <a href="javascript:;" class="weui-vcode-btn">获取验证码</a>
+                <a href="javascript:;" class="weui-vcode-btn" id="weui-vcode-btn" sindex="0">获取验证码</a>
             </div>
         </div>
     </div>
@@ -139,6 +137,9 @@ padding-top: 4px;
         </article>
       </div>
     </div>
+	
+</div>	
+	
 	<script src="/public/js/m/select.js"></script>	
 	<script>
 	var hash  = window.location.hash || '';
@@ -150,19 +151,57 @@ padding-top: 4px;
 		hash = new_hash;
 		} 
 	 
-var $form = $("#form");
-$form.form();
-$("#formSubmitBtn").on("click", function(){
-    $form.validate(function(error){
-        if(error){
-            
-        }else{
-            
-            $.toptips('验证通过提交','ok');
-        }
-    });
-    
-});
+	var $form = $("#form");
+	$form.form();
+	$("#formSubmitBtn").on("click", function(){
+		$form.validate(function(error){
+			if(error){
+				console.log(error);
+			}else{
+			console.log('no_error');
+				$.toptips('验证通过提交','ok');
+			}
+		});
+		
+	});
+	var delayTime = 60;
+	
+	$("#smscode").on("click", function(){
+		if ($('#weui-vcode-btn').attr("sindex") == 1) return;
+		$('#weui-vcode-btn').attr("sindex", 1);
+ 
+		$.ajax({
+			url:'/bind/send.html', 
+			type:'POST', 
+			data: {csrf_token:"<?=get_token('m_bind_send')?>", phone:$('#phone').val()},
+			success: function(data){
+				if (data.statusCode == 1 ) {
+					setTimeout(countDown, 1000);
+				} else {
+					 $.toast(data.message, "cancel");
+					 $('#weui-vcode-btn').attr("sindex", 0);
+				}
+			},
+			error:function(){
+				 $.toast("网络连接失败", "cancel");
+				 $('#weui-vcode-btn').attr("sindex", 0);
+			}
+		});
+	});
+
+	function countDown() {
+		 delayTime--;
+		 var code = $('#weui-vcode-btn');
+		
+		code.html('发送成功( ' + delayTime +' )');
+		if (delayTime == 1) {
+			delayTime = 60;
+			code.attr("sindex", 0);
+			code.html("获取验证码");
+		} else {
+			setTimeout(countDown, 1000);
+		}
+	}
  
 	</script>
  

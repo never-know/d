@@ -7,7 +7,8 @@ class SubscribeController extends \Min\Controller
 {
 	public function index_get()
 	{
-		$this->success();
+		$result['no_back'] = 1;
+		$this->success($result);
 	
 	}
 }

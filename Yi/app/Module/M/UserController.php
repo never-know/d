@@ -78,7 +78,9 @@ class UserController extends \App\Module\M\BaseController
 	{
 		$result						= [];
 		$result['statusCode'] 		= 30200;
+		
 		$result['message'] 			= '帐号已绑定手机号码';
+		$result['body']['no_back'] 	= 1;
 		$result['body']['phone'] 	= session_get('user')['phone'];
 		$this->response($result);
 	

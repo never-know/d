@@ -20,7 +20,7 @@ class QrcodeController extends \App\Module\M\BaseController
 		
 		if (!empty($_SERVER['HTTP_REFERER'])) {
 			$url = parse_url($_SERVER['HTTP_REFERER']);
-			if (preg_match('|^/content/([a-z0-9]+)/([a-z0-9_\-]+)\.html$|', $url['path'], $match)) {
+			if (preg_match('|^/content/([a-zA-Z0-9]+)/([a-zA-Z0-9_\-]+)\.html$|', $url['path'], $match)) {
 				$params = [];
 			
 				if (!empty($match[1]) && !empty($match[2])   && validate('words', $match[2])) {
