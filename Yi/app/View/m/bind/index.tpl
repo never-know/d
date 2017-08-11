@@ -71,6 +71,16 @@ footer a {
 	.weui_btn{
 padding-top: 4px;
 }
+.weui_toast_visible , .weui_toast_cancel{
+width:auto;
+padding-left:20px;
+padding-right:20px;
+}
+.weui_toast_visible p, .weui_toast_cancel p{
+ 
+padding-top:10px;
+padding-bottom:10px;
+}
 	</style>
 <form id="form">
 	
@@ -79,24 +89,25 @@ padding-top: 4px;
 		<div class="weui_cell weui_vcode2">
                 <div class="weui_cell_hd"><label class="weui_label">+86</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" type="tel" required pattern="[0-9]{11}" maxlength="11"  emptytips="请输入手机号" notmatchtips="请输入正确的手机号" placeholder="请输入手机号码" id="phone">
+                    <input class="weui_input" type="tel" required pattern="[0-9]{11}" maxlength="11"  emptytips="请输入手机号" notmatchtips="请输入正确的手机号" placeholder="请输入手机号码" id="phone" name="phone">
                 </div>
             </div>
         <div class="weui_cell weui_vcode2">
             <div class="weui_cell_hd"><label class="weui_label">验证码</label></div>
             <div class="weui_cell_bd weui_cell_primary">
-                <input class="weui_input" type="text" required  placeholder="请输入验证码" tips="请输入验证码">
+                <input class="weui_input" type="text" required  name="code" placeholder="请输入验证码" tips="请输入验证码">
             </div>
             <div class="weui_cell_ft" id="smscode">
-                <i class="weui_icon_warn"></i>
+                <i class="weui_icon_warn hide"></i>
                 <a href="javascript:;" class="weui-vcode-btn" id="weui-vcode-btn" sindex="0">获取验证码</a>
             </div>
         </div>
+		<input type="hidden" value="<?=get_token()?>" name="csrf_token" />
     </div>
 	<div class="weui_cells_tips">确认绑定代表您同意<a href="#abc"  data-target="#full" class="open-popup">《安逸时光网服务条款》</a></div>
 	 
     <div class="weui_btn_area" id="abc">
-        <a id="formSubmitBtn" href="javascript:" class="weui_btn weui_btn_primary">确认绑定</a>
+        <a id="formSubmitBtn" href="javascript:" class="weui_btn weui_btn_primary" sindex="">确认绑定</a>
     </div>
 </form>
 
@@ -149,31 +160,61 @@ padding-top: 4px;
 			$.closePopup();
 		}
 		hash = new_hash;
-		} 
+	} 
 	 
-	var $form = $("#form");
-	$form.form();
+	var $form = $("#form");  $form.form();
 	$("#formSubmitBtn").on("click", function(){
+	 
+		if ($(this).attr("sindex") == 1) return;
+			$(this).attr("sindex", 1);
+			
 		$form.validate(function(error){
-			if(error){
-				console.log(error);
-			}else{
-			console.log('no_error');
-				$.toptips('验证通过提交','ok');
+			if(error){} else {
+				$.ajax({
+					url:'/bind.html', 
+					type:'POST', 
+					data: $form.serialize(),
+					success: function(data){
+						if (data.statusCode == 1 ) {
+							window.location.href = '/';
+						} else {
+							 $.toast(data.message, "cancel");
+							 $('#formSubmitBtn').attr("sindex", 0);
+						}
+					},
+					error:function(){
+						 $.toast("网络连接失败", "cancel");
+						 $('#formSubmitBtn').attr("sindex", 0);
+					}
+				});
 			}
 		});
 		
 	});
-	var delayTime = 60;
+	
+	var delayTime = 60, phone ='';
 	
 	$("#smscode").on("click", function(){
+	  
+		phone = $('#phone').val();
+		
+		if ( phone == '') {
+			$.toast('请输入手机号码', "cancel");
+			return;
+		}
+		
+		if (!/^(13|15|18|14|17)[\d]{9}$/.test(phone)) {
+			$.toast('手机号码格式错误', "cancel");
+			return;
+		}
+
 		if ($('#weui-vcode-btn').attr("sindex") == 1) return;
-		$('#weui-vcode-btn').attr("sindex", 1);
+			$('#weui-vcode-btn').attr("sindex", 1);
  
 		$.ajax({
 			url:'/bind/send.html', 
 			type:'POST', 
-			data: {csrf_token:"<?=get_token('m_bind_send')?>", phone:$('#phone').val()},
+			data: {csrf_token:"<?=get_token('m_bind_send')?>", phone:phone},
 			success: function(data){
 				if (data.statusCode == 1 ) {
 					setTimeout(countDown, 1000);

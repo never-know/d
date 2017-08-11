@@ -33,6 +33,7 @@ class App
 				exit;
 			}
 		} 
+		
 		request_error_found(404);	 
 	}
 		

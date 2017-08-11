@@ -131,8 +131,9 @@ class AccountService extends \Min\Service
  
 	public function addUserByWx($data) 
 	{
+		watchdog($data);
 		$wx_id 			= intval($data['wx_id']);
-		$phone 			= intval($data['phone']);
+		$phone 			=  $data['phone'];
 		$balance_index 	= intval($data['balance_index']);
 		
 		if ($balance_index < 1 || $wx_id < 1 || !validate('open_id', $data['open_id'])) {
@@ -186,12 +187,13 @@ class AccountService extends \Min\Service
 					$balance_data = [
 						'user_id'		=> $check['body']['user_id'],
 						'balance' 		=> 0, 
-						'share_paret' 	=> 0, 
+						'share_part' 	=> 0, 
 						'team_part' 	=> 0,
 						'drawing'		=> 0
 					];
 				
-					$balance_sql = 'INSERT IGNORE INTO {{user_balance_' . $balance_index . '}} ' . build_query_insert($balance_data);
+					//$balance_sql = 'INSERT IGNORE INTO {{user_balance_' . $balance_index . '}} ' . build_query_insert($balance_data);
+					$balance_sql = 'INSERT IGNORE INTO {{user_balance}} ' . build_query_insert($balance_data);
 					
 					$db->query($balance_sql);
 

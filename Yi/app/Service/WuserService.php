@@ -117,7 +117,7 @@ class WuserService extends \Min\Service
 				$sql_count = 'SELECT count(1) AS count FROM {{user_wx}} WHERE parent_id = 0 LIMIT 1';
 				$count = $this->query($sql_count);
 				if ($count['count'] > 0) {
-					$data['balance_index'] = intval($count['count']/1000) + 1;
+					$data['balance_index'] = intval($count['count']/100) + 1;
 					/*
 					if ($data['balance_index'] > 1 && config_get('max_user_balance_index', 1) < $data['balance_index']) {
 					

@@ -33,11 +33,11 @@ class Controller
         }
 		
 		$key = $action.'_'.(strtolower($_SERVER['REQUEST_METHOD'])?:'get');
-		watchdog($key);
+
 		if (method_exists($this, $key) || method_exists($this, '__call')) {
 			$this->{$key}();
 		} else {
-			watchdog('error');
+			watchdog('action not exist', 'ACT_ERR', 'ERROR');
 			$this->error('无效请求', 404);
 		} 
 		exit; 

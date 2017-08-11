@@ -30,7 +30,7 @@ class BindController extends \App\Module\M\BaseController
 		$params 			= [];
 		$params['init'] 	= 'bind';
 		$params['phone'] 	= trim($_POST['phone']);
-		$params['smscode'] 	= trim($_POST['smscode']);
+		$params['smscode'] 	= trim($_POST['code']);
 		
 		$this->check($params['phone']);
 		
@@ -38,8 +38,8 @@ class BindController extends \App\Module\M\BaseController
 		
 		$user = session_get('user');
 		
-		$register_data	= [
-			'phone' => $params['phone'], 
+		$regist_data	= [
+			'phone' 		=> $params['phone'], 
 			'register_time' => $_SERVER['REQUEST_TIME'], 
 			'register_ip'	=> ip_address(), 
 			'wx_id' 		=> $user['wx_id'], 
@@ -71,7 +71,7 @@ class BindController extends \App\Module\M\BaseController
 			}  
 		}
 		
-		$this->request('\\App\\Service\\Sms::send', [ 0 => $phone, 'init' => 'bind'], $this::EXITALL);	
+		$this->request('\\App\\Service\\Sms::send', [ 0 => $phone, 'init' => 'bind'], self::EXITALL);	
 	}
 
 	private function check($phone)
