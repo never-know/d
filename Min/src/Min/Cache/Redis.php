@@ -108,7 +108,7 @@ class Redis{
 	{
 		try { 
 			$result = $this->connect()->delete($key);
-			watchdog($result, 'redis', 'DEBUG', 'delete key:'. $key);
+			watchdog($result, 'redis', 'DEBUG', 'delete key:'. safe_json_encode($key));
 			return $result;
 		} catch (\Throwable $t) {
 			watchdog($t, 'redis_error', 'CRITICAL');

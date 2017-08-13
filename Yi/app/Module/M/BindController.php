@@ -30,11 +30,11 @@ class BindController extends \App\Module\M\BaseController
 		$params 			= [];
 		$params['init'] 	= 'bind';
 		$params['phone'] 	= trim($_POST['phone']);
-		$params['smscode'] 	= trim($_POST['code']);
+		$params['code'] 	= trim($_POST['code']);
 		
 		$this->check($params['phone']);
 		
-		$this->request('\\App\\Service\\Sms::check', $params);
+		$this->request('\\App\\Service\\Sms::check', $params, self::EXITALL);
 		
 		$user = session_get('user');
 		
@@ -50,7 +50,6 @@ class BindController extends \App\Module\M\BaseController
 		$user = $this->request('\\App\\Service\\Account::addUserByWx', $regist_data);
 		
 		if (1 == $user['statusCode']) {
-			$this->initUser($user['body']);
 			$this->success('绑定成功');
 		} else {
 			$this->error($user['message'], $user['statusCode']);

@@ -63,7 +63,7 @@ class FileCache
     public function set($id, $data, $expiration = 0)
     {
         $file_name = $this->getFileName($id);
-		watchdog($file_name);
+		
 		$dir = dirname($file_name);
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
@@ -130,6 +130,20 @@ class FileCache
 		} else {
 			return false;
 		}
+	}
+	
+	public function delete($ids)
+	{
+		if (is_string($ids)) {
+			$ids = [$ids];
+		}
+		
+		foreach ($ids as $key => $value) {
+			 $file_name = $this->getFileName($value);
+			 if (is_file($file_name)) unlink($file_name);
+		}
+		
+		return true;	
 	}
 	
 	public function getDisc()

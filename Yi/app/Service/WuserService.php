@@ -35,7 +35,7 @@ class WuserService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-			$sql = 'SELECT w.wx_id, w.parent_id, w.balance_index, w.open_id, w.subscribe_status, u.user_id, u.phone, u.register_time, u.avater, u.nickname FROM {{user_wx}} AS w LEFT JOIN {{user}} AS u ON u.user_id = w.user_id WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
+			$sql = 'SELECT w.wx_id, w.balance_index, w.parent_id, w.subscribe_status, w.open_id,  u.user_id, u.user_type, u.phone, u.register_time, u.avater, u.nickname FROM {{user_wx}} AS w LEFT JOIN {{user}} AS u ON u.user_id = w.user_id WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
 			 
 			$result	= $this->query($sql);
  			  
@@ -88,12 +88,6 @@ class WuserService extends \Min\Service
 		if (1 == $check['statusCode'] && 2 == $data['subscribe_status']) {
 			return $check;	
 		}
-		
-		/*
-		if (1 == $check['statusCode'] && 3 == $check['body']['subscribe_status']) {
-			return $check;	
-		}
-		*/
 		
 		if (empty($check['body']['user_id'])) {
 		
@@ -174,17 +168,25 @@ class WuserService extends \Min\Service
 			return $this->error('注册失败', 30204);
 		}
 		
-		$this->cache()->delete($this->getCacheKey('open_id', $data['open_id']));		//清理 缓存
+		
+		// 清理缓存
+		$del_keys = [];
+		$del_keys[] = $this->getCacheKey('open_id', $data['open_id']));		 
 		if (1 == $check['statusCode']) {
-			$this->cache()->delete($this->getCacheKey('wx_id', $check['body']['wx_id']));		//清理 缓存
-			if (!empty($check['body']['user_id'])) $this->cache()->delete($this->getCacheKey('user_id', $check['body']['user_id'])); //清理 缓存
-			if (!empty($check['body']['phone'])) $this->cache()->delete($this->getCacheKey('phone', $check['body']['phone']));		 //清理 缓存
+			$del_keys[] = $this->getCacheKey('wx_id', $check['body']['wx_id']);		 
+			if (!empty($check['body']['user_id'])) {
+				$del_keys[] = $this->getCacheKey('user_id', $check['body']['user_id']);  
+			}
+			if (!empty($check['body']['phone'])) {
+				$del_keys[] = $this->getCacheKey('phone', $check['body']['phone']);		 
+			}
 		}
-
+		
+		$this->cache()->delete($del_keys);
+		
 		/* account not exist*/
 		
 		if ($check['statusCode'] == 30206 || $check['body']['subscribe_status'] == 2) {
-			//if (2 == $data['subscribe_status'])  $result['wx_id'] = $result['id'];
 			return $this->success($result);
 		} else {
 			$code = (empty($check['body']['user_id']) ? 30205 : 30207);
@@ -204,11 +206,17 @@ class WuserService extends \Min\Service
 			$sql = 'UPDATE {{user_wx}} SET subscribe_status = 4 WHERE open_id = ' . safe_json_encode($open_id);
 			$result = $this->query($sql);
 			if ($result['effect'] == 1) {
-				$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
-				$this->cache()->delete($this->getCacheKey('wx_id', $check['body']['wx_id']));		//清理 缓存
-				if (!empty($check['body']['user_id'])) $this->cache()->delete($this->getCacheKey('user_id', $check['body']['user_id']));		//清理 缓存
-				if (!empty($check['body']['phone'])) $this->cache()->delete($this->getCacheKey('phone', $check['body']['phone']));		//清理 缓存
-			
+				$del_keys 	= [];
+				$del_keys[] = $this->getCacheKey('open_id', $open_id);
+				$del_keys[] = $this->getCacheKey('wx_id', $check['body']['wx_id']);
+				if (!empty($check['body']['user_id'])) {
+					$del_keys[] = $this->getCacheKey('user_id', $check['body']['user_id']);
+				}
+				if (!empty($check['body']['phone'])) {
+					$del_keys[] = $this->getCacheKey('phone', $check['body']['phone']);
+				}
+				$this->cache()->delete($del_keys);		//清理 缓存
+
 				return $this->success();
 			} else {
 				return $this->error('操作失败', 20000);

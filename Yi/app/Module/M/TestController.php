@@ -90,10 +90,19 @@ var_dump($j);
 	
 		$user = $this->request('\\App\\Service\\Admin::bulid_table');
 		exit;
+
+	}
+	
+	public function phpinfo_get()
+	{
+		phpinfo();
+		//$user = $this->request('\\App\\Service\\Admin::bulid_table');
+		exit;
 		
 	
 	
 	}
+	
 	 
 
 }

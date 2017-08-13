@@ -15,7 +15,7 @@ class BaseController extends \Min\Controller
 		
 		if (empty($open_id)) {
 			watchdog('can not get opend id ', 'wx_openid_error', 'ERROR');			
-			exit('');
+			exit('openid error');
 		}
 		
 		return $this->login($redirect);  

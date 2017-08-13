@@ -59,7 +59,7 @@ class AccountService extends \Min\Service
 			 */
 			 
 			
-			$sql = 'SELECT u.*, uw.wx_id, uw.open_id, uw.balance_index FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
+			$sql = 'SELECT uw.wx_id, uw.balance_index, uw.parent_id, uw.subscribe_status, uw.open_id,  u.user_id, u.user_type, u.phone, u.register_time, u.avater, u.nickname FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -131,9 +131,8 @@ class AccountService extends \Min\Service
  
 	public function addUserByWx($data) 
 	{
-		watchdog($data);
 		$wx_id 			= intval($data['wx_id']);
-		$phone 			=  $data['phone'];
+		$phone 			= intval($data['phone']);
 		$balance_index 	= intval($data['balance_index']);
 		
 		if ($balance_index < 1 || $wx_id < 1 || !validate('open_id', $data['open_id'])) {
@@ -199,10 +198,13 @@ class AccountService extends \Min\Service
 
 					$db->commit();
 					
-					$this->cache()->delete($this->getCacheKey('wx_id', 	$wx_id)); 		//清理 缓存
-					$this->cache()->delete($this->getCacheKey('open_id', $open_id));		//清理 缓存
-					if (!empty($ins['id'])) $this->cache()->delete($this->getCacheKey('phone', $phone));	
 					
+					$del_keys = [];
+					$del_keys[] = $this->getCacheKey('wx_id', 	$wx_id);
+					$del_keys[] = $this->getCacheKey('open_id', $open_id);
+					if (!empty($ins['id'])) $del_keys[] = $this->getCacheKey('phone', $phone);
+					$this->cache()->delete($del_keys); 		//清理 缓存
+
 					return $this->success(['user_id' => $check['body']['user_id'], 'wx_id' => $wx_id, 'phone' => $phone]);
 				} 
 			}
