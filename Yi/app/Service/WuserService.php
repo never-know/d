@@ -171,7 +171,7 @@ class WuserService extends \Min\Service
 		
 		// 清理缓存
 		$del_keys = [];
-		$del_keys[] = $this->getCacheKey('open_id', $data['open_id']));		 
+		$del_keys[] = $this->getCacheKey('open_id', $data['open_id']);		 
 		if (1 == $check['statusCode']) {
 			$del_keys[] = $this->getCacheKey('wx_id', $check['body']['wx_id']);		 
 			if (!empty($check['body']['user_id'])) {
