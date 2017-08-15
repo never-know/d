@@ -1,6 +1,4 @@
 
-	
-
 	<div class="weui_panel" style="margin-top: 64px;">
    
       <div class="weui_panel_bd" style="background:#fff;">
@@ -81,12 +79,76 @@
     padding-left: 10px;
 	}
 	</style>
-	<script type="text/javascript" src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script> 	
+	
+	
+	<style type="text/css">
+		#rRightDown,#rLeftDown,#rLeftUp,#rRightUp,#rRight,#rLeft,#rUp,#rDown{
+			position:absolute;
+			background:#FFF;
+			border: 1px solid #333;
+			width: 6px;
+			height: 6px;
+			z-index:500;
+			font-size:0;
+			opacity: 0.5;
+			filter:alpha(opacity=50);
+		}
+
+		#rLeftDown,#rRightUp{cursor:ne-resize;}
+		#rRightDown,#rLeftUp{cursor:nw-resize;}
+		#rRight,#rLeft{cursor:e-resize;}
+		#rUp,#rDown{cursor:n-resize;}
+
+		#rLeftDown{left:-4px;bottom:-4px;}
+		#rRightUp{right:-4px;top:-4px;}
+		#rRightDown{right:-4px;bottom:-4px;background-color:#00F;}
+		#rLeftUp{left:-4px;top:-4px;}
+		#rRight{right:-4px;top:50%;margin-top:-4px;}
+		#rLeft{left:-4px;top:50%;margin-top:-4px;}
+		#rUp{top:-4px;left:50%;margin-left:-4px;}
+		#rDown{bottom:-4px;left:50%;margin-left:-4px;}
+
+		#bgDiv{width:150px; height:200px; border:1px solid #666666; position:relative;}
+		#dragDiv{border:1px dashed #fff; width:80%; height:60px; top:50px; left:50px; cursor:move; }
+	</style>
+	
+	<div id="crop" class="weui-popup-container" >
+		<div class="weui-popup-overlay"></div>
+		<div class="weui-popup-modal">
+			<table width="80%" border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+				<td><div id="bgDiv">
+					<div id="dragDiv">
+					  <div id="rRightDown"> </div>
+					  <div id="rLeftDown"> </div>
+					  <div id="rRightUp"> </div>
+					  <div id="rLeftUp"> </div>
+					  <div id="rRight"> </div>
+					  <div id="rLeft"> </div>
+					  <div id="rUp"> </div>
+					  <div id="rDown"></div>
+					</div>
+				  </div></td>
+				 
+			  </tr>
+			</table>
+		</div>
+    </div>
+	
+	
+	
+	
+	
+	<script type="text/javascript" src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script> 
+	<script src="/public/js/m/select.js"></script>	
+	<script type="text/javascript" src="/public/js/m/crop.js"></script>
+	<script type="text/javascript" src="/public/js/m/Drag.js"></script>
+	<script type="text/javascript" src="/public/js/m/Resize.js"></script>	
 	 	
 	<script>
 	
 	var ios = false;
-	var localIds = '';
+	var localIds = '', localData = '';
 	 
 	wx.config({
 			appId: 	"<?=$result['js']['appId']?>",
@@ -147,6 +209,40 @@
 								success: function (res3) {
 									console.log(res3);
 									//var serverId = res3.serverId; // 返回图片的服务器端ID
+									
+									if (ios == true) {
+										wx.getLocalImgData({
+											localId: localIds[0], // 图片的localID
+											success: function (res4) {
+												localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
+												//$('avater').attr('src', res4.localData);
+											}
+										});
+									} else {
+										localData =  localIds[0];
+									}
+									
+									$("#crop").popup();
+									
+									var wid = $('#crop').width();
+									$('#dragDiv').width(wid*0.8);
+									$('#dragDiv').height(wid*0.8);
+									$('#dragDiv').css('top', '120px');
+									$('#dragDiv').css('left', wid*0.1 + 'px');
+									$('#bgDiv').width(wid);
+									$('#bgDiv').height($(window).height());
+									console.log(wid);
+									var ic = new ImgCropper("bgDiv", "dragDiv", "http://images.cnblogs.com/cnblogs_com/cloudgamer/143727/r_xx2.jpg", {
+										Width: wid , Height: wid, Color: "#000",
+										Resize: true,
+										Right: "rRight", Left: "rLeft", Up:	"rUp", Down: "rDown",
+										RightDown: "rRightDown", LeftDown: "rLeftDown", RightUp: "rRightUp", LeftUp: "rLeftUp",
+										Preview: "viewDiv2", viewWidth: 300, viewHeight: 300, Scale:		true, 
+											Ratio:1
+									})
+									
+									
+									
 									$.ajax({
 										url:'/user/avater.html', 
 										type:'POST', 
@@ -162,7 +258,7 @@
 														localId: localIds[0], // 图片的localID
 														success: function (res4) {
 															//localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
-															$('avater').attr('src', res4.localData);
+															//$('avater').attr('src', res4.localData);
 														}
 													});
 												} else {
