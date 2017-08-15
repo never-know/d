@@ -127,7 +127,7 @@ class UserController extends \App\Module\M\BaseController
 			$result['headimgurl'] = '/public/images/avater.jpg';
 		}
 		if (empty($user['nickname'])) {
-			$result['nickname'] = 'Anbaby' .  substr(session_get('user_phone'), -4);
+			$result['nickname'] = 'An_' .  substr(session_get('user_phone'), -4);
 		}
 		return $result;
 	}
