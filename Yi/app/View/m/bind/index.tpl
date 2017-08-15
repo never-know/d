@@ -72,14 +72,10 @@ footer a {
 padding-top: 4px;
 }
 .weui_toast_visible , .weui_toast_cancel{
-width:auto;
-padding-left:20px;
-padding-right:20px;
+ 
 }
 .weui_toast_visible p, .weui_toast_cancel p{
- 
-padding-top:10px;
-padding-bottom:10px;
+padding:10px 20px;
 }
 	</style>
 <form id="form">
