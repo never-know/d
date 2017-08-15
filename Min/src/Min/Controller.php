@@ -175,7 +175,7 @@ class Controller
 	
 	final public function getCacheKey($type, $value)
 	{
-		return '{'. $this->cache_key.'}:'.$type. ':'. strtr($value, ['"'=>'']);
+		return '{'. $this->cache_key.'}:'.$type. ':'. strtr($value, ['"'=>'', "'"=>'']);
 	}
 
 }

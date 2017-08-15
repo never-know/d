@@ -40,25 +40,7 @@ class AccountService extends \Min\Service
 		$result = $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) {
-
-			/* 
-			$mark = ($arr['type'] == 'phone') ? 'd': 's';
-			$sql = 'SELECT * FROM {user}  WHERE '.$arr['type'].' = ? '; 	// mysqli prepare
-			$result	= $this->queryi($sql, $mark, [$arr['name']]);
-			 */
-			
-			
-			/*
-			$sql = 'SELECT * FROM {user}  WHERE '. $arr['type']. ' = '. $arr['name']; // mysqli normal 
-			$result	= $this->query($sql);
-			*/
-			
-			/*
-			$sql = 'SELECT phone FROM {user}  WHERE '. $arr['type']. ' = :type Limit 1'; // pdo 
-			$result	= $this->query($sql, [':type' => $arr['name']]);
-			 */
-			 
-			
+ 
 			$sql = 'SELECT uw.wx_id, uw.balance_index, uw.parent_id, uw.subscribe_status, uw.open_id,  u.user_id, u.user_type, u.phone, u.register_time, u.avater, u.nickname FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
 			$result	= $this->query($sql);
  			  
@@ -205,7 +187,7 @@ class AccountService extends \Min\Service
 					if (!empty($ins['id'])) $del_keys[] = $this->getCacheKey('phone', $phone);
 					$this->cache()->delete($del_keys); 		//清理 缓存
 
-					return $this->success(['user_id' => $check['body']['user_id'], 'wx_id' => $wx_id, 'phone' => $phone]);
+					return $this->success();
 				} 
 			}
 			
@@ -265,9 +247,20 @@ class AccountService extends \Min\Service
 			return $this->error('参数错误', 30201);
 		}
 		
-		$sql = 'UPDATE {{user}} SET nickname = '. safe_json_encode($nickname) . ' WHERE user_id = ' .$user_id;
+		$sql = 'UPDATE {{user}} SET nickname = '. safe_json_encode($nickname) . ' WHERE user_id = ' . $user_id;
 		
-		$this->query($sql);
+		$result = $this->query($sql);
+		
+		if ($result['effect'] > 0) {
+			// 清理缓存
+			$del_keys = [];
+			$del_keys[] = $this->getCacheKey('open_id', $data['open_id']);		 
+			$del_keys[] = $this->getCacheKey('wx_id', 	$data['wx_id']);		 
+			$del_keys[] = $this->getCacheKey('user_id', $data['user_id']);  
+			$del_keys[] = $this->getCacheKey('phone', 	$data['phone']);		 
+
+			$this->cache()->delete($del_keys);
+		}
 		
 		return $this->success('修改成功');
 	}
@@ -290,7 +283,7 @@ class AccountService extends \Min\Service
 		return $this->success('修改成功');
 	}
 	
-	private function initUser($user)
+	private function __initUser($user)
 	{ 
 		if($user['user_id'] > 0) {
 			

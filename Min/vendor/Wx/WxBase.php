@@ -5,45 +5,46 @@ use Min\App;
 
 class WxBase
 {
-	const API_URL_PREFIX = 'https://api.weixin.qq.com/cgi-bin';
-	const AUTH_URL = '/token?grant_type=client_credential&';
+	const API_URL_PREFIX 	= 'https://api.weixin.qq.com/cgi-bin';
+	const AUTH_URL 			= '/token?grant_type=client_credential&';
 	
-	const OAUTH_PREFIX = 'https://open.weixin.qq.com/connect/oauth2';
-	const OAUTH_AUTHORIZE_URL = '/authorize?';
+	const OAUTH_PREFIX 			= 'https://open.weixin.qq.com/connect/oauth2';
+	const OAUTH_AUTHORIZE_URL 	= '/authorize?';
 	
-	const MENU_CREATE_URL = '/menu/create?';
-	const MENU_GET_URL = '/menu/get?';
-	const MENU_DELETE_URL = '/menu/delete?';
-	const MENU_ADDCONDITIONAL_URL = '/menu/addconditional?';
-	const MENU_DELCONDITIONAL_URL = '/menu/delconditional?';
-	const MENU_TRYMATCH_URL = '/menu/trymatch?';
+	const MENU_CREATE_URL 	= '/menu/create?';
+	const MENU_GET_URL 		= '/menu/get?';
+	const MENU_DELETE_URL 	= '/menu/delete?';
+	const MENU_ADDCONDITIONAL_URL 	= '/menu/addconditional?';
+	const MENU_DELCONDITIONAL_URL 	= '/menu/delconditional?';
+	const MENU_TRYMATCH_URL 		= '/menu/trymatch?';
 	
-	const USER_GET_URL='/user/get?';
-	const USER_INFO_URL='/user/info?';
-	const USERS_INFO_URL='/user/info/batchget?';
-	const USER_UPDATEREMARK_URL='/user/info/updateremark?';
-	const GROUP_GET_URL='/groups/get?';
-	const USER_GROUP_URL='/groups/getid?';
-	const GROUP_CREATE_URL='/groups/create?';
-	const GROUP_UPDATE_URL='/groups/update?';
-	const GROUP_MEMBER_UPDATE_URL='/groups/members/update?';
-	const GROUP_MEMBER_BATCHUPDATE_URL='/groups/members/batchupdate?';
+	const USER_GET_URL			= '/user/get?';
+	const USER_INFO_URL			= '/user/info?';
+	const USERS_INFO_URL		= '/user/info/batchget?';
+	const USER_UPDATEREMARK_URL	= '/user/info/updateremark?';
+	const GROUP_GET_URL			= '/groups/get?';
+	const USER_GROUP_URL		= '/groups/getid?';
+	const GROUP_CREATE_URL		= '/groups/create?';
+	const GROUP_UPDATE_URL		= '/groups/update?';
+	const GROUP_MEMBER_UPDATE_URL		= '/groups/members/update?';
+	const GROUP_MEMBER_BATCHUPDATE_URL	= '/groups/members/batchupdate?';
 	
-	const QRCODE_CREATE_URL='/qrcode/create?';
-	const QR_SCENE = 0;
-	const QR_LIMIT_SCENE = 1;
-	const QRCODE_IMG_URL='https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=';
-	const SHORT_URL='/shorturl?';
+	const QRCODE_CREATE_URL		= '/qrcode/create?';
+	const QR_SCENE 				= 0;
+	const QR_LIMIT_SCENE 		= 1;
+	const QRCODE_IMG_URL		= 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=';
+	const SHORT_URL				= '/shorturl?';
 	
-	const API_BASE_URL_PREFIX = 'https://api.weixin.qq.com'; //以下API接口URL需要使用此前缀
-	const OAUTH_TOKEN_URL = '/sns/oauth2/access_token?';
-	const OAUTH_REFRESH_URL = '/sns/oauth2/refresh_token?';
-	const OAUTH_USERINFO_URL = '/sns/userinfo?';
-	const OAUTH_AUTH_URL = '/sns/auth?';
+	const API_BASE_URL_PREFIX 	= 'https://api.weixin.qq.com'; //以下API接口URL需要使用此前缀
+	const OAUTH_TOKEN_URL 		= '/sns/oauth2/access_token?';
+	const OAUTH_REFRESH_URL 	= '/sns/oauth2/refresh_token?';
+	const OAUTH_USERINFO_URL 	= '/sns/userinfo?';
+	const OAUTH_AUTH_URL 		= '/sns/auth?';
 	
-	const GET_TICKET_URL = '/ticket/getticket?';
+	const GET_TICKET_URL 	= '/ticket/getticket?';
 	
-	const MEDIA_UPLOAD_URL = '/media/upload?';
+	const MEDIA_UPLOAD_URL 	= '/media/upload?';
+	const MEDIA_GET_URL 	= '/media/get?';
 	
 	private $token;
 	private $appid;
@@ -426,6 +427,34 @@ class WxBase
 			}
 			return $json;
 		}
+		return false;
+	}
+	
+	/**
+	 * 获取临时素材(认证后的订阅号可用)
+	 * @param string $media_id 媒体文件id
+	 * @param boolean $is_video 是否为视频文件，默认为否
+	 * @return raw data
+	 */
+	public function getMedia($media_id, $is_video= false){
+		if (!$this->access_token && !$this->checkAuth()) return false;
+		//原先的上传多媒体文件接口使用 self::UPLOAD_MEDIA_URL 前缀
+		//如果要获取的素材是视频文件时，不能使用https协议，必须更换成http协议
+		$url_prefix = $is_video?str_replace('https','http',self::API_URL_PREFIX):self::API_URL_PREFIX;
+		$result = $this->http_get($url_prefix.self::MEDIA_GET_URL.'access_token='.$this->access_token.'&media_id='.$media_id);
+		if ($result)
+		{
+            if (is_string($result)) {
+                $json = json_decode($result,true);
+                if (!$json || !empty($json['errcode'])) {
+					watchdog($result, 'wx_result_error');
+					return false;
+				}
+            }
+			
+			return $result;
+		}
+		
 		return false;
 	}
 }

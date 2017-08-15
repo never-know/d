@@ -4,7 +4,7 @@
       <div class="weui_panel_bd">
         <a href="/user/profile.html" class="weui_media_box weui_media_appmsg" style="padding: 12px 15px 12px 22px;">
           <div class="weui_media_hd">
-            <img class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>" alt="">
+            <img class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>"  onerror="imgnotfound()" alt="">
           </div>
           <div class="weui_media_bd" style="margin-left:.5em;margin-top:4px;letter-spacing: 0px;">
             <h4 class="weui_media_title"><?=$result['nickname']?></h4>

@@ -36,7 +36,8 @@ class UserController extends \App\Module\M\BaseController
 	{
 		 
 		$result = $this->userinfo();
-		
+		$wx = $this->getWx();
+		$result['js'] = $wx->getJsSign(CURRENT_URL);
 		$result['meta'] = ['title' =>'用户信息'];
 		$this->success($result);
 	}
@@ -52,26 +53,43 @@ class UserController extends \App\Module\M\BaseController
 		$params				= [];
 		
 		$params['nickname'] = trim($_POST['nickname']);
+		
 		if (!validate('nickname', $params['nickname'])) {
 			$this->error('格式错误', 20000);
 		}
+ 
+		$user = session_get('user');
 		
-		$params['user_id']	= session_get('USER_ID');
+		if ($user['nickname'] != $params['nickname']) {
+			$params['user_id']	= $user['user_id'];
+			$params['wx_id']	= $user['wx_id'];
+			$params['phone']	= $user['phone'];
+			$params['open_id']	= $user['open_id'];
+			
+			$result = $this->request('\\App\\Service\\Account::nickname', $params);	 
+			
+			$user['nickname'] = $params['nickname'];
+			session_set('user', $user);
+		}
 		
-		$result = $this->request('\\App\\Service\\Account::nickname', $params);
-		$result['redirect'] = '/user/profile.html';
-		$this->success($result);
+		$this->success();
 	}
 	
 	public function avater_post()
-	{
-		$params				= [];
-
-		$params['user_id']	= session_get('USER_ID');
+	{	
+		watchdog($_POST);
 		
-		$result = $this->request('\\App\\Service\\Account::avater', $params);
-		$result['redirect'] = '/user/profile.html';
-		$this->success($result);
+		$wx = $this->getWx();
+		$img = $wx->getMedia($_POST['media_id']);
+		
+		if (!empty($img)) {
+			$path 	= get_avater($wx_id);	// wx_id
+			$result['headimgurl'] = ASSETS_URL . $path;
+			file_put_contents(PUBLIC_PATH . $path, $img);
+			$this->success($result);
+		} else {
+			$this->error('操作失败', 20000);
+		}	
 	}
 	
 	public function binded_get()
@@ -88,47 +106,18 @@ class UserController extends \App\Module\M\BaseController
 	
 	public function userinfo()
 	{	
-		/*
-		$wx_id		= session_get('wx_id');
-		$cache 		= $this->cache('user');
-		$key 		= $this->getCacheKey('userinfo', $wx_id);
-		$result 	= $cache->get($key, true);
-		
-		if (empty($result) || $cache->getDisc() === $result) {
-			$open_id 	= session_get('open_id');
-			$wx 		= $this->getWx();
-			$result 	= $wx->getUserInfo($open_id);
-			
-			if (!empty($result['openid'])) {
-				 
-				if (!empty($result['headimgurl'])) {
-					$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
-					if (!empty($img)) {
-						$path = '/avater/' . implode('/', str_split(base_convert($wx_id, 10, 36), 2)) . '.jpg';
-						$result['img_path'] = ASSETS_URL . $path;
-						file_put_contents(PUBLIC_PATH . $path, $img);
-					}
-				}
-				 
-				$cache->set($key, $result);
-
-			} else {
-				$result = [];
-			}
-		}
-		*/
-		
 		$result = [];
+		
 		$user = session_get('user');
-		if (!empty($user['avater'])) {
-			$key = $user['user_id'] . 'anyitime6688';
-			$result['headimgurl'] = (ASSETS_URL . '/avater' . hash_path(md5($key), 'fucome6688') . ['', '.png', '.jpg', '.jpeg'][$user['avater']]);
-		} else {
-			$result['headimgurl'] = '/public/images/avater.jpg';
-		}
+		 
+		$result['headimgurl'] = get_avater($user['wx_id'], ASSETS_URL);
+		
 		if (empty($user['nickname'])) {
 			$result['nickname'] = 'An_' .  substr(session_get('user_phone'), -4);
+		} else {
+			$result['nickname'] = $user['nickname'];
 		}
+		
 		return $result;
 	}
 		
