@@ -34,7 +34,7 @@ class BindController extends \App\Module\M\BaseController
 		
 		$this->check($params['phone']);
 		
-		$this->request('\\App\\Service\\Sms::check', $params, self::EXITALL);
+		$this->request('\\App\\Service\\Sms::check', $params, self::EXITERROR);
 		
 		$user = session_get('user');
 		
@@ -81,8 +81,7 @@ class BindController extends \App\Module\M\BaseController
 	}
 
 	/*************test ******************/
-	
-	
+
 	public function fastclick_get()
 	{
 		$result['meta'] = ['title' =>'fastclick'];

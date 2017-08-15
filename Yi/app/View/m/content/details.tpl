@@ -47,11 +47,9 @@ function loadScript(url, callback) {
 }
 var content_title = <?=safe_json_encode($result['content_title'])?>, content_description=<?=safe_json_encode($result['content_description'])?>, content_icon=<?=safe_json_encode($result['content_icon'])?>;
 var l = window.location.pathname;
-alert(l);
-alert(/^\/content\/[a-zA-Z0-9_\-]+\.html$/.test(l));
+
 if (/^\/content\/[a-zA-Z0-9_\-]+\.html$/.test(l)) {
 loadScript("//res.wx.qq.com/open/js/jweixin-1.2.0.js", function(){
-alert('loaded');
 loadScript("/share/js.html");
 });
 }

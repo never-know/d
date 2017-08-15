@@ -3,7 +3,7 @@ namespace App\Module\M;
 
 use Min\App;
 
-class ShareController extends \Min\Controller
+class ShareController extends \App\Module\M\BaseController
 {
 	/*
 		content_id
@@ -43,7 +43,7 @@ class ShareController extends \Min\Controller
 		if (preg_match('|^'. SCHEMA . SERVER_NAME . '/content/([a-zA-Z0-9_\-]+).html$|', $_SERVER['HTTP_REFERER'], $match)){
 			$id = str2int($match[1]);
 		} else {
-			exit;
+			exit('var msg = "error";');
 		}
 		
 		$result 					= [];

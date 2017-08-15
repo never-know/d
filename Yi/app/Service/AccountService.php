@@ -132,7 +132,7 @@ class AccountService extends \Min\Service
 	public function addUserByWx($data) 
 	{
 		$wx_id 			= intval($data['wx_id']);
-		$phone 			= intval($data['phone']);
+		$phone 			= trim($data['phone']);
 		$balance_index 	= intval($data['balance_index']);
 		
 		if ($balance_index < 1 || $wx_id < 1 || !validate('open_id', $data['open_id'])) {
