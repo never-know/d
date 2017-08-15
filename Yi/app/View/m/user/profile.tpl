@@ -79,7 +79,7 @@
 	</style>
 	 	
 	<script>
-	 $(document).on("click", "#show-nickname", function() {
+	 $(document).on("click", "#show-nickname1", function() {
         $.prompt("", "设置昵称", function(text) {
           //$.alert("您的昵称是:"+text, "哦");
 		  $('#nick').html(text);
@@ -88,7 +88,7 @@
         },  $('#nick').html());
       });
 	  
-	   $(document).on("click", "#balance_account", function() {
+	   $(document).on("click", "#balance_account1", function() {
         $.prompt("", "设置昵称", function(text) {
          
 		  $('#nick').html(text);
