@@ -77,19 +77,21 @@ class UserController extends \App\Module\M\BaseController
 	
 	public function avater_post()
 	{	
-		watchdog($_POST);
-		
 		$wx = $this->getWx();
 		$img = $wx->getMedia($_POST['media_id']);
 		
+		$wx_id = session_get('wx_id');
+		
 		if (!empty($img)) {
 			$path 	= get_avater($wx_id);	// wx_id
-			$result['headimgurl'] = ASSETS_URL . $path;
-			file_put_contents(PUBLIC_PATH . $path, $img);
-			$this->success($result);
-		} else {
-			$this->error('操作失败', 20000);
-		}	
+			if (make_dir(PUBLIC_PATH . $path)) {
+				file_put_contents(PUBLIC_PATH . $path, $img);
+				$result['headimgurl'] = ASSETS_URL . $path;
+				$this->success($result);
+			}
+		} 
+			
+		$this->error('操作失败', 20000);
 	}
 	
 	public function binded_get()

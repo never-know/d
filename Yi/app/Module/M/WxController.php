@@ -439,8 +439,10 @@ class WxController extends \Min\Controller
 				$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
 				if (!empty($img)) {
 					$path 	= get_avater($user['id']);	// wx_id
-					$result['headimgurl'] = ASSETS_URL . $path;
-					file_put_contents(PUBLIC_PATH . $path, $img);
+					if (make_dir(PUBLIC_PATH . $path)) {
+						$result['headimgurl'] = ASSETS_URL . $path;
+						file_put_contents(PUBLIC_PATH . $path, $img);
+					}
 				}
 			}
 			 

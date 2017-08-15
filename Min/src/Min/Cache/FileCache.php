@@ -63,12 +63,9 @@ class FileCache
     public function set($id, $data, $expiration = 0)
     {
         $file_name = $this->getFileName($id);
-		
-		$dir = dirname($file_name);
-        if (!is_dir($dir)) {
-            if (!mkdir($dir, 0755, true)) {
-                return false;
-            }
+ 
+        if (!make_dir($file_name)) {
+            return false;
         }
 		
 		if ($expiration > 0) $expiration += $_SERVER['REQUEST_TIME'];

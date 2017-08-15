@@ -441,7 +441,7 @@ class WxBase
 		//原先的上传多媒体文件接口使用 self::UPLOAD_MEDIA_URL 前缀
 		//如果要获取的素材是视频文件时，不能使用https协议，必须更换成http协议
 		$url_prefix = $is_video?str_replace('https','http',self::API_URL_PREFIX):self::API_URL_PREFIX;
-		$result = $this->http_get($url_prefix.self::MEDIA_GET_URL.'access_token='.$this->access_token.'&media_id='.$media_id);
+		$result = http_get($url_prefix.self::MEDIA_GET_URL.'access_token='.$this->access_token.'&media_id='.$media_id);
 		if ($result)
 		{
             if (is_string($result)) {

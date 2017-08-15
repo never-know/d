@@ -167,6 +167,17 @@ function hash_path($key, $salt = '')
 	return	implode(DIRECTORY_SEPARATOR, ['', substr($hash, 0, 2), substr($hash, 2, 2), substr($hash, 4, 2), substr($hash, 6)]);
 	//return	'/' . implode(DIRECTORY_SEPARATOR, str_split($hash, 2) [substr()]);
 }
+
+function make_dir($path)
+{
+	$dir = dirname($file_name);
+	if (!is_dir($dir)) {
+		if (!mkdir($dir, 0755, true)) {
+			return false;
+		}
+	}
+	return true;
+}
  
 function ip_address($type = 'iplong') 
 {
