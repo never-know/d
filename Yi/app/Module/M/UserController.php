@@ -113,7 +113,7 @@ class UserController extends \App\Module\M\BaseController
 		$user = session_get('user');
 		 
 		$result['headimgurl'] = get_avater($user['wx_id'], ASSETS_URL);
-		
+		watchdog($result['headimgurl']);
 		if (empty($user['nickname'])) {
 			$result['nickname'] = 'An_' .  substr(session_get('user_phone'), -4);
 		} else {

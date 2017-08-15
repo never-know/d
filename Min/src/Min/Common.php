@@ -170,7 +170,7 @@ function hash_path($key, $salt = '')
 
 function make_dir($path)
 {
-	$dir = dirname($file_name);
+	$dir = dirname($path);
 	if (!is_dir($dir)) {
 		if (!mkdir($dir, 0755, true)) {
 			return false;
