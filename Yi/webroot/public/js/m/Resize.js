@@ -95,10 +95,13 @@ Resize.prototype = {
 		fun = this.RightDown;
 	};
 	//设置触发对象
-	addEventHandler(resize, "mousedown", BindAsEventListener(this, this.Start, fun));
+	//addEventHandler(resize, "mousedown", BindAsEventListener(this, this.Start, fun));
+	console.log(resize);
+	$(resize).bind("touchstart", BindAsEventListener(this, this.Start, fun));
   },
   //准备缩放
   Start: function(e, fun, touch) {	
+	console.log('resize--start');
 	//防止冒泡(跟拖放配合时设置)
 	e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
 	//设置执行程序
@@ -153,8 +156,10 @@ Resize.prototype = {
 		};
 	};
 	//mousemove时缩放 mouseup时停止
-	addEventHandler(document, "mousemove", this._fR);
-	addEventHandler(document, "mouseup", this._fS);
+	//addEventHandler(document, "mousemove", this._fR);
+	$(document).bind('touchmove', this._fR);
+	//addEventHandler(document, "mouseup", this._fS);
+	$(document).bind('touchend',  this._fS);
 	if(isIE){
 		addEventHandler(this._obj, "losecapture", this._fS);
 		this._obj.setCapture();
@@ -357,8 +362,10 @@ Resize.prototype = {
   },
   //停止缩放
   Stop: function() {
-	removeEventHandler(document, "mousemove", this._fR);
-	removeEventHandler(document, "mouseup", this._fS);
+	//removeEventHandler(document, "mousemove", this._fR);
+	$(document).unbind('touchmove',  this._fR);
+	//removeEventHandler(document, "mouseup", this._fS);
+	$(document).bind('touchend',  this._fS);
 	if(isIE){
 		removeEventHandler(this._obj, "losecapture", this._fS);
 		this._obj.releaseCapture();

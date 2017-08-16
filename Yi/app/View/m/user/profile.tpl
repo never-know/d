@@ -110,15 +110,16 @@
 
 		#bgDiv{width:150px; height:200px; border:1px solid #666666; position:relative;}
 		#dragDiv{border:1px dashed #fff; width:80%; height:60px; top:0; left:0; cursor:move; }
+		#crop{ top:62px;}
 	</style>
 	
-	<div id="crop" class="weui-popup-container" >
+	<div id="crop" class="weui-popup-container">
 		<div class="weui-popup-overlay"></div>
 		<div class="weui-popup-modal">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			  <tr>
 				<td>
-				<div style="position:relative;width:100%;height:100%;background:#000;">
+				<div style="position:relative;width:100%;height:100%;background:#000">
 				<div id="bgDiv">
 					<div id="dragDiv">
 					  <div id="rRightDown"> </div>
@@ -230,18 +231,19 @@
 									
 									var wid = $('#crop').width();
 										var left = wid*0.1;
+										var total = wid*0.8;
 									$('#dragDiv').width(wid*0.8);
 									$('#dragDiv').height(wid*0.8);
 									//$('#dragDiv').css('top', '120px');
 									//$('#dragDiv').css('left', left + 'px');
 									$('#bgDiv').css('left', left + 'px');
-									$('#bgDiv').css('top', '62px');
+									//$('#bgDiv').css('top', '62px');
 									$('#bgDiv').width(wid*0.8);
-									$('#bgDiv').height($(window).height());
-									console.log(wid);
+									$('#bgDiv').height(($(window).height()-63));
+									
 								
 									var ic = new ImgCropper("bgDiv", "dragDiv", "https://m.anyitime.com/public/images/1.jpg", {
-										Width: wid , Height: wid, MarginTop:120, MarginLeft:left, Color: "#000",
+										Width: total , Height: total, MarginTop:120, MarginLeft:left, Color: "#000",
 										Resize: true,
 										Right: "rRight", Left: "rLeft", Up:	"rUp", Down: "rDown",
 										RightDown: "rRightDown", LeftDown: "rLeftDown", RightUp: "rRightUp", LeftUp: "rLeftUp",

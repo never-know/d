@@ -236,6 +236,76 @@ ImgCropper.prototype = {
   },
   //获取尺寸
   GetSize: function(nowWidth, nowHeight, fixWidth, fixHeight) {
+  var iWidth = nowWidth, iHeight = nowHeight, scale = iWidth / iHeight;
+  
+  	var wid = $('#crop').width();
+	var left = wid*0.1;
+	var total = wid*0.8;
+	$('#dragDiv').width(wid*0.8);
+	$('#dragDiv').height(wid*0.8);
+	//$('#dragDiv').css('top', '120px');
+	//$('#dragDiv').css('left', left + 'px');
+	$('#bgDiv').css('left', left + 'px');
+	//$('#bgDiv').css('top', '62px');
+	$('#bgDiv').width(wid*0.8);
+	$('#bgDiv').height(($(window).height()-63));
+  
+  
+  if (nowWidth > nowHeight) {
+	iHeight = fixHeight;
+	iWidth = iHeight*scale;
+	
+	$('#dragDiv').width(wid*0.8);
+	$('#dragDiv').height(wid*0.8);
+	//$('#dragDiv').css('top', '120px');
+	//$('#dragDiv').css('left', left + 'px');
+	$('#bgDiv').css('top', left + 'px');
+	$('#bgDiv').css('left', 0);
+	//$('#bgDiv').css('top', '62px');
+	$('#bgDiv').width($(window).width());
+	$('#bgDiv').height($(window).height()-63);
+	
+	
+  }
+  
+  if ( nowHeight >  nowWidth) {
+	iWidth = fixWidth;
+	iHeight = iWidth/scale;
+	
+	
+	$('#dragDiv').width(wid*0.8);
+	$('#dragDiv').height(wid*0.8);
+	//$('#dragDiv').css('top', '120px');
+	//$('#dragDiv').css('left', left + 'px');
+	$('#bgDiv').css('left', left + 'px');
+	//$('#bgDiv').css('top', '62px');
+	$('#bgDiv').width(wid*0.8);
+	$('#bgDiv').height(($(window).height()-63));
+	
+	
+  }
+  
+   if ( nowHeight ==   nowWidth) {
+	iWidth = iHeight =fixWidth;
+	
+	$('#dragDiv').width(wid*0.8);
+	$('#dragDiv').height(wid*0.8);
+	//$('#dragDiv').css('top', '120px');
+	//$('#dragDiv').css('left', left + 'px');
+	$('#bgDiv').css('left', left + 'px');
+	//$('#bgDiv').css('top', '62px');
+	$('#bgDiv').width(wid*0.8);
+	$('#bgDiv').height(($(window).height()-63));
+  }
+  
+
+  
+  
+  
+  
+  
+  return { Width: iWidth, Height: iHeight }
+  /********/
 	var iWidth = nowWidth, iHeight = nowHeight, scale = iWidth / iHeight;
 	//按比例设置
 	if(fixHeight){ iWidth = (iHeight = fixHeight) * scale; }
