@@ -1,4 +1,5 @@
 //拖放程序
+
 var Drag = Class.create();
 Drag.prototype = {
   //拖放对象
@@ -64,11 +65,13 @@ Drag.prototype = {
   },
   //准备拖动
   Start: function(oEvent) {
+	console.log('start');
+
 	if(this.Lock){ return; }
 	this.Repair();
 	//记录鼠标相对拖放对象的位置
-	this._x = oEvent.clientX - this.Drag.offsetLeft;
-	this._y = oEvent.clientY - this.Drag.offsetTop;
+	this._x = oEvent.targetTouches[0].clientX - this.Drag.offsetLeft;
+	this._y = oEvent.targetTouches[0].clientY - this.Drag.offsetTop;
 	//记录margin
 	this._marginLeft = parseInt(CurrentStyle(this.Drag).marginLeft) || 0;
 	this._marginTop = parseInt(CurrentStyle(this.Drag).marginTop) || 0;
@@ -103,12 +106,14 @@ Drag.prototype = {
   },
   //拖动
   Move: function(oEvent) {
+	console.log('move');
 	//判断是否锁定
 	if(this.Lock){ this.Stop(); return; };
 	//清除选择
 	window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
 	//设置移动参数
-	var iLeft = oEvent.clientX - this._x, iTop = oEvent.clientY - this._y;
+	//var iLeft = oEvent.clientX - this._x, iTop = oEvent.clientY - this._y;
+	var iLeft = oEvent.targetTouches[0].clientX - this._x, iTop = oEvent.targetTouches[0].clientY - this._y;
 	//设置范围限制
 	if(this.Limit){
 		//设置范围参数
@@ -125,6 +130,7 @@ Drag.prototype = {
 		iTop = Math.max(Math.min(iTop, mxBottom - this.Drag.offsetHeight), mxTop);
 	}
 	//设置位置，并修正margin
+
 	if(!this.LockX){ this.Drag.style.left = iLeft - this._marginLeft + "px"; }
 	if(!this.LockY){ this.Drag.style.top = iTop - this._marginTop + "px"; }
 	//附加程序
@@ -132,6 +138,7 @@ Drag.prototype = {
   },
   //停止拖动
   Stop: function() {
+  console.log('stop');
 	//移除事件
 	//removeEventHandler(document, "touchmove", this._fM);
 	//removeEventHandler(document, "touchend", this._fS);

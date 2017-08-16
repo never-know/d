@@ -109,15 +109,17 @@
 		#rDown{bottom:-4px;left:50%;margin-left:-4px;}
 
 		#bgDiv{width:150px; height:200px; border:1px solid #666666; position:relative;}
-		#dragDiv{border:1px dashed #fff; width:80%; height:60px; top:50px; left:50px; cursor:move; }
+		#dragDiv{border:1px dashed #fff; width:80%; height:60px; top:0; left:0; cursor:move; }
 	</style>
 	
 	<div id="crop" class="weui-popup-container" >
 		<div class="weui-popup-overlay"></div>
 		<div class="weui-popup-modal">
-			<table width="80%" border="0" cellspacing="0" cellpadding="0">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			  <tr>
-				<td><div id="bgDiv">
+				<td>
+				<div style="position:relative;width:100%;height:100%;background:#000;">
+				<div id="bgDiv">
 					<div id="dragDiv">
 					  <div id="rRightDown"> </div>
 					  <div id="rLeftDown"> </div>
@@ -128,7 +130,9 @@
 					  <div id="rUp"> </div>
 					  <div id="rDown"></div>
 					</div>
-				  </div></td>
+				  </div>
+				 </div>
+				 </td>
 				 
 			  </tr>
 			</table>
@@ -225,15 +229,19 @@
 									$("#crop").popup();
 									
 									var wid = $('#crop').width();
+										var left = wid*0.1;
 									$('#dragDiv').width(wid*0.8);
 									$('#dragDiv').height(wid*0.8);
-									$('#dragDiv').css('top', '120px');
-									$('#dragDiv').css('left', wid*0.1 + 'px');
-									$('#bgDiv').width(wid);
+									//$('#dragDiv').css('top', '120px');
+									//$('#dragDiv').css('left', left + 'px');
+									$('#bgDiv').css('left', left + 'px');
+									$('#bgDiv').css('top', '62px');
+									$('#bgDiv').width(wid*0.8);
 									$('#bgDiv').height($(window).height());
 									console.log(wid);
-									var ic = new ImgCropper("bgDiv", "dragDiv", "http://images.cnblogs.com/cnblogs_com/cloudgamer/143727/r_xx2.jpg", {
-										Width: wid , Height: wid, Color: "#000",
+								
+									var ic = new ImgCropper("bgDiv", "dragDiv", "https://m.anyitime.com/public/images/1.jpg", {
+										Width: wid , Height: wid, MarginTop:120, MarginLeft:left, Color: "#000",
 										Resize: true,
 										Right: "rRight", Left: "rLeft", Up:	"rUp", Down: "rDown",
 										RightDown: "rRightDown", LeftDown: "rLeftDown", RightUp: "rRightUp", LeftUp: "rLeftUp",

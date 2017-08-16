@@ -80,7 +80,9 @@ ImgCropper.prototype = {
 	this.Ratio = Math.max(this.options.Ratio, 0);
 	this.Width = Math.round(this.options.Width);
 	this.Height = Math.round(this.options.Height);
-	
+	this.MarginTop = Math.round(this.options.MarginTop);
+	this.MarginLeft = Math.round(this.options.MarginLeft);
+	 
 	//设置预览对象
 	var oPreview = _$(this.options.Preview);//预览对象
 	if(oPreview){
@@ -123,7 +125,10 @@ ImgCropper.prototype = {
 	//this._layBase.style.position = this._layCropper.style.position = "absolute";
 	this._layBase.style.position =  "absolute";
 	//this._layBase.style.top = this._layBase.style.left = this._layCropper.style.top = this._layCropper.style.left = 0;//对齐
-	this._layBase.style.top = this._layBase.style.left = 0;//对齐
+	//this._layBase.style.top = this._layBase.style.left = 0;//对齐
+	//this._layBase.style.top = this.MarginTop +'px';
+	//console.log(this._layBase);
+	//this._layBase.style.left = this.MarginLeft +'px';//对齐
 	//初始化设置
 	this.Init();
   },
@@ -207,13 +212,16 @@ ImgCropper.prototype = {
   },
   //设置图片大小
   SetSize: function() {
-	console.log(this._tempImg.width +' ' + this._tempImg.height+' ' + this.Width+' ' + this.Height);
+	//console.log(this._tempImg.width +' ' + this._tempImg.height+' ' + this.Width+' ' + this.Height);
 	var s = this.GetSize(this._tempImg.width, this._tempImg.height, this.Width, this.Height);
 	//设置底图和切割图
 	//this._layBase.style.width = this._layCropper.style.width = s.Width + "px";
 	this._layBase.style.width =  s.Width + "px";
 	//this._layBase.style.height = this._layCropper.style.height = s.Height + "px";
-	this._layBase.style.height  = s.Height + "px";
+	//this._layBase.style.height  = s.Height + "px";
+	//this._layBase.style.top = this.Top+ "px";
+	 
+	this._layBase.style.left = this.Left + "px";//对齐
 	//设置拖放范围
 	this._drag.mxRight = s.Width; this._drag.mxBottom = s.Height;
 	//设置缩放范围
@@ -222,7 +230,7 @@ ImgCropper.prototype = {
   //获取当前样式
   GetPos: function() {
 	with(this._layHandle){
-		console.log({ Top: offsetTop, Left: offsetLeft, Width: offsetWidth, Height: offsetHeight });
+		//console.log({ Top: offsetTop, Left: offsetLeft, Width: offsetWidth, Height: offsetHeight });
 		return { Top: offsetTop, Left: offsetLeft, Width: offsetWidth, Height: offsetHeight }
 	}
   },
