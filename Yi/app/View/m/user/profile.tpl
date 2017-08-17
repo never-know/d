@@ -82,7 +82,8 @@
 	<style>
     #crop_container {
       max-width: 640px;
-      margin: 20px auto;
+      padding: 20px auto;
+	  background:#000;
     }
 
     .crop_container img {
@@ -137,15 +138,15 @@
       });
 	  
 	   $(document).on("click", "#avater_wrapper", function() {
-	   
+	   alert('click');
 	   
 	   wx.checkJsApi({
 		jsApiList: ["chooseImage", "uploadImage","getLocalImgData"], // 需要检测的JS接口列表，所有JS接口列表见附录2,
 		success: function(res) {
 			console.log('1111');
 			console.log(res);
-			
-			if (res.checkResult.getLocalImgData == true) {
+			 
+			if (window.__wxjs_is_wkwebview) {
 				ios = true;
 			}
 			
@@ -170,23 +171,30 @@
 										wx.getLocalImgData({
 											localId: localIds[0], // 图片的localID
 											success: function (res4) {
+											//alert(res4.localData);
 												localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
 												//$('avater').attr('src', res4.localData);
 											}
 										});
 									} else {
+										
 										localData =  localIds[0];
 									}
 									
-									$("#crop").popup();
-									
-									  var image = document.querySelector('#image');
+									  $('#avater').attr("src", localIds[0]);
+									  $('#image').attr("src", localData);
 									  
-									  // $('#image').attr("src", localData);
+									
+									$("#crop_container").popup();
+									
+									
+									 
+									 
+									     var image = document.querySelector('#image');
 										  var cropper = new Cropper(image, {
 											dragMode: 'move',
 											aspectRatio: 1 / 1,
-											autoCropArea: 0.9,
+											autoCropArea: 0.8,
 											restore: false,
 											guides: false,
 											center: false,
@@ -194,6 +202,11 @@
 											cropBoxMovable: false,
 											cropBoxResizable: false,
 											toggleDragModeOnDblclick: false,
+											checkOrientation:false,
+											background:false,
+											 rotatable:false,
+											 zoomOnWheel:false,
+											
 										  });
 									
 									
