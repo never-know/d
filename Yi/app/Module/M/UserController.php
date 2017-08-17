@@ -48,6 +48,14 @@ class UserController extends \App\Module\M\BaseController
 		$this->success($result);
 	}
 	
+	
+	public function nickname_get()
+	{
+		$result['meta'] = ['title' =>'修改昵称'];
+		$this->success();
+	
+	
+	}
 	public function nickname_post()
 	{
 		$params				= [];

@@ -13,7 +13,7 @@
 		<script src="/public/js/m/zepto_fx.min.js"></script>		
 	</head>
 
-<body ontouchstart style="background-color: #f8f8f8;background-color:#f1f1f1">
+<body ontouchstart >
 
 	<div class="weui_tab">
 		<div class="weui_tab_bd">	

@@ -21,7 +21,7 @@
  
 	<div class="weui_cells">
 
-        <div class="weui_cell" href="javascript:;" id="show-nickname">
+        <div class="weui_cell" onclick="window.location.href='/user/nickname.html'" id="show-nickname">
           <div class="weui_cell_bd weui_cell_primary" style="min-width: 100px;">
             <p>昵称</p>
           </div>
@@ -118,7 +118,7 @@
 		});
 	
 	
-	 $(document).on("click", "#show-nickname", function() {
+	 $(document).on("click", "#show-nickname2", function() {
         $.prompt("", "设置昵称", function(text) { 
 			$('#nick').html(text);
 			$.ajax({
@@ -273,8 +273,7 @@
 			  ],
 			 
 			});
-		
-		
+
 		return false;
 	  });
 	 </script>
