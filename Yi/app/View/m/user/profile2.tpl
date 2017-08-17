@@ -79,28 +79,77 @@
     padding-left: 10px;
 	}
 	</style>
-	<style>
-    #crop_container {
-      max-width: 640px;
-      margin: 20px auto;
-    }
-
-    .crop_container img {
-      max-width: 100%;
-    }
-  </style>
 	
-	<div id="crop_container" class="weui-popup-container">
-    <div>
-      <img id="image" src="https://m.anyitime.com/public/images/1.jpg" alt="Picture">
+	
+	<style type="text/css">
+		#rRightDown,#rLeftDown,#rLeftUp,#rRightUp,#rRight,#rLeft,#rUp,#rDown{
+			position:absolute;
+			background:#FFF;
+			border: 1px solid #333;
+			width: 6px;
+			height: 6px;
+			z-index:500;
+			font-size:0;
+			opacity: 0.5;
+			filter:alpha(opacity=50);
+		}
+
+		#rLeftDown,#rRightUp{cursor:ne-resize;}
+		#rRightDown,#rLeftUp{cursor:nw-resize;}
+		#rRight,#rLeft{cursor:e-resize;}
+		#rUp,#rDown{cursor:n-resize;}
+
+		#rLeftDown{left:-4px;bottom:-4px;}
+		#rRightUp{right:-4px;top:-4px;}
+		#rRightDown{right:-4px;bottom:-4px;background-color:#00F;}
+		#rLeftUp{left:-4px;top:-4px;}
+		#rRight{right:-4px;top:50%;margin-top:-4px;}
+		#rLeft{left:-4px;top:50%;margin-top:-4px;}
+		#rUp{top:-4px;left:50%;margin-left:-4px;}
+		#rDown{bottom:-4px;left:50%;margin-left:-4px;}
+
+		#bgDiv{width:150px; height:200px; border:1px solid #666666; position:relative;}
+		#dragDiv{border:1px dashed #fff; width:80%; height:60px; top:0; left:0; cursor:move; }
+		#crop{ top:62px;}
+	</style>
+	
+	<div id="crop" class="weui-popup-container">
+		<div class="weui-popup-overlay"></div>
+		<div class="weui-popup-modal">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+				<td>
+				<div style="position:relative;width:100%;height:100%;background:#000">
+				<div id="bgDiv">
+					<div id="dragDiv">
+					  <div id="rRightDown"> </div>
+					  <div id="rLeftDown"> </div>
+					  <div id="rRightUp"> </div>
+					  <div id="rLeftUp"> </div>
+					  <div id="rRight"> </div>
+					  <div id="rLeft"> </div>
+					  <div id="rUp"> </div>
+					  <div id="rDown"></div>
+					</div>
+				  </div>
+				 </div>
+				 </td>
+				 
+			  </tr>
+			</table>
+		</div>
     </div>
-	</div>
+	
+	
+	
+	
 	
 	<script type="text/javascript" src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script> 
 	<script src="/public/js/m/select.js"></script>	
- 
-	<script type="text/javascript" src="/public/js/m/cropper.js"></script>	
-	<link rel="stylesheet" href="/public/css/cropper.css">	
+	<script type="text/javascript" src="/public/js/m/crop.js"></script>
+	<script type="text/javascript" src="/public/js/m/Drag.js"></script>
+	<script type="text/javascript" src="/public/js/m/Resize.js"></script>	
+	 	
 	<script>
 	
 	var ios = false;
@@ -180,21 +229,28 @@
 									
 									$("#crop").popup();
 									
-									  var image = document.querySelector('#image');
-									  
-									  // $('#image').attr("src", localData);
-										  var cropper = new Cropper(image, {
-											dragMode: 'move',
-											aspectRatio: 1 / 1,
-											autoCropArea: 0.9,
-											restore: false,
-											guides: false,
-											center: false,
-											highlight: false,
-											cropBoxMovable: false,
-											cropBoxResizable: false,
-											toggleDragModeOnDblclick: false,
-										  });
+									var wid = $('#crop').width();
+										var left = wid*0.1;
+										var total = wid*0.8;
+									$('#dragDiv').width(wid*0.8);
+									$('#dragDiv').height(wid*0.8);
+									//$('#dragDiv').css('top', '120px');
+									//$('#dragDiv').css('left', left + 'px');
+									$('#bgDiv').css('left', left + 'px');
+									//$('#bgDiv').css('top', '62px');
+									$('#bgDiv').width(wid*0.8);
+									$('#bgDiv').height(($(window).height()-63));
+									
+								
+									var ic = new ImgCropper("bgDiv", "dragDiv", "https://m.anyitime.com/public/images/1.jpg", {
+										Width: total , Height: total, MarginTop:120, MarginLeft:left, Color: "#000",
+										Resize: true,
+										Right: "rRight", Left: "rLeft", Up:	"rUp", Down: "rDown",
+										RightDown: "rRightDown", LeftDown: "rLeftDown", RightUp: "rRightUp", LeftUp: "rLeftUp",
+										Preview: "viewDiv2", viewWidth: 300, viewHeight: 300, Scale:		true, 
+											Ratio:1
+									})
+									
 									
 									
 									$.ajax({
