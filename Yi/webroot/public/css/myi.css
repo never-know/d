@@ -36,7 +36,9 @@ padding-top: 4px;
 font-size: 16px;
 margin-top:12px;
 }
- 
+ .weui_cells_access .weui_cell_ft:after{
+ margin-right:.3em;
+ }
 .weui_return .weui_cell_ft:after{
     height: 8px;
     width: 8px;

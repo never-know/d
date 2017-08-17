@@ -1,4 +1,14 @@
-
+	<div class="weui_return_wrapper black_back" >
+		<div class="weui_cells weui_cells_access weui_return" style="display:flex">
+			<a class="weui_cell" onclick="history.go(-1);"  style="flex=1;-webkit-box-flex: 1;-webkit-flex: 1;">
+				<span class="weui_cell_ft" ></span>返回
+			</a>
+			 
+			<a href="javascript:;" class="weui_btn weui_btn_primary" style="  width: 73px;height: 30px; font-size: 16px; line-height: 30px; margin-top: 8px;  margin-right: 20px; padding-top: 3px;">保存</a>
+		 
+		</div>
+		
+	</div>
 	<div class="weui_panel" style="margin-top: 64px;">
    
       <div class="weui_panel_bd" style="background:#fff;">
@@ -49,12 +59,7 @@
 	
 	<div class="weui_cells weui_cells_access">
 
-        <div class="weui_cell hide" href="javascript:;" >
-          <div class="weui_cell_bd weui_cell_primary">
-            <p>常用搜索地址</p>
-          </div>
-          <div class="weui_cell_ft weui_cell_ft_fix"></div>
-        </div>
+        
         <div class="weui_cell" href="javascript:;">
           <div class="weui_cell_bd weui_cell_primary" id="balance_account">
             <p>提现帐户设置</p>
@@ -78,6 +83,14 @@
 		    font-size: 16px;
     padding-left: 10px;
 	}
+	.black_back{
+		background-color:#292929;
+		display:block;
+	}
+	.black_back .save_button{
+		display:flex;
+	}
+	
 	</style>
 	<style>
     #crop_container {

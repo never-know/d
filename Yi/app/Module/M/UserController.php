@@ -37,8 +37,9 @@ class UserController extends \App\Module\M\BaseController
 		 
 		$result = $this->userinfo();
 		$wx = $this->getWx();
-		$result['js'] = $wx->getJsSign(CURRENT_URL);
-		$result['meta'] = ['title' =>'用户信息'];
+		$result['js'] 		= $wx->getJsSign(CURRENT_URL);
+		$result['meta'] 	= ['title' =>'用户信息'];
+		$result['no_back'] 	= 1;
 		$this->success($result);
 	}
 	
