@@ -13,7 +13,7 @@
 	<div class="weui_panel" style="margin-top: 64px;">
    
       <div class="weui_panel_bd" style="background:#fff;">
-        <a id="avater_wrapper" href="javascript:void(0);" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">
+        <a id="avater_wrapper"  href="#abc" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">
 			
 			<h4 class="weui_media_title">头像</h4>
         　	 <div class="weui_media_bd">
@@ -69,7 +69,6 @@
         </div>
     </div>
 	
-	
 	<style>
 	.weui_panel:before, .weui_panel:after {
 		border: none;  
@@ -112,18 +111,25 @@
     #crop_container {
       max-width: 100%;
       padding: 20px auto;
-	  background:#000;
+	   
     }
 
     .crop_container img {
       max-width: 100%;
     }
+	.blackground{
+	 background:#000;
+	}
+	 
   </style>
 	
 	<div id="crop_container" class="weui-popup-container">
+	  <div class="weui-popup-overlay"></div>
+      <div class="weui-popup-modal" >
     <div id="wrapper">
       <img id="image" src="https://m.anyitime.com/public/images/1.jpg" alt="Picture">
     </div>
+	</div>
 	</div>
 	
 	<script type="text/javascript" src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script> 
@@ -132,6 +138,16 @@
 	<script type="text/javascript" src="/public/js/m/cropper.js"></script>	
 	<link rel="stylesheet" href="/public/css/cropper.css">	
 	<script>
+	
+	var hash  = window.location.hash || '';
+	window.onhashchange = function(){
+		var new_hash = window.location.hash || ''; 	//substring(1)用来减去地址栏的地址中的#号
+		if (hash == '#abc' && new_hash == '') {
+			$('.weui-popup-modal').removeClass('blackground');
+			$('.weui_return_wrapper').removeClass('black_back').addClass('white_back');$.closePopup();
+		}
+		hash = new_hash;
+	} 
 
 	var localIds = '', localData = '';
 	 
@@ -202,7 +218,9 @@
 						  
 						$('#wrapper').height(document.documentElement.clientHeight);
 						$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');
+							$('.weui-popup-modal').addClass('blackground');
 						$("#crop_container").popup();
+						//$(".open-popup").trigger('click');
 
 						var image = document.querySelector('#image');
 						var cropper = new Cropper(image, {
