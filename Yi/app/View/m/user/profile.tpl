@@ -211,9 +211,9 @@
 						} else {
 							var localData =  localIds[0];
 						}
-						alert(localData);
+					
 						 // $('#avater').attr("src", localIds[0]);
-						  $('#image').attr("src", localData);
+						  $('#image').attr("src", 'https://m.anyitime.com/public/images/1.jpg');
 						  
 						$('#wrapper').height(document.documentElement.clientHeight);
 						$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');

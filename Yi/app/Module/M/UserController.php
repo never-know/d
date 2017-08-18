@@ -95,7 +95,22 @@ class UserController extends \App\Module\M\BaseController
 		if (!empty($img)) {
 			$path 	= get_avater($wx_id);	// wx_id
 			if (make_dir(PUBLIC_PATH . $path)) {
-				file_put_contents(PUBLIC_PATH . $path, $img);
+				$src = imagecreatefromstring(base64_decode($img));
+				
+				$x = $_POST['x'];
+				$y = $_POST['y'];
+				//裁剪区域的宽和高
+				$width = $_POST['width'];
+				 
+				//最终保存成图片的宽和高，和源要等比例，否则会变形
+				$final_width = 100;
+		 
+				//将裁剪区域复制到新图片上，并根据源和目标的宽高进行缩放或者拉升
+				$new_image = imagecreatetruecolor($final_width, $final_width);
+				imagecopyresampled($new_image, $src, 0, 0, $x, $y, $final_width, $final_width, $width, $width);
+				
+				
+				file_put_contents(PUBLIC_PATH . $path, $new_image);
 				$result['headimgurl'] = ASSETS_URL . $path;
 				$this->success($result);
 			}

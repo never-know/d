@@ -238,7 +238,7 @@ class DrawService extends \Min\Service
 		$params['extra_info'] 	= trim($data['extra_info']);
 		
 		
-		if (!validate('account_id', $params['account_name']) || !validate('nickname', $params['real_name']) || !validate('text', $params['extra_info'], 32, 0)) {
+		if (!validate('account_id', $params['account_name']) || !validate('text', $params['real_name'], 20, 2) || !validate('text', $params['extra_info'], 32, 0)) {
 			return $this->error('参数错误', 30000);
 		}
 		
