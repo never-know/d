@@ -1,10 +1,11 @@
-	<div class="weui_return_wrapper black_back" >
-		<div class="weui_cells weui_cells_access weui_return" style="display:flex">
-			<a class="weui_cell" onclick="history.go(-1);"  style="flex=1;-webkit-box-flex: 1;-webkit-flex: 1;">
+	<div class="weui_return_wrapper  white_back" >
+		<div class="weui_cells weui_cells_access weui_return"  >
+			<a class="weui_cell black_return" onclick="history.go(-1);" >
 				<span class="weui_cell_ft" ></span>返回
 			</a>
-			 
-			<a href="javascript:;" class="weui_btn weui_btn_primary" style="  width: 73px;height: 30px; font-size: 16px; line-height: 30px; margin-top: 8px;  margin-right: 20px; padding-top: 3px;">保存</a>
+			<div id ="save_button">
+			<a href="javascript:;" class="weui_btn weui_btn_primary" style="  width: 70px;height: 30px; font-size: 13px; line-height: 30px; margin-top: 8px;  margin-right: 20px; padding-top: 1px;">保存</a>
+			</div>
 		 
 		</div>
 		
@@ -87,14 +88,29 @@
 		background-color:#292929;
 		display:block;
 	}
-	.black_back .save_button{
+	.black_back .weui_return{
+ 
 		display:flex;
+	}
+	.black_back #save_button{
+		display:block;
+		flex=1;
+		-webkit-box-flex: 1;
+		-webkit-flex: 1;
+	}
+	.white_back #save_button{
+		display:none;
+	}
+	.white_back .weui_return, .black_back .black_return {
+		flex=1;
+		-webkit-box-flex: 1;
+		-webkit-flex: 1;
 	}
 	
 	</style>
 	<style>
     #crop_container {
-      max-width: 640px;
+      max-width: 100%;
       padding: 20px auto;
 	  background:#000;
     }
@@ -105,7 +121,7 @@
   </style>
 	
 	<div id="crop_container" class="weui-popup-container">
-    <div>
+    <div id="wrapper">
       <img id="image" src="https://m.anyitime.com/public/images/1.jpg" alt="Picture">
     </div>
 	</div>
@@ -116,8 +132,7 @@
 	<script type="text/javascript" src="/public/js/m/cropper.js"></script>	
 	<link rel="stylesheet" href="/public/css/cropper.css">	
 	<script>
-	
-	var ios = false;
+
 	var localIds = '', localData = '';
 	 
 	wx.config({
@@ -151,126 +166,111 @@
       });
 	  
 	   $(document).on("click", "#avater_wrapper", function() {
-	   alert('click');
-	   
-	   wx.checkJsApi({
-		jsApiList: ["chooseImage", "uploadImage","getLocalImgData"], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-		success: function(res) {
-			console.log('1111');
-			console.log(res);
-			 
-			if (window.__wxjs_is_wkwebview) {
-				ios = true;
-			}
-			
-			if (res.checkResult.chooseImage == true) {
-				wx.chooseImage({
-					count: 1,  
-					sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
-					sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-					success: function (res2) {
-						console.log('localIds');
-						console.log(res2);
-						localIds = res2.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-						if (res.checkResult.uploadImage == true) {
-							wx.uploadImage({
-								localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
-								isShowProgressTips: 1, // 默认为1，显示进度提示
-								success: function (res3) {
-									console.log(res3);
-									//var serverId = res3.serverId; // 返回图片的服务器端ID
-									
-									if (ios == true) {
-										wx.getLocalImgData({
-											localId: localIds[0], // 图片的localID
-											success: function (res4) {
-											//alert(res4.localData);
-												localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
-												//$('avater').attr('src', res4.localData);
-											}
-										});
-									} else {
-										
-										localData =  localIds[0];
-									}
-									
-									  $('#avater').attr("src", localIds[0]);
-									  $('#image').attr("src", localData);
-									  
-									
-									$("#crop_container").popup();
-									
-									
-									 
-									 
-									     var image = document.querySelector('#image');
-										  var cropper = new Cropper(image, {
-											dragMode: 'move',
-											aspectRatio: 1 / 1,
-											autoCropArea: 0.8,
-											restore: false,
-											guides: false,
-											center: false,
-											highlight: false,
-											cropBoxMovable: false,
-											cropBoxResizable: false,
-											toggleDragModeOnDblclick: false,
-											checkOrientation:false,
-											background:false,
-											 rotatable:false,
-											 zoomOnWheel:false,
-											
-										  });
-									
-									
-									$.ajax({
-										url:'/user/avater.html', 
-										type:'POST', 
-										data: {serverid: res3.serverId, csrf_token:"<?=get_token('m_user_avater')?>"},
-										success: function(data){
-											if (data.statusCode == 1 ) {
-												$('avater').attr('src', data.body.headimgurl);
-											} else {
-												// $.toast(data.message, "cancel");
-												// $('#formSubmitBtn').attr("sindex", 0);
-												if (ios == true) {
-													wx.getLocalImgData({
-														localId: localIds[0], // 图片的localID
-														success: function (res4) {
-															//localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
-															//$('avater').attr('src', res4.localData);
-														}
-													});
-												} else {
-													$('avater').attr('src', localIds[0]);
-												}
-											}
-										},
-										error:function(){
-											 $.toast("网络连接失败", "cancel");
-											 $('#formSubmitBtn').attr("sindex", 0);
-										}
-									});
-									
-									
+ 
+		wx.chooseImage({
+			count: 1,  
+			sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+			sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+			success: function (res2) {
+				console.log('localIds');
+				console.log(res2);
+				localIds = res2.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+		
+				wx.uploadImage({
+					localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+					isShowProgressTips: 1, // 默认为1，显示进度提示
+					success: function (res3) {
+						console.log(res3);
+						//var serverId = res3.serverId; // 返回图片的服务器端ID
+						
+						if (window.__wxjs_is_wkwebview) {
+							wx.getLocalImgData({
+								localId: localIds[0], // 图片的localID
+								success: function (res4) {
+								//alert(res4.localData);
+									localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
+									//$('avater').attr('src', res4.localData);
 								}
-							});	
+							});
+						} else {
+							
+							localData =  localIds[0];
 						}
+						
+						 // $('#avater').attr("src", localIds[0]);
+						  $('#image').attr("src", 'https://m.anyitime.com/public/images/1.jpg');
+						  
+						$('#wrapper').height(document.documentElement.clientHeight);
+						$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');
+						$("#crop_container").popup();
+
+						var image = document.querySelector('#image');
+						var cropper = new Cropper(image, {
+							dragMode: 'move',
+							viewMode:1,
+							aspectRatio: 1 / 1,
+							autoCropArea: 1,
+							restore: false,
+							guides: false,
+							center: false,
+							highlight: false,
+							cropBoxMovable: false,
+							cropBoxResizable: false,
+							toggleDragModeOnDblclick: false,
+							checkOrientation:false,
+							background:false,
+							 rotatable:false,
+							 zoomOnWheel:true,
+							 minContainerHeight:400
+						
+						});
+						
+						image.addEventListener('cropend', function (e) {
+							console.log( cropper.getCroppedCanvas());
+							console.log( cropper.getImageData());
+							console.log( cropper.getData());
+						});
+						
+						var img = {};
+						
+						$('#save_button').on('click', function(){
+							
+							img = cropper.getData();
+							
+							$.ajax({
+								url:'/user/avater.html', 
+								type:'POST', 
+								data: {media_id: res3.serverId, x: img.x, y:img.y, width:img.width, height : img.height, csrf_token:"<?=get_token('m_user_avater')?>"},
+								success: function(data){
+									if (data.statusCode == 1 ) {
+										$('avater').attr('src', data.body.headimgurl);
+									} else {
+										// $.toast(data.message, "cancel");
+										// $('#formSubmitBtn').attr("sindex", 0);
+										if (window.__wxjs_is_wkwebview) {
+											wx.getLocalImgData({
+												localId: localIds[0], // 图片的localID
+												success: function (res4) {
+													//localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
+													//$('avater').attr('src', res4.localData);
+												}
+											});
+										} else {
+											$('avater').attr('src', localIds[0]);
+										}
+									}
+								},
+								error:function(){
+									 $.toast("网络连接失败", "cancel");
+									 $('#formSubmitBtn').attr("sindex", 0);
+								}
+							});
+						});
 					}
-				});
-			
+				});	
 			}
-			
-			 
-			
-			// 以键值对的形式返回，可用的api值true，不可用为false
-			// 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
-		}
-	});
-	
-	
-       
-      });
+		});
+    });
 	  
 	  
 	  

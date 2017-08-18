@@ -86,6 +86,7 @@ class UserController extends \App\Module\M\BaseController
 	
 	public function avater_post()
 	{	
+		watchdog($_POST);
 		$wx = $this->getWx();
 		$img = $wx->getMedia($_POST['media_id']);
 		

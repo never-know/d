@@ -970,13 +970,14 @@ var render$1 = {
     var aspectRatio = naturalWidth / naturalHeight;
     var canvasWidth = containerData.width;
     var canvasHeight = containerData.height;
-
+	//console.log(containerData);
+	/* 比屏幕 比例宽版 */
     if (containerData.height * aspectRatio > containerData.width) {
       if (viewMode === 3) {
         canvasWidth = containerData.height * aspectRatio;
       } else {
         canvasHeight = containerData.width / aspectRatio;
-      }
+      }	/* 高版 */
     } else if (viewMode === 3) {
       canvasHeight = containerData.width / aspectRatio;
     } else {
@@ -990,6 +991,8 @@ var render$1 = {
       width: canvasWidth,
       height: canvasHeight
     };
+	
+	//console.log(canvasData);
 
     canvasData.oldLeft = canvasData.left = (containerData.width - canvasWidth) / 2;
     canvasData.oldTop = canvasData.top = (containerData.height - canvasHeight) / 2;
