@@ -45,5 +45,38 @@ class DrawController extends \App\Module\M\BaseController
 		$result['body']['meta'] = ['title' =>'资金明细'];
 		$this->response($result);
 	}
+	
+	public function account_get() 
+	{
+		$result = $this->request('\\App\\Service\\Draw::account', session_get('USER_ID'));	
+		 
+		$result['body']['readonly'] = (empty($result['body']['list']) ? '' :'readonly="readonly"');
+		 
+		$result['body']['meta'] = ['title' =>'提现帐号'];
+		$this->response($result);
+	
+	}
+	
+	public function account_post() 
+	{
+		$user_id = session_get('USER_ID');
+		$result = $this->request('\\App\\Service\\Draw::account', $user_id);	
+		
+		if (!empty($result['list'])) {
+			$this->error('已存在提现帐号', 30000);
+		}
+		 
+		$params= [];
+		
+		$params['status'] 		= 1;
+		$params['account_type'] = 1;
+		$params['extra_info'] 	= '';
+		$params['user_id'] 		= $user_id;
+		$params['real_name'] 	= $_POST['realname'];
+		$params['account_name'] = $_POST['account'];
+
+		$result = $this->request('\\App\\Service\\Draw::accountAdd', $params, self::EXITALL);	
+ 
+	}
 
 }

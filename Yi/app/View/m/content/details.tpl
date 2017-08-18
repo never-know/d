@@ -23,7 +23,11 @@
 	</div>	
 </body>
 <script>
-
+/* 进入可视区
+$(window).on("scroll",function(){
+    console.log(( $(".box").offset().top - $(this).scrollTop() ) > $(this).height());
+});
+*/
 function qrcodenotfound(){var img=event.srcElement;img.src="/public/images/qrcode.jpg"; img.onerror=null;} 
 function loadScript(url, callback) {
   var script = document.createElement("script");

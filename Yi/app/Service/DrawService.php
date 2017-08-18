@@ -217,7 +217,7 @@ class DrawService extends \Min\Service
 		if (false === $result) {
 			return $this->error('操作失败', 20106);
 		} else {
-			return $this->success($result);
+			return $this->success(['list' => $result]);
 		}
 	}
 	
@@ -225,22 +225,28 @@ class DrawService extends \Min\Service
 	public function accountAdd($data)
 	{
 		$params = [];
+		$params['status'] 		= intval($data['status']);
 		$params['user_id'] 		= intval($data['user_id']);
 		$params['account_type'] = intval($data['account_type']);
 		
-		if ($params['user_id']  < 1 || !in_array($params['account_type'], [1, 2, 3], true)) {
+		if ($params['user_id']  < 1) {
 			return $this->error('参数错误', 30000);
 		}
 		
-		$params['account_id'] 	= trim($data['account_id']);
 		$params['account_name'] = trim($data['account_name']);
-		$params['extra'] 		= trim($data['extra']);
+		$params['real_name'] 	= trim($data['real_name']);
+		$params['extra_info'] 	= trim($data['extra_info']);
 		
-		if (!validate('account_id', $params['account_id']) || !validate('text', $params['account_name'], 20, 2) || !validate('text', $params['extra'], 20, 0)) {
+		
+		if (!validate('account_id', $params['account_name']) || !validate('nickname', $params['real_name']) || !validate('text', $params['extra_info'], 32, 0)) {
 			return $this->error('参数错误', 30000);
 		}
 		
-		$sql = 'INSERT INTO {{user_balance_account}} ' . bulid_query_insert($params);
+		$params['account_name'] = safe_json_encode($params['account_name']);
+		$params['real_name'] 	= safe_json_encode($params['real_name']);
+		$params['extra_info'] 	= safe_json_encode($params['extra_info']);
+		
+		$sql = 'INSERT INTO {{user_balance_account}} ' . build_query_insert($params);
 		$result = $this->query($sql);
 		if ($result['id'] > 0) {
 			return $this->success();

@@ -103,7 +103,7 @@ class UserController extends \App\Module\M\BaseController
 			
 		$this->error('操作失败', 20000);
 	}
-	
+ 
 	public function binded_get()
 	{
 		$result						= [];

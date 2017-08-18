@@ -48,7 +48,6 @@
 	
 	<div class="weui_cells">
 		<div class="weui_cell" href="javascript:;" id="qrcode">
-		
           <div class="weui_cell_bd weui_cell_primary">
             <p>二维码名片</p>
           </div>
@@ -61,9 +60,9 @@
 	<div class="weui_cells weui_cells_access">
 
         
-        <div class="weui_cell" href="javascript:;">
+        <div class="weui_cell" onclick="window.location.href='/draw/account.html'">
           <div class="weui_cell_bd weui_cell_primary" id="balance_account">
-            <p>提现帐户设置</p>
+            <p>提现帐户设置（支付宝）</p>
           </div>
           <div class="weui_cell_ft weui_cell_ft_fix"></div>
         </div>
@@ -84,7 +83,7 @@
     padding-left: 10px;
 	}
 	.black_back{
-		background-color:#292929;
+	 
 		display:block;
 	}
 	.black_back .weui_return{
@@ -140,17 +139,18 @@
 	<script>
 	
 	var hash  = window.location.hash || '';
+	var cropper = null;
 	window.onhashchange = function(){
+ 
 		var new_hash = window.location.hash || ''; 	//substring(1)用来减去地址栏的地址中的#号
 		if (hash == '#abc' && new_hash == '') {
 			$('.weui-popup-modal').removeClass('blackground');
 			$('.weui_return_wrapper').removeClass('black_back').addClass('white_back');$.closePopup();
+			 
 		}
 		hash = new_hash;
 	} 
-
-	var localIds = '', localData = '';
-	 
+ 
 	wx.config({
 			appId: 	"<?=$result['js']['appId']?>",
 			timestamp:  <?=$result['js']['timestamp']?>,
@@ -190,7 +190,7 @@
 			success: function (res2) {
 				console.log('localIds');
 				console.log(res2);
-				localIds = res2.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+				var localIds = res2.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
 		
 				wx.uploadImage({
 					localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
@@ -204,26 +204,28 @@
 								localId: localIds[0], // 图片的localID
 								success: function (res4) {
 								//alert(res4.localData);
-									localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
+								var localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
 									//$('avater').attr('src', res4.localData);
 								}
 							});
 						} else {
-							
-							localData =  localIds[0];
+							var localData =  localIds[0];
 						}
-						
+						alert(localData);
 						 // $('#avater').attr("src", localIds[0]);
-						  $('#image').attr("src", 'https://m.anyitime.com/public/images/1.jpg');
+						  $('#image').attr("src", localData);
 						  
 						$('#wrapper').height(document.documentElement.clientHeight);
 						$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');
 							$('.weui-popup-modal').addClass('blackground');
 						$("#crop_container").popup();
-						//$(".open-popup").trigger('click');
-
+						
 						var image = document.querySelector('#image');
-						var cropper = new Cropper(image, {
+						if (cropper && cropper.destroy) {
+							cropper.destroy();
+						}
+						
+						cropper = new Cropper(image, {
 							dragMode: 'move',
 							viewMode:1,
 							aspectRatio: 1 / 1,
@@ -254,7 +256,7 @@
 						$('#save_button').on('click', function(){
 							
 							img = cropper.getData();
-							
+						 
 							$.ajax({
 								url:'/user/avater.html', 
 								type:'POST', 
