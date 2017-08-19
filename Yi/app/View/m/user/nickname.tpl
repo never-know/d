@@ -53,7 +53,7 @@ padding: 16px 15px 6px 15px;
 					data: $form.serialize(),
 					success: function(data){
 						if (data.statusCode == 1 ) {
-							window.location.href = '/user/profile.html';
+							window.history.go(-1);
 						} else {
 							 $.toast(data.message, "cancel");
 							 $('#formSubmitBtn').attr("sindex", 0);

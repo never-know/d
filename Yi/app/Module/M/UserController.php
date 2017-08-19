@@ -86,7 +86,7 @@ class UserController extends \App\Module\M\BaseController
 	
 	public function avater_post()
 	{	
-		 
+		watchdog($_POST);  
 		$wx = $this->getWx();
 		
 		$img = $wx->getMedia($_POST['media_id']);
@@ -96,23 +96,34 @@ class UserController extends \App\Module\M\BaseController
 		if (!empty($img)) {
 			$path 	= get_avater($wx_id);	// wx_id
 			if (make_dir(PUBLIC_PATH . $path)) {
-				$src = imagecreatefromstring(base64_decode($img));
+				$src_data = base64_decode($img);
+				$src = imagecreatefromstring($src_data);
+				if (!empty($src)) {
+					imagepng($src, PUBLIC_PATH . $path . '.origin.png');
 				
-				$x = intval($_POST['x']);
-				 
-				//裁剪区域的宽和高
+					list($origin_width, $origin_height, $type, $attr) = getimagesizefromstring($src_data);
+					//watchdog('origin_width:'. $origin_width);
+					$aspectRatio = $origin_width/$_POST['naturalWidth'];
 				
-				$width = intval($_POST['width']);
+					$x =  intval($_POST['x']*$aspectRatio);
+					$y =  intval($_POST['y']*$aspectRatio);
+
+					//裁剪区域的宽和高
+				
+					$width =  intval($_POST['width']/$aspectRatio);
+				
+					//watchdog('x:'. $x . ' y:' . $y .' width:' .$width);
 				 
-				$final_width = 120;
+					$final_width = 64;
 		 
-				//将裁剪区域复制到新图片上，并根据源和目标的宽高进行缩放或者拉升
-				$new_image = imagecreatetruecolor($final_width, $final_width);
-				imagecopyresampled($new_image, $src, 0, 0, $x, $y, $final_width, $final_width, $width, $width);
-				$r = imagepng($new_image, PUBLIC_PATH . $path);
-				if ($r) {
-					$this->success(['headimgurl' => ASSETS_URL . $path]);
-				} 
+					//将裁剪区域复制到新图片上，并根据源和目标的宽高进行缩放或者拉升
+					$new_image = imagecreatetruecolor($final_width, $final_width);
+					imagecopyresampled($new_image, $src, 0, 0, $x, $y, $final_width, $final_width, $width, $width);
+					$r = imagepng($new_image, PUBLIC_PATH . $path);
+					if ($r) {
+						$this->success(['headimgurl' => ASSETS_URL . $path]);
+					} 
+				}
 			}
 		} 
 			
@@ -138,6 +149,7 @@ class UserController extends \App\Module\M\BaseController
 		$user = session_get('user');
 		 
 		$result['headimgurl'] = get_avater($user['wx_id'], ASSETS_URL);
+		
 		watchdog($result['headimgurl']);
 		if (empty($user['nickname'])) {
 			$result['nickname'] = 'An_' .  substr(session_get('user_phone'), -4);

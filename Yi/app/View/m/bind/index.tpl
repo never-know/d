@@ -164,7 +164,7 @@ padding:10px 20px;
 			</section>
           </section>
           <section>
-            <a href="javascript:;" class="weui_btn weui_btn_plain_primary close-popup">关闭</a>
+            <a href="javascript:;" class="weui_btn weui_btn_plain_primary" onclick="window.history.go(-1);">关闭</a>
           </section>
         </article>
       </div>

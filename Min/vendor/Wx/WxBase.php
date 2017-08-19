@@ -442,18 +442,19 @@ class WxBase
 		//如果要获取的素材是视频文件时，不能使用https协议，必须更换成http协议
 		$url_prefix = $is_video?str_replace('https','http',self::API_URL_PREFIX):self::API_URL_PREFIX;
 		$result = http_get($url_prefix.self::MEDIA_GET_URL.'access_token='.$this->access_token.'&media_id='.$media_id);
-		return base64_encode($result);
+		watchdog($url_prefix.self::MEDIA_GET_URL.'access_token='.$this->access_token.'&media_id='.$media_id, 'wx_getMedia');
+		 
 		if ($result)
 		{
             if (is_string($result)) {
                 $json = json_decode($result,true);
-                if (!$json || !empty($json['errcode'])) {
+                if (!empty($json['errcode'])) {
 					watchdog($result, 'wx_result_error');
 					return false;
 				}
             }
 			
-			return $result;
+			return base64_encode($result);
 		}
 		
 		return false;

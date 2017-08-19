@@ -200,84 +200,73 @@
 					var localData =  localIds[0];
 				}
 				
-				//$('#image').attr("src", 'https://m.anyitime.com/public/images/1.jpg');
-				$('#image').attr("src", localData);
+				wx.uploadImage({
+					localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+					isShowProgressTips: 1, // 默认为1，显示进度提示
+					success: function (res3) {
+						console.log(res3);
+				
+						//$('#image').attr("src", 'https://m.anyitime.com/public/images/5.png');
+						$('#image').attr("src", localData);
 						  
-				$('#wrapper').height(document.documentElement.clientHeight);
-				$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');
-				$('.weui-popup-modal').addClass('blackground');
-				$("#crop_container").popup();
+						$('#wrapper').height(document.documentElement.clientHeight);
+						$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');
+						$('.weui-popup-modal').addClass('blackground');
+						$("#crop_container").popup();
+						
+						var image = document.querySelector('#image');
+						if (cropper && cropper.destroy) {
+							cropper.destroy();
+						}
 				
-				var image = document.querySelector('#image');
-				if (cropper && cropper.destroy) {
-					cropper.destroy();
-				}
-				
-				cropper = new Cropper(image, {
-					dragMode: 'move',
-					viewMode:1,
-					aspectRatio: 1 / 1,
-					autoCropArea: 1,
-					restore: false,
-					guides: false,
-					center: false,
-					highlight: false,
-					cropBoxMovable: false,
-					cropBoxResizable: false,
-					toggleDragModeOnDblclick: false,
-					checkOrientation:false,
-					background:false,
-					rotatable:false,
-					zoomOnWheel:true,
-					minContainerHeight:400
-				
-				});
-				image.addEventListener('cropend', function (e) {
-					console.log( cropper.getCroppedCanvas());
-					console.log( cropper.getImageData());
-					console.log( cropper.getData());
-				});
- 
-				$('#save_button').on('click', function(){
-				
-					wx.uploadImage({
-						localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
-						isShowProgressTips: 1, // 默认为1，显示进度提示
-						success: function (res3) {
-							console.log(res3);
-					
-							var img = cropper.getData();
+						cropper = new Cropper(image, {
+							dragMode: 'move',
+							viewMode:1,
+							aspectRatio: 1 / 1,
+							autoCropArea: 1,
+							restore: false,
+							guides: false,
+							center: false,
+							highlight: false,
+							cropBoxMovable: false,
+							cropBoxResizable: false,
+							toggleDragModeOnDblclick: false,
+							checkOrientation:false,
+							background:false,
+							rotatable:false,
+							zoomOnWheel:true,
+							minContainerHeight:400
+						
+						});
+						 
+						$('#save_button').on('click', function(){
 
+							var img = cropper.getData(), img2 = cropper.getImageData();
+								img.media_id = res3.serverId;
+								img.csrf_token = "<?=get_token('m_user_avater')?>";
+								img.naturalWidth = img2.naturalWidth;
+							 
 							$.ajax({
 								url:'/user/avater.html', 
 								type:'POST', 
-								data: {media_id: res3.serverId,x:img.x,width:img.width,csrf_token:"<?=get_token('m_user_avater')?>"},
+								data: img,
 								success: function(data){
 									if (data.statusCode == 1 ) {
-										$('avater').attr('src', data.body.headimgurl);
+										$('#avater').attr('src', data.body.headimgurl+'?v=' + new Date().getTime());
+										$.closePopup();
+										history.go(-1);
 									} else {
-										// $.toast(data.message, "cancel");
-										// $('#formSubmitBtn').attr("sindex", 0);
-										if (window.__wxjs_is_wkwebview) {
-											wx.getLocalImgData({
-												localId: localIds[0], // 图片的localID
-												success: function (res4) {
-													//localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
-													//$('avater').attr('src', res4.localData);
-												}
-											});
-										} else {
-											$('avater').attr('src', localIds[0]);
-										}
+										$.toast(data.message, "cancel");
 									}
+									$('#save_button').attr("sindex", 0);
 								},
 								error:function(){
 									 $.toast("网络连接失败", "cancel");
-									 $('#formSubmitBtn').attr("sindex", 0);
+									 $('#save_button').attr("sindex", 0);
 								}
 							});
-						}
-					});
+						});
+					}
 				});
 			}		 
 		});

@@ -10,15 +10,16 @@ class TestController extends \Min\Controller
 	public function img_get()
 	{
 	
-		$src = imagecreatefromstring(file_get_contents(PUBLIC_PATH . '/images/1.jpg'));
-		 	 
-		$x = 0;
-		$y = 0;
+		$a = '{"x":"0","y":"153.88957278829227","width":"360","height":"360","scaleX":"1","scaleY":"1","media_id":"dueS5sj_9-GUvl8knS0dVd-RwVertPSuIq-ZAtfFfJHcYtid9tgFiHn_028JIoZj","csrf_token":"U0Ltmv_E-55_CoOPGmykBq7S-4hdjGbCCZtaarqqCTE"}';
+		$src = imagecreatefromstring(file_get_contents(PUBLIC_PATH . '/images/00.jpg'));
+		$b = json_decode($a, true);	 
+		$x = intval($b['x']);
+		$y = intval($b['y']);
 		//裁剪区域的宽和高
-		$width = 540;
+		$width = intval($b['width']);
 		 
 		//最终保存成图片的宽和高，和源要等比例，否则会变形
-		$final_width = 540;
+		$final_width = 100;
  
 		//将裁剪区域复制到新图片上，并根据源和目标的宽高进行缩放或者拉升
 		$new_image = imagecreatetruecolor($final_width, $final_width);
