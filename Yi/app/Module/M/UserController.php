@@ -121,6 +121,7 @@ class UserController extends \App\Module\M\BaseController
 					imagecopyresampled($new_image, $src, 0, 0, $x, $y, $final_width, $final_width, $width, $width);
 					$r = imagepng($new_image, PUBLIC_PATH . $path);
 					if ($r) {
+						$result = $this->request('\\App\\Service\\Account::avater', session_get('USER_ID'));
 						$this->success(['headimgurl' => ASSETS_URL . $path]);
 					} 
 				}
@@ -148,7 +149,7 @@ class UserController extends \App\Module\M\BaseController
 		
 		$user = session_get('user');
 		 
-		$result['headimgurl'] = get_avater($user['wx_id'], ASSETS_URL);
+		$result['headimgurl'] = get_avater($user['wx_id'], ASSETS_URL) . '?v=' . $user['avater'];
 		
 		watchdog($result['headimgurl']);
 		if (empty($user['nickname'])) {

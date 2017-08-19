@@ -253,21 +253,11 @@
 								data: img,
 								success: function(data){
 									if (data.statusCode == 1 ) {
-										$.ajax({
-											 url:data.body.headimgurl,
-											 type:'GET',
-											 beforeSend :function(xmlHttp){ 
-												xmlHttp.setRequestHeader("If-Modified-Since","0"); 
-												xmlHttp.setRequestHeader("Cache-Control","no-cache");
-											 },
-											 success:function(response){
-												$('#avater').attr('src', data.body.headimgurl);
-												$.closePopup();
-												history.go(-1); 
-											 },
-											 async:false
-										});
-										
+										 
+										$('#avater').attr('src', data.body.headimgurl + '?v=' + new Date().getTime());
+										$.closePopup();
+										window.location.href="/user.html";
+											 
 									} else {
 										$.toast(data.message, "cancel");
 									}

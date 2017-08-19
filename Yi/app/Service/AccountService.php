@@ -270,15 +270,25 @@ class AccountService extends \Min\Service
 	{
 
 		$user_id 	= intval($data['user_id']);
-		$avater 	= intval($data['avater']);
-		
-		if ($user_id < 1 || $avater < 1 || $avater > 16777215) {
+		 
+		if ($user_id < 1) {
 			return $this->error('参数错误', 30201);
 		}
 		
-		$sql = 'UPDATE {{user}} SET avater = '. $avater . ' WHERE user_id = ' .$user_id;
+		$sql = 'UPDATE {{user}} SET avater = avater + 1 WHERE user_id = ' .$user_id;
 		
-		$this->query($sql);
+		$result = $this->query($sql);
+		
+		if ($result['effect'] > 0) {
+			// 清理缓存
+			$del_keys = [];
+			$del_keys[] = $this->getCacheKey('open_id', $data['open_id']);		 
+			$del_keys[] = $this->getCacheKey('wx_id', 	$data['wx_id']);		 
+			$del_keys[] = $this->getCacheKey('user_id', $data['user_id']);  
+			$del_keys[] = $this->getCacheKey('phone', 	$data['phone']);		 
+
+			$this->cache()->delete($del_keys);
+		}
 		
 		return $this->success('修改成功');
 	}
