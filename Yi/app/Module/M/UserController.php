@@ -12,7 +12,6 @@ class UserController extends \App\Module\M\BaseController
 		$user_id 	= session_get('USER_ID');
 		
 		// 用户基本信息
-		
 		$result = $this->userinfo();
 
 		$today 		= $this->request('\\App\\Service\\Balance::today', $user_id, self::EXITNONE, true);
@@ -33,8 +32,7 @@ class UserController extends \App\Module\M\BaseController
 	}
 	  
 	public function profile_get()
-	{
-		 
+	{ 
 		$result = $this->userinfo();
 		$wx = $this->getWx();
 		$result['js'] 		= $wx->getJsSign(CURRENT_URL);
@@ -43,17 +41,10 @@ class UserController extends \App\Module\M\BaseController
 		$this->success($result);
 	}
 	
-	public function setting_get()
-	{
-		$result['meta'] = ['title' =>' '];
-		$this->success($result);
-	}
-	
-	
 	public function nickname_get()
 	{
 		$result['meta'] = ['title' =>'修改昵称'];
-		$this->success();
+		$this->success($result);
 	
 	
 	}
