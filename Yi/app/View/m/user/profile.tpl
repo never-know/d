@@ -47,14 +47,14 @@
     </div>
 	
 	<div class="weui_cells">
-		<a class="weui_cell" href="#qrcode" id="qrcode">
+		<div class="weui_cell"  id="qrcode" onclick="window.location.hash='#qrcode'">
           <div class="weui_cell_bd weui_cell_primary">
             <p>二维码名片</p>
           </div>
           <div class="weui_cell_ft" style="height: 24px;">
 		  <img src="/public/images/abc.png" alt="" width="24">
           </div>
-        </a>
+        </div>
     </div>
 	
 	<div class="weui_cells weui_cells_access">
