@@ -210,7 +210,7 @@
 						//$('#image').attr("src", 'https://m.anyitime.com/public/images/qrcode.jpg');
 						$('#image').attr("src", localData);
 						 
-						 $('#wrapper').height(document.documentElement.clientHeight-60);
+						 $('#wrapper').height(document.documentElement.clientHeight);
 						 
 						$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');
 						$('.weui-popup-modal').addClass('blackground');
@@ -239,10 +239,7 @@
 							zoomOnWheel:true,
 							minContainerHeight:400
 						});
-						
-						
-						
-						
+
 						$('#save_button').on('click', function(){
 
 							var img = cropper.getData(), img2 = cropper.getImageData();
@@ -256,9 +253,21 @@
 								data: img,
 								success: function(data){
 									if (data.statusCode == 1 ) {
-										$('#avater').attr('src', data.body.headimgurl+'?v=' + new Date().getTime());
-										$.closePopup();
-										history.go(-1);
+										$.ajax({
+											 url:data.body.headimgurl,
+											 type:'GET',
+											 beforeSend :function(xmlHttp){ 
+												xmlHttp.setRequestHeader("If-Modified-Since","0"); 
+												xmlHttp.setRequestHeader("Cache-Control","no-cache");
+											 },
+											 success:function(response){
+												$('#avater').attr('src', data.body.headimgurl);
+												$.closePopup();
+												history.go(-1); 
+											 }
+											 async:false
+										});
+										
 									} else {
 										$.toast(data.message, "cancel");
 									}
