@@ -77,11 +77,17 @@ class WxController extends \Min\Controller
 		$add =  $this->request('\\App\\Service\\Wuser::addUserByOpenid', $param);
 		
 		if ($add['statusCode'] == 30205) {
-			$this->text('谢谢您再次关注，您可以先<a href="https://m.anyitime.com/bind.html" >绑定手机号码 </a>, 祝您生活愉快');
+			$this->reply();
+			$this->userinfo($add['body']);
+			exit;
+			$this->text('谢谢您再次关注，您可以<a href="https://m.anyitime.com/bind.html" >绑定手机号码 </a>, 祝您生活愉快');
 		} elseif ($add['statusCode'] == 30207) {
 			$this->text('谢谢您再次关注, 祝您生活愉快');
+			$this->reply();
+			$this->userinfo($add['body']);
+			exit;
 		} elseif ($add['statusCode'] == 1 ) {
-			$this->text('谢谢关注，您可以先<a href="https://m.anyitime.com/bind.html" >绑定手机号码</a>,祝您生活愉快');
+			$this->text('谢谢关注，您可以<a href="https://m.anyitime.com/bind.html" >绑定手机号码</a>,祝您生活愉快');
 			$this->reply();
 			$this->userinfo($add['body']);
 			exit;
@@ -432,20 +438,22 @@ class WxController extends \Min\Controller
 		$result 	= $wx->getUserInfo($open_id);
 		
 		if (!empty($result['openid'])) {
-			$cache 		= $this->cache('wx_user_info');
-			$key 		= $this->getCacheKey('userinfo', $user['id']);	// wx_id
-			 
-			if (!empty($result['headimgurl'])) {
-				$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
-				if (!empty($img)) {
-					$path 	= get_avater($user['id']);	// wx_id
-					if (make_dir(PUBLIC_PATH . $path)) {
-						$result['headimgurl'] = ASSETS_URL . $path;
-						file_put_contents(PUBLIC_PATH . $path, $img);
+			$cache 			= $this->cache('wx_user_info');
+			$key 			= $this->getCacheKey('userinfo', $user['id']);	// wx_id
+			$cache_result 	= $cache->get($key, true);
+			
+			if (empty($cache_result) || $cache->getDisc() === $cache_result || $cache_result['headimgurl'] != $result['headimgurl']) {
+				if (!empty($result['headimgurl']) ) {
+					$img = http_get(substr_replace($result['headimgurl'], '64', -1, 1));
+					if (!empty($img)) {
+						$path 	= get_avater($user['id']);	// wx_id
+						if (make_dir(PUBLIC_PATH . $path)) {
+							file_put_contents(PUBLIC_PATH . $path, $img);
+						}
 					}
 				}
-			}
-			 
+			} 
+			
 			$cache->set($key, $result);
 		}	
 	}
