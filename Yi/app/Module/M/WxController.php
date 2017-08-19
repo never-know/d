@@ -77,15 +77,9 @@ class WxController extends \Min\Controller
 		$add =  $this->request('\\App\\Service\\Wuser::addUserByOpenid', $param);
 		
 		if ($add['statusCode'] == 30205) {
-			$this->reply();
-			$this->userinfo($add['body']);
-			exit;
 			$this->text('谢谢您再次关注，您可以<a href="https://m.anyitime.com/bind.html" >绑定手机号码 </a>, 祝您生活愉快');
 		} elseif ($add['statusCode'] == 30207) {
 			$this->text('谢谢您再次关注, 祝您生活愉快');
-			$this->reply();
-			$this->userinfo($add['body']);
-			exit;
 		} elseif ($add['statusCode'] == 1 ) {
 			$this->text('谢谢关注，您可以<a href="https://m.anyitime.com/bind.html" >绑定手机号码</a>,祝您生活愉快');
 			$this->reply();
