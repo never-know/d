@@ -6,6 +6,33 @@ use Min\App;
 class TestController extends \Min\Controller
 {
 
+
+	public function img_get()
+	{
+	
+		$src = imagecreatefromstring(file_get_contents(PUBLIC_PATH . '/images/1.jpg'));
+		 	 
+		$x = 0;
+		$y = 0;
+		//裁剪区域的宽和高
+		$width = 540;
+		 
+		//最终保存成图片的宽和高，和源要等比例，否则会变形
+		$final_width = 540;
+ 
+		//将裁剪区域复制到新图片上，并根据源和目标的宽高进行缩放或者拉升
+		$new_image = imagecreatetruecolor($final_width, $final_width);
+		
+		
+		imagecopyresampled($new_image, $src, 0, 0, $x, $y, $final_width, $final_width, $width, $width);
+		//var_dump($new_image);
+		
+		imagepng($new_image, PUBLIC_PATH . '/images/12.png' );
+	
+	
+	
+	}
+
 	public function shareid_get()
 	{
 	 

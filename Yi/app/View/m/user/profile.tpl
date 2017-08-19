@@ -181,86 +181,77 @@
         },  $('#nick').html());
       });
 	  
-	   $(document).on("click", "#avater_wrapper", function() {
+	$(document).on("click", "#avater_wrapper", function() {
  
 		wx.chooseImage({
 			count: 1,  
-			sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+			sizeType: ['original'], // 可以指定是原图还是压缩图，默认二者都有
 			sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
 			success: function (res2) {
-				console.log('localIds');
-				console.log(res2);
 				var localIds = res2.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-		
-				wx.uploadImage({
-					localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
-					isShowProgressTips: 1, // 默认为1，显示进度提示
-					success: function (res3) {
-						console.log(res3);
-						//var serverId = res3.serverId; // 返回图片的服务器端ID
-						
-						if (window.__wxjs_is_wkwebview) {
-							wx.getLocalImgData({
-								localId: localIds[0], // 图片的localID
-								success: function (res4) {
-								//alert(res4.localData);
-								var localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
-									//$('avater').attr('src', res4.localData);
-								}
-							});
-						} else {
-							var localData =  localIds[0];
+				if (window.__wxjs_is_wkwebview) {
+					wx.getLocalImgData({
+						localId: localIds[0], // 图片的localID
+						success: function (res4) {
+						var localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
 						}
-					
-						 // $('#avater').attr("src", localIds[0]);
-						  $('#image').attr("src", 'https://m.anyitime.com/public/images/1.jpg');
+					});
+				} else {
+					var localData =  localIds[0];
+				}
+				
+				//$('#image').attr("src", 'https://m.anyitime.com/public/images/1.jpg');
+				$('#image').attr("src", localData);
 						  
-						$('#wrapper').height(document.documentElement.clientHeight);
-						$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');
-							$('.weui-popup-modal').addClass('blackground');
-						$("#crop_container").popup();
-						
-						var image = document.querySelector('#image');
-						if (cropper && cropper.destroy) {
-							cropper.destroy();
-						}
-						
-						cropper = new Cropper(image, {
-							dragMode: 'move',
-							viewMode:1,
-							aspectRatio: 1 / 1,
-							autoCropArea: 1,
-							restore: false,
-							guides: false,
-							center: false,
-							highlight: false,
-							cropBoxMovable: false,
-							cropBoxResizable: false,
-							toggleDragModeOnDblclick: false,
-							checkOrientation:false,
-							background:false,
-							 rotatable:false,
-							 zoomOnWheel:true,
-							 minContainerHeight:400
-						
-						});
-						
-						image.addEventListener('cropend', function (e) {
-							console.log( cropper.getCroppedCanvas());
-							console.log( cropper.getImageData());
-							console.log( cropper.getData());
-						});
-						
-						var img = {};
-						
-						$('#save_button').on('click', function(){
-							
-							img = cropper.getData();
-						 
+				$('#wrapper').height(document.documentElement.clientHeight);
+				$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');
+				$('.weui-popup-modal').addClass('blackground');
+				$("#crop_container").popup();
+				
+				var image = document.querySelector('#image');
+				if (cropper && cropper.destroy) {
+					cropper.destroy();
+				}
+				
+				cropper = new Cropper(image, {
+					dragMode: 'move',
+					viewMode:1,
+					aspectRatio: 1 / 1,
+					autoCropArea: 1,
+					restore: false,
+					guides: false,
+					center: false,
+					highlight: false,
+					cropBoxMovable: false,
+					cropBoxResizable: false,
+					toggleDragModeOnDblclick: false,
+					checkOrientation:false,
+					background:false,
+					rotatable:false,
+					zoomOnWheel:true,
+					minContainerHeight:400
+				
+				});
+				image.addEventListener('cropend', function (e) {
+					console.log( cropper.getCroppedCanvas());
+					console.log( cropper.getImageData());
+					console.log( cropper.getData());
+				});
+ 
+				$('#save_button').on('click', function(){
+				
+					wx.uploadImage({
+						localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+						isShowProgressTips: 1, // 默认为1，显示进度提示
+						success: function (res3) {
+							console.log(res3);
+					
+							var img = cropper.getData();
+
 							$.ajax({
 								url:'/user/avater.html', 
 								type:'POST', 
-								data: {media_id: res3.serverId, x: img.x, y:img.y, width:img.width, height : img.height, csrf_token:"<?=get_token('m_user_avater')?>"},
+								data: {media_id: res3.serverId,x:img.x,width:img.width,csrf_token:"<?=get_token('m_user_avater')?>"},
 								success: function(data){
 									if (data.statusCode == 1 ) {
 										$('avater').attr('src', data.body.headimgurl);
@@ -285,10 +276,10 @@
 									 $('#formSubmitBtn').attr("sindex", 0);
 								}
 							});
-						});
-					}
-				});	
-			}
+						}
+					});
+				});
+			}		 
 		});
     });
 	  
