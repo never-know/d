@@ -118,10 +118,23 @@ class UserController extends \App\Module\M\BaseController
 		 
 					//将裁剪区域复制到新图片上，并根据源和目标的宽高进行缩放或者拉升
 					$new_image = imagecreatetruecolor($final_width, $final_width);
+					
 					imagecopyresampled($new_image, $src, 0, 0, $x, $y, $final_width, $final_width, $width, $width);
+					
 					$r = imagepng($new_image, PUBLIC_PATH . $path);
+					
 					if ($r) {
-						$result = $this->request('\\App\\Service\\Account::avater', session_get('USER_ID'));
+						$user = session_get('user');
+						$params				= [];
+						$params['user_id']	= $user['user_id'];
+						$params['wx_id']	= $user['wx_id'];
+						$params['phone']	= $user['phone'];
+						$params['open_id']	= $user['open_id'];
+						$result = $this->request('\\App\\Service\\Account::avater', $params);
+						if ($result['statusCode'] == 1) {
+							$user['avater'] += 1;
+							session_set('user', $user);
+						}
 						$this->success(['headimgurl' => ASSETS_URL . $path]);
 					} 
 				}
