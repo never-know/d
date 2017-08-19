@@ -110,7 +110,7 @@ class UserController extends \App\Module\M\BaseController
 
 					//裁剪区域的宽和高
 				
-					$width =  intval($_POST['width']/$aspectRatio);
+					$width =  intval($_POST['width']*$aspectRatio);
 				
 					//watchdog('x:'. $x . ' y:' . $y .' width:' .$width);
 				 

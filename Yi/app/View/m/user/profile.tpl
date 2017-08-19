@@ -188,6 +188,7 @@
 			sizeType: ['original'], // 可以指定是原图还是压缩图，默认二者都有
 			sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
 			success: function (res2) {
+				console.log(res2);
 				var localIds = res2.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
 				if (window.__wxjs_is_wkwebview) {
 					wx.getLocalImgData({
@@ -206,10 +207,11 @@
 					success: function (res3) {
 						console.log(res3);
 				
-						//$('#image').attr("src", 'https://m.anyitime.com/public/images/5.png');
+						//$('#image').attr("src", 'https://m.anyitime.com/public/images/qrcode.jpg');
 						$('#image').attr("src", localData);
-						  
-						$('#wrapper').height(document.documentElement.clientHeight);
+						 
+						 $('#wrapper').height(document.documentElement.clientHeight-60);
+						 
 						$('.weui_return_wrapper').removeClass('white_back').addClass('black_back');
 						$('.weui-popup-modal').addClass('blackground');
 						$("#crop_container").popup();
@@ -236,9 +238,11 @@
 							rotatable:false,
 							zoomOnWheel:true,
 							minContainerHeight:400
-						
 						});
-						 
+						
+						
+						
+						
 						$('#save_button').on('click', function(){
 
 							var img = cropper.getData(), img2 = cropper.getImageData();
