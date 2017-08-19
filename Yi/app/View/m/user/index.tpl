@@ -10,7 +10,7 @@
             <h4 class="weui_media_title"><?=$result['nickname']?></h4>
             <p class="weui_media_desc" style="font-size:13px;">手机号码 : <?=session_get('user_phone')?></p>
           </div>
-		   <div class="weui_media_hd" id="qrcode" style="text-align: right;margin-right: 0;">
+		   <div class="weui_media_hd" id="qrcode" onclick="window.location.hash='#qrcode'" style="text-align: right;margin-right: 0;" >
             <img class="weui_media_appmsg_thumb" src="/public/images/abc.png"  style="width:36px;vertical-align: middle;" alt="">
           </div>
 		   <div class="weui_panel_ft" style ="border:none;padding-left:24px;">
@@ -140,6 +140,17 @@
 	</style>	
 	 
 	 <script>
+	 
+	 	var hash  = window.location.hash || '';
+		var cropper = null;
+		window.onhashchange = function(){
+			var new_hash = window.location.hash || ''; 	//substring(1)用来减去地址栏的地址中的#号
+			 
+			if (hash == '#qrcode' && new_hash == '') {
+					$.closeModal();
+			}
+			hash = new_hash;
+		}
 		 $(document).on("click", "#qrcode", function() {
 		  
 			//$.alert('<img src="http://m.anyitime.com/public/images/avater.png" style="position:relative;width:100%;" />', '扫描二维码<p>关注安逸时光网微信公众号', '关闭');
@@ -148,7 +159,7 @@
 				  title: '扫描二维码<p>关注 <span style="color:red;">安逸时光网</span> 微信公众号',
 				  text: '<img src="https://m.anyitime.com/public/images/qrcode.png" style="position:relative;width:100%;" />',
 				  buttons: [
-					{ text: "关闭", className: "primary"},
+					{ text: "关闭", className: "primary", onClick: function(){history.go(-1);}},
 				  ]
 				});
 			

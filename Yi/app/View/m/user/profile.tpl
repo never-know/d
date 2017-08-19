@@ -152,10 +152,6 @@
 		}
 		hash = new_hash;
 	}
-	
-	$('.closemodal').on("click", function(){
-		history.go(-1);
-	});
  
 	wx.config({
 			appId: 	"<?=$result['js']['appId']?>",
@@ -291,7 +287,7 @@
 			  title: '扫描二维码<p>关注 <span style="color:red;">安逸时光网</span> 微信公众号',
 			  text: '<img src="https://m.anyitime.com/public/images/qrcode.png" style="position:relative;width:100%;" />',
 			  buttons: [
-				{ text: "关闭", className: "primary closemodal", onClick: function(){history.go(-1);} },
+				{ text: "关闭", className: "primary", onClick: function(){history.go(-1);} },
 			  ],
 			 
 			});
