@@ -47,14 +47,14 @@
     </div>
 	
 	<div class="weui_cells">
-		<div class="weui_cell" href="javascript:;" id="qrcode">
+		<a class="weui_cell" href="#qrcode" id="qrcode">
           <div class="weui_cell_bd weui_cell_primary">
             <p>二维码名片</p>
           </div>
           <div class="weui_cell_ft" style="height: 24px;">
 		  <img src="/public/images/abc.png" alt="" width="24">
           </div>
-        </div>
+        </a>
     </div>
 	
 	<div class="weui_cells weui_cells_access">
@@ -141,15 +141,21 @@
 	var hash  = window.location.hash || '';
 	var cropper = null;
 	window.onhashchange = function(){
- 
 		var new_hash = window.location.hash || ''; 	//substring(1)用来减去地址栏的地址中的#号
 		if (hash == '#abc' && new_hash == '') {
 			$('.weui-popup-modal').removeClass('blackground');
 			$('.weui_return_wrapper').removeClass('black_back').addClass('white_back');$.closePopup();
 			 
 		}
+		if (hash == '#qrcode' && new_hash == '') {
+				$.closeModal();
+		}
 		hash = new_hash;
-	} 
+	}
+	
+	$('.closemodal').on("click", function(){
+		history.go(-1);
+	});
  
 	wx.config({
 			appId: 	"<?=$result['js']['appId']?>",
@@ -285,7 +291,7 @@
 			  title: '扫描二维码<p>关注 <span style="color:red;">安逸时光网</span> 微信公众号',
 			  text: '<img src="https://m.anyitime.com/public/images/qrcode.png" style="position:relative;width:100%;" />',
 			  buttons: [
-				{ text: "关闭", className: "primary"},
+				{ text: "关闭", className: "primary closemodal"},
 			  ],
 			 
 			});
