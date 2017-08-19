@@ -54,7 +54,7 @@ padding: 16px 15px 6px 15px;
 					success: function(data){
 						if (data.statusCode == 1 ) {
 							//window.history.go(-1);
-							window.location.href="/user/profile.html";
+							window.location.href="/user.html";
 						} else {
 							 $.toast(data.message, "cancel");
 							 $('#formSubmitBtn').attr("sindex", 0);

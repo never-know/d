@@ -264,7 +264,7 @@
 												$('#avater').attr('src', data.body.headimgurl);
 												$.closePopup();
 												history.go(-1); 
-											 }
+											 },
 											 async:false
 										});
 										
