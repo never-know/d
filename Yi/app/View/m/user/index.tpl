@@ -8,7 +8,7 @@
           </div>
           <div class="weui_media_bd" style="margin-left:.5em;margin-top:4px;letter-spacing: 0px;">
             <h4 class="weui_media_title"><?=$result['nickname']?></h4>
-            <p class="weui_media_desc" style="font-size:13px;">手机号码 : <?=session_get('user_phone')?></p>
+            <p class="weui_media_desc long_dot" style="font-size:13px;">手机号码 : <?=session_get('user_phone')?></p>
           </div>
 		   <div class="weui_media_hd" id="qrcode" onclick="window.location.hash='#qrcode'" style="text-align: right;margin-right: 0;" >
             <img class="weui_media_appmsg_thumb" src="/public/images/abc.png"  style="width:36px;vertical-align: middle;" alt="">
@@ -136,6 +136,12 @@
 	}
 	.weui_panel:before  {
 	 border:none; 
+	}
+	.long_dot{
+	white-space: nowrap;text-overflow: ellipsis; overflow: hidden;
+	}
+	#qrcode{
+	width:50px;
 	}
 	</style>	
 	 

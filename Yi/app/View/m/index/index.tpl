@@ -76,15 +76,28 @@
 	<div class="weui_navbar">
 	
 	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;overflow: hidden;    -webkit-box-flex: 2;
-    -webkit-flex: 2;
-    flex: 2;" id="region" data-value="110000,110100,110101">
-		西湖区转塘街道西湖区转塘街道转塘街道转塘街道
+    -webkit-flex: 2; flex: 2;" id="region" data-value="110000,110100,110101">
+		省市区
 	</div>
 	
-	<div class="weui_navbar_item" id="show-actions">
-		更多选择
+	<div class="weui_navbar_item open-popup" id="show-actions"   data-target="#half">
+		街道乡镇
 	</div>
 	</div>
+	<style>
+	.weui-picker-overlay, .weui-picker-container { z-index: 100;}
+	.weui_navbar_item {
+		 
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		margin-left: 6px;
+		-webkit-box-flex: 2;
+		-webkit-flex: 2;
+		flex: 2;
+	}
+	
+	</style>
 	
 	<div class="weui-infinite-scroll">
 
@@ -98,8 +111,8 @@
 	</div>
 	  
 		<form id="list_form" onsubmit="return false" style="visibility:hidden;font-size:0;">
-			<input type="hidden" name="region" value=""/>
-			<input type="hidden" name="sub_region" value=""/>
+			<input type="hidden" name="region" id ="selected_region" value=""/>
+			<input type="hidden" name="sub_region" id ="selected_subregion" value=""/>
 			<input type="hidden" name="page" value="2" id="next_page"/>
 		</form>
 	  
@@ -134,54 +147,136 @@
 			return html;
 		}
 		
+		var template2 = function(i, value){
+
+			return ('<label class="weui_cell weui_check_label" for="weui-select-id-' + value  + '">'+        '<div class="weui_cell_bd weui_cell_primary">' +           
+							'<p>'+ i + '</p>'+          
+						'</div>'+          
+						'<div class="weui_cell_ft">'+            
+							'<input type="checkbox" class="weui_check" name="weui-select[]" id="weui-select-id-' + value  + '" value="' + value  + '"  data-title="'+ i + '" >'+           
+							'<span class="weui_icon_checked"></span> '+   
+						'</div> '+     
+					'</label>');
+		}
+		
 		page_load('/',   template);
 	  
     </script>
 	
 	<?php endif; ?>
   
+  
+	 <div id="half" class="weui-popup-container popup-bottom" style="z-index:200">
+      <div class="weui-popup-overlay"></div>
+      <div class="weui-popup-modal" style="background:#fff;">
+        <div class="toolbar" style="z-index:300">
+          <div class="toolbar-inner">
+            <a href="javascript:;" class="picker-button close-popup">确定</a>
+            <h1 class="title">乡镇街道</h1>
+          </div>
+        </div>
+        <div class="modal-content" style="min-height:200px;max-height:380px;overflow:scroll;background-">
+          <div class="weui_grids" style="z-index:200">
+				<div class="weui_cells weui_cells_checkbox" id="sub_region_checkbox"> 
+					 <div class="weui-infinite-scroll">
+						<div class="infinite-preloader"></div>  正在加载... 
+					</div>
+					 
+			</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  
 	<script src="/public/js/m/picker.js"></script>
+	<script src="/public/js/m/select.js"></script>
 	<script src="/public/js/m/citypicker.js"></script>
 	<script src="/public/js/m/city-picker.min.js"></script>
 	<script>
-	   $("#region").cityPicker({
-        title: "选择广告投放区域",
-        onChange: function (picker, values, displayValues) {
-          console.log(values, displayValues);
-        }
-      });
+	
  
-      $(document).on("click", "#show-actions", function() {
-        $.actions({
-          title: "选择操作",
-          onClose: function() {
-            console.log("close");
-          },
-          actions: [
-            {
-              text: "发布",
-              className: "color-primary",
-              onClick: function() {
-                $.alert("发布成功");
-              }
-            },
-            {
-              text: "编辑",
-              className: "color-warning",
-              onClick: function() {
-                $.alert("你选择了“编辑”");
-              }
-            },
-            {
-              text: "删除",
-              className: 'color-danger',
-              onClick: function() {
-                $.alert("你选择了“删除”");
-              }
-            }
-          ]
-        });
-      });
-	  
-
+	
+	var binded = false;
+	var sub_regions = [];
+	var current_sub_regions = [{title: '你好'}] ;
+		
+	$("#region").cityPicker({
+		title: "选择广告投放区域",
+		onChange: function (picker, values, displayValues) {
+			console.log(values, displayValues);
+			 
+		},
+		onClose: function(obj){
+			$('#selected_region').val(obj.value[2]);
+			$('#region').html(obj.displayValue.join(''));
+			if (sub_regions[obj.value[2]]) {
+				current_sub_regions	 = sub_regions[obj.value[2]];
+				$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
+				$('#half').popup();
+				return;
+			} else {
+				$('#sub_region_checkbox').html(' <div class="weui-infinite-scroll"><div class="infinite-preloader"></div>  正在加载...</div>');
+				$.ajax({
+					url:'/region/id/' + obj.value[2] +'.html', 
+					type:'GET', 
+					success: function(data){
+						if (data.statusCode == 1 ) {
+							current_sub_regions = sub_regions[obj.value[2]] = data.body[obj.value[2]];
+							$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
+							$('#half').popup();
+							 //$("#show-actions").click();
+							
+						}  
+					} 
+				});
+			}
+ 
+		}
+	});
+ 
+	
+  
+	$("#show-actions222").select({
+        title: "乡镇街道",
+        multi: true,
+        split:',',
+        closeText:'完成',
+        items: current_sub_regions,
+        onChange: function(d) {
+          $.alert("你选择了"+d.values+d.titles);
+        }
+    });
+	
+	$(".close-picker").select({
+        title: "乡镇街道",
+        multi: true,
+        split:',',
+        closeText:'完成',
+        items: current_sub_regions,
+        onChange: function(d) {
+          $.alert("你选择了"+d.values+d.titles);
+        }
+    });
+	 
+	
 	  </script>
+	  
+	  
+	  <script>
+      $(document).on("open", ".weui-popup-modal", function() {
+        console.log("open popup");
+      }).on("close", ".weui-popup-modal", function() {
+        console.log("close popup");
+		
+	// b.on("change",function(){var f=b.find("input:checked"),g=f.map(function(){return a(this).val()}),h=f.map(function(){return a(this).data("title")});d.updateInputValue(g,h),c.autoClose&&!c.multi&&a.closePicker()})
+	 
+	 f = $('#half').find("input:checked");
+	 
+	 g=f.map(function(){return $(this).val()}),
+	 $('#selected_subregion').val(g.join(','));
+	 h=f.map(function(){return $(this).data("title")});
+	 $('#show-actions').html(h.join(','));
+		
+      });
+    </script>
