@@ -212,6 +212,7 @@
 			current_sub_region = obj.value[2];
 			$('#selected_subregion').val(obj.value[2]);
 			$('#selected_region').val(obj.value[2]);
+			document.cookie = "selected_region=" + obj.value[2] +';path=/;'; 
 			if (obj.displayValue[0] == '北京' || obj.displayValue[0] == '上海' || obj.displayValue[0] == '重庆' || obj.displayValue[0] == '天津' ) {
 				obj.displayValue[0] = '';
 			}
@@ -295,6 +296,7 @@
 				$('#selected_subregion').val(subregion_ids.join(','));
 				$('#show-actions').html(subregion_title.join(','));
 				document.cookie = "subregion_title=" + subregion_title.join(',')+';path=/;'; 
+				document.cookie = "selected_subregion=" + subregion_ids.join(',') +';path=/;'; 
 				window.location.href = "/?region=" + $('#selected_region').val() +"&sub_reigon=" +$('#selected_subregion').val();
 				/*
 				$.ajax({

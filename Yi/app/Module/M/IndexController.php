@@ -7,8 +7,8 @@ class IndexController extends \App\Module\M\BaseController
 {
 	public function index_get()
 	{
-		$param['region'] 		= intval($_REQUEST['region']??0);
-		$param['sub_region'] 	= $_REQUEST['sub_region']??'';
+		$param['region'] 		= intval($_GET['region']??($_COOKIE['selected_region']??0));
+		$param['sub_region'] 	= $_REQUEST['sub_region']??($_COOKIE['selected_subregion']??'');
 		$result = $this->request('\\App\\Service\\Article::list', $param);
 		$result['body']['meta'] = ['menu_active' => 1, 'title' =>'列表'];
 		$result['body']['show_bottom'] = 1;
