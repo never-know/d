@@ -100,7 +100,7 @@ class ArticleService extends \Min\Service
 		$param = [];
 		$param_processed = [];
 		
-		$param_processed['tag'][] = 0;
+		$param_processed['tag'] = [0];
 		
 		if (!empty($p['tag'])) {
 			if (preg_match('/^([\d]+,)*[\d]+$/', $p['tag'])) {

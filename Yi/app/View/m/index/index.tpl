@@ -77,11 +77,11 @@
 	
 	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;overflow: hidden;    -webkit-box-flex: 2;
     -webkit-flex: 2; flex: 2;" id="region" data-value="110000,110100,110101">
-		省市区
+		<?=$result['params']['region_name']?:'全国'?>
 	</div>
 	
 	<div class="weui_navbar_item open-popup" id="show-actions"   data-target="#half">
-		街道乡镇
+		<?=$result['params']['sub_region_name']?:'全国'?>
 	</div>
 	</div>
 	<style>
@@ -111,8 +111,8 @@
 	</div>
 	  
 		<form id="list_form" onsubmit="return false" style="visibility:hidden;font-size:0;">
-			<input type="hidden" name="region" id ="selected_region" value=""/>
-			<input type="hidden" name="sub_region" id ="selected_subregion" value=""/>
+			<input type="hidden" name="region" id ="selected_region" value="<?=$result['params']['region']?>"/>
+			<input type="hidden" name="sub_region" id ="selected_subregion" value="<?=$result['params']['sub_region']?>"/>
 			<input type="hidden" name="page" value="2" id="next_page"/>
 		</form>
 	  
@@ -212,7 +212,11 @@
 			current_sub_region = obj.value[2];
 			$('#selected_subregion').val(obj.value[2]);
 			$('#selected_region').val(obj.value[2]);
+			if (obj.displayValue[0] == '北京' || obj.displayValue[0] == '上海' || obj.displayValue[0] == '重庆' || obj.displayValue[0] == '天津' ) {
+				obj.displayValue[0] = '';
+			}
 			$('#region').html(obj.displayValue.join(''));
+			document.cookie = "region_title=" + obj.displayValue.join('')+';path=/;'; 
 			if (sub_regions[obj.value[2]]) {
 				current_sub_regions	 = sub_regions[obj.value[2]];
 				$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
@@ -278,8 +282,10 @@
 			
 			var f_checked = $('#half').find("input:checked");
 			if (f_checked.length > 0) {
-				var subregion_ids=f.map(function(){return $(this).val()}),
-				var subregion_title=f.map(function(){return $(this).data("title")});
+				var subregion_ids=f_checked.map(function(){return $(this).val()});
+				var subregion_title=f_checked.map(function(){return $(this).data("title")});
+
+				
 			} else {
 				var subregion_ids = ['0'];
 				var subregion_title = ['未选择'];
@@ -288,7 +294,22 @@
 			if (subregion_ids.join(',') != current_subregion) {
 				$('#selected_subregion').val(subregion_ids.join(','));
 				$('#show-actions').html(subregion_title.join(','));
+				document.cookie = "subregion_title=" + subregion_title.join(',')+';path=/;'; 
 				window.location.href = "/?region=" + $('#selected_region').val() +"&sub_reigon=" +$('#selected_subregion').val();
+				/*
+				$.ajax({
+					url:'/', 
+					type:'GET', 
+					data: {region:$('#selected_region').val(),sub_reigon:$('#selected_subregion').val()}
+					success: function(data){
+						if (data.statusCode == 1 ) {
+							
+							
+						}  
+					} 
+				});
+				*/
+				
 			}
       });
 	  

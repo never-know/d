@@ -10,12 +10,14 @@ class IndexController extends \App\Module\M\BaseController
 		$param['region'] 		= intval($_REQUEST['region']??0);
 		$param['sub_region'] 	= $_REQUEST['sub_region']??'';
 		$result = $this->request('\\App\\Service\\Article::list', $param);
-		$result['body']['meta'] = ['menu_active' => 1, 'title' =>' '];
+		$result['body']['meta'] = ['menu_active' => 1, 'title' =>'列表'];
 		$result['body']['show_bottom'] = 1;
 		$result['body']['no_back'] = 1;
+		if (!empty($_COOKIE['subregion_title'])) {
+			$result['body']['params']['sub_region_name'] = $_COOKIE['subregion_title']?:'';
+			$result['body']['params']['region_name'] = $_COOKIE['region_title']?:'';
+		}
  
 		$this->response($result);
 	}
-	
-	 
 }
