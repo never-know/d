@@ -12,12 +12,12 @@ class LoginController extends \Min\Controller
 		if (PHP_SESSION_NONE === session_status()) {
 			App::initSession(true);  
 		} 
-		$this->layout('type-login');
+		$this->response('', '/layout/type-login');
 	}
 	
 	public function index_post()
 	{	
-		$phone 		= $_POST['phone'];
+		$phone 		= $_POST['name'];
 		$pwd 		= $_POST['pwd'];
 		$captcha 	= $_POST['captcha'];
 		if (empty($phone) || empty($pwd)) {	

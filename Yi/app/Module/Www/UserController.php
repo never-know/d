@@ -3,7 +3,7 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class UserController
+class UserController extends \App\Module\Www\BaseController
 {
 	private function login()
 	{

@@ -10,7 +10,7 @@ class RegistController extends \Min\Controller
 		if (PHP_SESSION_NONE === session_status()) {
 			App::initSession(true);  
 		} 
-		$this->layout('type-login');
+		$this->response(null,'/layout/type-login');
 	}
 	
 	public function send_post()

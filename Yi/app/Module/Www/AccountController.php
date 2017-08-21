@@ -3,7 +3,7 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class AccountController extends \Min\Controller
+class AccountController extends \App\Module\Www\BaseController
 { 
 	public function onConstruct() 
 	{

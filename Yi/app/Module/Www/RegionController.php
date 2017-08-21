@@ -4,7 +4,7 @@ namespace App\Module\Www;
 use App\Traits\RegionControllerTrait;
 use Min\App;
 
-class RegionController extends \Min\Controller
+class RegionController extends \App\Module\Www\BaseController
 {
 	use RegionControllerTrait;
 	/*

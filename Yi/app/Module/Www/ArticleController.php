@@ -1,16 +1,16 @@
 <?php
 namespace App\Module\Www;
 
-use App\Traits\RegionTrait;
+use App\Traits\RegionControllerTrait;
 use Min\App;
 
-class ArticleController extends \Min\Controller
+class ArticleController extends \App\Module\Www\BaseController
 {	
-	use RegionTrait;
+	use RegionControllerTrait;
 	
 	public function onConstruct()
 	{
-		require CONF_PATH .'/keypairs.php';
+		//require CONF_PATH .'/keypairs.php';
 	} 
 
 	public function list_get()

@@ -68,7 +68,7 @@ Min.event.bind('loginsubmit','click', function(){
 			pwd = _$('loginpwd'),
 			code = _$('logincode') ? _$('logincode').value : '';
 		minAjax({
-			url:'http://www.' + site_domain + '/login.html', 
+			url:'https://www.' + site_domain + '/login.html', 
 			type:'POST', 
 			data:{
 				name:name.value,
@@ -167,7 +167,7 @@ function code_check(){
 	var code = _$('logincode').value;
 	if(code == current_code) return;
 	current_code = code;
-	JSONP.get( 'http://www.' + site_domain + '/captcha/check.html', {captcha:code,type:'login'}, function(data){
+	JSONP.get( 'https://www.' + site_domain + '/captcha/check.html', {captcha:code,type:'login'}, function(data){
 			if(_$('logincode').value != code) return;
 			 code_tag(((data.statusCode==1)?1:2))
 		 }

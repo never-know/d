@@ -3,7 +3,7 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class UploadController extends \Min\Controller
+class UploadController extends \App\Module\Www\BaseController
 {
 	public function index_post()
 	{
