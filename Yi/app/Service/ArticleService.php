@@ -167,7 +167,7 @@ class ArticleService extends \Min\Service
 			}
 			
 			if (!empty($p['sub_region']) && preg_match('/^\d+(,\d)*$/', $p['sub_region'])) {
-				$param['filter']['region'] = ' OR region_id = ' . implode(' OR region_id = ' . explode(',', $p['sub_region']));
+				$param['filter']['region'] .= ' OR region_id = ' . implode(' OR region_id = ', explode(',', $p['sub_region']));
 			}
 			
 			$param['filter']['region'] = '(' . $param['filter']['region']. ')';

@@ -191,7 +191,7 @@
 			sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
 			sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
 			success: function (res2) {
-				console.log(res2);
+				
 				var localIds = res2.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
 				if (window.__wxjs_is_wkwebview) {
 					wx.getLocalImgData({
@@ -208,8 +208,7 @@
 					localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
 					isShowProgressTips: 1, // 默认为1，显示进度提示
 					success: function (res3) {
-						console.log(res3);
-				
+						
 						//$('#image').attr("src", 'https://m.anyitime.com/public/images/qrcode.jpg');
 						$('#image').attr("src", localData);
 						 

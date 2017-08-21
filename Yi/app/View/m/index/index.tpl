@@ -149,9 +149,7 @@
 		
 		var template2 = function(i, value){
 			var s = $('#selected_subregion').val().split(',');
-			console.log(s);
-			console.log(value);
-			console.log($.inArray(value, s)!=-1);
+			
 			return ('<label class="weui_cell weui_check_label" for="weui-select-id-' + value  + '">'+  '<div class="weui_cell_bd weui_cell_primary">' +           
 							'<p>'+ i + '</p>'+          
 						'</div>'+          
@@ -227,11 +225,10 @@
 	$("#region").cityPicker({
 		title: "选择广告投放区域",
 		onChange: function (picker, values, displayValues) {
-			console.log(values, displayValues);	 
+			//console.log(values, displayValues);	 
 		},
 		onClose: function(obj){
-			console.log(current_sub_region);
-			console.log(obj.value[2]);
+			
 			if (current_sub_region == obj.value[2] ) return;
 			current_sub_region = obj.value[2];
 			$('#selected_subregion').val(obj.value[2]);
