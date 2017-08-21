@@ -6,8 +6,13 @@ use Min\App;
 class IndexController extends \App\Module\M\BaseController
 {
 	public function index_get()
-	{
-		$param['region'] 		= intval($_GET['region']??($_COOKIE['selected_region']??0));
+	{	
+		if (!empty($_COOKIE['selected_region'])) {
+			$param['region'] =  explode(',', $_COOKIE['selected_region'])[2];
+		} else {
+			$param['region'] = 0;
+		}
+		
 		$param['sub_region'] 	= $_REQUEST['sub_region']??($_COOKIE['selected_subregion']??'');
 		$result = $this->request('\\App\\Service\\Article::list', $param);
 		$result['body']['meta'] = ['menu_active' => 1, 'title' =>'列表'];
@@ -16,6 +21,9 @@ class IndexController extends \App\Module\M\BaseController
 		if (!empty($_COOKIE['subregion_title'])) {
 			$result['body']['params']['sub_region_name'] = $_COOKIE['subregion_title']?:'';
 			$result['body']['params']['region_name'] = $_COOKIE['region_title']?:'';
+		}
+		if (!empty($_COOKIE['selected_region'])) {
+			$result['body']['params']['selected_region'] = $_COOKIE['selected_region'];
 		}
  
 		$this->response($result);

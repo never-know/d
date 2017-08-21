@@ -76,7 +76,7 @@
 	<div class="weui_navbar">
 	
 	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;overflow: hidden;    -webkit-box-flex: 2;
-    -webkit-flex: 2; flex: 2;" id="region" data-value="110000,110100,110101">
+    -webkit-flex: 2; flex: 2;" id="region" data-value="<?=$result['params']['selected_region']?:'110000,110100,110101'?>">
 		<?=$result['params']['region_name']?:'全国'?>
 	</div>
 	
@@ -212,7 +212,8 @@
 			current_sub_region = obj.value[2];
 			$('#selected_subregion').val(obj.value[2]);
 			$('#selected_region').val(obj.value[2]);
-			document.cookie = "selected_region=" + obj.value[2] +';path=/;'; 
+			$('#region').data('value', obj.value.join(','));
+			document.cookie = "selected_region=" + obj.value.join(',') +';path=/;'; 
 			if (obj.displayValue[0] == '北京' || obj.displayValue[0] == '上海' || obj.displayValue[0] == '重庆' || obj.displayValue[0] == '天津' ) {
 				obj.displayValue[0] = '';
 			}
