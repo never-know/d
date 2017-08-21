@@ -1,6 +1,6 @@
 	<div class="weui_return_wrapper  white_back" >
 		<div class="weui_cells weui_cells_access weui_return"  >
-			<a class="weui_cell black_return" onclick="history.go(-1);" >
+			<a class="weui_cell black_return" href="javascript:;" >
 				<span class="weui_cell_ft" ></span>返回
 			</a>
 			<div id ="save_button">
@@ -152,6 +152,14 @@
 		}
 		hash = new_hash;
 	}
+	
+	$(document).on('click', '.white_back .black_return', function(){
+		window.location.href="/user.html";
+	});
+	
+	$(document).on('click', '.black_back .black_return', function(){
+		history.go(-1);
+	});
  
 	wx.config({
 			appId: 	"<?=$result['js']['appId']?>",
@@ -258,7 +266,10 @@
 										 
 										$('#avater').attr('src', data.body.headimgurl + '?v=' + new Date().getTime());
 										$.closePopup();
-										window.location.href="/user.html";
+										history.replaceState(null, "用户信息", "/user.html");
+										//window.location.href="/user/profile.html";
+										//window.location.href="/user.html";
+										history.go(-1);
 											 
 									} else {
 										$.toast(data.message, "cancel");
