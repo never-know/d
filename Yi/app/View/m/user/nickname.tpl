@@ -37,7 +37,7 @@ padding: 16px 15px 6px 15px;
 </style>
 
 	<script>
- $('.weui_input').focus();
+
 	 
 	var $form = $("#form");  $form.form();
 	$("#formSubmitBtn").on("click", function(){

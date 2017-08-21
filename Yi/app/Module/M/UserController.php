@@ -9,6 +9,13 @@ class UserController extends \App\Module\M\BaseController
 	
 	public function index_get()
 	{
+	
+		if (intval(session_get('update_userinfo')) > $_SERVER['REQUEST_TIME'] - 10 ) {
+			session_set('update_userinfo', 0);
+			redirect('/user/profile.html');
+			exit;
+		}
+		
 		$user_id 	= session_get('USER_ID');
 		
 		// 用户基本信息
@@ -68,7 +75,7 @@ class UserController extends \App\Module\M\BaseController
 			$params['open_id']	= $user['open_id'];
 			
 			$result = $this->request('\\App\\Service\\Account::nickname', $params);	 
-			
+			session_set('update_userinfo', $_SERVER['REQUEST_TIME']);
 			$user['nickname'] = $params['nickname'];
 			session_set('user', $user);
 		}
@@ -127,6 +134,7 @@ class UserController extends \App\Module\M\BaseController
 							$user['avater'] += 1;
 							session_set('user', $user);
 						}
+						session_set('update_userinfo', $_SERVER['REQUEST_TIME']);
 						$this->success(['headimgurl' => ASSETS_URL . $path]);
 					} 
 				}
