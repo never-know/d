@@ -258,7 +258,7 @@
 									if (data.statusCode == 1 ) {
 										 
 										$('#avater').attr('src', data.body.headimgurl + '?v=' + new Date().getTime());
-										$.closePopup();
+										//$.closePopup();
 										history.replaceState(null, "用户主页", "/user.html?v=" + new Date().getTime());
 										window.location.href="/user/profile.html";
 										//window.location.href="/user.html";
