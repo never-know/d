@@ -276,19 +276,19 @@
 			// b.on("change",function(){var f=b.find("input:checked"),g=f.map(function(){return a(this).val()}),h=f.map(function(){return a(this).data("title")});d.updateInputValue(g,h),c.autoClose&&!c.multi&&a.closePicker()})
 			var current_subregion = $('#selected_subregion').val();
 			
-			var f = $('#half').find("input:checked");
-			if (f.length > 0) {
-				var g=f.map(function(){return $(this).val()}),
-				var h=f.map(function(){return $(this).data("title")});
+			var f_checked = $('#half').find("input:checked");
+			if (f_checked.length > 0) {
+				var subregion_ids=f.map(function(){return $(this).val()}),
+				var subregion_title=f.map(function(){return $(this).data("title")});
 			} else {
-				var g = ['0'];
-				var h = ['未选择'];
+				var subregion_ids = ['0'];
+				var subregion_title = ['未选择'];
 			}
 			
-			if (g.join(',') != current_subregion) {
-				$('#selected_subregion').val(g.join(','));
-				$('#show-actions').html(h.join(','));
-				window.location.href="/?region=" + $('#selected_region').val() +"&sub_reigon=" +$('#selected_subregion').val();
+			if (subregion_ids.join(',') != current_subregion) {
+				$('#selected_subregion').val(subregion_ids.join(','));
+				$('#show-actions').html(subregion_title.join(','));
+				window.location.href = "/?region=" + $('#selected_region').val() +"&sub_reigon=" +$('#selected_subregion').val();
 			}
       });
 	  
