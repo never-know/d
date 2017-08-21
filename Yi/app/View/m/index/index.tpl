@@ -111,7 +111,7 @@
 	</div>
 	  
 		<form id="list_form" onsubmit="return false" style="visibility:hidden;font-size:0;">
-			<input type="hidden" name="region" id ="selected_region" value="<?=$result['params']['selected_region']?>"/>
+			<input type="hidden" name="region" id ="selected_region" value="<?=$result['params']['region']?>"/>
 			<input type="hidden" name="sub_region" id ="selected_subregion" value="<?=$result['params']['selected_subregion']?:0?>"/>
 			<input type="hidden" name="page" value="2" id="next_page"/>
 		</form>
@@ -148,7 +148,10 @@
 		}
 		
 		var template2 = function(i, value){
-			var s = $('#selected_subregion').val().split();
+			var s = $('#selected_subregion').val().split(',');
+			console.log(s);
+			console.log(value);
+			console.log($.inArray(value, s)!=-1);
 			return ('<label class="weui_cell weui_check_label" for="weui-select-id-' + value  + '">'+  '<div class="weui_cell_bd weui_cell_primary">' +           
 							'<p>'+ i + '</p>'+          
 						'</div>'+          

@@ -24,6 +24,7 @@ class IndexController extends \App\Module\M\BaseController
 		}
 		if (!empty($_COOKIE['selected_region'])) {
 			$result['body']['params']['selected_region'] = $_COOKIE['selected_region'];
+			$result['body']['params']['region'] = $param['region'];
 		}
 		$result['body']['params']['selected_subregion'] = $param['sub_region'] ;
 		$this->response($result);
