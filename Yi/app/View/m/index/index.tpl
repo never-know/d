@@ -111,8 +111,8 @@
 	</div>
 	  
 		<form id="list_form" onsubmit="return false" style="visibility:hidden;font-size:0;">
-			<input type="hidden" name="region" id ="selected_region" value="<?=$result['params']['region']?>"/>
-			<input type="hidden" name="sub_region" id ="selected_subregion" value="<?=$result['params']['sub_region']?>"/>
+			<input type="hidden" name="region" id ="selected_region" value="<?=$result['params']['selected_region']?>"/>
+			<input type="hidden" name="sub_region" id ="selected_subregion" value="<?=$result['params']['selected_subregion']?:0?>"/>
 			<input type="hidden" name="page" value="2" id="next_page"/>
 		</form>
 	  
@@ -148,12 +148,12 @@
 		}
 		
 		var template2 = function(i, value){
-
-			return ('<label class="weui_cell weui_check_label" for="weui-select-id-' + value  + '">'+        '<div class="weui_cell_bd weui_cell_primary">' +           
+			var s = $('#selected_subregion').val().split();
+			return ('<label class="weui_cell weui_check_label" for="weui-select-id-' + value  + '">'+  '<div class="weui_cell_bd weui_cell_primary">' +           
 							'<p>'+ i + '</p>'+          
 						'</div>'+          
 						'<div class="weui_cell_ft">'+            
-							'<input type="checkbox" class="weui_check" name="weui-select[]" id="weui-select-id-' + value  + '" value="' + value  + '"  data-title="'+ i + '" >'+           
+							'<input type="checkbox" class="weui_check" name="weui-select[]" id="weui-select-id-' + value  + '" value="' + value  + '"  data-title="'+ i + '"  ' + (($.inArray(value, s)!=-1)?' checked = "checked"':'' ) + '>'+           
 							'<span class="weui_icon_checked"></span> '+   
 						'</div> '+     
 					'</label>');
@@ -200,7 +200,26 @@
 	var binded = false;
 	var sub_regions = {};
 	var current_sub_regions = {};
-	var current_sub_region = '';
+	var current_sub_region = '<?=$result['params']['region']?>' || '110101';
+	
+	
+	$('#sub_region_checkbox').html(' <div class="weui-infinite-scroll"><div class="infinite-preloader"></div>  正在加载...</div>');
+		$.ajax({
+			url:'/region/id/' + current_sub_region +'.html', 
+			type:'GET', 
+			success: function(data){
+				if (data.statusCode == 1 ) {
+					current_sub_regions = sub_regions[current_sub_region] = data.body[current_sub_region];
+					$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
+					//$('#half').popup();
+					 //$("#show-actions").click();
+					
+				}  
+			} 
+		});
+	
+	
+	
 		
 	$("#region").cityPicker({
 		title: "选择广告投放区域",
@@ -208,6 +227,8 @@
 			console.log(values, displayValues);	 
 		},
 		onClose: function(obj){
+			console.log(current_sub_region);
+			console.log(obj.value[2]);
 			if (current_sub_region == obj.value[2] ) return;
 			current_sub_region = obj.value[2];
 			$('#selected_subregion').val(obj.value[2]);
@@ -241,7 +262,6 @@
 					} 
 				});
 			}
- 
 		}
 	});
  
