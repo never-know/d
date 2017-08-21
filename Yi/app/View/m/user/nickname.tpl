@@ -8,7 +8,7 @@
         <div class="weui_cell weui_vcode2">
             
             <div class="weui_cell_bd weui_cell_primary" >
-                <input class="weui_input" type="text" required  name="nickname" placeholder="" tips="请输入昵称">
+                <input class="weui_input" type="text" required  name="nickname" placeholder="" tips="请输入昵称" value="<?=$result['nickname']?>">
             </div>
           
         </div>
@@ -37,7 +37,7 @@ padding: 16px 15px 6px 15px;
 </style>
 
 	<script>
- 
+ $('.weui_input').focus();
 	 
 	var $form = $("#form");  $form.form();
 	$("#formSubmitBtn").on("click", function(){

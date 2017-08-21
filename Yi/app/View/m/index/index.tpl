@@ -198,21 +198,25 @@
  
 	
 	var binded = false;
-	var sub_regions = [];
-	var current_sub_regions = [{title: '你好'}] ;
+	var sub_regions = {};
+	var current_sub_regions = {};
+	var current_sub_region = '';
 		
 	$("#region").cityPicker({
 		title: "选择广告投放区域",
 		onChange: function (picker, values, displayValues) {
-			console.log(values, displayValues);
-			 
+			console.log(values, displayValues);	 
 		},
 		onClose: function(obj){
+			if (current_sub_region == obj.value[2] ) return;
+			current_sub_region = obj.value[2];
+			$('#selected_subregion').val(obj.value[2]);
 			$('#selected_region').val(obj.value[2]);
 			$('#region').html(obj.displayValue.join(''));
 			if (sub_regions[obj.value[2]]) {
 				current_sub_regions	 = sub_regions[obj.value[2]];
 				$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
+				
 				$('#half').popup();
 				return;
 			} else {
@@ -244,7 +248,7 @@
         closeText:'完成',
         items: current_sub_regions,
         onChange: function(d) {
-          $.alert("你选择了"+d.values+d.titles);
+          //$.alert("你选择了"+d.values+d.titles);
         }
     });
 	
@@ -264,19 +268,28 @@
 	  
 	  
 	  <script>
-      $(document).on("open", ".weui-popup-modal", function() {
-        console.log("open popup");
-      }).on("close", ".weui-popup-modal", function() {
-        console.log("close popup");
+		$(document).on("open", ".weui-popup-modal", function() {
+			console.log("open popup");
+		}).on("close", ".weui-popup-modal", function() {
+			console.log("close popup");
 		
-	// b.on("change",function(){var f=b.find("input:checked"),g=f.map(function(){return a(this).val()}),h=f.map(function(){return a(this).data("title")});d.updateInputValue(g,h),c.autoClose&&!c.multi&&a.closePicker()})
-	 
-	 f = $('#half').find("input:checked");
-	 
-	 g=f.map(function(){return $(this).val()}),
-	 $('#selected_subregion').val(g.join(','));
-	 h=f.map(function(){return $(this).data("title")});
-	 $('#show-actions').html(h.join(','));
-		
+			// b.on("change",function(){var f=b.find("input:checked"),g=f.map(function(){return a(this).val()}),h=f.map(function(){return a(this).data("title")});d.updateInputValue(g,h),c.autoClose&&!c.multi&&a.closePicker()})
+			var current_subregion = $('#selected_subregion').val();
+			
+			var f = $('#half').find("input:checked");
+			if (f.length > 0) {
+				var g=f.map(function(){return $(this).val()}),
+				var h=f.map(function(){return $(this).data("title")});
+			} else {
+				var g = ['0'];
+				var h = ['未选择'];
+			}
+			
+			if (g.join(',') != current_subregion) {
+				$('#selected_subregion').val(g.join(','));
+				$('#show-actions').html(h.join(','));
+				window.location.href="/?region=" + $('#selected_region').val() +"&sub_reigon=" +$('#selected_subregion').val();
+			}
       });
+	  
     </script>

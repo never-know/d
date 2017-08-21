@@ -43,6 +43,7 @@ class UserController extends \App\Module\M\BaseController
 	
 	public function nickname_get()
 	{
+		$result = $this->userinfo();
 		$result['meta'] = ['title' =>'修改昵称'];
 		$this->success($result);
 	
