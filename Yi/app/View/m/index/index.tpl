@@ -76,12 +76,12 @@
 	<div class="weui_navbar">
 	
 	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;overflow: hidden;    -webkit-box-flex: 2;
-    -webkit-flex: 2; flex: 2;" id="region" data-value="<?=$result['params']['selected_region']?:'110000,110100,110101'?>">
-		<?=$result['params']['region_name']?:'全国'?>
+    -webkit-flex: 2; flex: 2;" id="region" data-value="<?=implode(',',$result['params']['region_id'])?>">
+		<?=implode('', $result['params']['region_title'])?>
 	</div>
 	
 	<div class="weui_navbar_item open-popup" id="show-actions"   data-target="#half">
-		<?=$result['params']['sub_region_name']?:'全国'?>
+		<?=implode(',', $result['params']['subregion_title'])?>
 	</div>
 	</div>
 	<style>
@@ -112,8 +112,8 @@
 	<?php endif; ?> 
 	
 	<form id="list_form" onsubmit="return false" style="visibility:hidden;font-size:0;">
-		<input type="hidden" name="region" 		id="selected_region" value="<?=$result['params']['region']?>"/>
-		<input type="hidden" name="sub_region" 	id="selected_subregion" value="<?=$result['params']['selected_subregion']?:0?>"/>
+		<input type="hidden" name="region" 		id="selected_region" value="<?=end($result['params']['region_id'])?>"/>
+		<input type="hidden" name="sub_region" 	id="selected_subregion" value="<?=implode(',', $result['params']['subregion_id'])?>"/>
 		<input type="hidden" name="page" 		id="next_page" value="2" />
 	</form>
 	  
@@ -199,18 +199,17 @@
  
 	var binded = false;
 	var sub_regions = {};
-	var current_sub_regions = {};
-	var current_sub_region = '<?=$result['params']['region']?>' || '110101';
+	var current_region = '<?=end($result['params']['region_id'])?>';
 
 	$('#sub_region_checkbox').html(' <div class="weui-infinite-scroll"><div class="infinite-preloader"></div>  正在加载...</div>');
-	
+
 	$.ajax({
-		url:'/region/id/' + current_sub_region +'.html', 
+		url:'/region/id/' + current_region +'.html', 
 		type:'GET', 
 		success: function(data){
 			if (data.statusCode == 1 ) {
-				current_sub_regions = sub_regions[current_sub_region] = data.body[current_sub_region];
-				$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
+				sub_regions[current_region] = data.body[current_region];
+				$("#sub_region_checkbox").html($.map(data.body[current_region],template2).join(' '));
 			}  
 		} 
 	});
@@ -219,34 +218,38 @@
 		title: "选择广告投放区域",
 		onClose: function(obj){
 			
-			if (current_sub_region == obj.value[2] ) return;
-			current_sub_region = obj.value[2];
+			if (current_region == obj.value[2] ) return;
+			
+			current_region = obj.value[2];
+			
+			var region_chain = obj.value.join(',');
+			
+			$('#selected_region').val(current_region);
+			$('#region').data('value', region_chain);
 			$('#selected_subregion').val(obj.value[2]);
-			$('#selected_region').val(obj.value[2]);
-			$('#region').data('value', obj.value.join(','));
-			document.cookie = "selected_region=" + obj.value.join(',') +';path=/;'; 
+
 			if (obj.displayValue[0] == '北京' || obj.displayValue[0] == '上海' || obj.displayValue[0] == '重庆' || obj.displayValue[0] == '天津' ) {
 				obj.displayValue[0] = '';
 			}
+			
 			$('#region').html(obj.displayValue.join(''));
-			document.cookie = "region_title=" + obj.displayValue.join('')+';path=/;'; 
+			 
 			if (sub_regions[obj.value[2]]) {
-				current_sub_regions	 = sub_regions[obj.value[2]];
-				$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
+				$("#sub_region_checkbox").html($.map(sub_regions[obj.value[2]],template2).join(' '));
 				
 				$('#half').popup();
 				return;
 			} else {
 				$('#sub_region_checkbox').html(' <div class="weui-infinite-scroll"><div class="infinite-preloader"></div>  正在加载...</div>');
 				$.ajax({
-					url:'/region/id/' + obj.value[2] +'.html', 
+					url:'/region/id/' + current_region +'.html', 
 					type:'GET', 
 					success: function(data){
 						if (data.statusCode == 1 ) {
-							current_sub_regions = sub_regions[obj.value[2]] = data.body[obj.value[2]];
-							$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
+							sub_regions[current_region] = data.body[current_region];
+							$("#sub_region_checkbox").html($.map(data.body[current_region], template2).join(' '));
 							$('#half').popup();
-							 
+							return;
 						}  
 					} 
 				});
@@ -254,10 +257,9 @@
 		}
 	});
  
-	  </script>
-	  
-	  
-	  <script>
+	</script>
+	    
+	<script>
 		$(document).on("open", ".weui-popup-modal", function() {
 			console.log("open popup");
 		}).on("close", ".weui-popup-modal", function() {
@@ -266,21 +268,23 @@
 			var current_subregion = $('#selected_subregion').val();
 			
 			var f_checked = $('#half').find("input:checked");
+			
 			if (f_checked.length > 0) {
-				var subregion_ids=f_checked.map(function(){return $(this).val()});
-				var subregion_title=f_checked.map(function(){return $(this).data("title")});
+				var subregion_ids	= f_checked.map(function(){return $(this).val()});
+				var subregion_title	= f_checked.map(function(){return $(this).data("title")});
 	
 			} else {
 				var subregion_ids = ['0'];
 				var subregion_title = ['未选择'];
 			}
 			
-			if (subregion_ids.join(',') != current_subregion) {
-				$('#selected_subregion').val(subregion_ids.join(','));
+			var sub_regions = subregion_ids.join(',');
+			if (sub_regions != current_subregion) {
+				$('#selected_subregion').val(sub_regions);
 				$('#show-actions').html(subregion_title.join(','));
-				document.cookie = "subregion_title=" + subregion_title.join(',')+';path=/;'; 
-				document.cookie = "selected_subregion=" + subregion_ids.join(',') +';path=/;'; 
-				//window.location.href = "/?region=" + $('#selected_region').val() +"&sub_reigon=" +$('#selected_subregion').val();
+				document.cookie = "region=" + current_region +';path=/;'; 
+				document.cookie = "sub_region=" + sub_regions +';path=/;'; 
+				 
 				window.location.href="#top";
 				$.ajax({
 					url:'/', 

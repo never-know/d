@@ -108,8 +108,8 @@ class ArticleService extends \Min\Service
 				$source = article_tags();
 				$tag 	= explode(',', $p['tag']);
 				
-				foreach ($tag as $key => $value) {
-					if (empty($value) || empty($source[$value]))  return $this->error('参数错误', 1);
+				foreach ($tag as $key => $t) {
+					if (empty($t) || empty($source[$t]))  return $this->error('参数错误', 1);
 				}
 				
 				if (is_numeric($p['tag'])) {
@@ -145,59 +145,61 @@ class ArticleService extends \Min\Service
 		}
 		*/
 		
-		$param['filter']['region'] = ' region_id = 0';
+		//$param['filter']['region'] = ' region_id = 0';
+		
+		$param_processed['region'] = [0];
+		
 		$region = intval($p['region']??0);
 		
-		if ($region > 1) {
+		if ($region > 1 && $region < 100000000) {
+ 
+			$patten = '/^'. $region .'\d+(,' .  $region . '\d+)*$/';
 			
-			if ($region < 100000000) $region *= 1000;
-			// 不限 and self 
-			$param['filter']['region'] .= ' OR region_id = ' . $region;
-			// 省级 
-			if ( 0 != $region%10000000) {
-				// 非省级的要加上省ID
-				$param['filter']['region'] .= ' OR region_id = '. (intval($region/10000000) * 10000000);
-				if (0 != $region%100000) {	
-					// 非市级的要加上市ID
-					$param['filter']['region'] .= ' OR  region_id = '. (intval($region/100000) * 100000);
-					if (0 != $region%1000) {
-						$param['filter']['region'] .= ' OR  region_id = '. (intval($region/1000) * 1000);
+			$region *= 1000;	
+  
+			if ( 0 != $region%10000000) {				// 非省级的要加上省ID
+				$param_processed['region'][] 			=  (intval($region/10000000) * 10000000);	
+				if (0 != $region%100000) {				// 非市级的要加上市ID
+					$param_processed['region'][]  		=  (intval($region/100000) * 100000);	
+					if (0 != $region%1000) {			// 非区级的要加上区ID
+						$param_processed['region'][] 	= (intval($region/1000) * 1000);
 					}
 				}
 			}
 			
-			if (!empty($p['sub_region']) && preg_match('/^'. strval($region/1000) .'\d+(,' . strval($region/1000). '\d)*$/', $p['sub_region'])) {
-				$param['filter']['region'] .= ' OR region_id = ' . implode(' OR region_id = ', explode(',', $p['sub_region']));
-			}
+			$param_processed['region'][] = $region;
 			
-			$param['filter']['region'] = '(' . $param['filter']['region']. ')';
-		}
+			if (!empty($p['sub_region']) && preg_match($patten, $p['sub_region'])) {
+				$param_processed['region']   = array_merge($param_processed['region'], explode(',', $p['sub_region']));
+			}
+ 
+			$param['filter']['region'] = '( region_id = ' .  implode(' OR region_id = ', $param_processed['region']). ')';
+		}  
+		
 		
 		if (!empty($p['author'])) {
-			$param['filter'][] = 'author = ' . intval($p['author']);
+			$author = intval($p['author']);
+			$param['filter']['author'] 		= 'author = ' . $author;
+			$param_processed['author'] 		= $author;
 		}
-		
-		$param['order'] = ' ';
-		
-		$param_processed['order'] = 1;
-		
-		if (!empty($p['order'])) {	
-			switch (intval($p['order'])) {
-				case 1 :
-					$param['order'] = ' ORDER BY content_id DESC ';
-					$param_processed['order'] = 1;
-					break;
-				case 2 :
-					$param['order'] = ' ORDER BY start_date DESC ';
-					$param_processed['order'] = 2;
-					break;
-				case 3 :
-					$param['order'] = ' ORDER BY end_date DESC ';
-					$param_processed['order'] = 3;
-					break;					 
-			}
+ 	
+		switch (intval($p['order']??1)) {
+			
+			case 2 :
+				$param['order'] = ' ORDER BY start_date DESC ';
+				$param_processed['order'] = 2;
+				break;
+			case 3 :
+				$param['order'] = ' ORDER BY end_date DESC ';
+				$param_processed['order'] = 3;
+				break;	
+			case 1 :
+			default:
+				$param['order'] = ' ORDER BY content_id DESC ';
+				$param_processed['order'] = 1;
+				break;			
 		}
-
+ 
 		$filter = empty($param['filter']) ? '' : ' WHERE ' . implode(' AND ', $param['filter']);
 		
 		$sql_count 	= 'SELECT count(1) as count FROM {{article}} ' . $filter . ' LIMIT 1'; 
@@ -209,27 +211,61 @@ class ArticleService extends \Min\Service
 			return $result;
 		}
 		
-		$region_namses 	= $this->cache('region')->get('regionChain_' . strval($region/1000), true);
-		$names 			= [];
-		foreach ($region_names as $key =>$value) {
-			$names += $value;
-		}
- 
+		$region_names 	= $this->cache('region')->get('regionChain_' . intval($region/1000), true);
 		
+		
+		$names 			= ['0' => '不限'];
+		foreach ($region_names as $key =>$vv) {
+			$names += $vv;
+		}
+		 
 		if (!empty($result['body']['list'])) {
-			foreach ($result['body']['list'] as &$value) {
-				$value['id_name'] 		= \int2str($value['content_id']);
-				$value['tag_name'] 		= \article_tags($value['content_tag']);
-				if (0 != ($value['region_id']%1000)) {
-					$value['region_name'] 	= $names[$value['region_id']]??'';
+			foreach ($result['body']['list'] as &$v) {
+				$v['id_name'] 		= \int2str($v['content_id']);
+				$v['tag_name'] 		= \article_tags($v['content_tag']);
+				if (0 != ($v['region_id']%1000)) {
+					$v['region_name'] 	= $names[$v['region_id']]??'';
 				} else {
-					$value['region_name']	= $names[$value['region_id']/1000]??'';
+					$v['region_name']	= $names[$v['region_id']/1000]??'';
 				}
 			}
 		}
  
+		$param_processed['region_id'] 		= [];
+		$param_processed['region_title'] 	= [];
+		$param_processed['subregion_id'] 	= [];
+		$param_processed['subregion_title'] = [];
+		
+		if (!empty($param_processed['region'])) {
+			foreach ($param_processed['region'] as $value) {
+				if (empty($value)) continue;
+				$mask = $value%1000;
+				if (0 == $mask) {
+					$region_id = $value/1000;
+					
+					if ($names[$region_id] == '北京' || $names[$region_id] == '上海' || $names[$region_id] == '重庆' || $names[$region_id] == '天津' ) {
+						$param_processed['region_title'][] = '';
+					} else {
+						$param_processed['region_title'][] = $names[$region_id]??'';
+					}
+					
+					$param_processed['region_id'][] = $region_id;
+				} else {
+					$param_processed['subregion_title'][] = $names[$value]??'';
+					$param_processed['subregion_id'][] = $value;
+				}
+			}
+			
+		} else {
+			$param_processed['region_title'] 	= ['不限'];
+			$param_processed['region_id']		= [0];
+		}
+		
+		$param_processed['subregion_title'] = $param_processed['subregion_title']?:['不限'];
+		$param_processed['subregion_id']	= $param_processed['subregion_id']?:[0];
+		
 		$result['body']['params'] 	= $param_processed;
- 
+
 		return $result;
 		
 	}
