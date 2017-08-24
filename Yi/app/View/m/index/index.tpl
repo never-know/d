@@ -15,7 +15,7 @@
 	<p>1</p><p>1</p><p>1</p><p>1</p><p>1</p><p>1</p><p>1</p><p>1</p><p>1</p>
 	<p>1</p><p>last line</p>
 -->		
-		<div class="weui_panel weui_panel_access_new">
+		<div class="weui_panel weui_panel_access_new" id="top">
 			<div class="weui_panel_hd">图文组合列表</div>
 			<div class="weui_panel_bd" id="list_loaded">
 			<?php if (!empty($result['list'])) : ?>	 
@@ -109,12 +109,13 @@
 	   <div class="infinite-preloader"></div>
 	  正在加载... 
 	</div>
-	  
-		<form id="list_form" onsubmit="return false" style="visibility:hidden;font-size:0;">
-			<input type="hidden" name="region" id ="selected_region" value="<?=$result['params']['region']?>"/>
-			<input type="hidden" name="sub_region" id ="selected_subregion" value="<?=$result['params']['selected_subregion']?:0?>"/>
-			<input type="hidden" name="page" value="2" id="next_page"/>
-		</form>
+	<?php endif; ?> 
+	
+	<form id="list_form" onsubmit="return false" style="visibility:hidden;font-size:0;">
+		<input type="hidden" name="region" 		id="selected_region" value="<?=$result['params']['region']?>"/>
+		<input type="hidden" name="sub_region" 	id="selected_subregion" value="<?=$result['params']['selected_subregion']?:0?>"/>
+		<input type="hidden" name="page" 		id="next_page" value="2" />
+	</form>
 	  
 	<script>
 	    
@@ -164,7 +165,7 @@
 	  
     </script>
 	
-	<?php endif; ?>
+	
   
   
 	 <div id="half" class="weui-popup-container popup-bottom" style="z-index:200">
@@ -195,38 +196,27 @@
 	<script src="/public/js/m/citypicker.js"></script>
 	<script src="/public/js/m/city-picker.min.js"></script>
 	<script>
-	
  
-	
 	var binded = false;
 	var sub_regions = {};
 	var current_sub_regions = {};
 	var current_sub_region = '<?=$result['params']['region']?>' || '110101';
-	
-	
+
 	$('#sub_region_checkbox').html(' <div class="weui-infinite-scroll"><div class="infinite-preloader"></div>  正在加载...</div>');
-		$.ajax({
-			url:'/region/id/' + current_sub_region +'.html', 
-			type:'GET', 
-			success: function(data){
-				if (data.statusCode == 1 ) {
-					current_sub_regions = sub_regions[current_sub_region] = data.body[current_sub_region];
-					$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
-					//$('#half').popup();
-					 //$("#show-actions").click();
-					
-				}  
-			} 
-		});
 	
+	$.ajax({
+		url:'/region/id/' + current_sub_region +'.html', 
+		type:'GET', 
+		success: function(data){
+			if (data.statusCode == 1 ) {
+				current_sub_regions = sub_regions[current_sub_region] = data.body[current_sub_region];
+				$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
+			}  
+		} 
+	});
 	
-	
-		
 	$("#region").cityPicker({
 		title: "选择广告投放区域",
-		onChange: function (picker, values, displayValues) {
-			//console.log(values, displayValues);	 
-		},
 		onClose: function(obj){
 			
 			if (current_sub_region == obj.value[2] ) return;
@@ -256,8 +246,7 @@
 							current_sub_regions = sub_regions[obj.value[2]] = data.body[obj.value[2]];
 							$("#sub_region_checkbox").html($.map(current_sub_regions,template2).join(' '));
 							$('#half').popup();
-							 //$("#show-actions").click();
-							
+							 
 						}  
 					} 
 				});
@@ -265,31 +254,6 @@
 		}
 	});
  
-	
-  
-	$("#show-actions222").select({
-        title: "乡镇街道",
-        multi: true,
-        split:',',
-        closeText:'完成',
-        items: current_sub_regions,
-        onChange: function(d) {
-          //$.alert("你选择了"+d.values+d.titles);
-        }
-    });
-	
-	$(".close-picker").select({
-        title: "乡镇街道",
-        multi: true,
-        split:',',
-        closeText:'完成',
-        items: current_sub_regions,
-        onChange: function(d) {
-          $.alert("你选择了"+d.values+d.titles);
-        }
-    });
-	 
-	
 	  </script>
 	  
 	  
@@ -298,16 +262,14 @@
 			console.log("open popup");
 		}).on("close", ".weui-popup-modal", function() {
 			console.log("close popup");
-		
-			// b.on("change",function(){var f=b.find("input:checked"),g=f.map(function(){return a(this).val()}),h=f.map(function(){return a(this).data("title")});d.updateInputValue(g,h),c.autoClose&&!c.multi&&a.closePicker()})
+  
 			var current_subregion = $('#selected_subregion').val();
 			
 			var f_checked = $('#half').find("input:checked");
 			if (f_checked.length > 0) {
 				var subregion_ids=f_checked.map(function(){return $(this).val()});
 				var subregion_title=f_checked.map(function(){return $(this).data("title")});
-
-				
+	
 			} else {
 				var subregion_ids = ['0'];
 				var subregion_title = ['未选择'];
@@ -318,21 +280,31 @@
 				$('#show-actions').html(subregion_title.join(','));
 				document.cookie = "subregion_title=" + subregion_title.join(',')+';path=/;'; 
 				document.cookie = "selected_subregion=" + subregion_ids.join(',') +';path=/;'; 
-				window.location.href = "/?region=" + $('#selected_region').val() +"&sub_reigon=" +$('#selected_subregion').val();
-				/*
+				//window.location.href = "/?region=" + $('#selected_region').val() +"&sub_reigon=" +$('#selected_subregion').val();
+				window.location.href="#top";
 				$.ajax({
 					url:'/', 
 					type:'GET', 
-					data: {region:$('#selected_region').val(),sub_reigon:$('#selected_subregion').val()}
+					data: {region:$('#selected_region').val(),sub_reigon:$('#selected_subregion').val()},
 					success: function(data){
 						if (data.statusCode == 1 ) {
-							
-							
+							if (data.body.list.length > 0) {
+								$("#list_loaded").html($(data.body.list).map(template ).get().join(' '));
+								if (data.body.page.total_page > 1) {
+									$('.weui-infinite-scroll').html('  <div class="infinite-preloader"></div>正在加载... ');
+								} else {
+									$('.weui-infinite-scroll').html(' - - - - - - - - 加载完成 - - - - - - - - ');	
+								}
+							} else {
+								$("#list_loaded").html('<h3 class="no-data">暂无记录</h3>');
+
+							}
+							page_load('','', true);
+							$('#next_page').val(2);
 						}  
 					} 
 				});
-				*/
-				
+
 			}
       });
 	  

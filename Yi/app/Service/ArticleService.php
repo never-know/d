@@ -166,7 +166,7 @@ class ArticleService extends \Min\Service
 				}
 			}
 			
-			if (!empty($p['sub_region']) && preg_match('/^\d+(,\d)*$/', $p['sub_region'])) {
+			if (!empty($p['sub_region']) && preg_match('/^'. strval($region/1000) .'\d+(,' . strval($region/1000). '\d)*$/', $p['sub_region'])) {
 				$param['filter']['region'] .= ' OR region_id = ' . implode(' OR region_id = ', explode(',', $p['sub_region']));
 			}
 			
@@ -174,7 +174,7 @@ class ArticleService extends \Min\Service
 		}
 		
 		if (!empty($p['author'])) {
-			$param['filter'][] = 'author = ' . intval(session_get('UID'));
+			$param['filter'][] = 'author = ' . intval($p['author']);
 		}
 		
 		$param['order'] = ' ';
@@ -208,11 +208,24 @@ class ArticleService extends \Min\Service
 		if ($result['statusCode'] != 1) {
 			return $result;
 		}
- 	
-		foreach ($result['body']['list'] as &$value) {
-			$value['id_name'] 		= \int2str($value['content_id']);
-			$value['tag_name'] 		= \article_tags($value['content_tag']);
-			$value['region_name'] 	= \region_get($value['region_id']);				
+		
+		$region_namses 	= $this->cache('region')->get('regionChain_' . strval($region/1000), true);
+		$names 			= [];
+		foreach ($region_names as $key =>$value) {
+			$names += $value;
+		}
+ 
+		
+		if (!empty($result['body']['list'])) {
+			foreach ($result['body']['list'] as &$value) {
+				$value['id_name'] 		= \int2str($value['content_id']);
+				$value['tag_name'] 		= \article_tags($value['content_tag']);
+				if (0 != ($value['region_id']%1000)) {
+					$value['region_name'] 	= $names[$value['region_id']]??'';
+				} else {
+					$value['region_name']	= $names[$value['region_id']/1000]??'';
+				}
+			}
 		}
  
 		$result['body']['params'] 	= $param_processed;
