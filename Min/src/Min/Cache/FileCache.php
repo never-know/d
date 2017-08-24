@@ -69,6 +69,7 @@ class FileCache
         }
 		
 		if ($expiration > 0) $expiration += $_SERVER['REQUEST_TIME'];
+		$dir = dirname($file_name);;
 		
 		$tmp = tempnam($dir, 'swap');
 		if (file_put_contents($tmp, safe_json_encode(['data'=>$data, 'expiration' => $expiration]))) {
