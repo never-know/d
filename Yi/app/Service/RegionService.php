@@ -35,7 +35,7 @@ class RegionService extends \Min\Service
 			$level = '';
 		}
 		
-		$sql = 'SELECT id, short_name, parent_id FROM {{region}} ' . $level . ' ORDER BY parent_id ASC, id ASC';
+		$sql = 'SELECT id, name as short_name, parent_id FROM {{region}} ' . $level . ' ORDER BY parent_id ASC, id ASC';
 		$result	= $this->query($sql, null);
 		
 		$region = [];

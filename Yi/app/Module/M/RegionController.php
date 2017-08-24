@@ -35,6 +35,7 @@ class RegionController extends \Min\Controller
 	 
 	public function cache_get()
 	{ 
+		if (empty($_GET[key]) || $_GET[key] !='yb') exit('success');
 		$cache 	= $this->cache('region');
 		$nodes = $this->request('\\App\\Service\\Region::allNode');
 		$region = [];
@@ -66,6 +67,7 @@ class RegionController extends \Min\Controller
 	
 	public function citypicker_get()
 	{ 
+		if (empty($_GET[key]) || $_GET[key] !='yb') exit('success');
 		$cache 	= $this->cache('region');
 		
 		$region = $cache->get('citypicker', true);
