@@ -289,7 +289,7 @@
 				$.ajax({
 					url:'/', 
 					type:'GET', 
-					data: {region:$('#selected_region').val(),sub_reigon:$('#selected_subregion').val()},
+					data: {region:$('#selected_region').val(),sub_region:$('#selected_subregion').val()},
 					success: function(data){
 						if (data.statusCode == 1 ) {
 							if (data.body.list.length > 0) {

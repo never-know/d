@@ -173,10 +173,11 @@ class ArticleService extends \Min\Service
 				$param_processed['region']   = array_merge($param_processed['region'], explode(',', $p['sub_region']));
 			}
  
-			$param['filter']['region'] = '( region_id = ' .  implode(' OR region_id = ', $param_processed['region']). ')';
-		}  
-		
-		
+			$param['filter']['region'] = ' region_id in ( ' .  implode(',', $param_processed['region']). ')';
+		} else {
+			$param['filter']['region'] = ' region_id = 0 ';
+		}
+
 		if (!empty($p['author'])) {
 			$author = intval($p['author']);
 			$param['filter']['author'] 		= 'author = ' . $author;
