@@ -144,7 +144,7 @@ class AccountService extends \Min\Service
 					'phone' 		=> $phone, 
 					'register_time' => intval($data['register_time']), 
 					'register_ip' 	=> intval($data['register_ip']),
-					'nick_name' 	=> safe_json_encode($data['nick_name'])
+					'nickname' 		=> safe_json_encode($data['nickname']??'')
 				];
 			 
 				$sql = 'INSERT INTO {{user}} ' . build_query_insert($processed_data);
