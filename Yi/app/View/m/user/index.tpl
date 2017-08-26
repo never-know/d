@@ -174,7 +174,7 @@
 	#qrcode{
 	width:50px;
 	}
-	.weui_cell .weui_tabbar_icon{width:45px;}
+	.weui_cell .weui_tabbar_icon{width:45px;margin-top:-2px}
 	
 	
 	</style>	

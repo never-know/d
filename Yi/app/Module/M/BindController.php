@@ -38,6 +38,10 @@ class BindController extends \App\Module\M\BaseController
 		
 		$user = session_get('user');
 		
+		$cache 			= $this->cache('wx_user_info');
+		$key 			= $this->getCacheKey('userinfo', $user['wx_id']);	 
+		$cache_result 	= $cache->get($key, true);
+ 
 		$regist_data	= [
 			'phone' 		=> $params['phone'], 
 			'register_time' => $_SERVER['REQUEST_TIME'], 
@@ -46,6 +50,10 @@ class BindController extends \App\Module\M\BaseController
 			'open_id' 		=> $user['open_id'], 
 			'balance_index' => $user['balance_index']
 		];
+		
+		if (!empty($cache_result['nickname'])) {
+			$regist_data['nickname'] = $cache_result['nickname'];
+		}
 		
 		$user = $this->request('\\App\\Service\\Account::addUserByWx', $regist_data);
 		

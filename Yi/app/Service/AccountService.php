@@ -143,7 +143,8 @@ class AccountService extends \Min\Service
 					'user_type'		=> 0,
 					'phone' 		=> $phone, 
 					'register_time' => intval($data['register_time']), 
-					'register_ip' 	=> intval($data['register_ip'])
+					'register_ip' 	=> intval($data['register_ip']),
+					'nick_name' 	=> safe_json_encode($data['nick_name'])
 				];
 			 
 				$sql = 'INSERT INTO {{user}} ' . build_query_insert($processed_data);
@@ -254,12 +255,12 @@ class AccountService extends \Min\Service
 		if ($result['effect'] > 0) {
 			// 清理缓存
 			$del_keys = [];
-			$del_keys[] = $this->getCacheKey('open_id', $data['open_id']);		 
-			$del_keys[] = $this->getCacheKey('wx_id', 	$data['wx_id']);		 
-			$del_keys[] = $this->getCacheKey('user_id', $data['user_id']);  
-			$del_keys[] = $this->getCacheKey('phone', 	$data['phone']);		 
+			if (!empty($data['open_id'])) $del_keys[] = $this->getCacheKey('open_id', $data['open_id']);		 
+			if (!empty($data['wx_id'])) $del_keys[] = $this->getCacheKey('wx_id', $data['wx_id']);		 
+			if (!empty($data['user_id'])) $del_keys[] = $this->getCacheKey('user_id', $data['user_id']);  
+			if (!empty($data['phone'])) $del_keys[] = $this->getCacheKey('phone', $data['phone']);		 
 
-			$this->cache()->delete($del_keys);
+			if (!empty($del_keys)) $this->cache()->delete($del_keys);
 		}
 		
 		return $this->success('修改成功');
