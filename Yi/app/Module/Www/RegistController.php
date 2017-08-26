@@ -3,7 +3,7 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class RegistController extends \Min\Controller
+class RegistController extends \App\Module\Www\BaseController
 {
 	public function index_get()
 	{

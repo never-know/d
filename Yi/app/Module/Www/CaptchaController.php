@@ -15,7 +15,7 @@ class CaptchaController extends \Min\Controller
 	
 	public function check_get()
 	{ 
-		if (is_numeric($_GET['callback']) && \validate('words', $_GET['type'])) { 
+		if (\validate('words', $_GET['type'])) { 
 			$code = new \Min\Captcha;
 			if (true === $code->checkCode($_GET['captcha'], $_GET['type'], false)) {
 				$this->success();

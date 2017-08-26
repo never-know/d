@@ -41,7 +41,7 @@ class AccountService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
  
-			$sql = 'SELECT uw.wx_id, uw.balance_index, uw.parent_id, uw.subscribe_status, uw.open_id,  u.user_id, u.user_type, u.phone, u.register_time, u.avater, u.nickname FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
+			$sql = 'SELECT uw.wx_id, uw.balance_index, uw.parent_id, uw.subscribe_status, uw.open_id,  u.user_id, u.user_type, u.password, u.phone, u.register_time, u.avater, u.nickname FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -210,7 +210,8 @@ class AccountService extends \Min\Service
 			return $result;
 		}
 		
-		if (password_verify($params['password'], $result['body']['password'])) {					 
+		if (password_verify($params['password'], $result['body']['password'])) {
+			unset($result['body']['password']);
 			return $this->success($result['body']);
 		} else {
 			return $this->error('帐号密码错误', 30201);
@@ -293,20 +294,5 @@ class AccountService extends \Min\Service
 		
 		return $this->success('修改成功');
 	}
-	
-	private function __initUser($user)
-	{ 
-		if($user['user_id'] > 0) {
-			
-			session_regenerate_id();// 每次登陆都需要更换session id ;
-			//if (!empty($user['nick'])) setcookie('nick', $user['nick'], 0, '/', COOKIE_DOMAIN);
-			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
-			// 此处应与 logincontroller islogged 相同
-			
-			setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 100, '/', COOKIE_DOMAIN);
-			session_set('logined', 1);
-			session_set('USER_ID', $user['user_id']);
-			session_set('user', $user);
-		}
-	}
+
 }

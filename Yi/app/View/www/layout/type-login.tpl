@@ -13,6 +13,7 @@
 <script type="text/javascript" src="/public/js/minajax.js"></script>
 <script type="text/javascript" src="/public/js/dialog.js"></script>
 <script type="text/javascript" src="/public/js/domready.js"></script>
+ 
 
 </head>
 <body>

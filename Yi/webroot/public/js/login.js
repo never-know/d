@@ -12,7 +12,7 @@ function check_empty(){
 	var name = _$('loginname');
 	var pwd = _$('loginpwd');
 	var has_error = false;
-	var code = _$('logincode') ? _$('logincode').value : '';
+	//var code = _$('logincode') ? _$('logincode').value : '';
 
 	if(name.value ==''){
 		msg += '帐户名';
@@ -27,7 +27,7 @@ function check_empty(){
 		Min.css.addClass('error',Min.dom.next(pwd));
 		has_error = true;
 	}
-	
+	/*
 	if( _$('logincode') && code =='' ){
 		if(has_error){
 			msg += '和';
@@ -37,6 +37,7 @@ function check_empty(){
 		_$('login-code').style.display='block';
 		has_error = true;
 	}
+	*/
 	if( has_error ) {
 		show_error(msg)
 	}
@@ -68,8 +69,8 @@ Min.event.bind('loginsubmit','click', function(){
 			pwd = _$('loginpwd'),
 			code = _$('logincode') ? _$('logincode').value : '';
 		minAjax({
-			url:'https://www.' + site_domain + '/login.html', 
-			type:'POST', 
+			url: '/login.html', 
+			type: 'POST', 
 			data:{
 				name:name.value,
 				pwd:pwd.value,
@@ -78,15 +79,16 @@ Min.event.bind('loginsubmit','click', function(){
 			},
 			success: function(data){
 				if(data.statusCode == 1){
-					/* 
+					/*
 					var ReturnUrl = Min.util.getQueryString('ReturnUrl');
-					var location = 'http://www.' + site_domain;
-					if(ReturnUrl && '@^http[s]?://[a-z][a-z0-9]*\.qi\.com(?:/[a-zA-Z0-9]+)+\.html@'.test(ReturnUrl)){
+					var location = 'https://www.' + site_domain;
+					if(ReturnUrl && '@^http[s]?://[a-z][a-z0-9]*\.' + site_domain + '(?:/[a-zA-Z0-9\-_]+)+\.html@'.test(ReturnUrl)){
 						location = ReturnUrl; 
 					} 
+					 
+					var location = data.jumpurl || '/';
 					*/
-					var location = data.jumpurl || 'http://www.' + site_domain;
-					window.location.href = location;
+					window.location.href = '/';
 					
 				} else {
 					if (data.statusCode != 30207) {
@@ -97,10 +99,12 @@ Min.event.bind('loginsubmit','click', function(){
 						if( data.statusCode == 30202 || data.statusCode ==  30103 || data.statusCode ==  30102){
 								
 							if (a) {
+								a.style.display = 'block';
 								var ai = a.getElementsByTagName('i')[0], logincode = _$('logincode');
 								ai.removeAttribute('style');
 								ai.innerHTML='';
 								logincode.value ='';
+								
 								//logincode.style.borderColor = error_bordercolor;
 							
 							} else {
@@ -167,11 +171,21 @@ function code_check(){
 	var code = _$('logincode').value;
 	if(code == current_code) return;
 	current_code = code;
-	JSONP.get( 'https://www.' + site_domain + '/captcha/check.html', {captcha:code,type:'login'}, function(data){
-			if(_$('logincode').value != code) return;
-			 code_tag(((data.statusCode==1)?1:2))
-		 }
-	); 
+	
+	minAjax({
+			url: '/captcha/check.html', 
+			type:'GET', 
+			data:{
+				type:'login',
+				captcha:code,
+			},
+			success: function(data){
+				if(_$('logincode').value != code) return;
+				code_tag(((data.statusCode==1)?1:2))
+			}
+ 
+		});
+ 
 }
 
 function login_checkcode(){
@@ -209,7 +223,7 @@ Min.event.bind('autoLogin','click', function(){
 	}
 });
 Min.event.bind('login-code','click',{handler:function(e){
-
+	 
 	e.currentTarget.getElementsByTagName('IMG')[0].src=code_url+new Date().getTime();
 	var ei = e.currentTarget.getElementsByTagName('i')[0];
 	ei.removeAttribute('style');

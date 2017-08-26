@@ -28,6 +28,10 @@ Min.event = {
 			}
 			 
 		}
+		console.log(elem);
+		console.log(type);
+		console.log(options);
+		console.log('binded');
 	},
 	childBind : function(elem, type, options){
 		elem = _$(elem);

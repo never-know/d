@@ -704,7 +704,7 @@ if (Min.UA.isIE8){
 Min.css.addCssByLink('/public/css/ie8.css');
 }
 
-
+function imgnotfound(){var img=event.srcElement;img.src="/public/images/avater.jpg"; img.onerror=null;}
 
 
 

@@ -32,11 +32,11 @@
 							<input type="password" id="loginpwd" name="loginpwd" class="loginpwd"  autocomplete="off" placeholder="密码" onkeypress = "Min.util.checkCapslock(event,this)">
 								<i class="icon-login iconfont">&#xe63a;</i>
 						</div>
-						<?php if (intval(session_get('loginerror')) > 3) : ?>
-						<div class="login-code" id="login-code" style="display:block">
+						 
+						<div class="login-code" id="login-code" style="display:<?=((intval(session_get('loginerror')) > 3) ? 'block' : 'none')?>">
 							<input id="logincode" type="text" class="logincode" name="logincode" tabindex="1" autocomplete="off"  placeholder="验证码" maxlength="4">  <i class="icon-reg iconfont icon-white" id="icon-reg">&#xe619;</i><img class="login-captcha"  src="/captcha/get.html?type=login_1"><span>换一张</span>
 						</div>
-						<?php endif; ?>
+						 
 						<div class="login-li" id="login-li">
 							<a href="#" class="f-fl">免费注册</a>
 							<a href="#" id="forget-pwd"  class="f-fr" >忘记登陆密码?</a>	

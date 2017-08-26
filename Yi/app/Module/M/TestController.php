@@ -69,44 +69,39 @@ class TestController extends \App\Module\M\TestBaseController
 
 	public function shareid_get()
 	{
-	 
-		
-	 
-		
-		
-$j = 0;
-$error = [];
+		$j = 0;
+		$error = [];
 
-$time= time();
+		$time= time();
 
-for($i=0;$i<1000;$i++) {
+		for($i=0;$i<1000;$i++) {
 
-$user_id  = mt_rand(1, 100000000);
-session_set('USER_ID', $user_id);
-$content_id = mt_rand(1, 100000000);
-$share_type = mt_rand(0,1);
-$_SERVER['REQUEST_TIME'] = mt_rand(1499929697,2099929697) ;
+		$user_id  = mt_rand(1, 100000000);
+		session_set('USER_ID', $user_id);
+		$content_id = mt_rand(1, 100000000);
+		$share_type = mt_rand(0,1);
+		$_SERVER['REQUEST_TIME'] = mt_rand(1499929697,2099929697) ;
 
-$id = shareid_encode($content_id);
- 
+		$id = shareid_encode($content_id);
+		 
 
-$result1 = shareid_decode($id['timeline']);
-$result2 = shareid_decode($id['friend']);
+		$result1 = shareid_decode($id['timeline']);
+		$result2 = shareid_decode($id['friend']);
 
- 
+		 
 
-if ($result1['content_id'] != $content_id || $result1['user_id'] != $user_id || $result1['share_time'] != $_SERVER['REQUEST_TIME'] || $result2['content_id'] != $content_id || $result2['user_id'] != $user_id || $result2['share_time'] != $_SERVER['REQUEST_TIME']) {
-	$j++;
-	//$error[$j] = [$content_id, $share_type, $user_id, $_SERVER['REQUEST_TIME']];
-}
+		if ($result1['content_id'] != $content_id || $result1['user_id'] != $user_id || $result1['share_time'] != $_SERVER['REQUEST_TIME'] || $result2['content_id'] != $content_id || $result2['user_id'] != $user_id || $result2['share_time'] != $_SERVER['REQUEST_TIME']) {
+			$j++;
+			//$error[$j] = [$content_id, $share_type, $user_id, $_SERVER['REQUEST_TIME']];
+		}
 
 
-}
-echo time()-$time,'<br>';
+		}
+		echo time()-$time,'<br>';
 
-var_dump($j);
- exit;
-		
+		var_dump($j);
+		 exit;
+				
 	}
 	
 	
@@ -159,8 +154,13 @@ var_dump($j);
 		phpinfo();
 		//$user = $this->request('\\App\\Service\\Admin::bulid_table');
 		exit;
-		
+
+	}
 	
+	public function password_get()
+	{
+		echo password_hash('123456', PASSWORD_BCRYPT, ['cost' => 9]);
+		exit;
 	
 	}
 	

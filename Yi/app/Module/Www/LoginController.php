@@ -3,16 +3,23 @@ namespace App\Module\Www;
 
 use Min\App;
 
-class LoginController extends \Min\Controller
+class LoginController extends \App\Module\Www\BaseController
 {
 	protected $max_error_time = 9;
 	
+	public function onConstruct()
+	{
+	
+	}
+	
 	public function index_get()
 	{
+		/*
 		if (PHP_SESSION_NONE === session_status()) {
 			App::initSession(true);  
 		} 
-		$this->response('', '/layout/type-login');
+		*/
+		$this->success('', '/layout/type-login');
 	}
 	
 	public function index_post()
@@ -38,10 +45,11 @@ class LoginController extends \Min\Controller
 			}
 		}
 
-		$login =  $this->request('\\App\\Service\\Account::login', ['phone' => $phone, 'pwd' => $pwd]);
+		$login =  $this->request('\\App\\Service\\Account::login', ['name' => $phone, 'password' => $pwd]);
 		 
 		if (1 == $login['statusCode']) {	
-			session_set('loginerror', null);
+			//session_set('loginerror', null);
+			$this->initUser($login['body']);
 			$this->success('登陆成功');
 			
 		} else {

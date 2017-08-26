@@ -13,103 +13,42 @@ class BaseController extends \Min\Controller
 			redirect(HOME_PAGE . '/login.html');
 		} 
 	}
-	
-	final public function getOpenid()
-	{
-		$wx = $this->getWx();
-		
-		if (empty($_GET['code'])) {
-			$state = mt_rand(10000, 99999);
-			session_set('state', $state);
-			redirect($wx->getOauthRedirect(CURRENT_URL, $state, 'snsapi_base'));
-			exit;
-		} else {
-			if (isset($_GET['state']) && $_GET['state'] == session_get('state')) {
-				$r = $wx->getOauthAccessToken();
-				$open_id = $r['openid']??0;
-			} else {
-				$open_id = 0;
-			} 
-			
-			if (!empty($open_id)) session_set('open_id', $open_id);
-			return $open_id;
-		}
-	}
- 
-	final public function getWx($type= 'anyitime')
-	{
-		return new \Vendor\Wx\WxBase($type);
-	}
-	
 	/*
-		params: 
-		
-		2 1 0
-	
-	*/
-	
-	final public function login($redirect = 1)
-	{
-		$open_id 	= session_get('open_id');
-		$logged 	= session_get('logged');
-		
-		if (!empty($logged)) {
-			$user 	= session_get('user');
-		} else {
+	protected function initUser($user)
+	{ 
+		if($user['user_id'] > 0) {
 			
-			$result = $this->request('\\App\\Service\\Wuser::login', $open_id);	// 登陆
-			if (1 == $result['statusCode']) {
-				$user = $result['body'];
-				$this->initUser($user);
-				
-			} elseif (30206 == $result['statusCode'] && 2 === $redirect ) {
-				$user						= [];
-				$user['wx_ip']				= ip_address();
-				$user['parent_id']			= 0;
-				$user['open_id']			= $open_id;
-				$user['subscribe_time'] 	= $_SERVER['REQUEST_TIME'];
-				$user['subscribe_status']	= 2;
-
-				$result = $this->request('\\App\\Service\\Wuser::addUserByOpenid', $user);
-				if (!empty($result['body']['id'])) {
-					$this->initUser(['wx_id' => $result['body']['id']]);
-				}
-			}	
-		}  
-		
-		if (2 === $redirect) {
-			return true;
+			session_regenerate_id();// 每次登陆都需要更换session id ;
+			//if (!empty($user['nick'])) setcookie('nick', $user['nick'], 0, '/', COOKIE_DOMAIN);
+			//app::usrerror(-999,ini_get('session.gc_maxlifetime'));
+			// 此处应与 logincontroller islogged 相同
+			
+			//setcookie('logged', 1, time() + ini_get('session.gc_maxlifetime') - 100, '/', COOKIE_DOMAIN);
+			session_set('wlogined', 1);
+			session_set('WWW_USER_ID', $user['user_id']);
+			session_set('www_user', $user);
 		}
-		
-		if (empty($user) || 3 != $user['subscribe_status']) {
-			$url = HOME_PAGE. '/subscribe.html';	 
-		} elseif (!empty($user['user_id'])) {
-			return true;
-		} elseif (empty($redirect)) {
-			return false;
-		} else {
-			$url = HOME_PAGE. '/bind.html';	
-		}
-
-		$this->response(['statusCode' => '307' , 'redirect' => $url]);
 	}
- 
+	*/
 	final public function initUser($user)
 	{ 
 		if (!empty($user['user_id'])) {
-			session_set('USER_ID', $user['user_id']);
-			session_set('logged', 1);
+			session_regenerate_id();
+			session_set('WWW_USER_ID', $user['user_id']);
+			session_set('www_logged', 1);
 		}
 		
 		if (!empty($user['wx_id'])) {
-			session_set('wx_id', $user['wx_id']);
+			session_set('www_wx_id', $user['wx_id']);
 		}
 		
 		if (!empty($user['phone'])) {
-			session_set('user_phone', $user['phone']);
+			session_set('www_user_phone', $user['phone']);
 		}
-		 
-		session_set('user', $user);	 
+		
+		$user['nickname'] = $user['nickname'] ?? ('An_' .  substr($user['phone'], -4));
+		
+		session_set('www_nickname', $user['nickname']);
+		session_set('www_user', $user);	 
 	}
-
 }

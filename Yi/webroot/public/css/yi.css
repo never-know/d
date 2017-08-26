@@ -145,7 +145,7 @@ font-size:0;
 .account .avatar img{
     width: 38px;
     height: 38px;
-    border: 1px solid #e0e0e0;
+    /*border: 1px solid #e0e0e0;*/
 }
 .account .nickname , #logout{
 padding-top: 12px;
