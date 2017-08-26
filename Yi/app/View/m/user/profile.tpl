@@ -14,14 +14,7 @@
    
       <div class="weui_panel_bd" style="background:#fff;">
         <a id="avater_wrapper"  href="#abc" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">
-			
-			<h4 class="weui_media_title">头像</h4>
-        　	 <div class="weui_media_bd">
-				&nbsp;
-		     </div>
-		  　
-		   <div class="weui_panel_ft" style="padding:0;">
-		    <img id="avater" class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>" alt="" style="width:50px;" onerror="imgnotfound()">
+			<h4 class="weui_media_title">头像</h4><div class="weui_media_bd"></div><div class="weui_panel_ft" style="padding:0;"><img id="avater" class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>" alt="" style="width:50px;" onerror="imgnotfound()">
 		   </div>
         </a>
      
@@ -62,7 +55,7 @@
         
         <div class="weui_cell" onclick="window.location.href='/draw/account.html'">
           <div class="weui_cell_bd weui_cell_primary" id="balance_account">
-            <p>提现帐户设置（支付宝）</p>
+            <p>提现帐户设置 ( 支付宝 )</p>
           </div>
           <div class="weui_cell_ft weui_cell_ft_fix"></div>
         </div>
