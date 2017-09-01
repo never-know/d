@@ -46,7 +46,6 @@ class Service
 		not throw but record result			if  one of them  === false
 		throw and will not record result	if  one of them  === true
 		not throw and  not record result	if  one of them  === null
-	
 	*/
 	
 	final public function query($sql, $param = false, $throwable = false)
@@ -116,6 +115,11 @@ class Service
 	final public function watchdog($data, $extra = null)
 	{	
 		watchdog($data, $this->log_type, $this->log_level, $extra);
+	}
+	
+	final public function callService($name)
+	{
+		return new ('\\App\\Service\\' . $name);
 	}
 	
 	final public function commonList($sql_count, $sql_list) 

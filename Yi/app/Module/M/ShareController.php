@@ -40,7 +40,8 @@ class ShareController extends \App\Module\M\BaseController
 	
 	public function js_get()
 	{
-		if (preg_match('|^'. SCHEMA . SERVER_NAME . '/content/([a-zA-Z0-9_\-]+).html$|', $_SERVER['HTTP_REFERER'], $match)){
+		$open_id = session_get('open_id');
+		if (preg_match('|^'. SCHEMA . SERVER_NAME . '/content/([a-zA-Z0-9_\-]+).html$|', $_SERVER['HTTP_REFERER'], $match) && !empty($open_id)) {
 			$id = str2int($match[1]);
 		} else {
 			exit('var msg = "error";');
@@ -57,25 +58,42 @@ class ShareController extends \App\Module\M\BaseController
 		$result['js'] = $wx->getJsSign($_SERVER['HTTP_REFERER']);
 				
 		echo 'function parseJSON(c){if(!c){return null}if(window.JSON&&window.JSON.parse){return window.JSON.parse(c)}var a=/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,e=/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,b=/(?:^|:|,)(?:\s*\[)+/g,d=/^[\],:{}\s]*$/;if(d.test(c.replace(e,"@").replace(a,"]").replace(b,""))){return(new Function("return "+c))()}}function initXMLhttp(){var a;if(window.XMLHttpRequest){a=new XMLHttpRequest()}else{a=new ActiveXObject("Microsoft.XMLHTTP")}return a}function Ajax(c){if(!c.url){return}if(!c.type){return}if(!c.method){c.method=true}var a=initXMLhttp();a.onreadystatechange=function(){if(a.readyState==4){if(a.status==200){if(c.success){c.success(parseJSON(a.responseText),a.readyState)}}else{if(c.fail){c.fail()}}}};var b=[],l=c.data;if(typeof l==="string"){var f=String.prototype.split.call(l,"&");for(var g=0,e=f.length;g<e;g++){var h=f[g].split("=");b.push(encodeURIComponent(h[0])+"="+encodeURIComponent(h[1]))}}else{if(typeof l==="object"&&!(l instanceof String)){for(var d in l){var h=l[d];if(Object.prototype.toString.call(h)=="[object Array]"){for(var g=0,e=h.length;g<e;g++){b.push(encodeURIComponent(d)+"[]="+encodeURIComponent(h[g]))}}else{b.push(encodeURIComponent(d)+"="+encodeURIComponent(h))}}}}b=b.join("&");if(c.type=="GET"){a.open("GET",c.url+"?"+b,c.method);a.setRequestHeader("X-REQUESTED-WITH","xmlhttprequest");a.send()}if(c.type=="POST"){a.open("POST",c.url,c.method);a.setRequestHeader("Content-type","application/x-www-form-urlencoded");a.setRequestHeader("X-REQUESTED-WITH","xmlhttprequest");a.send(b)}};
-		var token = "' . get_token('m_share_index') . '";
+		
+		var params = {token : "' . get_token('m_share_index') . '"};
+		 
 		wx.config({
 			appId: 	"'. $result['js']['appId'] . '",
 			timestamp: '. $result['js']['timestamp']. ',
 			nonceStr: "'. $result['js']['nonceStr']. '",
 			signature: "'. $result['js']['signature']. '",
 			jsApiList: [
-				"onMenuShareTimeline", "onMenuShareAppMessage"
+				"onMenuShareTimeline", "onMenuShareAppMessage","getLocation","getNetworkType"
 			]
 		});
 	  
 		wx.ready(function () {
-	   
+			
+			wx.getNetworkType({
+				success: function (res) {
+					params.networkType = res.networkType; // 返回网络类型2g，3g，4g，wifi
+				}
+			});
+			
+			wx.getLocation({
+				type: "wgs84", 
+				success: function (res) {
+					params.lat = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+					params.lng = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+					params.accuracy = res.accuracy; // 位置精度
+				}
+			});
 			wx.onMenuShareTimeline({
 				title: content_title,
 				link: "' . $result['share_url']['timeline']. '",
 				imgUrl: content_icon, 
-				success: function () { 
-					Ajax({url:"/share.html",type:"POST", data:{key: "' . $result['share_nos']['timeline'] .'", csrf_token: token}});
+				success: function () {
+					params.key = "' . $result['share_nos']['timeline'] .'";
+					Ajax({url:"/share.html",type:"POST", data: params});
 				},
 			});
 		
@@ -85,7 +103,8 @@ class ShareController extends \App\Module\M\BaseController
 				link: "' .$result['share_url']['friend']. '",
 				imgUrl: content_icon, 
 				success: function () { 
-					Ajax({url:"/share.html",type:"POST", data:{key: "' . $result['share_nos']['friend'] .'", csrf_token:token}});
+					params.key = "' . $result['share_nos']['friend'] .'";
+					Ajax({url:"/share.html",type:"POST", data:params});
 			}
 		});
 	});';

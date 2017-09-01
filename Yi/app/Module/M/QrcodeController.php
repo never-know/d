@@ -29,7 +29,12 @@ class QrcodeController extends \App\Module\M\BaseController
 					$params['current_user'] = session_get('USER_ID')??0;
 					$params['content_id']   = \str2int($match[1]);
 					$params['share_no']   	= $match[2];
-					$result = $this->request('\\App\\Service\\Share::view', $params);
+					$result = $this->request('\\App\\Service\\ShareView::getShareUser', $params);
+					if ($result['body']['record'] == 1 && $result['body']['wx_id'] > 1) {
+						$sign = md5(md5(config_get('private_key') . ($_SERVER['REQUEST_TIME']*($_SERVER['REQUEST_TIME']%188))));
+						min_socket(HOME_PAGE.'/cron/shareview.html?time='.$_SERVER['REQUEST_TIME'].'&sign=' .$sign);
+					}
+					
 					$shared_user_wx_id = ($result['body']['wx_id']??0);	// 分享者 用户ID
 				}
 			}

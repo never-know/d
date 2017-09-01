@@ -22,6 +22,9 @@ class IndexController extends \App\Module\M\BaseController
 			$param['sub_region']	=  '';
 		
 		} else {   // 使用默认 
+			 
+			//$result = $this->cache('user_actions')->get('region_select_' . session_get('USER_ID'), true);
+
 			$param['region'] 	 =  110101;
 			$param['sub_region'] =  '';
 		}		
@@ -44,8 +47,7 @@ class IndexController extends \App\Module\M\BaseController
 		
 		$result['body']['params']['selected_subregion'] = $param['sub_region'] ;
 		*/
-		
-		
+
 		$this->response($result);
 	}
 	

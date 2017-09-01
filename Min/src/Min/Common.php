@@ -511,7 +511,7 @@ function min_socket($uri, $timeout = 1)
 		$fp = fsockopen($scheme.$arr['host'], $port);
 		
 		if ($fp) { 
-			$out = "GET " . $arr['path'] . " HTTP/1.1\r\n";
+			$out = "GET " . $arr['path'] ."?" . $arr['query'] . " HTTP/1.1\r\n";
 			$out .= "Host: " . $arr['host'] . "\r\n";
 			$out .= "Connection: Close\r\n\r\n";
 			stream_set_timeout($fp, 0, $timeout);
