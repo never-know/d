@@ -29,6 +29,9 @@ class QrcodeController extends \App\Module\M\BaseController
 					$params['current_user'] = session_get('USER_ID')??0;
 					$params['content_id']   = \str2int($match[1]);
 					$params['share_no']   	= $match[2];
+					$params['lat']   		= ($_COOKIE['lat']??0)*10000000;
+					$params['lng']   		= ($_COOKIE['lng']??0)*10000000;
+					$params['ip']   		= ip_address();
 					$result = $this->request('\\App\\Service\\ShareView::getShareUser', $params);
 					if ($result['body']['record'] == 1 && $result['body']['wx_id'] > 1) {
 						$sign = md5(md5(config_get('private_key') . ($_SERVER['REQUEST_TIME']*($_SERVER['REQUEST_TIME']%188))));

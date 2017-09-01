@@ -257,8 +257,7 @@ function int2str($value)
 		return base_convert($value, 10, 36);
 	} else {
 		throw new \Exception('整型值错误', 1);
-	}
-	 
+	}	 
 }
 
 function str2int($value)

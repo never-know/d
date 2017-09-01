@@ -64,6 +64,9 @@ class ShareViewService extends \Min\Service
 			$params['current_user'] = intval($data['current_user']);
 			$params['content_id']   = intval($data['content_id']);
 			$params['share_no']   	= safe_json_encode($data['share_no']);
+			$params['lat']   		= intval($data['lat']);
+			$params['lng']   		= intval($data['lng']);
+			$params['ip']   		= intval($data['ip']);
 		
 			$sql = 'INSERT INTO {{user_share_view_data}} ' . build_query_insert($params);
 			
