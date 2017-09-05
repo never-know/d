@@ -119,7 +119,8 @@ class Service
 	
 	final public function callService($name)
 	{
-		return new ('\\App\\Service\\' . $name);
+		$server_name = '\\App\\Service\\' . $name;
+		return new  $server_name;
 	}
 	
 	final public function commonList($sql_count, $sql_list) 

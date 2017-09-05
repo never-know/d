@@ -148,8 +148,7 @@ class MysqliPDO
 		watchdog($sql, 'sqlt');
 		
 		return $this->nonPrepareQuery('master', $sql, 'UPDATE');
-		
-	
+
 	}
 	
 	private function realQuery($type, $sql, $action, $param)

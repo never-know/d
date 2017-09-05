@@ -67,14 +67,16 @@ class ShareService extends \Min\Service
 		$result = $this->query($ins_sql);
 	
 		if ($result['effect'] != 1) {
-			watchdog('error insert share log SHARE_NO = ' . $params['share_no'] , 'share_id error', 'ERROR');
-		} else {
+			watchdog('error insert share log SHARE_NO = ' . $params['share_no'] , 'share_id error', 'ERROR');  // this error should not have showtime
+		} 
+		/*
+		else {
 			// 跳过手机号码范围
 			if ($result['id'] > 9999999999 && $result['id'] < 10000900000) {
 				$this->query('ALERT TABLE {{user_share}} auto_increment =  ' . (30000000000 + 1000 * ($result['id'] - 10000000000)));
 			}
 		}
-
+		*/
 		return $this->success();		
 	}
 	

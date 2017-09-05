@@ -5,13 +5,12 @@ use Min\App;
 
 class CronController extends \Min\Controller
 {
-	 
-	
+
 	public function shareview_get()
 	{
 		$time = $_GET['time'];
 		
-		$sign	=  md5((md5(config_get('private_key') . ($time*($time%188))));
+		$sign	=  md5(md5(config_get('private_key') . ($time*($time%188))));
 		
 		if ($sign == $_GET['sign']) {
 			$cache = $this->cache('share_view');
@@ -38,7 +37,6 @@ class CronController extends \Min\Controller
 		}
 		
 		exit('SUCCESS');
-
 	}
 	
 	 
