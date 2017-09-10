@@ -4,7 +4,7 @@ namespace App\Module\Www;
 use App\Traits\RegionTrait;
 use Min\App;
 
-class NeedsController extends \Min\Controller
+class NeedsController extends \App\Module\Www\BaseController
 {	
 
 	public function list_get()

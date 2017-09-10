@@ -16,7 +16,19 @@
 	<p>1</p><p>last line</p>
 -->		
 		<div class="weui_panel weui_panel_access_new" id="top">
-			<div class="weui_panel_hd">图文组合列表</div>
+		 
+			<div class="weui_navbar" style="z-index:10000;position:relative;">
+	
+				<div class="weui_navbar_item" id="region" data-value="<?=implode(',',$result['params']['region_id'])?>">
+				<?=implode('', $result['params']['region_title'])?>
+				</div>
+	
+				<div class="weui_navbar_item open-popup" id="show-actions"   data-target="#half">
+					<?=implode(',', $result['params']['subregion_title'])?>
+				</div>
+			</div>
+			
+			 
 			<div class="weui_panel_bd" id="list_loaded">
 			<?php if (!empty($result['list'])) : ?>	 
 			<?php foreach ($result['list'] as $key => $value) : ?>	 
@@ -73,21 +85,10 @@
 			</div>
 		</div>
 		
-	<div class="weui_navbar">
-	
-	<div class="weui_navbar_item" style="padding-left:10px;white-space:nowrap; text-overflow:ellipsis;overflow: hidden;    -webkit-box-flex: 2;
-    -webkit-flex: 2; flex: 2;" id="region" data-value="<?=implode(',',$result['params']['region_id'])?>">
-		<?=implode('', $result['params']['region_title'])?>
-	</div>
-	
-	<div class="weui_navbar_item open-popup" id="show-actions"   data-target="#half">
-		<?=implode(',', $result['params']['subregion_title'])?>
-	</div>
-	</div>
+
 	<style>
 	.weui-picker-overlay, .weui-picker-container { z-index: 100;}
-	.weui_navbar_item {
-		 
+	.weui_navbar_item { 
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -95,6 +96,7 @@
 		-webkit-box-flex: 2;
 		-webkit-flex: 2;
 		flex: 2;
+		padding: 8px;
 	}
 	
 	</style>

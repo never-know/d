@@ -52,6 +52,11 @@ class UserController extends \App\Module\M\BaseController
 	{
 		$result = $this->userinfo();
 		$result['meta'] = ['title' =>'修改昵称'];
+		
+		if (get_device_type() == 'ios') {
+			$result['no_back'] 	= '/user.html';
+		} 
+		
 		$this->success($result);
 	
 	

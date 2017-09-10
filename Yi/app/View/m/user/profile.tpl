@@ -1,6 +1,6 @@
 	<div class="weui_return_wrapper  white_back" >
 		<div class="weui_cells weui_cells_access weui_return"  >
-			<a class="weui_cell black_return" onclick="history.go(-1);" >
+			<a class="weui_cell black_return" onclick="<?=((get_device_type() == 'ios')? '/user.html' : 'history.go(-1);')?>" >
 				<span class="weui_cell_ft" ></span>返回
 			</a>
 			<div id ="save_button">
@@ -191,13 +191,23 @@
 						localId: localIds[0], // 图片的localID
 						success: function (res4) {
 						var localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
+						uploade_avater(localIds, localData)
 						}
 					});
 				} else {
 					var localData =  localIds[0];
+					uploade_avater(localIds, localData);
+					
 				}
-				
-				wx.uploadImage({
+				return;
+			
+			}		 
+		});
+    });
+	  
+	function uploade_avater(localIds, localData)
+	{
+			wx.uploadImage({
 					localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
 					isShowProgressTips: 1, // 默认为1，显示进度提示
 					success: function (res3) {
@@ -269,13 +279,8 @@
 						});
 					}
 				});
-			}		 
-		});
-    });
-	  
-	  
-	  
-	  
+
+	}  
 	</script>
 	 <script>
 		 $(document).on("click", "#qrcode", function() {

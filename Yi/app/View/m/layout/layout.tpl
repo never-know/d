@@ -10,8 +10,11 @@
 		<?php endif;?>
 		<link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/0.4.3/weui.min.css"/>
 		<link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/0.8.3/css/jquery-weui.min.css"/>
-		<link rel="stylesheet" href="/public/css/myi.css?v=10"/>
-		<script src="/public/js/m/zepto_fx.min.js"></script>		
+		<link rel="stylesheet" href="/public/css/myi.css?v=11"/>
+		<script src="/public/js/m/zepto_fx.min.js"></script>
+		<?php if (false && in_array(session_get('USER_ID'), [10, 19]) ) : ?>
+		<script src="/public/js/m/vconsole.min.js"></script>		
+		<?php endif;?>		
 	</head>
 
 <body ontouchstart >
