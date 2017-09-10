@@ -37,7 +37,7 @@ padding: 16px 15px 6px 15px;
 </style>
 
 	<script>
-
+	(function(){           var isPageHide = false;           window.addEventListener('pageshow', function(){               if(isPageHide) {                   window.location.reload();               }           });           window.addEventListener('pagehide', function(){               isPageHide = true;           });       })();
 	 
 	var $form = $("#form");  $form.form();
 	$("#formSubmitBtn").on("click", function(){
