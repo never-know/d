@@ -8,7 +8,7 @@ class BaseController extends \Min\Controller
 	public function onConstruct($redirect = 1)
 	{ 
 		$open_id = session_get('open_id');
-		
+		//$open_id = 'o3GfAwVRJp_lmi0viacZS3c_BtqU'; session_set('open_id', $open_id);
 		if (!isset($open_id)) {
 			$open_id = $this->getOpenid();
 		}

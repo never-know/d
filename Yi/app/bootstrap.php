@@ -13,6 +13,8 @@
 	
 	define('COOKIE_DOMAIN', SERVER_NAME);
 	
+	define('PAGE_SIZE', 40);
+	
 	if (empty($_SERVER['HTTPS'])) {
 		define('SCHEMA', 'http://');
 		define('IS_HTTPS', 	false);

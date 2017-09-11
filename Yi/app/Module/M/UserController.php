@@ -83,7 +83,6 @@ class UserController extends \App\Module\M\BaseController
 	
 	public function avater_get()
 	{
-		$result = $this->userinfo();
 		$wx = $this->getWx();
 		$result['js'] 		= $wx->getJsSign(CURRENT_URL);
 		$result['meta'] 	= ['title' =>'修改头像'];

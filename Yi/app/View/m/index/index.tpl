@@ -23,7 +23,7 @@
 				<?=implode('', $result['params']['region_title'])?>
 				</div>
 	
-				<div class="weui_navbar_item open-popup" id="show-actions"   data-target="#half">
+				<div class="weui_navbar_item " id="show-actions" >
 					<?=implode(',', $result['params']['subregion_title'])?>
 				</div>
 			</div>
@@ -257,6 +257,11 @@
 				});
 			}
 		}
+	});
+	
+	$("#show-actions").on("click", function(){
+		$('#half').popup();
+	
 	});
  
 	</script>

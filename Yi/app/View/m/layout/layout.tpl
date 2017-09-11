@@ -12,13 +12,14 @@
 		<link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/0.8.3/css/jquery-weui.min.css"/>
 		<link rel="stylesheet" href="/public/css/myi.css?v=11"/>
 		<script src="/public/js/m/zepto_fx.min.js"></script>
-		<?php if (false && in_array(session_get('USER_ID'), [10, 19]) ) : ?>
+		<?php if (in_array(session_get('USER_ID'), [10, 19]) ) : ?>
 		<script src="/public/js/m/vconsole.min.js"></script>		
 		<?php endif;?>		
 	</head>
 
-<body ontouchstart >
-
+<body ontouchstart style="overflow-x: hidden;">
+	<div class="container" id="container" style="height: 100%;overflow-y: auto; -webkit-overflow-scrolling: touch;"> 
+	<div class="tabbar" style="height: 100%;">
 	<div class="weui_tab">
 		<div class="weui_tab_bd">	
 		<?php if (empty($result['no_back']) || $result['no_back'] != 1 ) :?> 
@@ -59,10 +60,11 @@
 		</div>
 		<?php endif;?>
 	</div>	
-	
+	</div>
+	</div>
    <script>
   $(function() {
-    FastClick.attach(document.body);
+   // FastClick.attach(document.body);
 	});
 </script>
 	 
