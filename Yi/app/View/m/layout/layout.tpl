@@ -18,8 +18,8 @@
 	</head>
 
 <body ontouchstart style="overflow-x: hidden;">
-	 
-	<div class="weui_tab">
+	<div style="position: relative; height: 100%;overflow:scroll;overflow-x: hidden;">
+	<div class="weui_tab" style="zoom:1;">
 		<div class="weui_tab_bd">	
 		<?php if (empty($result['no_back']) || $result['no_back'] != 1 ) :?> 
 		<div class="weui_return_wrapper" >
@@ -33,8 +33,9 @@
 		<?php view($result); ?> 
 		</div>
 	</div>
+	</div>
 		<?php if (!empty($result['show_bottom'])) : ?>
-		<div class="weui_tabbar">
+		<div class="weui_tabbar" style="position:relative;margin-top:-55px;">
 			<?php if (!empty($result['meta']['menu_active'])) : ?>
 			<a href="javascript:;" class="weui_tabbar_item weui_bar_item_on">
 			<?php  else : ?>
