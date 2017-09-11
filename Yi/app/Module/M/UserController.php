@@ -9,13 +9,7 @@ class UserController extends \App\Module\M\BaseController
 	
 	public function index_get()
 	{
-	/*
-		if (intval(session_get('update_userinfo')) > $_SERVER['REQUEST_TIME'] - 10 ) {
-			session_set('update_userinfo', 0);
-			redirect('/user/profile.html');
-			exit;
-		}
-	*/	
+	 
 		$user_id 	= session_get('USER_ID');
 		
 		// 用户基本信息
@@ -40,9 +34,9 @@ class UserController extends \App\Module\M\BaseController
 	  
 	public function profile_get()
 	{ 
-		$result = $this->userinfo();
-		$wx = $this->getWx();
-		$result['js'] 		= $wx->getJsSign(CURRENT_URL);
+		//$result = $this->userinfo();
+		//$wx = $this->getWx();
+		//$result['js'] 		= $wx->getJsSign(CURRENT_URL);
 		$result['meta'] 	= ['title' =>'用户信息'];
 		$result['no_back'] 	= 1;
 		$this->success($result);
@@ -58,9 +52,8 @@ class UserController extends \App\Module\M\BaseController
 		} 
 		
 		$this->success($result);
-	
-	
 	}
+	
 	public function nickname_post()
 	{
 		$params				= [];
@@ -87,6 +80,18 @@ class UserController extends \App\Module\M\BaseController
 		
 		$this->success();
 	}
+	
+	public function avater_get()
+	{
+		$result = $this->userinfo();
+		$wx = $this->getWx();
+		$result['js'] 		= $wx->getJsSign(CURRENT_URL);
+		$result['meta'] 	= ['title' =>'修改头像'];
+		$result['no_back'] 	= 1;
+		
+		$this->success($result);
+	}
+	
 	
 	public function avater_post()
 	{	
