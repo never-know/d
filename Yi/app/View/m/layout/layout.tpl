@@ -18,8 +18,7 @@
 	</head>
 
 <body ontouchstart style="overflow-x: hidden;">
-	<div class="container" id="container" style="height: 100%;overflow-y: auto; -webkit-overflow-scrolling: touch;"> 
-	<div class="tabbar" style="height: 100%;">
+	 
 	<div class="weui_tab">
 		<div class="weui_tab_bd">	
 		<?php if (empty($result['no_back']) || $result['no_back'] != 1 ) :?> 
@@ -33,6 +32,7 @@
 		<?php endif;?>
 		<?php view($result); ?> 
 		</div>
+	</div>
 		<?php if (!empty($result['show_bottom'])) : ?>
 		<div class="weui_tabbar">
 			<?php if (!empty($result['meta']['menu_active'])) : ?>
@@ -59,9 +59,8 @@
 			</a>       
 		</div>
 		<?php endif;?>
-	</div>	
-	</div>
-	</div>
+	 
+	 
    <script>
   $(function() {
    // FastClick.attach(document.body);
