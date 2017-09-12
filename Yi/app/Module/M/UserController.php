@@ -34,9 +34,9 @@ class UserController extends \App\Module\M\BaseController
 	  
 	public function profile_get()
 	{ 
-		//$result = $this->userinfo();
-		//$wx = $this->getWx();
-		//$result['js'] 		= $wx->getJsSign(CURRENT_URL);
+		$result = $this->userinfo();
+		$wx = $this->getWx();
+		$result['js'] 		= $wx->getJsSign(CURRENT_URL);
 		$result['meta'] 	= ['title' =>'用户信息'];
 		$result['no_back'] 	= 1;
 		$this->success($result);
@@ -80,21 +80,9 @@ class UserController extends \App\Module\M\BaseController
 		
 		$this->success();
 	}
-	
-	public function avater_get()
-	{
-		$wx = $this->getWx();
-		$result['js'] 		= $wx->getJsSign(CURRENT_URL);
-		$result['meta'] 	= ['title' =>'修改头像'];
-		$result['no_back'] 	= 1;
-		
-		$this->success($result);
-	}
-	
-	
+
 	public function avater_post()
 	{	
-		watchdog($_POST);  
 		$wx = $this->getWx();
 		
 		$img = $wx->getMedia($_POST['media_id']);
