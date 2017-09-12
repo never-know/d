@@ -3,7 +3,7 @@
 			<a class="weui_cell black_return" onclick="history.go(-1);" >
 				<span class="weui_cell_ft" ></span>返回
 			</a>
-			<div id ="save_button">
+			<div id ="save_button" style="display:none">
 			<a href="javascript:;" class="weui_btn weui_btn_primary" style="  width: 70px;height: 30px; font-size: 13px; line-height: 30px; margin-top: 8px;  margin-right: 20px; padding-top: 1px;">保存</a>
 			</div>
 		 
@@ -11,7 +11,9 @@
 		
 	</div>
 	 
-	 
+	<div id="loading">
+	
+	</div>
  
 	 
 	
@@ -77,7 +79,9 @@
 	<link rel="stylesheet" href="/public/css/cropper.css">	
 	<script>
 	(function(){           var isPageHide = false;           window.addEventListener('pageshow', function(){               if(isPageHide) {                   window.location.reload();               }           });           window.addEventListener('pagehide', function(){               isPageHide = true;           });       })();
- 
+	
+	$.showLoading();
+	var cropper = null;
 	wx.config({
 			appId: 	"<?=$result['js']['appId']?>",
 			timestamp:  <?=$result['js']['timestamp']?>,
@@ -85,19 +89,21 @@
 			signature: "<?=$result['js']['signature']?>",
 			jsApiList: [
 				"chooseImage", "uploadImage","getLocalImgData"
-			]
+			],
+			  
 		});
 	
 	
 	 
-	$(function() {
- 
+	wx.ready(function(){
+		$.hideLoading();
+		$('#save_button').show();
 		wx.chooseImage({
 			count: 1,  
 			sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
 			sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
 			success: function (res2) {
-				
+				alert('456');
 				var localIds = res2.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
 				if (window.__wxjs_is_wkwebview) {
 					wx.getLocalImgData({

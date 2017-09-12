@@ -200,9 +200,9 @@ class WuserService extends \Min\Service
 			return $this->error('参数错误', 30200);
 		}
 		
-		$info = $this->checkAccount($open_id);
+		$check = $this->checkAccount($open_id);
 		
-		if (!empty($info)) {
+		if (!empty($check)) {
 			$sql = 'UPDATE {{user_wx}} SET subscribe_status = 4 WHERE open_id = ' . safe_json_encode($open_id);
 			$result = $this->query($sql);
 			if ($result['effect'] == 1) {

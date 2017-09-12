@@ -231,12 +231,13 @@ padding:10px 20px;
 
 		if ($('#weui-vcode-btn').attr("sindex") == 1) return;
 			$('#weui-vcode-btn').attr("sindex", 1);
- 
+		$.showLoading();
 		$.ajax({
 			url:'/bind/send.html', 
 			type:'POST', 
 			data: {csrf_token:"<?=get_token('m_bind_send')?>", phone:phone},
 			success: function(data){
+				$.hideLoading();
 				if (data.statusCode == 1 ) {
 					setTimeout(countDown, 1000);
 				} else {
@@ -245,6 +246,7 @@ padding:10px 20px;
 				}
 			},
 			error:function(){
+				$.hideLoading();
 				 $.toast("网络连接失败", "cancel");
 				 $('#weui-vcode-btn').attr("sindex", 0);
 			}
