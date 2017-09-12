@@ -34,6 +34,7 @@ border-bottom:1px solid #04be02;
 margin: 0 20px;
 padding: 16px 15px 6px 15px;
 }
+ 
 </style>
 
 	<script>
@@ -55,7 +56,9 @@ padding: 16px 15px 6px 15px;
 						if (data.statusCode == 1 ) {
 							//window.history.go(-1);
 							history.replaceState(null, "用户主页", "/user.html?v=" + new Date().getTime());
-							window.location.href="/user/profile.html";
+							$.toast('修改成功')
+							setTimeout(function(){window.location.href="/user/profile.html";}, 200);
+							
 						} else {
 							 $.toast(data.message, "cancel");
 							 $('#formSubmitBtn').attr("sindex", 0);

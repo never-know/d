@@ -67,7 +67,9 @@
 					data: $form.serialize(),
 					success: function(data){
 						if (data.statusCode == 1 ) {
-							window.location.href = '/user/profile.html';
+							$.toast('修改成功')
+							setTimeout(function(){window.location.href="/user/profile.html";}, 200);
+							 
 						} else {
 							 $.toast(data.message, "cancel");
 							 $('#formSubmitBtn').attr("sindex", 0);

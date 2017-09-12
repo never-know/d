@@ -71,12 +71,7 @@ footer a {
 	.weui_btn{
 padding-top: 4px;
 }
-.weui_toast_visible , .weui_toast_cancel{
  
-}
-.weui_toast_visible p, .weui_toast_cancel p{
-padding:10px 20px;
-}
 	</style>
 <form id="form">
 	
@@ -220,25 +215,27 @@ padding:10px 20px;
 		phone = $('#phone').val();
 		
 		if ( phone == '') {
-			$.toast('请输入手机号码', "cancel");
+			$.toast('网络连接失败', "cancel");
 			return;
 		}
 		
 		if (!/^(13|15|18|14|17)[\d]{9}$/.test(phone)) {
-			$.toast('手机号码格式错误', "cancel");
+			$.toast('手机号码错误', "cancel");
 			return;
 		}
 
 		if ($('#weui-vcode-btn').attr("sindex") == 1) return;
 			$('#weui-vcode-btn').attr("sindex", 1);
-		$.showLoading();
+		$.showLoading('短信发送中...');
 		$.ajax({
 			url:'/bind/send.html', 
 			type:'POST', 
 			data: {csrf_token:"<?=get_token('m_bind_send')?>", phone:phone},
 			success: function(data){
 				$.hideLoading();
+				 
 				if (data.statusCode == 1 ) {
+					setTimeout(function(){$.toast('发送成功')}, 200);
 					setTimeout(countDown, 1000);
 				} else {
 					 $.toast(data.message, "cancel");
