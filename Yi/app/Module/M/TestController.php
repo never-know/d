@@ -163,7 +163,11 @@ class TestController extends \App\Module\M\TestBaseController
 		exit;
 	
 	}
-	
+	public function bottom_get()
+	{
+		$id = $_GET['id'];
+		$this->success('', '/test/'.$id);
+	}	
 	 
 
 }

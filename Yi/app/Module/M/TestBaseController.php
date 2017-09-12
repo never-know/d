@@ -7,6 +7,10 @@ class TestBaseController extends \Min\Controller
 {
 	public function onConstruct($redirect = 1)
 	{ 
+		if (empty($_REQUEST['key']) || $_REQUEST['key'] != 'fucome6688') {
+			exit;
+		}
+		
 		$open_id = session_get('open_id');
 		
 		if (!isset($open_id)) {
