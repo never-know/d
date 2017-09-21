@@ -215,7 +215,7 @@ padding-top: 4px;
 		phone = $('#phone').val();
 		
 		if ( phone == '') {
-			$.toast('网络连接失败', "cancel");
+			$.toast('手机号码为空', "cancel");
 			return;
 		}
 		

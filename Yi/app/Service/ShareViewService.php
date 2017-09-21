@@ -112,6 +112,17 @@ class ShareViewService extends \Min\Service
 			$params 				= [];
 			$params['viewer_id'] 	= intval($data['viewer_id']);
 			$params['content_id'] 	= intval($data['content_id']);
+			
+			$sql_count = 'SELECT count(1) as count FROM {{user_share_view}} WHERE '. build_query_common(' AND ', $params). ' LIMIT 1';
+
+			$count = $db->query($sql_count);
+			
+			if (!empty($count['count'])) {
+				$check['body']['share_salary'] 	= 0;
+				$check['body']['adv_cost'] 		= 0;
+				
+			}
+			
 			$params['share_user'] 	= intval($check['body']['user_id']);
 			
 			if ($check['body']['adv_cost'] > 0) {
@@ -145,15 +156,7 @@ class ShareViewService extends \Min\Service
 					$balance[$value['user_id']] = $value;	
 				}
  
-				$sql_count = 'SELECT view_id FROM {{user_share_view}} WHERE '. build_query_common(' AND ', $params). ' LIMIT 1';
-	
-				$count = $db->query($sql_count);
-				
-				if (!empty($count)) {
-					$check['body']['share_salary'] 	= 0;
-					$check['body']['adv_cost'] 		= 0;
-					
-				}
+			
 			}
 
 			$params['view_time'] 	= intval($data['view_time']);
