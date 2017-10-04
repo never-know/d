@@ -434,8 +434,12 @@ color:#aaaaaa;
  margin-bottom:8px;
  
 }
-.weui_return_wrapper1 + div{
+.weui_return_wrapper + div{
 margin-top:64px;
+}
+
+.weui_return_wrapper + .weui_return_wrapper{
+margin-top:0;
 }
 
 .weui_return_wrapper{

@@ -24,7 +24,7 @@
 		<?php if (empty($result['no_back']) || $result['no_back'] != 1 ) :?> 
 		<div class="weui_return_wrapper" >
 		<div class="weui_cells weui_cells_access weui_return" style="flex=1;-webkit-box-flex: 1;-webkit-flex: 1;">
-			<a class="weui_cell" onclick="<?=($result['no_back']?:'history.go(-1);')?>" >
+			<a class="weui_cell" onclick="<?=($result['no_back']?("window.location.href='".$result['no_back']."'"):'history.go(-1);')?>" >
 				<span class="weui_cell_ft" ></span>返回
 			</a>
 		</div>
