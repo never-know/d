@@ -10,7 +10,7 @@
 		<?php endif;?>
 		<link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/0.4.3/weui.min.css"/>
 		<link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/0.8.3/css/jquery-weui.min.css"/>
-		<link rel="stylesheet" href="/public/css/myi.css?v=12"/>
+		<link rel="stylesheet" href="/public/css/myi.css?v=13"/>
 		<script src="/public/js/m/zepto_fx.min.js"></script>
 		<?php if (in_array(session_get('USER_ID'), [10, 19]) ) : ?>
 		<script src="/public/js/m/vconsole.min.js"></script>		

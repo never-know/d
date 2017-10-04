@@ -17,7 +17,7 @@
 -->		
 		<div class="weui_panel weui_panel_access_new" id="top">
 		 
-			<div class="weui_navbar" style="z-index:10000;position:relative;">
+			<div class="weui_navbar" style="z-index:10;position:relative;">
 	
 				<div class="weui_navbar_item" id="region" data-value="<?=implode(',',$result['params']['region_id'])?>">
 				<?=implode('', $result['params']['region_title'])?>
