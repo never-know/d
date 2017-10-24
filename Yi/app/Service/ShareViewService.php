@@ -32,7 +32,7 @@ class ShareViewService extends \Min\Service
 			$result	= $this->query($sql);
 			
 			if (!empty($result['user_id'])) {
-				$user_info = $this->callService('checkAccount')->checkAccount('uid', $result['user_id']);
+				$user_info = $this->callService('AccountService')->checkAccount($result['user_id'], 'uid');
 				$result['wx_id']	= $user_info['body']['wx_id']??'0'; 
 				$result['phone']	= $user_info['body']['phone']??'0'; 
 				$cache->set($key, $result, 3600*24*20);
@@ -72,7 +72,8 @@ class ShareViewService extends \Min\Service
 			
 			$result = $this->query($sql);
 			 
-			$params['data_id'] = $result['id']??0;
+			$params['data_id']  = $result['id']?:0;
+            $params['share_no'] = $data['share_no'];
 			 
 			$this->cache('share_view')->push('share_view_logs', json_encode($params));
 			return $this->success(['share_user' => intval($check['body']['wx_id']), 'record' => 1]);

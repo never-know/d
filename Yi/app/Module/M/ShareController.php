@@ -63,7 +63,7 @@ class ShareController extends \App\Module\M\BaseController
 		$wx = $this->getWx();
 		$result['js'] = $wx->getJsSign($_SERVER['HTTP_REFERER']);
 				
-		echo 'var params = {token : "' . get_token('m_share_index') . '"};
+		echo 'var params = {csrf_token : "' . get_token('m_share_index') . '"};
 		
 		wx.config({
 			appId: 	"'. 	$result['js']['appId'] . '",

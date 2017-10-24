@@ -31,9 +31,6 @@ class CronController extends \Min\Controller
 				
 				$cache->set('current_status', 0);
 			} 
-			
-			$this->success();
-			 
 		}
 		
 		exit('SUCCESS');

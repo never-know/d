@@ -24,7 +24,7 @@
 			<?=$result['content']?>
 		</div>
 	 
-		<img src="https://m.anyitime.com/public/images/qrcode.jpg" data-src="https://m.anyitime.com/public/images/qrcode.png" width="200px;" id="qrcode"/>
+		<img data-src="https://m.anyitime.com/public/images/qrcode.png" width="200px;" id="qrcode"/>
 
 	</div>	
 </body>
