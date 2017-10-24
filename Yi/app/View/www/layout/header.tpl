@@ -13,7 +13,7 @@
 			
 			
 			<div class="account">                       	    
-				<a href="" class="avatar"><img src="<?=get_avater(session_get('www_wx_id'), ASSETS_URL)?>"  onerror="imgnotfound()"/></a>                          
+				<a href="" class="avatar"><img src="<?=get_avatar(session_get('www_wx_id'), ASSETS_URL)?>"  onerror="imgnotfound()"/></a>                          
 				<a href="" class="nickname"><?=session_get('www_nickname')??''?></a>  
 				<a id="logout" href="">退出</a>					 
 			</div> 

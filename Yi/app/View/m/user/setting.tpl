@@ -16,7 +16,7 @@
 		     </div>
 		  　
 		   <div class="weui_panel_ft" style="padding:0;">
-		    <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="" style="width:50px;">
+		    <img class="weui_media_appmsg_thumb" src="/public/images/avatar.png" alt="" style="width:50px;">
 		   </div>
         </a>
      

@@ -4,7 +4,7 @@
       <div class="weui_panel_bd" style="/*background-color:#01a9da;background-color: #009264;background-color:#33b2c8;background-color:#7ed6a4;background-color:#1ac9f6;background-color:#d839ce;background-color:#e62a31;background-color:#489ef1;background-color:#ec151c;*/">
         <a href="/user/profile.html" class="weui_media_box weui_media_appmsg" style="padding: 12px 15px 12px 22px;">
           <div class="weui_media_hd">
-            <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
+            <img class="weui_media_appmsg_thumb" src="/public/images/avatar.png" alt="">
           </div>
           <div class="weui_media_bd" style="margin-left:.5em;margin-top:6px;letter-spacing: 0px;">
             <h4 class="weui_media_title">Noota</h4>
@@ -141,11 +141,11 @@
 	 <script>
 		 $(document).on("click", "#qrcode", function() {
 		  
-			//$.alert('<img src="http://m.anyitime.com/public/images/avater.png" style="position:relative;width:100%;" />', '扫描二维码<p>关注安逸时光网微信公众号', '关闭');
+			//$.alert('<img src="http://m.anyitime.com/public/images/avatar.png" style="position:relative;width:100%;" />', '扫描二维码<p>关注安逸时光网微信公众号', '关闭');
 			
 			    $.modal({
 				  title: '扫描二维码<p>关注 <span style="color:red;">安逸时光网</span> 微信公众号',
-				  text: '<img src="http://m.anyitime.com/public/images/avater.png" style="position:relative;width:100%;" />',
+				  text: '<img src="http://m.anyitime.com/public/images/avatar.png" style="position:relative;width:100%;" />',
 				  buttons: [
 					{ text: "关闭", className: "primary"},
 				  ]

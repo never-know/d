@@ -35,7 +35,7 @@ class WuserService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
 
-			$sql = 'SELECT w.wx_id, w.balance_index, w.parent_id, w.subscribe_status, w.open_id,  u.user_id, u.user_type, u.phone, u.register_time, u.avater, u.nickname FROM {{user_wx}} AS w LEFT JOIN {{user}} AS u ON u.user_id = w.user_id WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
+			$sql = 'SELECT w.wx_id, w.balance_index, w.parent_id, w.subscribe_status, w.open_id,  u.user_id, u.user_type, u.phone, u.register_time, u.avatar, u.nickname FROM {{user_wx}} AS w LEFT JOIN {{user}} AS u ON u.user_id = w.user_id WHERE  w.'. $type. ' = '. $name .' LIMIT 1';
 			 
 			$result	= $this->query($sql);
  			  

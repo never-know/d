@@ -110,12 +110,12 @@
 						localId: localIds[0], // 图片的localID
 						success: function (res4) {
 						var localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
-						uploade_avater(localIds, localData)
+						uploade_avatar(localIds, localData)
 						}
 					});
 				} else {
 					var localData =  localIds[0];
-					uploade_avater(localIds, localData);
+					uploade_avatar(localIds, localData);
 					
 				}
 				return;
@@ -124,7 +124,7 @@
 		});
     });
 	  
-	function uploade_avater(localIds, localData)
+	function uploade_avatar(localIds, localData)
 	{
 			wx.uploadImage({
 					localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
@@ -168,17 +168,17 @@
 
 							var img = cropper.getData(), img2 = cropper.getImageData();
 								img.media_id = res3.serverId;
-								img.csrf_token = "<?=get_token('m_user_avater')?>";
+								img.csrf_token = "<?=get_token('m_user_avatar')?>";
 								img.naturalWidth = img2.naturalWidth;
 							 
 							$.ajax({
-								url:'/user/avater.html', 
+								url:'/user/avatar.html', 
 								type:'POST', 
 								data: img,
 								success: function(data){
 									if (data.statusCode == 1 ) {
 										 
-										//$('#avater').attr('src', data.body.headimgurl + '?v=' + new Date().getTime());
+										//$('#avatar').attr('src', data.body.headimgurl + '?v=' + new Date().getTime());
 										//$.closePopup();
 										history.replaceState(null, "用户主页", "https://m.anyitime.com/user.html?v=" + new Date().getTime());
 										window.location.href="/user/profile.html";

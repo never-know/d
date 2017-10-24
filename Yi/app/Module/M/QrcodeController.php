@@ -79,8 +79,15 @@ class QrcodeController extends \App\Module\M\BaseController
 							return $default;
 						}
 					}
+
+					$avatar = imagecreatefromstring(file_get_contents(get_avatar($scene_id, PUBLIC_PATH)));
+					$new_image = imagecreatefromstring($img);
+  
+					// imagecopymerge使用注解
+					imagecopymerge($new_image, $avatar, 182, 182, 0, 0, 65, 65, 100);
 					
-					file_put_contents($result['img_path'], $img);
+					imagepng($new_image, $result['img_path']);
+				//	file_put_contents($result['img_path'], $img);
 					$cache->set($key, $result, $result['expire_seconds']-100);
 				}
 			}

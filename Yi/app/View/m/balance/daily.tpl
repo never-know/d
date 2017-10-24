@@ -81,7 +81,7 @@
 		<!-- template
 		<li class="weui_cell" href="/share/log.html">
 			<div class="share_clock"> 12:30 </div>
-			<div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" ></div>
+			<div class="weui_cell_hd"><img src="/public/images/avatar.png" alt="" ></div>
 			<div class="weui_cell_bd weui_cell_primary">
             <p class="share_title">永辉超市转塘店6.1大促</p>
             <p class="share_detail">分享于12-03 12:30@朋友圈 </p>

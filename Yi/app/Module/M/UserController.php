@@ -81,7 +81,7 @@ class UserController extends \App\Module\M\BaseController
 		$this->success();
 	}
 
-	public function avater_post()
+	public function avatar_post()
 	{	
 		$wx = $this->getWx();
 		
@@ -90,7 +90,7 @@ class UserController extends \App\Module\M\BaseController
 		$wx_id = session_get('wx_id');
 		
 		if (!empty($img)) {
-			$path 	= get_avater($wx_id);	// wx_id
+			$path 	= get_avatar($wx_id);	// wx_id
 			if (make_dir(PUBLIC_PATH . $path)) {
 				$src_data = base64_decode($img);
 				$src = imagecreatefromstring($src_data);
@@ -126,9 +126,9 @@ class UserController extends \App\Module\M\BaseController
 						$params['wx_id']	= $user['wx_id'];
 						$params['phone']	= $user['phone'];
 						$params['open_id']	= $user['open_id'];
-						$result = $this->request('\\App\\Service\\Account::avater', $params);
+						$result = $this->request('\\App\\Service\\Account::avatar', $params);
 						if ($result['statusCode'] == 1) {
-							$user['avater'] += 1;
+							$user['avatar'] += 1;
 							session_set('user', $user);
 						}
 						//session_set('update_userinfo', $_SERVER['REQUEST_TIME']);
@@ -159,7 +159,7 @@ class UserController extends \App\Module\M\BaseController
 		
 		$user = session_get('user');
 		 
-		$result['headimgurl'] = get_avater($user['wx_id'], ASSETS_URL) . '?v=' . $user['avater'];
+		$result['headimgurl'] = get_avatar($user['wx_id'], ASSETS_URL) . '?v=' . $user['avatar'];
 		
 		watchdog($result['headimgurl']);
 		if (empty($user['nickname'])) {

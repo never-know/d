@@ -77,7 +77,7 @@
 					  </ul>
                     </div>
 					 <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
+                        <img class="weui_media_appmsg_thumb" src="/public/images/avatar.png" alt="">
                     </div>
                 </a>
 				-->

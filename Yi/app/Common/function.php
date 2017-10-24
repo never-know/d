@@ -65,9 +65,9 @@ function balance_type($type)
 
 }
 
-function get_avater($wx_id, $prefix = '')
+function get_avatar($wx_id, $prefix = '')
 {
-	return ( $prefix . '/avater' . hash_path($wx_id, 'avater') . '.png');
+	return ( $prefix . '/avatar' . hash_path($wx_id, 'avatar') . '.png');
 }
 
 function img_url($img)

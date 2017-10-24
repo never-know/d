@@ -193,7 +193,7 @@
 		}
 		 $(document).on("click", "#qrcode", function() {
 		  
-			//$.alert('<img src="http://m.anyitime.com/public/images/avater.png" style="position:relative;width:100%;" />', '扫描二维码<p>关注安逸时光网微信公众号', '关闭');
+			//$.alert('<img src="http://m.anyitime.com/public/images/avatar.png" style="position:relative;width:100%;" />', '扫描二维码<p>关注安逸时光网微信公众号', '关闭');
 			
 			    $.modal({
 				  title: '扫描二维码<p>关注 <span style="color:red;">安逸时光网</span> 微信公众号',

@@ -4,7 +4,7 @@
       <div class="weui_panel_bd" style="background-color:#01a9da;background-color: #009264;background-color:#33b2c8;background-color:#7ed6a4;background-color:#1ac9f6;background-color:#d839ce;background-color:#e62a31;background-color:#489ef1;background-color:#ec151c;">
         <a href="/user/profile.html" class="weui_media_box weui_media_appmsg" style="padding:30px 15px;margin-left:.5em">
           <div class="weui_media_hd">
-            <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
+            <img class="weui_media_appmsg_thumb" src="/public/images/avatar.png" alt="">
           </div>
           <div class="weui_media_bd" style="margin-left:.8em;margin-top:4px;color:white;letter-spacing: 1px;">
             <h4 class="weui_media_title">Noota</h4>
@@ -109,7 +109,7 @@
 	<div class="weui_cells weui_cells_access">
 
         <a class="weui_cell" href="javascript:;">
-          <div class="weui_cell_hd"><img src="/public/images/avater.png" alt="" width="24"></div>
+          <div class="weui_cell_hd"><img src="/public/images/avatar.png" alt="" width="24"></div>
           <div class="weui_cell_bd weui_cell_primary">
             <p>安逸积分</p>
           </div>
@@ -154,7 +154,7 @@
 	 
 		 $(document).on("click", "#qrcode", function() {
 		  
-			$.alert('<img src="http://m.yi.com/public/images/avater.png" style="position:relative;width:100%;" />', '扫描二维码<p>关注安逸时光网微信公众号', '');
+			$.alert('<img src="http://m.yi.com/public/images/avatar.png" style="position:relative;width:100%;" />', '扫描二维码<p>关注安逸时光网微信公众号', '');
 			return false;
 		  });
 	 

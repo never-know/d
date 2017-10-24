@@ -41,7 +41,7 @@ class AccountService extends \Min\Service
 		
 		if (empty($result) || $cache->getDisc() === $result) {
  
-			$sql = 'SELECT uw.wx_id, uw.balance_index, uw.parent_id, uw.subscribe_status, uw.open_id,  u.user_id, u.user_type, u.password, u.phone, u.register_time, u.avater, u.nickname FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
+			$sql = 'SELECT uw.wx_id, uw.balance_index, uw.parent_id, uw.subscribe_status, uw.open_id,  u.user_id, u.user_type, u.password, u.phone, u.register_time, u.avatar, u.nickname FROM {{user}} AS u LEFT JOIN {{user_wx}} AS uw ON u.user_id = uw.user_id WHERE u.'. $type. ' = '. $name .' LIMIT 1'; // pdo normal 
 			$result	= $this->query($sql);
  			  
 			if (!empty($result)) $cache->set($key, $result, 7200);
@@ -268,7 +268,7 @@ class AccountService extends \Min\Service
 	}
 	
 	
-	public function avater($data)
+	public function avatar($data)
 	{
 
 		$user_id 	= intval($data['user_id']);
@@ -277,7 +277,7 @@ class AccountService extends \Min\Service
 			return $this->error('参数错误', 30201);
 		}
 		
-		$sql = 'UPDATE {{user}} SET avater = avater + 1 WHERE user_id = ' .$user_id;
+		$sql = 'UPDATE {{user}} SET avatar = avatar + 1 WHERE user_id = ' .$user_id;
 		
 		$result = $this->query($sql);
 		

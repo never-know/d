@@ -40,7 +40,7 @@
 			<?php foreach($result['list'] as $value)   : ?>
 				<a href="javascript:;" class="weui_media_box weui_media_appmsg">
                    <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="<?=$value['avater']?>"  onerror="imgnotfound()" alt="">
+                        <img class="weui_media_appmsg_thumb" src="<?=$value['avatar']?>"  onerror="imgnotfound()" alt="">
                     </div>
                     <div class="weui_media_bd">
                         <p class="weui_media_desc"><?=$value['phone']?></p>
@@ -59,7 +59,7 @@
 			<!-- template
 				<a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
                    <div class="weui_media_hd">
-                        <img class="weui_media_appmsg_thumb" src="/public/images/avater.png" alt="">
+                        <img class="weui_media_appmsg_thumb" src="/public/images/avatar.png" alt="">
                     </div>
                     <div class="weui_media_bd">
                         <p class="weui_media_desc">183****8890</p>
@@ -95,7 +95,7 @@
 		
 			return  ('<a href="javascript:;" class="weui_media_box weui_media_appmsg">' +
                    '<div class="weui_media_hd">' +
-                        '<img class="weui_media_appmsg_thumb" src="' +  value.avater + '"  onerror="imgnotfound()" alt="">'+
+                        '<img class="weui_media_appmsg_thumb" src="' +  value.avatar + '"  onerror="imgnotfound()" alt="">'+
                    ' </div>'+
                     '<div class="weui_media_bd">' +
                         '<p class="weui_media_desc">'+ value.phone + '</p>' +

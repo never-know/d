@@ -2,7 +2,7 @@
 	<div class="weui_panel" style="margin-top: 64px;">
    
       <div class="weui_panel_bd" style="background:#fff;">
-        <a id="avater_wrapper" href="javascript:void(0);" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">
+        <a id="avatar_wrapper" href="javascript:void(0);" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">
 			
 			<h4 class="weui_media_title">头像</h4>
         　	 <div class="weui_media_bd">
@@ -10,7 +10,7 @@
 		     </div>
 		  　
 		   <div class="weui_panel_ft" style="padding:0;">
-		    <img id="avater" class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>" alt="" style="width:50px;" onerror="imgnotfound()">
+		    <img id="avatar" class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>" alt="" style="width:50px;" onerror="imgnotfound()">
 		   </div>
         </a>
      
@@ -185,7 +185,7 @@
         },  $('#nick').html());
       });
 	  
-	   $(document).on("click", "#avater_wrapper", function() {
+	   $(document).on("click", "#avatar_wrapper", function() {
 	   
 	   
 	   wx.checkJsApi({
@@ -220,7 +220,7 @@
 											localId: localIds[0], // 图片的localID
 											success: function (res4) {
 												localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
-												//$('avater').attr('src', res4.localData);
+												//$('avatar').attr('src', res4.localData);
 											}
 										});
 									} else {
@@ -254,12 +254,12 @@
 									
 									
 									$.ajax({
-										url:'/user/avater.html', 
+										url:'/user/avatar.html', 
 										type:'POST', 
-										data: {serverid: res3.serverId, csrf_token:"<?=get_token('m_user_avater')?>"},
+										data: {serverid: res3.serverId, csrf_token:"<?=get_token('m_user_avatar')?>"},
 										success: function(data){
 											if (data.statusCode == 1 ) {
-												$('avater').attr('src', data.body.headimgurl);
+												$('avatar').attr('src', data.body.headimgurl);
 											} else {
 												// $.toast(data.message, "cancel");
 												// $('#formSubmitBtn').attr("sindex", 0);
@@ -268,11 +268,11 @@
 														localId: localIds[0], // 图片的localID
 														success: function (res4) {
 															//localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
-															//$('avater').attr('src', res4.localData);
+															//$('avatar').attr('src', res4.localData);
 														}
 													});
 												} else {
-													$('avater').attr('src', localIds[0]);
+													$('avatar').attr('src', localIds[0]);
 												}
 											}
 										},

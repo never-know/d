@@ -11,7 +11,7 @@ class MyController extends \App\Module\M\BaseController
 		$result['body']['level2'] = 0;
 		if (!empty($result['body']['list'])) {
 			foreach ($result['body']['list'] as &$value) {
-				$value['avater'] = get_avater($value['wx_id'], ASSETS_URL);
+				$value['avatar'] = get_avatar($value['wx_id'], ASSETS_URL);
 				$value['name'] = base_convert($value['wx_id'], 10, 36);
 				if (empty($value['phone'])) {
 					$value['phone'] 	= '暂无';
@@ -42,7 +42,7 @@ class MyController extends \App\Module\M\BaseController
 			if (!empty($result['body']['list'])) {
 
 				foreach ($result['body']['list'] as &$value) {
-					$value['avater'] = get_avater($value['wx_id'], ASSETS_URL);
+					$value['avatar'] = get_avatar($value['wx_id'], ASSETS_URL);
 					$value['name'] = '';
 					if (empty($value['phone'])) {
 						$value['phone'] 	= '暂无';

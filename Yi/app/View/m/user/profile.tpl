@@ -22,8 +22,8 @@
 	<div class="weui_panel" style="margin-top: 64px;">
    
       <div class="weui_panel_bd" style="background:#fff;">
-        <a id="avater_wrapper"  href="#abc" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">
-			<h4 class="weui_media_title">头像</h4><div class="weui_media_bd"></div><div class="weui_panel_ft" style="padding:0;"><img id="avater" class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>" alt="" style="width:50px;" onerror="imgnotfound()">
+        <a id="avatar_wrapper"  href="#abc" class="weui_media_box weui_media_appmsg" style="padding:8px 15px;">
+			<h4 class="weui_media_title">头像</h4><div class="weui_media_bd"></div><div class="weui_panel_ft" style="padding:0;"><img id="avatar" class="weui_media_appmsg_thumb" src="<?=$result['headimgurl'];?>" alt="" style="width:50px;" onerror="imgnotfound()">
 		   </div>
         </a>
      
@@ -189,7 +189,7 @@
         },  $('#nick').html());
       });
 	  
-	$(document).on("click", "#avater_wrapper", function() {
+	$(document).on("click", "#avatar_wrapper", function() {
  
 		wx.chooseImage({
 			count: 1,  
@@ -203,12 +203,12 @@
 						localId: localIds[0], // 图片的localID
 						success: function (res4) {
 						var localData = res4.localData; // localData是图片的base64数据，可以用img标签显示
-						uploade_avater(localIds, localData)
+						uploade_avatar(localIds, localData)
 						}
 					});
 				} else {
 					var localData =  localIds[0];
-					uploade_avater(localIds, localData);
+					uploade_avatar(localIds, localData);
 					
 				}
 				return;
@@ -217,7 +217,7 @@
 		});
     });
 	  
-	function uploade_avater(localIds, localData)
+	function uploade_avatar(localIds, localData)
 	{
 			wx.uploadImage({
 					localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
@@ -262,17 +262,17 @@
 
 							var img = cropper.getData(), img2 = cropper.getImageData();
 								img.media_id = res3.serverId;
-								img.csrf_token = "<?=get_token('m_user_avater')?>";
+								img.csrf_token = "<?=get_token('m_user_avatar')?>";
 								img.naturalWidth = img2.naturalWidth;
 							 
 							$.ajax({
-								url:'/user/avater.html', 
+								url:'/user/avatar.html', 
 								type:'POST', 
 								data: img,
 								success: function(data){
 									if (data.statusCode == 1 ) {
 										 
-										$('#avater').attr('src', data.body.headimgurl + '?v=' + new Date().getTime());
+										$('#avatar').attr('src', data.body.headimgurl + '?v=' + new Date().getTime());
 										//$.closePopup();
 										history.replaceState(null, "", "/user.html?v=" + new Date().getTime());
 										window.location.href="/user/profile.html";
