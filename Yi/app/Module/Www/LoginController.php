@@ -7,7 +7,7 @@ class LoginController extends \App\Module\Www\BaseController
 {
 	protected $max_error_time = 9;
 	
-	public function onConstruct()
+	public function onConstruct($redirect = 1)
 	{
 	
 	}

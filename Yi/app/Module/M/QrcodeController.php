@@ -17,6 +17,7 @@ class QrcodeController extends \App\Module\M\BaseController
 	public function index_get()
 	{
 		$shared_user_wx_id	= session_get('wx_id')??0;
+		$type = 'qrcode_avatar';
 		
 		if (!empty($_SERVER['HTTP_REFERER'])) {
 			$url = parse_url($_SERVER['HTTP_REFERER']);
@@ -32,22 +33,23 @@ class QrcodeController extends \App\Module\M\BaseController
 					$params['lat']   		= ($_COOKIE['lat']??0)*10000000;
 					$params['lng']   		= ($_COOKIE['lng']??0)*10000000;
 					$params['ip']   		= ip_address();
+					
 					$result = $this->request('\\App\\Service\\ShareView::getShareUser', $params);
+				 
 					if ($result['body']['record'] == 1 && $result['body']['share_user'] > 1) {
 						$sign = md5(md5(config_get('private_key') . ($_SERVER['REQUEST_TIME']*($_SERVER['REQUEST_TIME']%188))));
 						min_socket(HOME_PAGE.'/cron/shareview.html?time='.$_SERVER['REQUEST_TIME'].'&sign=' .$sign);
 					}
-					
-					$shared_user_wx_id = ($result['body']['share_user']??0);	// 分享者 用户ID
+					$type = 'qrcode_logo';
+					$shared_user_wx_id = intval($result['body']['share_user']??0);	// 分享者 用户ID
 				}
 			}
 		} 
 		
 		$img = PUBLIC_PATH . config_get('wx_qrcode');
-		
-		if ($shared_user_wx_id) {
-			$scene_id = base_convert($shared_user_wx_id, 10, 36);
-			$img = $this->getQRCode($scene_id, $img);
+			 
+		if (!empty($shared_user_wx_id)) {
+			$img = $this->getQRCode($shared_user_wx_id, $img, $type);
 		} 
 		
 		//redirect($img);
@@ -57,42 +59,53 @@ class QrcodeController extends \App\Module\M\BaseController
 		exit;
 	}
 	 
-	public function getQRCode($scene_id, $default = null)
+	public function getQRCode($shared_user_wx_id, $default = null, $type = 'qrcode_avatar')
 	{
+		$scene_id = base_convert($shared_user_wx_id, 10, 36);
 		$cache 	= $this->cache('qrcode');
 		$key	= '{qrcode}:'. $scene_id;
 		$result = $cache->get($key, true);
 		
 		if (empty($result) || $cache->getDisc() === $result) { 
-		
+ 
 			$wx 	= $this->getWx();
 			$result = $wx->getQRCode($scene_id);
 			if (!empty($result['ticket'])) {
 			
 				$img = http_get($wx->getQRUrl($result['ticket']));
+				
 				if (!empty($img)) {
-					$result['img_path'] = PUBLIC_PATH . '/qrcode/' . implode('/', str_split($scene_id, 2)) . '.jpg';
 					
-					$dir = dirname($result['img_path']);
+					$base = PUBLIC_PATH . '/qrcode/' . implode('/', str_split($scene_id, 2));
+
+					$dir = dirname($base);
 					if (!is_dir($dir)) {
 						if (!mkdir($dir, 0755, true)) {
 							return $default;
 						}
 					}
-
-					$avatar = imagecreatefromstring(file_get_contents(get_avatar($scene_id, PUBLIC_PATH)));
-					$new_image = imagecreatefromstring($img);
-  
-					// imagecopymerge使用注解
-					imagecopymerge($new_image, $avatar, 182, 182, 0, 0, 65, 65, 100);
 					
-					imagepng($new_image, $result['img_path']);
-				//	file_put_contents($result['img_path'], $img);
+					$avatar_path = get_avatar($shared_user_wx_id, PUBLIC_PATH);
+				
+					if (is_file($avatar_path)) {
+						$new_image_avatar = imagecreatefromstring($img);
+						$qrcode_avatar = imagecreatefromstring(file_get_contents($avatar_path));
+						imagecopymerge($new_image_avatar, $qrcode_avatar, 183, 183, 0, 0, 64, 64, 100);
+						$result['qrcode_avatar'] = $base . '1.jpg';
+						imagepng($new_image_avatar, $result['qrcode_avatar']);
+					} 
+					
+					$new_image_logo = imagecreatefromstring($img);
+					$qrcode_logo = imagecreatefromstring(file_get_contents(PUBLIC_PATH. config_get('logo64')));
+					imagecopymerge($new_image_logo, $qrcode_logo, 183, 183, 0, 0, 64, 64, 100);
+					$result['qrcode_logo'] = $base . '2.jpg';
+					imagepng($new_image_logo, $result['qrcode_logo']);
+   
 					$cache->set($key, $result, $result['expire_seconds']-100);
 				}
 			}
 		}
 		
-		return $result['img_path']?:$default;
+		return ($result[$type]?:($result['qrcode_logo']?:$default));
 	}
 }
